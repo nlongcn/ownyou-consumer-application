@@ -195,3 +195,6 @@ data/studio_checkpoints.db-shm
 data/studio_checkpoints.db-wal
 *.out
 dashboard/backend/backend.out
+
+# Git worktrees (isolated workspaces)
+.worktrees/
