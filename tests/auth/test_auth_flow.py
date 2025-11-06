@@ -319,13 +319,13 @@ class TestIntegration:
     def test_multiple_devices(self, auth_flow, test_wallet):
         """Test user with multiple active sessions."""
         sessions = []
-        
+
         # Create 3 sessions (3 devices)
         for i in range(3):
             challenge_data = auth_flow.generate_challenge()
             message = encode_defunct(text=challenge_data["challenge"])
             signed_message = test_wallet["account"].sign_message(message)
-            
+
             session = auth_flow.authenticate(
                 wallet_address=test_wallet["address"],
                 signature=signed_message.signature.hex(),
@@ -333,7 +333,7 @@ class TestIntegration:
                 device_info={"device": f"device_{i}"}
             )
             sessions.append(session)
-        
+
         # All sessions should be valid
         for session in sessions:
             assert auth_flow.validate_request(session.jwt_token) is True
@@ -344,17 +344,89 @@ class TestIntegration:
         challenge_data = auth_flow.generate_challenge()
         message = encode_defunct(text=challenge_data["challenge"])
         signed_message = test_wallet["account"].sign_message(message)
-        
+
         session = auth_flow.authenticate(
             wallet_address=test_wallet["address"],
             signature=signed_message.signature.hex(),
             challenge=challenge_data["challenge"]
         )
-        
+
         # Simulate concurrent requests
         for _ in range(10):
             is_valid = auth_flow.validate_request(session.jwt_token)
             assert is_valid is True
+
+    def test_end_to_end_auth_flow(self, auth_flow, test_wallet):
+        """
+        Test complete end-to-end authentication flow.
+
+        Covers: challenge generation → wallet signature → verification →
+        JWT token issuance → API request validation.
+
+        This test simulates the full user authentication journey from
+        initial challenge request to authenticated API access.
+        """
+        # Step 1: Client requests authentication challenge
+        challenge_response = auth_flow.generate_challenge()
+
+        # Verify challenge structure
+        assert "challenge" in challenge_response
+        assert "nonce" in challenge_response
+        assert "timestamp" in challenge_response
+        assert "expires_at" in challenge_response
+        assert len(challenge_response["nonce"]) == 32  # 32 hex characters
+
+        # Step 2: User signs challenge with wallet (client-side)
+        challenge_message = challenge_response["challenge"]
+        message = encode_defunct(text=challenge_message)
+        signed_message = test_wallet["account"].sign_message(message)
+        signature = signed_message.signature.hex()
+
+        # Verify signature format
+        # Note: .hex() returns without 0x prefix
+        assert len(signature) == 130  # 130 hex chars (65 bytes * 2)
+
+        # Step 3: Client sends signature for verification and session creation
+        session = auth_flow.authenticate(
+            wallet_address=test_wallet["address"],
+            signature=signature,
+            challenge=challenge_message,
+            device_info={"platform": "web", "user_agent": "Mozilla/5.0"},
+            ip_address="127.0.0.1"
+        )
+
+        # Verify session created
+        assert session is not None
+        assert session.wallet_address.lower() == test_wallet["address"].lower()
+        assert session.jwt_token is not None
+        assert session.jwt_token.count('.') == 2  # JWT has 3 parts
+        assert not session.is_expired()
+
+        # Step 4: Client uses JWT token for API requests
+        # Simulate API request validation
+        is_authenticated = auth_flow.validate_request(session.jwt_token)
+        assert is_authenticated is True
+
+        # Step 5: Extract user info from token
+        user_id = auth_flow.get_user_from_token(session.jwt_token)
+        assert user_id is not None
+        assert user_id == session.user_id
+
+        # Step 6: Verify token contains correct claims
+        from src.auth import JWTManager
+        jwt_manager = JWTManager(secret_key=auth_flow.jwt_manager.secret_key)
+        claims = jwt_manager.validate_token(session.jwt_token)
+
+        assert claims.user_id == session.user_id
+        assert claims.wallet_address.lower() == test_wallet["address"].lower()
+        assert not claims.is_expired()
+
+        # Step 7: Test logout (session termination)
+        auth_flow.logout(session.jwt_token)
+
+        # Verify session invalid after logout
+        is_authenticated_after_logout = auth_flow.validate_request(session.jwt_token)
+        assert is_authenticated_after_logout is False
 
 
 if __name__ == "__main__":

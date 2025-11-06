@@ -523,10 +523,11 @@ class TestUserProfile:
         """Test UserProfile with minimal required fields."""
         profile = UserProfile(
             user_id="user_123",
-            wallet_address="0x1234567890abcdef"
+            wallet_address="0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1"
         )
         assert profile.user_id == "user_123"
-        assert profile.wallet_address == "0x1234567890abcdef"
+        # Wallet address is normalized to lowercase
+        assert profile.wallet_address == "0x742d35cc6634c0532925a3b844bc9e7595f0beb1"
         assert profile.display_name is None
         assert profile.email is None
         assert profile.onboarding_completed is False
@@ -538,7 +539,7 @@ class TestUserProfile:
         """Test UserProfile with all fields populated."""
         profile = UserProfile(
             user_id="user_123",
-            wallet_address="0x1234567890abcdef",
+            wallet_address="0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1",
             display_name="John Doe",
             email="john@example.com",
             onboarding_completed=True,
@@ -782,7 +783,7 @@ class TestSerialization:
         """Test UserProfile can be serialized to JSON and back."""
         profile = UserProfile(
             user_id="user_123",
-            wallet_address="0x1234567890abcdef",
+            wallet_address="0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1",
             preferences={"theme": "dark"}
         )
         json_str = profile.model_dump_json()

@@ -19,6 +19,23 @@ info:
     - Real-time notifications
     - Privacy-first design (no PII in responses without user consent)
 
+    **API Versioning**:
+    - Current version: v1 (in URL path: `/v1/...`)
+    - Breaking changes will increment major version (v2, v3, etc.)
+    - Minor changes (additive) maintain backward compatibility within major version
+
+    **Rate Limiting**:
+    - Per user: 1000 requests/hour (standard tier)
+    - Per IP: 5000 requests/hour (prevents abuse)
+    - Rate limit headers included in all responses
+
+    **CORS Policy**:
+    - Allowed origins: `https://app.ownyou.app`, `http://localhost:3000` (dev)
+    - Allowed methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
+    - Allowed headers: Authorization, Content-Type, X-Request-ID
+    - Credentials: true (cookies, auth headers)
+    - Max age: 86400 (24 hours)
+
   contact:
     name: OwnYou Development Team
     url: https://github.com/ownyou
@@ -28,11 +45,17 @@ info:
 
 servers:
   - url: https://api.ownyou.app/v1
-    description: Production server
+    description: |
+      Production server
+      Rate limit: 1000 req/hour per user
   - url: https://staging-api.ownyou.app/v1
-    description: Staging server
+    description: |
+      Staging server
+      Rate limit: 10000 req/hour (higher for testing)
   - url: http://localhost:5000/v1
-    description: Local development server
+    description: |
+      Local development server
+      Rate limit: Unlimited
 
 tags:
   - name: Authentication
@@ -65,6 +88,105 @@ components:
       description: |
         JWT token obtained via wallet signature authentication.
         Include in Authorization header: `Authorization: Bearer <token>`
+
+  # ==============================================================================
+  # REUSABLE RESPONSES
+  # ==============================================================================
+
+  responses:
+    RateLimitExceeded:
+      description: Rate limit exceeded - too many requests
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+            example: 1000
+          description: Request limit per hour
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+            example: 0
+          description: Remaining requests in current window
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+            example: 1609459200
+          description: Unix timestamp when rate limit resets
+        Retry-After:
+          schema:
+            type: integer
+            example: 3600
+          description: Seconds until rate limit resets
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Rate limit exceeded"
+              message:
+                type: string
+                example: "You have exceeded the rate limit of 1000 requests per hour. Please try again later."
+              retry_after:
+                type: integer
+                example: 3600
+                description: Seconds until rate limit resets
+
+    Unauthorized:
+      description: Unauthorized - invalid or missing JWT token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Unauthorized"
+              message:
+                type: string
+                example: "Invalid or expired JWT token"
+
+    Forbidden:
+      description: Forbidden - valid token but insufficient permissions
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Forbidden"
+              message:
+                type: string
+                example: "You do not have permission to access this resource"
+
+  # ==============================================================================
+  # RESPONSE HEADERS (GLOBAL)
+  # ==============================================================================
+
+  headers:
+    X-RateLimit-Limit:
+      description: Request limit per hour
+      schema:
+        type: integer
+        example: 1000
+    X-RateLimit-Remaining:
+      description: Remaining requests in current window
+      schema:
+        type: integer
+        example: 999
+    X-RateLimit-Reset:
+      description: Unix timestamp when rate limit resets
+      schema:
+        type: integer
+        example: 1609459200
+    X-Request-ID:
+      description: Unique request identifier for debugging
+      schema:
+        type: string
+        format: uuid
+        example: "550e8400-e29b-41d4-a716-446655440000"
 
   # ==============================================================================
   # REUSABLE SCHEMAS
@@ -127,7 +249,7 @@ components:
           type: object
           nullable: true
           description: Type-specific card data (ShoppingCardData, TravelCardData, etc.)
-          example: {"product_name": "ASIC Running Shoes", "current_price": 89.99}
+          example: {"product_name": "ASICS Gel-Kayano Running Shoes", "current_price": 89.99}
         priority:
           type: integer
           minimum: 1
@@ -135,6 +257,93 @@ components:
           default: 5
           description: Priority level (1-10, higher = more important)
           example: 7
+      example:
+        # Complete example: Shopping mission card
+        mission_id: "mission_shop_001"
+        user_id: "user_abc123"
+        thread_id: "thread_xyz789"
+        card_type: "shopping"
+        category: "savings"
+        state: "active"
+        created_at: "2025-01-06T10:00:00Z"
+        updated_at: "2025-01-06T15:30:00Z"
+        priority: 8
+        card_data:
+          product_name: "ASICS Gel-Kayano 30 Running Shoes"
+          product_url: "https://amazon.com/dp/B09XYZ123"
+          image_url: "https://images.amazon.com/images/I/71ABC123.jpg"
+          current_price: 89.99
+          original_price: 159.99
+          retailer_name: "Amazon"
+          in_stock: true
+          savings_amount: 70.00
+
+    # Mission Card Examples - Different Card Types
+    MissionCardExamples:
+      oneOf:
+        - title: Shopping Card
+          example:
+            mission_id: "mission_shop_002"
+            user_id: "user_456"
+            card_type: "shopping"
+            category: "savings"
+            state: "active"
+            card_data:
+              product_name: "Sony WH-1000XM5 Wireless Headphones"
+              product_url: "https://bestbuy.com/products/sony-wh1000xm5"
+              image_url: "https://images.bestbuy.com/image.jpg"
+              current_price: 298.00
+              original_price: 399.99
+              retailer_name: "Best Buy"
+              in_stock: true
+              savings_amount: 101.99
+        - title: Travel Card
+          example:
+            mission_id: "mission_travel_001"
+            user_id: "user_456"
+            card_type: "travel"
+            category: "ikigai"
+            state: "pending"
+            card_data:
+              destination: "Tokyo, Japan"
+              destination_image_url: "https://images.unsplash.com/tokyo"
+              trip_dates: ["2025-04-10T00:00:00Z", "2025-04-17T00:00:00Z"]
+              estimated_cost: 3500.00
+              alignment_score: 0.92
+              hotel_options:
+                - name: "Park Hyatt Tokyo"
+                  price_per_night: 450.00
+                  rating: 4.8
+              flight_options:
+                - airline: "ANA"
+                  price: 1200.00
+                  duration_hours: 11
+              activities:
+                - name: "Tsukiji Fish Market Tour"
+                  price: 85.00
+                - name: "Mt. Fuji Day Trip"
+                  price: 150.00
+        - title: Health Card
+          example:
+            mission_id: "mission_health_001"
+            user_id: "user_456"
+            card_type: "health"
+            category: "health"
+            state: "active"
+            priority: 10
+            card_data:
+              health_type: "fitness"
+              title: "Weekly Cardio Goals"
+              description: "Based on your activity patterns, you're 30% below your target cardio minutes this week"
+              action_items:
+                - "Schedule 3x 30-min runs this week"
+                - "Track heart rate during workouts"
+                - "Aim for 150+ bpm during cardio"
+              priority: "high"
+              resources:
+                - type: "article"
+                  title: "Benefits of Regular Cardio"
+                  url: "https://health.com/cardio-benefits"
 
     # User Profile
     UserProfile:

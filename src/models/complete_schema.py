@@ -14,7 +14,7 @@ All models use Pydantic BaseModel for validation and serialization.
 
 from datetime import datetime
 from typing import Optional, List, Dict, Any, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
 
 # ==============================================================================
@@ -138,14 +138,22 @@ class ShoppingCardData(BaseModel):
     user preferences from retailers.
     """
 
-    product_name: str = Field(..., min_length=1, description="Product name")
-    product_url: str = Field(..., min_length=1, description="URL to product page")
-    image_url: str = Field(..., min_length=1, description="Product image URL")
-    current_price: float = Field(..., gt=0, description="Current price in USD")
-    original_price: Optional[float] = Field(None, gt=0, description="Original price if on sale")
-    retailer_name: str = Field(..., min_length=1, description="Retailer name (e.g., Amazon, Target)")
+    product_name: str = Field(..., min_length=2, max_length=500, description="Product name")
+    product_url: str = Field(..., min_length=10, max_length=2000, description="URL to product page")
+    image_url: str = Field(..., min_length=10, max_length=2000, description="Product image URL")
+    current_price: float = Field(..., gt=0.01, description="Current price in USD")
+    original_price: Optional[float] = Field(None, gt=0.01, description="Original price if on sale")
+    retailer_name: str = Field(..., min_length=2, max_length=100, description="Retailer name (e.g., Amazon, Target)")
     in_stock: bool = Field(True, description="Whether product is in stock")
     savings_amount: Optional[float] = Field(None, ge=0, description="Amount saved if on sale")
+
+    @validator('original_price')
+    def validate_original_price(cls, v, values):
+        """Ensure original_price >= current_price when present."""
+        if v is not None and 'current_price' in values:
+            if v < values['current_price']:
+                raise ValueError("original_price must be >= current_price")
+        return v
 
 
 class UtilityCardData(BaseModel):
@@ -159,12 +167,19 @@ class UtilityCardData(BaseModel):
         ...,
         description="Type of utility service"
     )
-    current_provider: str = Field(..., min_length=1, description="Current service provider")
-    current_cost: float = Field(..., gt=0, description="Current monthly cost in USD")
-    recommended_provider: str = Field(..., min_length=1, description="Recommended new provider")
-    recommended_cost: float = Field(..., gt=0, description="Recommended monthly cost in USD")
+    current_provider: str = Field(..., min_length=2, max_length=100, description="Current service provider")
+    current_cost: float = Field(..., gt=0.01, description="Current monthly cost in USD")
+    recommended_provider: str = Field(..., min_length=2, max_length=100, description="Recommended new provider")
+    recommended_cost: float = Field(..., gt=0.01, description="Recommended monthly cost in USD")
     savings_annual: float = Field(..., ge=0, description="Estimated annual savings in USD")
     switch_incentive: Optional[float] = Field(None, ge=0, description="One-time switching bonus/incentive")
+
+    @validator('recommended_cost')
+    def validate_recommended_cost(cls, v, values):
+        """Ensure recommended_cost < current_cost (otherwise no savings)."""
+        if 'current_cost' in values and v >= values['current_cost']:
+            raise ValueError("recommended_cost must be < current_cost for savings")
+        return v
 
 
 class ServicesCardData(BaseModel):
@@ -196,13 +211,13 @@ class TravelCardData(BaseModel):
     Used when mission agent plans trips matching user's Ikigai interests.
     """
 
-    destination: str = Field(..., min_length=1, description="Travel destination")
-    destination_image_url: str = Field(..., min_length=1, description="Destination image URL")
+    destination: str = Field(..., min_length=2, max_length=200, description="Travel destination")
+    destination_image_url: str = Field(..., min_length=10, max_length=2000, description="Destination image URL")
     trip_dates: Optional[tuple[datetime, datetime]] = Field(None, description="Proposed trip dates (start, end)")
     hotel_options: List[Dict[str, Any]] = Field(default_factory=list, description="Hotel recommendations")
     flight_options: List[Dict[str, Any]] = Field(default_factory=list, description="Flight options")
     activities: List[Dict[str, Any]] = Field(default_factory=list, description="Recommended activities")
-    estimated_cost: float = Field(..., gt=0, description="Total estimated trip cost in USD")
+    estimated_cost: float = Field(..., gt=0.01, description="Total estimated trip cost in USD")
     alignment_score: float = Field(..., ge=0, le=1, description="How well trip matches Ikigai profile (0-1)")
 
 
@@ -315,14 +330,33 @@ class UserProfile(BaseModel):
     Stored in Store namespace: (user_id, "user_profile")
     """
 
-    user_id: str = Field(..., min_length=1, description="Unique user identifier")
-    wallet_address: str = Field(..., min_length=1, description="User's blockchain wallet address")
-    display_name: Optional[str] = Field(default=None, description="User's display name")
-    email: Optional[str] = Field(default=None, description="User's email (optional, for notifications)")
+    user_id: str = Field(..., min_length=1, max_length=100, description="Unique user identifier")
+    wallet_address: str = Field(..., min_length=3, max_length=42, description="User's blockchain wallet address (0x...)")
+    display_name: Optional[str] = Field(default=None, min_length=1, max_length=100, description="User's display name")
+    email: Optional[str] = Field(default=None, max_length=255, description="User's email (optional, for notifications)")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Account creation timestamp")
     last_login: datetime = Field(default_factory=datetime.utcnow, description="Last login timestamp")
     onboarding_completed: bool = Field(default=False, description="Whether user completed onboarding")
     preferences: Dict[str, Any] = Field(default_factory=dict, description="User preferences")
+
+    @validator('wallet_address')
+    def validate_wallet_address(cls, v):
+        """Ensure wallet address is valid Ethereum address format."""
+        if not v.startswith('0x'):
+            raise ValueError("Wallet address must start with '0x'")
+        if len(v) != 42:
+            raise ValueError("Ethereum wallet address must be exactly 42 characters (0x + 40 hex chars)")
+        if not all(c in '0123456789abcdefABCDEF' for c in v[2:]):
+            raise ValueError("Wallet address contains invalid hex characters")
+        return v.lower()  # Normalize to lowercase
+
+    @validator('email')
+    def validate_email(cls, v):
+        """Basic email validation."""
+        if v is not None:
+            if '@' not in v or '.' not in v.split('@')[-1]:
+                raise ValueError("Invalid email format")
+        return v
 
 
 class WalletTransaction(BaseModel):

@@ -1734,10 +1734,229 @@ def update_memory_node(state, store=None):
 
 ---
 
+## Schema Versioning and Migration Strategy
+
+### Schema Version Format
+
+All Store items MUST include a `schema_version` field to enable safe schema evolution:
+
+```json
+{
+  "schema_version": "1.0",
+  "mission_id": "...",
+  "..."
+}
+```
+
+**Version Format:** `{major}.{minor}`
+- **Major version**: Breaking changes (incompatible with previous schema)
+- **Minor version**: Additive changes (backward compatible)
+
+### Schema Version Registry
+
+| Namespace | Current Version | Last Breaking Change |
+|-----------|----------------|---------------------|
+| `iab_classifications` | 1.0 | 2025-01-06 (initial) |
+| `user_profiles` | 1.0 | 2025-01-06 (initial) |
+| `mission_cards` | 1.0 | 2025-01-06 (initial) |
+| `data_sources` | 1.0 | 2025-01-06 (initial) |
+| `wallet_transactions` | 1.0 | 2025-01-06 (initial) |
+| `notifications` | 1.0 | 2025-01-06 (initial) |
+
+### Migration Strategy
+
+#### Read-Time Migration
+
+Items are migrated lazily on read to avoid downtime and batch operations:
+
+```python
+# src/mission_agents/memory/migrations.py
+
+def migrate_namespace(namespace: str, item: dict) -> dict:
+    """
+    Migrate Store item to latest schema version.
+
+    Args:
+        namespace: Store namespace (e.g., "mission_cards")
+        item: Raw item from Store
+
+    Returns:
+        Migrated item with latest schema_version
+    """
+    current_version = item.get("schema_version", "0.0")
+    target_version = SCHEMA_VERSIONS[namespace]
+
+    if current_version == target_version:
+        return item  # Already latest
+
+    # Apply migrations in sequence
+    migrations = get_migrations(namespace, current_version, target_version)
+    for migration in migrations:
+        item = migration(item)
+
+    item["schema_version"] = target_version
+    return item
+
+
+# Example migration function
+def migrate_mission_card_1_0_to_1_1(item: dict) -> dict:
+    """Migrate MissionCard from v1.0 to v1.1 (add retry_count field)."""
+    item["retry_count"] = 0  # New field with default
+    return item
+```
+
+#### Migration Registry
+
+```python
+# Migration registry maps (namespace, from_version, to_version) → migration_func
+MIGRATIONS = {
+    ("mission_cards", "1.0", "1.1"): migrate_mission_card_1_0_to_1_1,
+    ("mission_cards", "1.1", "2.0"): migrate_mission_card_1_1_to_2_0,
+    # Add more migrations as schema evolves
+}
+
+def get_migrations(namespace: str, from_version: str, to_version: str) -> List[Callable]:
+    """Get ordered list of migrations to apply."""
+    # Walk migration graph from from_version to to_version
+    # Example: 1.0 → 1.1 → 1.2 → 2.0
+    pass
+```
+
+#### Store Read Helper
+
+```python
+# src/mission_agents/memory/store.py
+
+def get_item_migrated(store, namespace: tuple, key: str) -> dict:
+    """
+    Get item from Store with automatic migration.
+
+    Usage:
+        item = get_item_migrated(store, ("mission_cards", user_id), mission_id)
+    """
+    item = store.get(namespace, key)
+    if item is None:
+        return None
+
+    # Migrate if needed
+    namespace_name = namespace[0] if isinstance(namespace, tuple) else namespace
+    migrated = migrate_namespace(namespace_name, item.value)
+
+    # Write back if schema changed
+    if migrated["schema_version"] != item.value.get("schema_version"):
+        store.put(namespace, key, migrated)
+        logger.info(f"Migrated {namespace}/{key} to {migrated['schema_version']}")
+
+    return migrated
+```
+
+### Breaking Changes Policy
+
+**When making breaking changes:**
+
+1. **Plan migration path** - Define how old data maps to new schema
+2. **Increment major version** - e.g., 1.2 → 2.0
+3. **Add migration function** - Implement in `migrations.py`
+4. **Test migration** - Verify on sample data
+5. **Monitor migration metrics** - Track migration success rate
+6. **Support N-1 versions** - Maintain migrations for previous major version
+
+**Example Breaking Change:**
+
+```python
+# Breaking: Rename field "savings_amount" → "discount_amount" in ShoppingCardData
+
+def migrate_shopping_card_1_0_to_2_0(item: dict) -> dict:
+    """Breaking change: Rename savings_amount → discount_amount."""
+    card_data = item.get("card_data", {})
+    if "savings_amount" in card_data:
+        card_data["discount_amount"] = card_data.pop("savings_amount")
+    return item
+
+MIGRATIONS[("mission_cards", "1.0", "2.0")] = migrate_shopping_card_1_0_to_2_0
+```
+
+### Backward Compatibility
+
+**Additive changes (minor version bumps) are backward compatible:**
+
+```python
+# Safe: Add new optional field
+{
+  "schema_version": "1.1",  # Was 1.0
+  "mission_id": "...",
+  "new_field": "..."  # New optional field, old code can ignore
+}
+```
+
+**Breaking changes require migration:**
+
+```python
+# Breaking: Remove required field (requires migration)
+{
+  "schema_version": "2.0",  # Was 1.0
+  "mission_id": "...",
+  # "old_field" removed - old code will break
+}
+```
+
+### Migration Monitoring
+
+**Metrics to track:**
+
+- Migration success rate (% successful migrations)
+- Migration latency (time to migrate item)
+- Schema version distribution (how many items on old schemas)
+- Migration errors (failed migrations requiring manual intervention)
+
+**Logging:**
+
+```python
+logger.info(f"Migrated {namespace}/{key}: v{old_version} → v{new_version}")
+logger.error(f"Migration failed for {namespace}/{key}: {error}")
+```
+
+**Alerting:**
+
+- Alert if migration error rate > 1%
+- Alert if >10% of items on schema version older than N-2
+
+### Testing Migrations
+
+```python
+# tests/mission_agents/memory/test_migrations.py
+
+def test_shopping_card_migration_1_0_to_2_0():
+    """Test shopping card schema migration."""
+    old_item = {
+        "schema_version": "1.0",
+        "mission_id": "mission_123",
+        "card_data": {
+            "savings_amount": 25.50
+        }
+    }
+
+    migrated = migrate_shopping_card_1_0_to_2_0(old_item)
+
+    assert migrated["schema_version"] == "2.0"
+    assert "discount_amount" in migrated["card_data"]
+    assert migrated["card_data"]["discount_amount"] == 25.50
+    assert "savings_amount" not in migrated["card_data"]
+```
+
+### Future Considerations
+
+**Phase 2-3:** Implement complete migration framework
+**Phase 4:** Add migration API endpoints for manual triggering
+**Phase 5:** Build migration dashboard for monitoring
+
+---
+
 ## Change Log
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.1.0 | 2025-01-06 | Added schema versioning and migration strategy |
 | 1.0.0 | 2025-01-06 | Initial comprehensive documentation (Phase 1) |
 
 ---

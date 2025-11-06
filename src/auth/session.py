@@ -129,6 +129,30 @@ class SessionManager:
     In production, sessions should be stored in Redis or similar
     for performance and scalability.
 
+    **Thread Safety:**
+    The current in-memory implementation using Python dict is NOT thread-safe
+    for concurrent access. For production use:
+
+    1. **Option A - Use LangGraph Store (RECOMMENDED for OwnYou)**:
+       - Store sessions in LangGraph Store namespace: ("sessions", user_id)
+       - Provides thread-safe access via Store's internal locking
+       - Enables session persistence across app restarts
+       - Integrates with existing OwnYou architecture
+
+    2. **Option B - Use Redis**:
+       - Redis provides atomic operations (SET, DEL, EXPIRE)
+       - Handles concurrent access from multiple app instances
+       - Built-in TTL support for auto-expiry
+
+    3. **Option C - Add threading.Lock (development only)**:
+       - Suitable for single-instance deployments only
+       - Wrap all dict operations in lock: `with self._lock: ...`
+
+    **Current Limitations**:
+    - Dict operations (del, __setitem__) are not atomic in Python
+    - Race conditions possible with concurrent requests
+    - No persistence across app restarts
+
     Example:
         >>> manager = SessionManager()
         >>> session = manager.create_session(
@@ -147,10 +171,14 @@ class SessionManager:
         Args:
             default_ttl_days: Default session TTL in days
             idle_timeout_minutes: Idle timeout in minutes
+
+        Warning:
+            In-memory session storage is NOT production-ready. Use Redis or
+            LangGraph Store for production deployments.
         """
         self.default_ttl_days = default_ttl_days
         self.idle_timeout_minutes = idle_timeout_minutes
-        self._sessions: Dict[str, Session] = {}  # In-memory store (use Redis in production)
+        self._sessions: Dict[str, Session] = {}  # In-memory store (use Redis/Store in production)
 
     def create_session(
         self,
@@ -283,9 +311,11 @@ class SessionManager:
 
         Args:
             session_id: Session identifier
+
+        Thread Safety Note:
+            Uses .pop() for atomic removal.
         """
-        if session_id in self._sessions:
-            del self._sessions[session_id]
+        self._sessions.pop(session_id, None)  # pop() is more atomic than del
 
     def delete_user_sessions(self, user_id: str):
         """
@@ -295,43 +325,60 @@ class SessionManager:
 
         Args:
             user_id: User identifier
+
+        Thread Safety Note:
+            Creates snapshot of session IDs before deletion to avoid
+            dict size change during iteration.
         """
+        # Create snapshot to avoid dict size change during iteration
         session_ids_to_delete = [
-            sid for sid, session in self._sessions.items()
+            sid for sid, session in list(self._sessions.items())
             if session.user_id == user_id
         ]
 
         for session_id in session_ids_to_delete:
-            del self._sessions[session_id]
+            self._sessions.pop(session_id, None)  # pop() is more atomic than del
 
     def cleanup_expired_sessions(self):
         """
         Remove all expired sessions from storage.
 
         Should be called periodically (e.g., via cron job).
+
+        Thread Safety Note:
+            Uses .pop() instead of del for atomic removal. However, iterating
+            over .items() while other threads modify the dict can still cause
+            issues. For production, use Redis or LangGraph Store.
         """
         current_time = datetime.utcnow()
+        # Create snapshot of expired session IDs to avoid dict size change during iteration
         expired_session_ids = [
-            sid for sid, session in self._sessions.items()
+            sid for sid, session in list(self._sessions.items())
             if session.is_expired()
         ]
 
         for session_id in expired_session_ids:
-            del self._sessions[session_id]
+            self._sessions.pop(session_id, None)  # pop() is more atomic than del
 
     def cleanup_idle_sessions(self):
         """
         Remove idle sessions that haven't been active recently.
 
         Should be called periodically.
+
+        Thread Safety Note:
+            Uses .pop() instead of del for atomic removal. However, iterating
+            over .items() while other threads modify the dict can still cause
+            issues. For production, use Redis or LangGraph Store.
         """
+        # Create snapshot of idle session IDs to avoid dict size change during iteration
         idle_session_ids = [
-            sid for sid, session in self._sessions.items()
+            sid for sid, session in list(self._sessions.items())
             if session.is_idle(self.idle_timeout_minutes)
         ]
 
         for session_id in idle_session_ids:
-            del self._sessions[session_id]
+            self._sessions.pop(session_id, None)  # pop() is more atomic than del
 
     def list_user_sessions(self, user_id: str) -> list[Session]:
         """
