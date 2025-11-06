@@ -95,6 +95,72 @@ Once Mission Agents are fully integrated, SQLite writes can be removed.
 - **Dashboard API** → Read from Store for profile display
 - **External Systems** → All access via Store wrapper (never direct access)
 
+### Legacy Code Compatibility (email_parser Integration)
+
+**Decision 1.1: Backward Compatible Store Writes**
+
+During transition from email_parser to Mission Agents (Phase 1-5), the system writes to BOTH:
+- **SQLite** (legacy system - dashboard, LangGraph Studio)
+- **Store** (new system - Mission Agents)
+
+**Why:** Zero-downtime migration. Dashboard and existing tools continue working while Mission Agents are built.
+
+**When to remove dual writes:** After Phase 5 complete (dashboard migrated to Store reads).
+
+**Code pattern preserved:**
+```python
+# This pattern is REQUIRED until Phase 5 complete
+def update_memory_node(state, store: Optional[MissionStore] = None):
+    """Update both SQLite (legacy) and Store (new)"""
+
+    user_id = state["user_id"]
+    classifications = state["all_classifications"]
+
+    # Legacy write (KEEP until Phase 5)
+    memory_manager = MemoryManager(user_id)
+    memory_manager.update_classifications(classifications)
+
+    # New write (ADD for mission agents)
+    if store:
+        for c in classifications:
+            store.put_iab_classification(
+                user_id=user_id,
+                taxonomy_id=c["taxonomy_id"],
+                classification=c
+            )
+```
+
+**Namespace Compatibility:**
+
+email_parser and mission_agents share namespace pattern: `(user_id, collection_name)`
+
+```python
+# Both systems use same pattern
+email_parser_namespace = (user_id, "iab_taxonomy_profile")
+mission_agents_namespace = (user_id, "iab_classifications")
+
+# Store reads work for both
+classifications = store.get_all_iab_classifications(user_id)
+```
+
+**Integration Testing Required:**
+
+```python
+def test_email_parser_still_works_after_mission_agents():
+    """CRITICAL: Email parser must continue working"""
+    # Baseline
+    result_before = email_parser.process_emails(max_count=10)
+
+    # Initialize mission agents
+    mission_orchestrator = MissionOrchestrator(store=store)
+
+    # Verify email parser still works
+    result_after = email_parser.process_emails(max_count=10)
+    assert result_after["status"] == "success"
+```
+
+**See:** [docs/reference/LEGACY_CODE_INTEGRATION.md](docs/reference/LEGACY_CODE_INTEGRATION.md) for complete integration patterns.
+
 ---
 
 ## Decision 2: IAB Classifications Trigger Mission Agents
