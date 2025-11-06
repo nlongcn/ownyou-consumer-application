@@ -11,15 +11,16 @@
     "test": "echo \"Spike tests - run day1/day3/day5 scripts\""
   },
   "dependencies": {
+    "@langchain/anthropic": "^0.3.11",
     "@langchain/core": "^0.3.24",
     "@langchain/langgraph": "^0.2.26",
-    "@steerprotocol/langgraph-checkpoint-pglite": "latest",
-    "@langchain/anthropic": "^0.3.11",
     "@langchain/openai": "^0.3.15",
+    "@steerprotocol/langgraph-checkpoint-pglite": "latest",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
+    "fake-indexeddb": "^6.2.4",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
