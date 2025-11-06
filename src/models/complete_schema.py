@@ -301,3 +301,113 @@ class HealthCardData(BaseModel):
     action_items: List[str] = Field(..., min_length=1, description="Specific action items for user")
     resources: List[Dict[str, Any]] = Field(default_factory=list, description="Helpful resources (articles, videos, apps)")
     priority: Literal["high", "medium", "low"] = Field(..., description="Health priority level")
+
+
+# ==============================================================================
+# USER & SYSTEM MODELS
+# ==============================================================================
+
+class UserProfile(BaseModel):
+    """
+    Core user profile information.
+
+    Created at signup, updated throughout user lifecycle.
+    Stored in Store namespace: (user_id, "user_profile")
+    """
+
+    user_id: str = Field(..., min_length=1, description="Unique user identifier")
+    wallet_address: str = Field(..., min_length=1, description="User's blockchain wallet address")
+    display_name: Optional[str] = Field(default=None, description="User's display name")
+    email: Optional[str] = Field(default=None, description="User's email (optional, for notifications)")
+    created_at: datetime = Field(default_factory=datetime.utcnow, description="Account creation timestamp")
+    last_login: datetime = Field(default_factory=datetime.utcnow, description="Last login timestamp")
+    onboarding_completed: bool = Field(default=False, description="Whether user completed onboarding")
+    preferences: Dict[str, Any] = Field(default_factory=dict, description="User preferences")
+
+
+class WalletTransaction(BaseModel):
+    """
+    Token transaction record for user rewards and payments.
+
+    Tracks all token movements in/out of user wallet.
+    Stored in Store namespace: (user_id, "wallet_transactions")
+    """
+
+    transaction_id: str = Field(..., min_length=1, description="Unique transaction identifier")
+    user_id: str = Field(..., min_length=1, description="User who owns this transaction")
+    transaction_type: Literal["reward", "withdrawal", "purchase", "refund"] = Field(
+        ...,
+        description="Type of transaction"
+    )
+    amount: float = Field(..., description="Transaction amount (positive = credit, negative = debit)")
+    token_symbol: str = Field(default="OWN", description="Token symbol (default: OWN)")
+    description: str = Field(..., min_length=1, description="Human-readable description")
+    related_mission_id: Optional[str] = Field(default=None, description="Mission ID if transaction from mission reward")
+    blockchain_tx_hash: Optional[str] = Field(default=None, description="On-chain transaction hash")
+    status: Literal["pending", "completed", "failed"] = Field(
+        default="completed",
+        description="Transaction status"
+    )
+    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Transaction timestamp")
+
+
+class Notification(BaseModel):
+    """
+    User notification for app events.
+
+    Sent when missions created, data sources connected, rewards earned, etc.
+    Stored in Store namespace: (user_id, "notifications")
+    """
+
+    notification_id: str = Field(..., min_length=1, description="Unique notification identifier")
+    user_id: str = Field(..., min_length=1, description="User who receives this notification")
+    notification_type: Literal[
+        "mission_created",
+        "mission_completed",
+        "reward_earned",
+        "data_source_connected",
+        "data_source_error",
+        "system_update"
+    ] = Field(..., description="Type of notification")
+    title: str = Field(..., min_length=1, description="Notification title")
+    message: str = Field(..., min_length=1, description="Notification message body")
+    related_mission_id: Optional[str] = Field(default=None, description="Related mission ID if applicable")
+    related_data_source: Optional[str] = Field(default=None, description="Related data source if applicable")
+    action_url: Optional[str] = Field(default=None, description="Deep link to relevant app screen")
+    is_read: bool = Field(default=False, description="Whether user has read this notification")
+    created_at: datetime = Field(default_factory=datetime.utcnow, description="Notification creation timestamp")
+
+
+class DataSourceConnection(BaseModel):
+    """
+    Connection status for user data sources.
+
+    Tracks which data sources (email, calendar, etc.) user has connected.
+    Stored in Store namespace: (user_id, "data_source_connections")
+    """
+
+    user_id: str = Field(..., min_length=1, description="User who owns this connection")
+    source_type: Literal[
+        "email",
+        "calendar",
+        "financial",
+        "location",
+        "browser",
+        "photos",
+        "social",
+        "health"
+    ] = Field(..., description="Type of data source")
+    source_name: str = Field(..., min_length=1, description="Specific source name (e.g., 'Gmail', 'Google Calendar')")
+    status: Literal["connected", "disconnected", "error", "pending_auth"] = Field(
+        ...,
+        description="Connection status"
+    )
+    connected_at: Optional[datetime] = Field(default=None, description="When connection was established")
+    last_sync: Optional[datetime] = Field(default=None, description="Last successful data sync")
+    oauth_token_expiry: Optional[datetime] = Field(default=None, description="OAuth token expiration time")
+    error_message: Optional[str] = Field(default=None, description="Error message if status=error")
+    permissions: List[str] = Field(default_factory=list, description="Granted permissions (read, write, etc.)")
+    sync_frequency: Literal["realtime", "hourly", "daily", "weekly"] = Field(
+        default="daily",
+        description="How often to sync this source"
+    )
