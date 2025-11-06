@@ -1,0 +1,126 @@
+{
+  "user_id": "test_grouping_fixed",
+  "profile_version": 1,
+  "generated_at": "2025-10-07T09:08:59.525509",
+  "schema_version": "2.0",
+  "generator": {
+    "system": "email_parser_iab_taxonomy",
+    "llm_model": "claude:default",
+    "workflow_version": "1.0"
+  },
+  "data_coverage": {
+    "total_emails_analyzed": 3,
+    "emails_this_run": 3,
+    "date_range": "2025-10-07 to 2025-10-07"
+  },
+  "demographics": {
+    "age_range": null,
+    "gender": null,
+    "education": {
+      "taxonomy_id": 20,
+      "tier_path": "Demographic | Education & Occupation | Education (Highest Level) | College Education",
+      "value": "College Education",
+      "confidence": 0.65,
+      "evidence_count": 1,
+      "last_validated": "2025-10-07T08:08:59.472875Z",
+      "days_since_validation": 0
+    },
+    "occupation": null,
+    "marital_status": null,
+    "language": null
+  },
+  "household": {
+    "location": null,
+    "income": null,
+    "length_of_residence": null,
+    "life_stage": null,
+    "median_home_value": null,
+    "monthly_housing_payment": null,
+    "number_of_adults": null,
+    "number_of_children": null,
+    "number_of_individuals": null,
+    "ownership": null,
+    "property_type": null,
+    "urbanization": null
+  },
+  "personal_finance": null,
+  "interests": [
+    {
+      "taxonomy_id": 520,
+      "tier_path": "Interest | Music and Audio | Variety (Music and Audio)",
+      "value": "Politics",
+      "confidence": 0.9,
+      "evidence_count": 1,
+      "last_validated": "2025-10-07T08:08:48.490118Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 211,
+      "tier_path": "Interest | Academic Interests | Arts and Humanities | History",
+      "value": "History",
+      "confidence": 0.7,
+      "evidence_count": 1,
+      "last_validated": "2025-10-07T08:08:48.503151Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 521,
+      "tier_path": "Interest | Music and Audio | World/International Music",
+      "value": "International News",
+      "confidence": 0.85,
+      "evidence_count": 1,
+      "last_validated": "2025-10-07T08:08:48.510001Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 268,
+      "tier_path": "Interest | Business and Finance",
+      "value": "Business and Finance",
+      "confidence": 0.9,
+      "evidence_count": 1,
+      "last_validated": "2025-10-07T08:08:54.503623Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 270,
+      "tier_path": "Interest | Business and Finance | Business | Business Accounting & Finance",
+      "value": "Business Accounting & Finance",
+      "confidence": 0.85,
+      "evidence_count": 1,
+      "last_validated": "2025-10-07T08:08:54.514747Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 500,
+      "tier_path": "Interest | Music and Audio | Oldies/Adult Standards",
+      "value": "Technology",
+      "confidence": 0.8,
+      "evidence_count": 1,
+      "last_validated": "2025-10-07T08:08:54.520304Z",
+      "days_since_validation": 0
+    }
+  ],
+  "purchase_intent": [],
+  "actual_purchases": [],
+  "memory_stats": {
+    "total_facts_stored": 6,
+    "high_confidence_facts": 5,
+    "moderate_confidence_facts": 1,
+    "low_confidence_facts": 0,
+    "facts_needing_validation": 0,
+    "average_confidence": 0.8333333333333334
+  },
+  "section_confidence": {
+    "demographics": 0.7,
+    "household": 0.7,
+    "interests": 0.8333333333333334,
+    "purchase_intent": 0.0,
+    "actual_purchases": 0.0
+  },
+  "tiered_classifications": {
+    "demographics": {},
+    "household": {},
+    "interests": [],
+    "purchase_intent": []
+  }
+}

@@ -1,0 +1,260 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-26T09:26:12.998222",
+    "primary_ikigai": "Digital vigilance and control – the daily practice of safeguarding a well-governed tech life and deriving calm, competence, and pride from staying secure and ahead of risks",
+    "secondary_areas": [
+      "Professional mastery in ad-tech and regulatory shifts",
+      "Curated wine exploration and sensory discernment"
+    ],
+    "confidence_score": 0.85,
+    "supporting_evidence": [
+      {
+        "pattern": "Sustained attention to personal account security and tech-stack hygiene",
+        "strength": "high",
+        "examples": [
+          "New sign-in detected for your Microsoft account (high engagement with security alerts)",
+          "New sign-in detected for your Microsoft account (repeated, indicating ongoing vigilance)"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Research-driven monitoring of ad-tech industry and regulatory remedies",
+        "strength": "medium-high",
+        "examples": [
+          "Google ad tech remedies trial: Explained (active tracking of complex industry shifts)"
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Cultivated, region-specific wine interest emphasizing quality and curation",
+        "strength": "medium",
+        "examples": [
+          "Beaujolais: top wines from all ten crus (targeted, discerning wine exploration)"
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Intentional, interest-aligned subscriptions and information sources",
+        "strength": "medium",
+        "examples": [
+          "Industry regulation explainer subscription",
+          "Curated wine newsletter focused on crus and typicity"
+        ],
+        "email_count": 2
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Connects through industry explainers, vendor security ecosystems, and curated wine guides; stays plugged into regulatory discourse and region-focused wine communities.",
+      "active_engagement": "High; consistently monitors and acts on security alerts, reads complex ad-tech content with purpose, and selectively engages with curated wine material.",
+      "emotional_meaning": "Finds reassurance and self-efficacy in keeping accounts safe, intellectual satisfaction in decoding ad-tech shifts, and sensory joy in exploring well-chosen wines.",
+      "voluntary_pursuit": "Mixed but mostly chosen; security alerts are externally triggered yet part of a deliberately built monitoring system, while ad-tech learning and wine curation are clearly voluntary and intentional.",
+      "everyday_joy": "Small daily/weekly rituals: reviewing security notifications, skimming an ad-tech brief with coffee, and selecting or learning about a specific cru or producer.",
+      "growth_orientation": "Strong; oriented toward continuous learning, evolving best practices in security, deepening professional mastery, and refining palate and discernment."
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [
+          "Professional vigilance in ad-tech and regulatory change",
+          "Cultivated appreciation for wine and curated tasting experiences",
+          "Emphasis on digital security and account integrity"
+        ],
+        "interest_areas": [
+          {
+            "area": "Personal account security and tech-stack hygiene",
+            "strength": "low",
+            "indicators": [
+              "Multiple Microsoft new sign-in alerts in short succession",
+              "Use of mainstream identity platform with active monitoring"
+            ],
+            "frequency": 2,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Ad tech and digital media (industry news and regulation)",
+            "strength": "medium",
+            "indicators": [
+              "Subscription to The Trade Desk’s The Current newsletter",
+              "Engagement with content about Google’s ad tech remedies trial"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Wine curation and oenology",
+            "strength": "medium",
+            "indicators": [
+              "Promotional content from The Wine Society (member-driven retailer)",
+              "Interest in terroir-specific Beaujolais crus and mixed cases"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          }
+        ],
+        "behavioral_patterns": {
+          "engagement_style": "mixed",
+          "information_preferences": "mixed",
+          "decision_making": "research-driven",
+          "temporal_consistency": "varied"
+        },
+        "value_indicators": [
+          "Continuous learning and professional mastery (keeping current with complex industry shifts)",
+          "Security, control, and risk-awareness in digital life",
+          "Quality and discernment in lifestyle choices (curated, region-specific wine selections)"
+        ],
+        "temporal_patterns": {
+          "evolution_trend": "stable_interests",
+          "seasonal_patterns": "not_detected",
+          "engagement_frequency": "low"
+        },
+        "engagement_styles": {
+          "engagement_style": "mixed",
+          "information_preferences": "mixed",
+          "decision_making": "research-driven",
+          "temporal_consistency": "varied"
+        },
+        "commercial_insights": {
+          "purchase_alignment": "aligned_with_interests",
+          "subscription_choices": "intentional",
+          "brand_preferences": "unclear"
+        },
+        "confidence_factors": [
+          "No open/click or longer-term history to confirm strength and consistency of interests",
+          "Small, single-day sample with limited signal across only four emails"
+        ]
+      },
+      "score_statistics": {
+        "average_ikigai_score": 0.9075000000000001,
+        "median_ikigai_score": 0.915,
+        "score_std": 0.03766629793329841,
+        "high_score_count": 4,
+        "medium_score_count": 0,
+        "low_score_count": 0,
+        "average_autonomy": 0.8125,
+        "category_distribution": {
+          "High": 3,
+          "Commercial-Personal": 1
+        },
+        "top_themes": [
+          [
+            "Emphasis on digital security and account integrity",
+            2
+          ],
+          [
+            "Personal account security and tech-stack hygiene",
+            2
+          ],
+          [
+            "Security, control, and risk-awareness in digital life",
+            2
+          ],
+          [
+            "Cultivated appreciation for wine and curated tasting experiences",
+            1
+          ],
+          [
+            "Wine curation and oenology",
+            1
+          ],
+          [
+            "Quality and discernment in lifestyle choices (curated, region-specific wine selections)",
+            1
+          ],
+          [
+            "Professional vigilance in ad-tech and regulatory change",
+            1
+          ],
+          [
+            "Ad tech and digital media (industry news and regulation)",
+            1
+          ],
+          [
+            "Continuous learning and professional mastery (keeping current with complex industry shifts)",
+            1
+          ]
+        ],
+        "total_emails": 4
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Formalize a weekly Security Stewardship Hour: review sign-in logs, update passwords with a manager, check MFA and recovery options, and audit device/app permissions.",
+      "Consolidate alerts into a single dashboard or filtered inbox label so only high-signal security events surface; add quarterly reviews for account hygiene.",
+      "Build an ad-tech regulatory tracker: maintain a simple board with key cases/remedies, deadlines, summaries, and personal takeaways; write a monthly one-page brief.",
+      "Join or contribute to a focused ad-tech community (working group, Slack, or newsletter roundtable) to convert passive reading into dialogue and perspective-sharing.",
+      "Design a monthly themed tasting (e.g., Beaujolais crus by terroir or vintage); log structured notes and calibrate with respected critic benchmarks to hone discernment.",
+      "Create anchor rituals that reinforce ikigai: Friday micro-audit for security with a small reward; Sunday morning 20-minute industry read; monthly wine night with a clear learning goal.",
+      "Keep an ikigai ledger capturing small wins: blocked sign-ins, a clarified regulatory insight, and a memorable bottle; review quarterly to reinforce purpose and progress."
+    ],
+    "data_coverage": {
+      "total_emails": 4
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 0.9075000000000001,
+    "median_ikigai_score": 0.915,
+    "score_std": 0.03766629793329841,
+    "high_score_count": 4,
+    "medium_score_count": 0,
+    "low_score_count": 0,
+    "average_autonomy": 0.8125,
+    "category_distribution": {
+      "High": 3,
+      "Commercial-Personal": 1
+    },
+    "top_themes": [
+      [
+        "Emphasis on digital security and account integrity",
+        2
+      ],
+      [
+        "Personal account security and tech-stack hygiene",
+        2
+      ],
+      [
+        "Security, control, and risk-awareness in digital life",
+        2
+      ],
+      [
+        "Cultivated appreciation for wine and curated tasting experiences",
+        1
+      ],
+      [
+        "Wine curation and oenology",
+        1
+      ],
+      [
+        "Quality and discernment in lifestyle choices (curated, region-specific wine selections)",
+        1
+      ],
+      [
+        "Professional vigilance in ad-tech and regulatory change",
+        1
+      ],
+      [
+        "Ad tech and digital media (industry news and regulation)",
+        1
+      ],
+      [
+        "Continuous learning and professional mastery (keeping current with complex industry shifts)",
+        1
+      ]
+    ],
+    "total_emails": 4
+  },
+  "email_count": 4
+}

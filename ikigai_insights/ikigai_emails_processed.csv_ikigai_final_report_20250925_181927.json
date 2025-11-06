@@ -1,0 +1,124 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-25T17:19:27.778656",
+    "primary_ikigai": "Unable to identify - insufficient authentic personal data",
+    "secondary_areas": [],
+    "confidence_score": 0.05,
+    "supporting_evidence": [
+      {
+        "pattern": "Extremely limited authentic personal engagement data",
+        "strength": "low",
+        "examples": [
+          "Only one personal email from merrickhaydon@gmail.com about charity golf event",
+          "All other communications are commercial/marketing content"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Minimal evidence - only one charity golf invitation suggests potential community connection",
+      "active_engagement": "Cannot assess - no clear evidence of active personal pursuits in data",
+      "emotional_meaning": "Insufficient data to determine what brings personal joy or meaning",
+      "voluntary_pursuit": "Cannot distinguish chosen interests from passive commercial consumption",
+      "everyday_joy": "No identifiable small daily activities that bring meaning",
+      "growth_orientation": "Zero learning frequency indicators - no evidence of personal development pursuits"
+    },
+    "personal_patterns": {
+      "total_emails": 50,
+      "personal_email_count": 45,
+      "personal_percentage": 90.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "AI working like magic? Here's how we do it.",
+          "Category": "Newsletter",
+          "Summary": "Promotional newsletter from Civic introducing tips for writing better AI prompts and explaining the hook chain architecture behind Civic Nexus, with links to resources, demos, and launch week events.",
+          "From": "Team Civic <contact@civic.com>"
+        },
+        {
+          "Subject": "New Research: IoTeX: Infrastructure for Real-World AI",
+          "Category": "Newsletter",
+          "Summary": "Research alert summarizing IoTeX's July 2025 roadmap to build an AI stack that processes verified DePIN data for context-aware applications, highlighting modular components (ioID, W3bstream, Quicksilver, Realms) and strong adoption/growth metrics.",
+          "From": "Messari Research Alerts <research@messari.io>"
+        },
+        {
+          "Subject": "New Research: Rujira Pulse: THORChain's App Layer",
+          "Category": "Newsletter",
+          "Summary": "Messari research alert introducing Rujira, THORChain's application layer that enables native-asset DeFi (e.g., Bitcoin) without wrapping, describing core products (RUJI Trade orderbook, BTC-backed stablecoin, Orbital Pools), liquidity backing, and RUJI tokenomics distributing USDC yield.",
+          "From": "Messari Research Alerts <research@messari.io>"
+        },
+        {
+          "Subject": "RE: INVITATION: 6th Annual Edition of the Kohler Cup in memory of Rod and for Pancreatic Cancer Action, Friday 3rd October 2025 at Goodwood",
+          "Category": "Personal Communication",
+          "Summary": "Coordination for the 6th Annual Kohler Cup event: confirming team names, player lists, handicaps and dietary requirements; final email to be sent next week.",
+          "From": "<merrickhaydon@gmail.com>"
+        },
+        {
+          "Subject": "Nicholas giveaways, updates, and what’s next",
+          "Category": "Newsletter",
+          "Summary": "Newsletter from UX Pilot about giveaways, updates, and next steps with links to view the HTML version and unsubscribe",
+          "From": "Adam Fard <adam@uxpilot.ai>"
+        },
+        {
+          "Subject": "Why AI's Future Depends on Bio",
+          "Category": "Newsletter",
+          "Summary": "Newsletter arguing that AI's future depends on applying AI to biology; urges tech builders and investors to learn, engage, and invest in AI+Bio to achieve goals like curing disease, extending life, and addressing climate change.",
+          "From": "NFX <qed@nfx.com>"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 34,
+          "Personal Communication": 11
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "This analysis requires authentic personal communication data to identify ikigai patterns",
+      "Look for emails about hobbies, personal interests, learning activities, or voluntary pursuits",
+      "Focus on communications that show active choice and personal engagement rather than commercial content",
+      "Consider analyzing personal calendar, journal entries, or social communications for better ikigai insights"
+    ],
+    "data_coverage": {
+      "total_emails": 50,
+      "personal_email_count": 45,
+      "personal_percentage": 90.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "claude-sonnet-4-20250514"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

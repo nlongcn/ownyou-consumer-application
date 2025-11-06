@@ -1,0 +1,112 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-26T08:24:44.278529",
+    "primary_ikigai": "News & current affairs (political interest / news consumption)",
+    "secondary_areas": [
+      "Civic engagement / public affairs",
+      "Passive information-seeking (reading/editorials)"
+    ],
+    "confidence_score": 0.28,
+    "supporting_evidence": [
+      {
+        "pattern": "Single clear personal engagement is political news/editorial",
+        "strength": "low",
+        "examples": [
+          "Subject: \"Starmer: Labour got it wrong on migration\" — From the Editor (Telegraph)"
+        ]
+      },
+      {
+        "pattern": "Low overall personal engagement rate and no recorded learning frequency",
+        "strength": "high",
+        "examples": [
+          "Total emails analyzed: 4; Personal engagement emails: 1; Personal engagement rate: 25.0%",
+          "Learning frequency indicators: 0"
+        ]
+      },
+      {
+        "pattern": "Engagement appears primarily passive (reading an editorial) rather than active participation",
+        "strength": "medium",
+        "examples": [
+          "The only personal communication is an editorial/news item with no evidence of reply, comment, or follow-up activity"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Connects to the external world through consumption of political news/editorial content — indicates interest in public affairs and societal issues.",
+      "active_engagement": "Predominantly passive: no evidence of active participation (comments, volunteering, content creation) in the dataset.",
+      "emotional_meaning": "Unclear — the chosen email suggests topical interest, but there is no explicit sign of personal joy or emotional investment in the data provided.",
+      "voluntary_pursuit": "Likely voluntary — the engagement is with editorial content rather than transactional or required communications, but confirmation is limited by sparse data.",
+      "everyday_joy": "Not apparent in the data — no repeated small daily activities were recorded that indicate everyday meaning.",
+      "growth_orientation": "No evidence of active learning or development (learning frequency = 0)."
+    },
+    "personal_patterns": {
+      "total_emails": 4,
+      "personal_email_count": 1,
+      "personal_percentage": 25.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "Starmer: Labour got it wrong on migration",
+          "Category": "Newsletter",
+          "Summary": "Telegraph editor newsletter highlighting Sir Keir Starmer admitting Labour got immigration policy wrong and outlining plans to counter the populist Right; includes links to articles on Europe's drone defences and a 'fit at 70' feature.",
+          "From": "\"Telegraph | From the Editor\" <editor@emails.telegraph.co.uk>"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 1
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Treat this apparent interest in current affairs as a seed: intentionally make it active rather than purely passive (for example, write short reflections or keep a news journal to clarify why certain topics matter).",
+      "Increase frequency of voluntary engagement in small, daily ways: set a 10–15 minute morning routine to read one piece and note one personal reaction — this supports 'everyday joy' and helps reveal if this is a true ikigai.",
+      "Move from consumption to participation: join a local discussion group, online forum, or civic organization related to topics you care about (e.g., migration policy or local politics) to create external connection and active engagement.",
+      "Introduce learning goals to convert interest into growth: choose one subtopic (e.g., migration policy) and commit to a short course, a book, or a weekly deep-dive to build learning frequency.",
+      "Track patterns over time: collect more personal engagement signals (replies, saved articles, comments, event attendance) to raise confidence in whether this area is a stable ikigai.",
+      "Explore adjacent everyday activities that bring joy: where political interest overlaps with volunteering, community events, or discussion with friends — these small acts can anchor meaning in daily life."
+    ],
+    "data_coverage": {
+      "total_emails": 4,
+      "personal_email_count": 1,
+      "personal_percentage": 25.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

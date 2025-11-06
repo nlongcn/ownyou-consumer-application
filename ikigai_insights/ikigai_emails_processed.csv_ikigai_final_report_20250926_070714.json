@@ -1,0 +1,151 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-26T06:07:14.414062",
+    "primary_ikigai": "Curiosity-driven engagement with technology & research (currently passive/subscription-based)",
+    "secondary_areas": [
+      "Local community & recreational involvement (tennis club)",
+      "Crypto / market research interest"
+    ],
+    "confidence_score": 0.35,
+    "supporting_evidence": [
+      {
+        "pattern": "Frequent subscriptions to AI and research newsletters indicate an enduring curiosity about technology and markets",
+        "strength": "medium",
+        "examples": [
+          "Subject: \"Introducing Perplexity's new Search API\"",
+          "Subject: \"AI Agents Spend Money, Online Betting Automates, ChatGPT Users Shift, Reinforcement Learning Accelerates\"",
+          "Subject: \"New Research: State of Sia Q2 2025\""
+        ]
+      },
+      {
+        "pattern": "Local community membership communications point to a connection with nearby social/recreational life",
+        "strength": "medium",
+        "examples": [
+          "Subject: \"Member Notice - Tree Removal\" (St George's Hill Lawn Tennis Club)"
+        ]
+      },
+      {
+        "pattern": "High personal engagement rate in the inbox (60%) suggests the person curates or values personal communications, but content is largely passive",
+        "strength": "medium",
+        "examples": [
+          "Personal engagement emails: 6 of 10 (60.0%)"
+        ]
+      },
+      {
+        "pattern": "No measurable learning frequency or active learning signals captured — limited evidence of hands-on practice, projects, or study routines",
+        "strength": "low",
+        "examples": [
+          "Learning frequency indicators: 0"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Present but one-way: subscriptions and membership notices show an outward orientation toward communities and fields of interest, primarily through received communications rather than two‑way participation.",
+      "active_engagement": "Limited. Most signals are passive consumption (newsletters, research alerts). Little evidence of active creation, responding, or hands‑on projects.",
+      "emotional_meaning": "Unclear. Messages are informational/organizational rather than emotive. Evidence points to intellectual interest rather than obvious everyday emotional joy.",
+      "voluntary_pursuit": "Likely voluntary: subscriptions and club membership imply choice, but some items (research alerts, product announcements) could be work-related or automated.",
+      "everyday_joy": "Not evident in the data. No small, specific daily rituals or joyful activities surfaced from the emails.",
+      "growth_orientation": "Low in the observed window: no recorded learning sessions or growth activities despite topical interest in learning areas."
+    },
+    "personal_patterns": {
+      "total_emails": 10,
+      "personal_email_count": 6,
+      "personal_percentage": 60.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "Member Notice - Tree Removal",
+          "Category": "Personal Communication",
+          "Summary": "Member notice that a decayed beech tree will be removed and the oak overhanging Grass Court 1 will be reduced on Thursday 9th October; safety work will cause parking restrictions, no through access, suspension of outdoor classes and gym use, Cottage closures for Physio and Pilates, and possible noise disturbance.",
+          "From": "\"St George's Hill Lawn Tennis Club\" <marketing@stghltc.co.uk>"
+        },
+        {
+          "Subject": "Introducing Perplexity's new Search API",
+          "Category": "Newsletter",
+          "Summary": "Announcement of Perplexity's new Search API offering factual, up-to-date web results without the generative layer; highlights features, pricing, and links to docs and API platform.",
+          "From": "James at Perplexity <team@mail.perplexity.ai>"
+        },
+        {
+          "Subject": "AI Agents Spend Money, Online Betting Automates, ChatGPT Users Shift, Reinforcement Learning Accelerates",
+          "Category": "Newsletter",
+          "Summary": "Newsletter from DeepLearning.AI summarizing tech and AI news, focusing on China banning major tech firms from buying Nvidia chips and broader trends like AI agents spending money, automated online betting, ChatGPT user shifts, and advances in reinforcement learning.",
+          "From": "\"The Batch @ DeepLearning.AI\" <thebatch@deeplearning.ai>"
+        },
+        {
+          "Subject": "New Research: State of Sia Q2 2025",
+          "Category": "Newsletter",
+          "Summary": "Messari research alert summarizing Sia's Q2 2025: network activity and adoption metrics declined while host revenues recovered; the v2 hard fork and rebrand were successfully deployed and partnerships were announced, positioning the project for longer-term resilience.",
+          "From": "Messari Research Alerts <research@messari.io>"
+        },
+        {
+          "Subject": "Just for you - 15% off this weekend 🐦",
+          "Category": "Newsletter",
+          "Summary": "Promotional email from Jin Designs offering 15% off everything this weekend with code BIRD15, thanking the customer and suggesting gift inspiration for Christmas; code expires 29/09/25.",
+          "From": "jinny@jindesigns.com"
+        },
+        {
+          "Subject": "Re: About linked data integrity issues: protecting from updates",
+          "Category": "Personal Communication",
+          "Summary": "Reply discussing protecting linked data integrity by using hashes (hashlink/ni) instead of embedding full documents due to copyright/privacy, and raising the problem that object content can change via side effects (e.g., replies.totalItems) which would invalidate simple hashing; links to a Fediverse Ideas issue.",
+          "From": "tesaguriguma@gmail.com"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 4,
+          "Personal Communication": 2
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Turn passive interest into small, regular active practices: schedule 15–30 minutes three times a week to experiment with a tiny AI or crypto project (e.g., a small notebook, a demo, or reading + notes).",
+      "Leverage the tennis club membership to create routine, social, active joy: attend one club event per week or organize a short practice session to convert notices into lived activity.",
+      "Use incoming newsletters as prompts for active response: pick one article a week to summarize in a personal note, comment publicly, or discuss with a friend — this converts consumption into meaningful external connection.",
+      "Create a simple learning frequency tracker (calendar or habit app) to turn '0' learning indicators into measurable micro‑goals; celebrate small wins to build momentum.",
+      "Curate the inbox: keep informational feeds you enjoy but set an action rule (read + act, archive, or unsubscribe). Fewer passive reads will free time for chosen, joyful activities.",
+      "Experiment for 4–8 weeks with one focused, externally connected activity (a mini research note, a local volunteer slot at the club, or a public thread discussing a newsletter topic) and observe which recurring activity reliably 'gets you up in the morning' — that will reveal a more authentic ikigai."
+    ],
+    "data_coverage": {
+      "total_emails": 10,
+      "personal_email_count": 6,
+      "personal_percentage": 60.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

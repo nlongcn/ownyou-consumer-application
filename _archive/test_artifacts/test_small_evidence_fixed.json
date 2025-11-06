@@ -1,0 +1,106 @@
+{
+  "user_id": "evidence_fixed_test",
+  "profile_version": 1,
+  "generated_at": "2025-10-08T06:33:04.646907",
+  "schema_version": "2.0",
+  "generator": {
+    "system": "email_parser_iab_taxonomy",
+    "llm_model": "openai:default",
+    "workflow_version": "1.0"
+  },
+  "data_coverage": {
+    "total_emails_analyzed": 2,
+    "emails_this_run": 2,
+    "date_range": "2025-10-08 to 2025-10-08"
+  },
+  "demographics": {
+    "age_range": {
+      "taxonomy_id": 6,
+      "tier_path": "Demographic | Age Range | 30-34",
+      "value": "30-34",
+      "confidence": 0.9,
+      "evidence_count": 1,
+      "last_validated": "2025-10-08T05:32:34.824221Z",
+      "days_since_validation": 0
+    },
+    "gender": null,
+    "education": null,
+    "occupation": null,
+    "marital_status": null,
+    "language": null
+  },
+  "household": {
+    "location": null,
+    "income": null,
+    "length_of_residence": null,
+    "life_stage": null,
+    "median_home_value": null,
+    "monthly_housing_payment": null,
+    "number_of_adults": null,
+    "number_of_children": null,
+    "number_of_individuals": null,
+    "ownership": null,
+    "property_type": null,
+    "urbanization": null
+  },
+  "personal_finance": null,
+  "interests": [],
+  "purchase_intent": [],
+  "actual_purchases": [],
+  "memory_stats": {
+    "total_facts_stored": 0,
+    "high_confidence_facts": 0,
+    "moderate_confidence_facts": 0,
+    "low_confidence_facts": 0,
+    "facts_needing_validation": 0,
+    "average_confidence": 0.7
+  },
+  "section_confidence": {
+    "demographics": 0.7,
+    "household": 0.7,
+    "interests": 0.0,
+    "purchase_intent": 0.0,
+    "actual_purchases": 0.0
+  },
+  "tiered_classifications": {
+    "demographics": {
+      "education": {
+        "primary": {
+          "taxonomy_id": 23,
+          "tier_path": "Demographic | Education & Occupation | Education (Highest Level) | College Education | Undergraduate Education",
+          "value": "Undergraduate Education",
+          "confidence": 0.9,
+          "evidence_count": 1,
+          "last_validated": "2025-10-08T05:32:34.816435Z",
+          "days_since_validation": 0,
+          "tier_depth": 5,
+          "granularity_score": 1.15,
+          "classification_type": "primary",
+          "confidence_delta": null
+        },
+        "alternatives": [],
+        "selection_method": "granularity_weighted"
+      },
+      "age_range": {
+        "primary": {
+          "taxonomy_id": 6,
+          "tier_path": "Demographic | Age Range | 30-34",
+          "value": "30-34",
+          "confidence": 0.9,
+          "evidence_count": 1,
+          "last_validated": "2025-10-08T05:32:34.824221Z",
+          "days_since_validation": 0,
+          "tier_depth": 3,
+          "granularity_score": 1.05,
+          "classification_type": "primary",
+          "confidence_delta": null
+        },
+        "alternatives": [],
+        "selection_method": "granularity_weighted"
+      }
+    },
+    "household": {},
+    "interests": [],
+    "purchase_intent": []
+  }
+}

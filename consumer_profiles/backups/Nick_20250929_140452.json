@@ -1,0 +1,70 @@
+{
+  "profile_id": "Nick",
+  "created_at": "2025-09-29T09:03:20.521349+00:00",
+  "last_updated": "2025-09-29T09:03:20.522180+00:00",
+  "categories": {
+    "shopping": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    },
+    "travel": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    },
+    "entertainment": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    },
+    "health": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    },
+    "restaurants": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    },
+    "recipes": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    }
+  },
+  "behavioral_patterns": [],
+  "demographic_insights": {},
+  "temporal_patterns": {},
+  "memories": [],
+  "data_sources": [],
+  "analysis_history": [
+    {
+      "timestamp": "2025-09-29T09:03:20.522170+00:00",
+      "analysis_type": "comprehensive_profile_analysis",
+      "categories_analyzed": [],
+      "insights_generated": 0,
+      "confidence_score": 0.0
+    }
+  ],
+  "confidence_score": 0.0
+}

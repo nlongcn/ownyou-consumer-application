@@ -1,0 +1,130 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-26T13:18:56.344615",
+    "primary_ikigai": "Engaged exploration of financial markets and crypto research (active learning and professional development)",
+    "secondary_areas": [
+      "Continuing professional education and industry events (ETFs, regulatory/practice-focused learning)",
+      "Media literacy / consumer-culture awareness (tracking advertising and market signals)"
+    ],
+    "confidence_score": 0.78,
+    "supporting_evidence": [
+      {
+        "pattern": "Consistent subscription to market- and crypto-focused research and product updates",
+        "strength": "high",
+        "examples": [
+          "New Research: State of Babylon Q2 2025 (Messari Research Alerts)",
+          "Grayscale® Near Trust Now Trading Publicly (Ticker: GSNR) (grayscale.com)"
+        ]
+      },
+      {
+        "pattern": "Active pursuit of structured learning / professional development opportunities",
+        "strength": "medium",
+        "examples": [
+          "Today: Webcast - From Lockups to Liquidity: Using 351 Conversions to enter ETFs - 1 CE Credit (events@riadatabase.com)"
+        ]
+      },
+      {
+        "pattern": "Interest in media/consumer-trend analysis that suggests curiosity about cultural signals and information quality",
+        "strength": "low-to-medium",
+        "examples": [
+          "WEEKLY REVIEW: Fake Ads, Fake Snacks, Real Panic (ADOTAT)"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Strong — engagement is oriented outward: following industry research providers, product announcements, and event organizers to stay connected to market developments and communities of practice.",
+      "active_engagement": "Moderate — evidence of active pursuit (reading research alerts, registering/attending webcasts) rather than purely passive consumption; however, no direct evidence of hands-on projects (trading, writing, teaching) in the dataset.",
+      "emotional_meaning": "Unclear-to-moderate — communications point to intellectual interest and professional relevance; explicit signs of emotional joy (enthusiasm, personal anecdotes) are absent, so personal meaning is inferred from chosen subscriptions and event attendance.",
+      "voluntary_pursuit": "Likely voluntary — subscriptions and event attendance appear chosen rather than imposed (no corporate/mandatory context in the samples).",
+      "everyday_joy": "Low evidence — items are oriented toward research and professional updates rather than small daily rituals; the data suggests a sense of purpose through staying informed rather than clear everyday pleasures.",
+      "growth_orientation": "Moderate — the presence of research alerts and CE-credit webcasts signals an orientation toward learning and skill maintenance, though explicit frequency of learning activity is limited in the sample."
+    },
+    "personal_patterns": {
+      "total_emails": 4,
+      "personal_email_count": 4,
+      "personal_percentage": 100.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "New Research: State of Babylon Q2 2025",
+          "Category": "Newsletter",
+          "Summary": "Research alert on Babylon's State of Babylon Q2 2025, covering Phase-2 launch with Babylon Genesis, stake slashing and Bitcoin-native restaking, BSN development, BTC holdings and TVL shifts, ecosystem integrations, and preparation for Phase-3 onboarding.",
+          "From": "Messari Research Alerts <research@messari.io>"
+        },
+        {
+          "Subject": "WEEKLY REVIEW: Fake Ads, Fake Snacks, Real Panic",
+          "Category": "Newsletter",
+          "Summary": "Weekly review newsletter from ADOTAT promoting the ADOTAT+ subscription and discussing advertising issues including fraud and industry topics.",
+          "From": "ADOTAT <adotat@mail.beehiiv.com>"
+        },
+        {
+          "Subject": "Grayscale® Near Trust Now Trading Publicly (Ticker: GSNR)",
+          "Category": "Newsletter",
+          "Summary": "Grayscale Near Trust (GSNR) has begun trading on OTC Markets, providing exposure to the NEAR token as a publicly quoted investment product.",
+          "From": "hello@grayscale.com"
+        },
+        {
+          "Subject": "Today: Webcast - From Lockups to Liquidity: Using 351 Conversions to enter ETFs - 1 CE Credit",
+          "Category": "Newsletter",
+          "Summary": "Invitation to a complimentary webcast for financial advisors on using IRS Section 351 conversions to enter ETFs, with emphasis on tax deferral, liquidity, and CE credits.",
+          "From": "events@riadatabase.com"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 4
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Turn reading into active practice: set a weekly 30–60 minute 'research ritual' to summarize findings and note one small experiment or question to explore (paper trade, simulation, or a short blog/email draft).",
+      "Increase emotional connection by reflecting briefly after events/reports: keep a one-paragraph log of what excited you and why — this converts professional interest into everyday meaning.",
+      "Deepen community ties: join or form a small peer group (online or local) to discuss reports and events; active discussion increases external connection and sustained engagement.",
+      "Use CE and event attendance more deliberately: pick one concrete skill or topic to master each quarter and attend related webcasts/readings, then apply learning in a small project.",
+      "Introduce simple daily rituals for everyday joy: a 10–15 minute morning market/insights scan with a personal note (what surprised me today?) to build a repeatable, joy-linked habit.",
+      "Broaden activity types to balance cognitive work with hands-on or creative outlets (writing short explainers, mentoring, building a small data visualization) to move from passive intake to active creation, which aligns with Mitsuhashi's emphasis on active, external engagement."
+    ],
+    "data_coverage": {
+      "total_emails": 4,
+      "personal_email_count": 4,
+      "personal_percentage": 100.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

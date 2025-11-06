@@ -1,0 +1,140 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-26T11:21:40.266375",
+    "primary_ikigai": "Local club-based recreation and community (tennis club involvement)",
+    "secondary_areas": [
+      "Civic awareness through regular engagement with current-affairs editorials"
+    ],
+    "confidence_score": 0.38,
+    "supporting_evidence": [
+      {
+        "pattern": "Ongoing affiliation with a local sports club suggests chosen, place-based community and recreational habits",
+        "strength": "medium",
+        "examples": [
+          "Member Notice - Tree Removal — St George's Hill Lawn Tennis Club"
+        ]
+      },
+      {
+        "pattern": "Routine touchpoints with current-affairs editorials indicate a voluntary habit of staying informed",
+        "strength": "low",
+        "examples": [
+          "Telegraph | From the Editor — 'Starmer: Labour got it wrong on migration'"
+        ]
+      },
+      {
+        "pattern": "High share of emails marked as personal engagement implies the person actively connects to chosen communities/interests via email",
+        "strength": "medium",
+        "examples": [
+          "156 of 200 emails flagged as personal engagement (78%)"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Strongest concrete link is membership communication from a local tennis club, indicating connection to a real-world community and shared space.",
+      "active_engagement": "Evidence of actual participation is indirect (facility notice). Membership implies potential regular play or attendance, but not directly observed.",
+      "emotional_meaning": "Club affiliation and attention to shared environment (tree removal notice) suggest care for a place and community—likely a source of small, everyday satisfaction.",
+      "voluntary_pursuit": "Tennis club membership and editorial newsletter subscriptions are voluntary choices rather than imposed requirements.",
+      "everyday_joy": "Most plausible daily/weekly joys: visiting the club, casual hits or social play, brief check-ins with editorials. These are modest, routine touchpoints rather than grand goals.",
+      "growth_orientation": "Learning frequency indicators are zero; no clear evidence of active skill-building. Growth potential exists if club/research habits are turned into small, intentional practices."
+    },
+    "personal_patterns": {
+      "total_emails": 200,
+      "personal_email_count": 156,
+      "personal_percentage": 78.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "New sign-in detected for your Microsoft account",
+          "Category": "Personal Communication",
+          "Summary": "New sign-in detected for your Microsoft account; security alert advising to review activity if unsure.",
+          "From": "Microsoft account team <account-security-noreply@accountprotection.microsoft.com>"
+        },
+        {
+          "Subject": "Starmer: Labour got it wrong on migration",
+          "Category": "Newsletter",
+          "Summary": "Telegraph newsletter featuring an exclusive on Sir Keir Starmer admitting the Left has got immigration wrong and outlining his plan against the populist Right.",
+          "From": "\"Telegraph | From the Editor\" <editor@emails.telegraph.co.uk>"
+        },
+        {
+          "Subject": "Member Notice - Tree Removal",
+          "Category": "Newsletter",
+          "Summary": "Notice of beech tree removal due to decay for health and safety; oak tree deadwood reduction; work scheduled Oct 9 with disruptions to parking, access, classes, and gym use; Cottage closed for Physio/Pilates.",
+          "From": "\"St George's Hill Lawn Tennis Club\" <marketing@stghltc.co.uk>"
+        },
+        {
+          "Subject": "Introducing Perplexity's new Search API",
+          "Category": "Newsletter",
+          "Summary": "Perplexity launches the Perplexity Search API, offering real-time, factual web indexing with structured snippets and developer-friendly pricing ($5 per 1K requests).",
+          "From": "James at Perplexity <team@mail.perplexity.ai>"
+        },
+        {
+          "Subject": "A sound was played on N E S’s Apple Watch",
+          "Category": "Personal Communication",
+          "Summary": "Notification that a sound was played on N E S’s Apple Watch, with links to Find My and iCloud Find for further action.",
+          "From": "Find My <noreply@email.apple.com>"
+        },
+        {
+          "Subject": "AI Agents Spend Money, Online Betting Automates, ChatGPT Users Shift, Reinforcement Learning Accelerates",
+          "Category": "Newsletter",
+          "Summary": "DL AI newsletter noting China's ban on major tech firms purchasing Nvidia chips and discussing broader implications for AI hardware and policy.",
+          "From": "\"The Batch @ DeepLearning.AI\" <thebatch@deeplearning.ai>"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 134,
+          "Personal Communication": 22
+        },
+        "engagement_timespan_days": 6
+      }
+    },
+    "recommendations": [
+      "Lean into the club community: book a weekly hit or join a social mix-in; say yes to one small volunteering task (e.g., grounds/club day) to deepen ties.",
+      "Create a simple micro-ritual around play: after each session, jot a 2-minute note (what felt fun, one shot to repeat next time).",
+      "If current affairs brings energy, set a 10–15 minute focused window and capture a one-sentence takeaway; consider a monthly discussion with a friend or local meetup to make it active rather than passive.",
+      "Add one small growth loop at the club: a beginner/intermediate clinic, or a single technical focus per week (serve toss, split step) to reintroduce learning joy.",
+      "Protect the everyday feel: keep commitments small and regular (weekly), prioritizing enjoyment and connection over performance."
+    ],
+    "data_coverage": {
+      "total_emails": 200,
+      "personal_email_count": 156,
+      "personal_percentage": 78.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

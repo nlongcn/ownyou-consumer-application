@@ -1,0 +1,500 @@
+{
+  "profile_id": "FullSystemTest",
+  "created_at": "2025-09-29T12:52:30.754913+00:00",
+  "last_updated": "2025-09-29T13:19:38.274724+00:00",
+  "categories": {
+    "shopping": {
+      "insights": [
+        {
+          "insight_type": "product_preference",
+          "description": "Interest in Sports & Activities: Tennis programmes, Club events",
+          "evidence": [
+            "Improved for Adult & Juniors - Be part of our tennis programmes at St George's Hill Lawn Tennis Club (newsletter promoting autumn tennis programmes, discounts for multiple junior sessions)",
+            "FIREWORKS TICKET LAUNCH - Tuesday 30th September, 9am (sent by St George's Hill Lawn Tennis Club; promotes club event ticket sales)"
+          ],
+          "confidence": 0.4,
+          "confidence_level": "low",
+          "created_at": "2025-09-29T13:19:04.170539+00:00",
+          "last_updated": "2025-09-29T13:19:04.170546+00:00"
+        },
+        {
+          "insight_type": "product_preference",
+          "description": "Interest in Consumer Electronics / Accessories: Rechargeable hand warmers",
+          "evidence": [
+            "Dispatched: \u20182-Pack Hand Warmer...\u2019 (shipment notification from Amazon for 2-Pack Hand Warmer Rechargeable)"
+          ],
+          "confidence": 0.2,
+          "confidence_level": "low",
+          "created_at": "2025-09-29T13:19:04.170550+00:00",
+          "last_updated": "2025-09-29T13:19:04.170551+00:00"
+        },
+        {
+          "insight_type": "product_preference",
+          "description": "Interest in Financial / Crypto Information & Services: Crypto market newsletters, Market analysis newsletters, Paid data/product promotions",
+          "evidence": [
+            "Solmate\u2019s $300M Bet: Solana Expansion into the UAE (Messari marketing newsletter; product promotions and discounts mentioned)",
+            "Solmate\u2019s $300M Bet: Solana Expansion into the UAE (duplicate entry - indicates subscription/regular receipt)",
+            "The Curious Case of the Lost $4Bn of Daily Equity Demand (The Market Ear weekly market newsletter)"
+          ],
+          "confidence": 0.6,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T13:19:04.170554+00:00",
+          "last_updated": "2025-09-29T13:19:04.170554+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for St George's Hill Lawn Tennis Club in Sports & Activities",
+          "evidence": [
+            "Multiple emails from the club (programme promotion and event ticket launch)",
+            "Communications include discounts and booking options suggesting an active membership/interest relationship"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T13:19:04.170557+00:00",
+          "last_updated": "2025-09-29T13:19:04.170557+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for Amazon in Consumer Electronics / Accessories",
+          "evidence": [
+            "Shipment notification for purchased rechargeable hand warmers indicates transactional use of Amazon for purchases"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T13:19:04.170559+00:00",
+          "last_updated": "2025-09-29T13:19:04.170560+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for Messari in Financial / Crypto Information & Services",
+          "evidence": [
+            "Repeated Messari marketing/newsletter entries indicate subscription or repeated engagement",
+            "Messages reference product promotions and enterprise discounts (possible interest in paid data/services)"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T13:19:04.170562+00:00",
+          "last_updated": "2025-09-29T13:19:04.170563+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for The Market Ear in Financial / Crypto Information & Services",
+          "evidence": [
+            "Single weekly newsletter received (engagement with market analysis content)"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T13:19:04.170565+00:00",
+          "last_updated": "2025-09-29T13:19:04.170566+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "Recent activity concentrated in late September 2025 \u2014 marketing for an event (ticket launch) and a shipped consumer good within a few days. Suggests at least occasional buying/engagement around this time window rather than a high-frequency cadence.",
+          "evidence": [
+            "St George's Hill Lawn Tennis Club marketing email: 'FIREWORKS TICKET LAUNCH - Tuesday 30th September, 9am' (2025-09-22T11:00:12)",
+            "Amazon shipment: 'Dispatched: \u20182-Pack Hand Warmer...\u2019' (2025-09-26T15:16:05+00:00)"
+          ],
+          "confidence": 0.7,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T13:19:38.233250+00:00",
+          "last_updated": "2025-09-29T13:19:38.233258+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "Purchases/engagement span event tickets (leisure/outdoor events) and small consumer electronics/personal accessories (rechargeable hand warmer).",
+          "evidence": [
+            "Event ticket promotion: 'FIREWORKS TICKET LAUNCH' (marketing email)",
+            "Order shipment: '2-Pack Hand Warmer Rechargeable' (Amazon dispatch)"
+          ],
+          "confidence": 0.8,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T13:19:38.233263+00:00",
+          "last_updated": "2025-09-29T13:19:38.233263+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "Timing and product suggest autumn/winter seasonal behavior: fireworks events in the UK are typically in autumn (Bonfire Night/early November), and purchase of hand warmers is consistent with preparing for colder weather. The ticket launch date (late September) indicates advance planning for an autumn event.",
+          "evidence": [
+            "Ticket launch email dated 2025-09-22 for a ticket sale on 30th September (event likely in autumn)",
+            "Hand warmer dispatched 2025-09-26 \u2014 a product typically purchased for colder months"
+          ],
+          "confidence": 0.65,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T13:19:38.233267+00:00",
+          "last_updated": "2025-09-29T13:19:38.233268+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "Evidence leans toward planned purchases or planned engagement: event tickets are promoted with a set launch date implying advance planning, and a rechargeable hand warmer is a utilitarian purchase likely made with intent (seasonal preparation). There is insufficient data to categorically label purchases as impulse buys.",
+          "evidence": [
+            "Promotional email for a timed ticket launch (implies advance planning/awareness)",
+            "Shipment confirmation for a functional seasonal item (hand warmer) \u2014 likely a considered purchase"
+          ],
+          "confidence": 0.6,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T13:19:38.233270+00:00",
+          "last_updated": "2025-09-29T13:19:38.233271+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "No reliable price or spend data available from the provided emails, so spending level and variability cannot be determined.",
+          "evidence": [
+            "Marketing email includes mention of pricing and sale date but no confirmed transaction or amount in the provided summary",
+            "Shipment email indicates an item dispatched but contains no price or order total in the provided summary"
+          ],
+          "confidence": 0.1,
+          "confidence_level": "low",
+          "created_at": "2025-09-29T13:19:38.233274+00:00",
+          "last_updated": "2025-09-29T13:19:38.233275+00:00"
+        },
+        {
+          "insight_type": "purchase_category",
+          "description": "Regular purchases in Event / Outdoor Entertainment Tickets",
+          "evidence": [
+            "Marketing email: 'FIREWORKS TICKET LAUNCH - Tuesday 30th September, 9am' (St George's Hill Lawn Tennis Club, 2025-09-22)"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T13:19:38.233286+00:00",
+          "last_updated": "2025-09-29T13:19:38.233287+00:00"
+        },
+        {
+          "insight_type": "purchase_category",
+          "description": "Regular purchases in Personal accessories / Portable heating devices (hand warmers)",
+          "evidence": [
+            "Shipment email: 'Dispatched: \u20182-Pack Hand Warmer...\u2019' (Amazon, 2025-09-26)"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T13:19:38.233289+00:00",
+          "last_updated": "2025-09-29T13:19:38.233290+00:00"
+        },
+        {
+          "insight_type": "product_preference",
+          "description": "Interest in Sports & Activities (Local club programmes): Tennis lessons, Junior tennis programmes, Adult tennis programmes",
+          "evidence": [
+            "Improved for Adult & Juniors - Be part of our tennis programmes at St George's Hill Lawn Tennis Club",
+            "FIREWORKS TICKET LAUNCH - Tuesday 30th September, 9am (same sender: St George's Hill Lawn Tennis Club)"
+          ],
+          "confidence": 0.6,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T12:52:53.842468+00:00",
+          "last_updated": "2025-09-29T12:52:53.842473+00:00"
+        },
+        {
+          "insight_type": "product_preference",
+          "description": "Interest in Events & Tickets: Local events, Fireworks events, Ticketed community gatherings",
+          "evidence": [
+            "FIREWORKS TICKET LAUNCH - Tuesday 30th September, 9am"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T12:52:53.842477+00:00",
+          "last_updated": "2025-09-29T12:52:53.842478+00:00"
+        },
+        {
+          "insight_type": "product_preference",
+          "description": "Interest in Consumer goods \u2014 Cold-weather accessories / small electronics: Rechargeable hand warmers, Portable seasonal gadgets",
+          "evidence": [
+            "Dispatched: \u20182-Pack Hand Warmer...\u2019 (shipment-tracking@amazon.co.uk)"
+          ],
+          "confidence": 0.2,
+          "confidence_level": "low",
+          "created_at": "2025-09-29T12:52:53.842481+00:00",
+          "last_updated": "2025-09-29T12:52:53.842482+00:00"
+        },
+        {
+          "insight_type": "product_preference",
+          "description": "Interest in Financial & Crypto research / subscription products: Crypto market research, Crypto protocol news, Investment newsletters",
+          "evidence": [
+            "Solmate\u2019s $300M Bet: Solana Expansion into the UAE (messari.io newsletter)",
+            "Solmate\u2019s $300M Bet: Solana Expansion into the UAE (duplicate mailing \u2014 messari.io)",
+            "The Curious Case of the Lost $4Bn of Daily Equity Demand (The Market Ear newsletter)"
+          ],
+          "confidence": 0.8,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T12:52:53.842485+00:00",
+          "last_updated": "2025-09-29T12:52:53.842485+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for St George's Hill Lawn Tennis Club in Sports & Activities / Local club",
+          "evidence": [
+            "Multiple emails from the club (programme promotion + ticket launch) indicating subscription/engagement",
+            "Receipt of both promotional and transactional communications from same sender (newsletter + purchase-related)"
+          ],
+          "confidence": 0.8,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T12:52:53.842489+00:00",
+          "last_updated": "2025-09-29T12:52:53.842490+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for Amazon (shipment-tracking@amazon.co.uk) in E-commerce / Fulfilment",
+          "evidence": [
+            "Dispatch notice for a purchased item (2-Pack Hand Warmer) indicates active purchase via Amazon",
+            "Single shipment event \u2014 shows transactional use but limited frequency in sample"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T12:52:53.842502+00:00",
+          "last_updated": "2025-09-29T12:52:53.842503+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for Messari (messari.io) in Crypto research / Subscription content",
+          "evidence": [
+            "Multiple identical newsletter sends referencing Solmate and promotional offers \u2014 indicates subscription to Messari marketing",
+            "Engages with crypto-focused content and promotional discounts"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T12:52:53.842505+00:00",
+          "last_updated": "2025-09-29T12:52:53.842506+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for The Market Ear in Market newsletters / Investment research",
+          "evidence": [
+            "Single weekly market newsletter in sample \u2014 indicates subscription/interest but lower volume than Messari"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T12:52:53.842514+00:00",
+          "last_updated": "2025-09-29T12:52:53.842515+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for Solmate (mentioned within newsletters) in Crypto project / Venture",
+          "evidence": [
+            "Referenced in newsletter subject lines (interest in Solana expansion story) but no direct transactional interaction in sample"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T12:52:53.842518+00:00",
+          "last_updated": "2025-09-29T12:52:53.842518+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "Observed activity clustered in late September (both emails within a one-week window), suggesting occasional purchasing or purchase-related attention around this time rather than high-frequency transactions.",
+          "evidence": [
+            "2025-09-22 - Subject: FIREWORKS TICKET LAUNCH - Tuesday 30th September, 9am",
+            "2025-09-26 - Subject: Dispatched: \u20182-Pack Hand Warmer...\u2019"
+          ],
+          "confidence": 0.6,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T12:53:23.922959+00:00",
+          "last_updated": "2025-09-29T12:53:23.922964+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "Purchases / purchase interest align with autumn/cold-weather and event seasonality \u2014 a hand warmer (cold-weather accessory) and a fireworks event launch (seasonal autumn/Winter event, e.g., Bonfire/Fireworks Night).",
+          "evidence": [
+            "Dispatched: 2-Pack Hand Warmer Rechargeable (shipment 2025-09-26)",
+            "Fireworks ticket launch email promoting event with sale date 2025-09-30 (seasonal event)"
+          ],
+          "confidence": 0.7,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T12:53:23.922972+00:00",
+          "last_updated": "2025-09-29T12:53:23.922974+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "Purchases span event/ticket purchases and small consumer goods (portable electronic/thermal accessory), indicating a mix of experiential purchases and practical items.",
+          "evidence": [
+            "Fireworks ticket promotion (event/ticket category)",
+            "Amazon dispatch for rechargeable hand warmers (small consumer electronics / personal accessory)"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T12:53:23.922980+00:00",
+          "last_updated": "2025-09-29T12:53:23.922981+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "Hand warmer order appears to be a completed online purchase (likely planned at time of ordering). The fireworks email is promotional (indicating potential planned future purchase at launch), so behavior appears more planned than pure impulse, but impulse purchases cannot be ruled out from these items alone.",
+          "evidence": [
+            "Shipment notification for hand warmers (order already placed and dispatched) \u2014 2025-09-26",
+            "Marketing email announcing a ticket launch date/time (calls for planned purchase at launch) \u2014 2025-09-22"
+          ],
+          "confidence": 0.4,
+          "confidence_level": "low",
+          "created_at": "2025-09-29T12:53:23.922987+00:00",
+          "last_updated": "2025-09-29T12:53:23.922989+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "No explicit prices in the provided transactional emails. Contextual inference: items likely low-to-moderate spend (consumer hand warmers typically low-cost; event tickets moderate).",
+          "evidence": [
+            "Shipment email references a 2-pack hand warmer (product type suggests low-cost consumer item)",
+            "Ticket launch email mentions pricing/purchase method (email summary only; no exact price provided)"
+          ],
+          "confidence": 0.3,
+          "confidence_level": "low",
+          "created_at": "2025-09-29T12:53:23.922994+00:00",
+          "last_updated": "2025-09-29T12:53:23.922995+00:00"
+        },
+        {
+          "insight_type": "purchase_category",
+          "description": "Regular purchases in Events / Tickets (Fireworks)",
+          "evidence": [
+            "2025-09-22 - FIREWORKS TICKET LAUNCH - promotional email from St George's Hill Lawn Tennis Club"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T12:53:23.923017+00:00",
+          "last_updated": "2025-09-29T12:53:23.923019+00:00"
+        },
+        {
+          "insight_type": "purchase_category",
+          "description": "Regular purchases in Personal accessories / Small consumer electronics (Hand warmers)",
+          "evidence": [
+            "2025-09-26 - Dispatched: \u20182-Pack Hand Warmer Rechargeable 6\u2019 (shipment email from Amazon)"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T12:53:23.923024+00:00",
+          "last_updated": "2025-09-29T12:53:23.923026+00:00"
+        }
+      ],
+      "behavior_patterns": [
+        {
+          "pattern_id": "1c3c73ab-ea25-4690-99ba-ddcd2dd22ca3",
+          "pattern_type": "brand_engagement",
+          "description": "Regular engagement with Stghltc",
+          "frequency": 2,
+          "recency": "2025-09-29T13:19:04.171786",
+          "confidence": 0.2,
+          "evidence": [
+            "Received 2 communications from stghltc"
+          ],
+          "tags": [
+            "brand",
+            "loyalty",
+            "stghltc"
+          ]
+        },
+        {
+          "pattern_id": "be50b2bf-7731-4721-83d2-2a1ed55ab9ce",
+          "pattern_type": "brand_engagement",
+          "description": "Regular engagement with Marketing",
+          "frequency": 2,
+          "recency": "2025-09-29T13:19:04.171811",
+          "confidence": 0.2,
+          "evidence": [
+            "Received 2 communications from marketing"
+          ],
+          "tags": [
+            "brand",
+            "loyalty",
+            "marketing"
+          ]
+        },
+        {
+          "pattern_id": "256bb25f-5818-4d4b-b211-8b86ca1cc647",
+          "pattern_type": "price_sensitivity",
+          "description": "High engagement with promotional offers",
+          "frequency": 3,
+          "recency": "2025-09-29T13:19:38.234791",
+          "confidence": 1.0,
+          "evidence": [
+            "Received 3 promotional emails out of 6 total"
+          ],
+          "tags": [
+            "price_sensitive",
+            "deal_seeker",
+            "promotional"
+          ]
+        },
+        {
+          "pattern_id": "b70d8073-5f00-41d3-a152-27eb8f9c52d4",
+          "pattern_type": "weekly_shopping_pattern",
+          "description": "Higher shopping activity on: Friday",
+          "frequency": 1,
+          "recency": "2025-09-29T13:19:38.244784",
+          "confidence": 0.6,
+          "evidence": [
+            "Peak activity on: ['Friday']"
+          ],
+          "tags": [
+            "weekly_pattern",
+            "timing",
+            "friday"
+          ]
+        }
+      ],
+      "preferences": {},
+      "engagement_score": 0.5446428571428572,
+      "last_analyzed": "2025-09-29T13:19:38.247028+00:00",
+      "analysis_count": 0
+    },
+    "travel": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.1,
+      "last_analyzed": "2025-09-29T13:19:38.274659",
+      "analysis_count": 2
+    },
+    "entertainment": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    },
+    "health": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    },
+    "restaurants": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    },
+    "recipes": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    }
+  },
+  "behavioral_patterns": [],
+  "demographic_insights": {},
+  "temporal_patterns": {},
+  "memories": [],
+  "data_sources": [],
+  "analysis_history": [
+    {
+      "timestamp": "2025-09-29T12:53:23.957445+00:00",
+      "analysis_type": "comprehensive_profile_analysis",
+      "categories_analyzed": [
+        "shopping",
+        "travel"
+      ],
+      "insights_generated": 16,
+      "confidence_score": 0.454125
+    },
+    {
+      "timestamp": "2025-09-29T13:19:38.274714+00:00",
+      "analysis_type": "comprehensive_profile_analysis",
+      "categories_analyzed": [
+        "shopping",
+        "travel"
+      ],
+      "insights_generated": 14,
+      "confidence_score": 0.4446473214285714
+    }
+  ],
+  "confidence_score": 0.4446473214285714
+}

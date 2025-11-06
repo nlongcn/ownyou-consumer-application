@@ -1,0 +1,286 @@
+{
+  "communication_patterns": {
+    "volume_metrics": {
+      "total_communications": 4,
+      "unique_senders": 3,
+      "category_diversity": 3
+    },
+    "category_distribution": {
+      "Personal Communication": 0.5,
+      "Purchase": 0.25,
+      "Newsletter": 0.25
+    },
+    "primary_communication_type": "Personal Communication"
+  },
+  "interest_clusters": {},
+  "purchase_behavior": {
+    "confirmed_transactions": [],
+    "transaction_count": 0,
+    "transaction_frequency": 0.0
+  },
+  "geographic_indicators": {},
+  "temporal_patterns": {
+    "date_range": {
+      "start": "2025-09-26T07:42:38+00:00",
+      "end": "2025-09-26T09:06:03+00:00",
+      "span_days": 0
+    },
+    "day_distribution": {
+      "Friday": 4
+    },
+    "hour_distribution": {
+      "9": 2,
+      "8": 1,
+      "7": 1
+    }
+  },
+  "engagement_profile": {
+    "engagement_level": "low",
+    "engagement_diversity": {
+      "category_count": 3,
+      "diversity_level": "low"
+    },
+    "significant_patterns": 0,
+    "pattern_confidence": 0.5
+  },
+  "pattern_evidence": [
+    {
+      "pattern_type": "communication_volume",
+      "observation": "Analyzed 4 email communications",
+      "frequency": 4,
+      "context": "Overall communication activity level",
+      "confidence": 0.5
+    }
+  ],
+  "demographic_possibilities": {
+    "age_analysis": {
+      "likely_range": "18-65 (indeterminate based on limited, non-diagnostic signals)",
+      "confidence": "low",
+      "evidence": "Only 2-4 total email interactions observed, all personal and from a single source; no message content, timing, institutional domains, or behavioral cues that typically correlate with age were provided."
+    },
+    "lifestyle_profile": {
+      "characteristics": [
+        "Low observed email volume in the sample window",
+        "Communication concentrated to a single personal contact",
+        "Likely narrow engagement scope during observation or use of other channels outside email"
+      ],
+      "confidence": "low",
+      "evidence": "Summary shows 2 total communications, 100% personal, from 1 unique source; separate note of 4 analyzed emails with only 50% confidence indicates a small and uncertain sample."
+    },
+    "economic_indicators": {
+      "spending_patterns": [],
+      "income_signals": "No income or spending-related indicators present in the available communications.",
+      "confidence": "low"
+    },
+    "geographic_analysis": {
+      "location_indicators": [
+        "No existing geographic analysis provided; deferring location assessment to supplied sources if/when available."
+      ],
+      "likely_region": "Not available",
+      "confidence": "Not available"
+    },
+    "data_quality": "Very limited dataset with an internal inconsistency (observed patterns list 4 emails at 50% confidence while the summary lists 2 communications). No message content, metadata details, or temporal patterns provided. Findings are constrained and largely non-diagnostic; conclusions carry low confidence."
+  },
+  "next_purchase_signals": [
+    {
+      "rank": 1,
+      "category": "Laptops",
+      "tier_1": "Consumer Electronics",
+      "tier_2": "Computers",
+      "tier_3": "Laptops",
+      "probability": 0.33,
+      "reasoning": "Two 'New sign-in detected for your Microsoft account' alerts on a Friday morning (7–9) indicate recent authentication on a new or reset device. With Microsoft as the only observed brand, a Windows laptop setup is the most common cause of these alerts. No confirmed purchases exist, but the timing (late September, workday morning) aligns with back-to-work/back-to-school device refreshes.",
+      "lifestyle_connection": "Weekday morning digital routine suggests a work/school-oriented, utilitarian lifestyle with low newsletter/leisure signals; laptop portability fits a mobile work/school pattern.",
+      "brand_connection": "Microsoft (account ecosystem). Likely preference toward Microsoft/Windows devices (e.g., Surface) due to brand familiarity; no other hardware brands observed.",
+      "purchase_timeline": "immediate",
+      "confidence": "medium"
+    },
+    {
+      "rank": 2,
+      "category": "Desktops",
+      "tier_1": "Consumer Electronics",
+      "tier_2": "Computers",
+      "tier_3": "Desktops",
+      "probability": 0.18,
+      "reasoning": "The same Microsoft new sign-in alerts could also reflect a new or re-imaged desktop login (workstation at home or office). With no other brand signals and a Friday morning access window, a desktop setup is a plausible alternative to a laptop upgrade.",
+      "lifestyle_connection": "Work/school-centric morning activity with minimal leisure signals suggests a productivity-first setup where a desktop could serve as a fixed workstation.",
+      "brand_connection": "Microsoft (account ecosystem). No direct OEM brand engagement observed; inference remains within the Microsoft/Windows environment.",
+      "purchase_timeline": "short-term",
+      "confidence": "low"
+    },
+    {
+      "rank": 3,
+      "category": "Office Products",
+      "tier_1": "Consumer Packaged Goods",
+      "tier_2": "Office/School Supplies",
+      "tier_3": "Office Products",
+      "probability": 0.17,
+      "reasoning": "A new device sign-in commonly triggers ancillary needs (notebooks, organizers, cables, basic desk supplies). The dataset includes some 'Purchase' emails (25% category share) though no confirmed transactions, supporting general ecommerce activity tied to a productivity context.",
+      "lifestyle_connection": "Morning workday behavior and low engagement diversity point to practical, task-oriented purchases that support a workspace.",
+      "brand_connection": "No direct office-supply brand engagement observed; context stems from Microsoft-driven productivity usage.",
+      "purchase_timeline": "short-term",
+      "confidence": "low"
+    },
+    {
+      "rank": 4,
+      "category": "Batteries",
+      "tier_1": "Durable Goods",
+      "tier_2": "Electronics/Photography",
+      "tier_3": "Batteries",
+      "probability": 0.16,
+      "reasoning": "If a new/updated computer setup is occurring (implied by Microsoft sign-in alerts), batteries are a typical complementary need for wireless peripherals (mice, keyboards, headsets) during initial setup.",
+      "lifestyle_connection": "Practical, work-focused setup behavior with minimal leisure indicators suggests small, utilitarian accessory purchases.",
+      "brand_connection": "No battery brand engagement observed in communications.",
+      "purchase_timeline": "short-term",
+      "confidence": "low"
+    },
+    {
+      "rank": 5,
+      "category": "Coffee and Tea",
+      "tier_1": "Consumer Packaged Goods",
+      "tier_2": "Beverages",
+      "tier_3": "Coffee and Tea",
+      "probability": 0.12,
+      "reasoning": "All observed activity occurs early Friday morning (7–9), consistent with a workday start where coffee/tea purchases are common. With no family or club indicators and low newsletter engagement, routine personal essentials are plausible.",
+      "lifestyle_connection": "Workday morning cadence suggests a productivity routine supported by caffeinated beverages; no premium cues or household-size signals detected.",
+      "brand_connection": "No beverage brand engagement observed in the dataset.",
+      "purchase_timeline": "immediate",
+      "confidence": "low"
+    }
+  ],
+  "ikigai": {
+    "primary_ikigai": "Digital account management / personal-security upkeep (practical everyday administration)",
+    "secondary_areas": [
+      "Digital organization & monitoring (email/account hygiene)",
+      "Possible curiosity about ad/tech topics (uncertain — marketing content)"
+    ],
+    "confidence_score": 0.3,
+    "supporting_evidence": [
+      {
+        "pattern": "High proportion of personal/transactional emails (3 of 4 = 75%) indicating attention to personal accounts",
+        "strength": "medium",
+        "examples": [
+          "3 personal engagement emails out of 4 total"
+        ]
+      },
+      {
+        "pattern": "Repeated security notifications for the same account (sign-in alerts) — consistent, concrete daily/periodic activity related to checking and maintaining account safety",
+        "strength": "medium",
+        "examples": [
+          "Subject: \"New sign-in detected for your Microsoft account\"",
+          "Two identical Microsoft account alerts"
+        ]
+      },
+      {
+        "pattern": "Presence of an ad tech message (The Trade Desk) that could indicate interest in technology/ads — however this is marketing content and excluded from core ikigai assessment, so treated as low-evidence",
+        "strength": "low",
+        "examples": [
+          "Subject: \"Google ad tech remedies trial: Explained\" — from info@thetradedesk.com"
+        ]
+      },
+      {
+        "pattern": "No detected learning-frequency signals or active growth patterns in the personal emails",
+        "strength": "low",
+        "examples": [
+          "Growth & Learning frequency indicators: 0"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Low-to-moderate — connection is functional (account providers) rather than social or community-based; external world appears primarily as service notifications.",
+      "active_engagement": "Low — most items are passive receipts (alerts). There is potential for active engagement if the user regularly reviews and responds to account alerts, but evidence is limited.",
+      "emotional_meaning": "Minimal evidence — transactional nature of messages suggests limited emotional/joyful attachment; no clear signs of activities that bring everyday delight.",
+      "voluntary_pursuit": "Low — security alerts are system-generated rather than voluntary personal pursuits. The one ad-tech item is marketing and cannot be confidently classed as chosen interest.",
+      "everyday_joy": "Not apparent — no small, specific daily activities expressing joy are visible in the email sample.",
+      "growth_orientation": "Absent in the data — zero indicators of active learning, courses, or personal-development communications."
+    },
+    "personal_patterns": {
+      "total_emails": 4,
+      "personal_email_count": 3,
+      "personal_percentage": 75.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "New sign-in detected for your Microsoft account",
+          "Category": "Personal Communication",
+          "Summary": "Security alert for Microsoft account sign-in; details provided and instructions to review activity if suspicious.",
+          "From": "Microsoft account team <account-security-noreply@accountprotection.microsoft.com>"
+        },
+        {
+          "Subject": "New sign-in detected for your Microsoft account",
+          "Category": "Personal Communication",
+          "Summary": "Security alert about a new sign-in for a Microsoft account; review account activity if not recognized.",
+          "From": "Microsoft account team <account-security-noreply@accountprotection.microsoft.com>"
+        },
+        {
+          "Subject": "Google ad tech remedies trial: Explained",
+          "Category": "Newsletter",
+          "Summary": "Newsletter summarizing updates on Google's ad tech remedies trial and related industry insights from The Current Newsletter.",
+          "From": "info@thetradedesk.com"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Personal Communication": 2,
+          "Newsletter": 1
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Treat current pattern as administrative, not ikigai — if you want to surface authentic ikigai, track emails or actions that you proactively seek out (newsletters you open for pleasure, invitations you respond to enthusiastically, project updates you act on).",
+      "Convert passive notifications into an active practice: make a brief routine when a security alert arrives (review activity, update passwords if unfamiliar, note trends). That turns upkeep into a small, chosen ritual.",
+      "Create a simple folder/tag system to capture emails that genuinely spark curiosity or joy. Over 30 days, note which tagged emails you eagerly open — these will reveal authentic, repeat interests.",
+      "If ad/tech topics matter, deliberately subscribe to a small number of non-commercial learning sources (1–2 trustworthy blogs or short newsletters) and commit 10 minutes daily to read; this will create measurable learning frequency.",
+      "Introduce one small voluntary daily activity (eg, 10-minute walk, photo a day, short journaling) connected to external interaction. Mitsuhashi’s ikigai emphasizes everyday, active, voluntary pursuits — start with something concrete and observable.",
+      "Reduce marketing noise (filters, unsubscribes) so genuine personal-engagement emails stand out. More signal will improve identification of authentic ikigai patterns."
+    ],
+    "analysis_timestamp": "2025-09-26T09:22:51.635602"
+  },
+  "confidence_metrics": {
+    "data_volume": 0.232,
+    "evidence_quality": 0.5,
+    "evidence_count": 0.2,
+    "pattern_diversity": 0.2,
+    "data_completeness": 0.75,
+    "overall_confidence": 0.10575000000000001
+  },
+  "summary": "Engagement is limited (4 communications from 3 senders) and skewed toward Personal Communication (50%), with the remainder split between Purchase and Newsletter content (25% each), indicating conversational responsiveness over transactional behavior. The absence of confirmed transactions and zero purchase frequency point to an early-funnel or passive subscriber rather than an active buyer. Action: emphasize onboarding and value-led messaging, test personal-toned outreach against light transactional prompts, and use low-friction CTAs to capture preferences and guide a first purchase. Confidence is low (overall ≈0.11) due to sparse evidence; additional interaction and transaction data would refine these insights.",
+  "analysis_model": "openai:gpt-5",
+  "analysis_timestamp": "2025-09-26T09:23:02.573624",
+  "schema_version": "1.0",
+  "generator": {
+    "name": "UnbiasedMarketingAnalyzer",
+    "version": "v1",
+    "model": "openai:gpt-5",
+    "seed": 42
+  },
+  "data_coverage": {
+    "total_emails": 4,
+    "analyzed_emails": 4,
+    "filtered_non_marketing": 2,
+    "samples": {
+      "patterns": 4,
+      "products_services": 4,
+      "geographic": 2
+    },
+    "time_range": {
+      "start": "2025-09-26T07:42:38+00:00",
+      "end": "2025-09-26T09:06:03+00:00",
+      "span_days": 0
+    }
+  },
+  "section_confidence": {
+    "communication": 0.62,
+    "interests": 0.2,
+    "purchases": 0.2,
+    "geographic": 0.3,
+    "temporal": 0.2,
+    "engagement": 0.8
+  }
+}

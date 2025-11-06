@@ -1,0 +1,484 @@
+{
+  "profile_id": "Nick",
+  "created_at": "2025-09-29T09:03:20.521349+00:00",
+  "last_updated": "2025-09-29T14:04:52.296038+00:00",
+  "categories": {
+    "shopping": {
+      "insights": [
+        {
+          "insight_type": "product_preference",
+          "description": "Interest in Sports & Activities: Tennis programmes, Junior coaching",
+          "evidence": [
+            "Improved for Adult & Juniors - Be part of our tennis programmes at St George's Hill Lawn Tennis Club",
+            "FIREWORKS TICKET LAUNCH - Tuesday 30th September, 9am (from same club)"
+          ],
+          "confidence": 0.75,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T14:03:37.974844+00:00",
+          "last_updated": "2025-09-29T14:03:37.974849+00:00"
+        },
+        {
+          "insight_type": "product_preference",
+          "description": "Interest in Events & Tickets: Local events, Fireworks displays",
+          "evidence": [
+            "FIREWORKS TICKET LAUNCH - Tuesday 30th September, 9am"
+          ],
+          "confidence": 0.55,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:03:37.974851+00:00",
+          "last_updated": "2025-09-29T14:03:37.974851+00:00"
+        },
+        {
+          "insight_type": "product_preference",
+          "description": "Interest in Outdoor / Cold-weather Accessories: Hand warmers (rechargeable, reusable)",
+          "evidence": [
+            "Dispatched: \u20182-Pack Hand Warmer...\u2019 (shipment-tracking@amazon.co.uk)"
+          ],
+          "confidence": 0.45,
+          "confidence_level": "low",
+          "created_at": "2025-09-29T14:03:37.974853+00:00",
+          "last_updated": "2025-09-29T14:03:37.974853+00:00"
+        },
+        {
+          "insight_type": "product_preference",
+          "description": "Interest in Financial / Crypto Services & Content: Crypto market newsletters, Market analysis newsletters, Crypto product promotions (e.g., enterprise, protocols)",
+          "evidence": [
+            "Solmate\u2019s $300M Bet: Solana Expansion into the UAE (messari.io) [two similar entries]",
+            "The Curious Case of the Lost $4Bn of Daily Equity Demand (The Market Ear)"
+          ],
+          "confidence": 0.65,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:03:37.974855+00:00",
+          "last_updated": "2025-09-29T14:03:37.974855+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for St George's Hill Lawn Tennis Club in Sports & Activities / Local Events",
+          "evidence": [
+            "Subscribed to/receiving club newsletters",
+            "Receiving both programme promotions and event ticket launch from the same club \u2014 indicates ongoing engagement with club communications"
+          ],
+          "confidence": 0.8,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T14:03:37.974857+00:00",
+          "last_updated": "2025-09-29T14:03:37.974857+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for Amazon (marketplace) in Retail / Outdoor Accessories",
+          "evidence": [
+            "Shipment notification for purchased 2-Pack Hand Warmer (order fulfilled via Amazon) \u2014 indicates transactional use of the marketplace"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:03:37.974858+00:00",
+          "last_updated": "2025-09-29T14:03:37.974858+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for Messari in Crypto / Financial Content",
+          "evidence": [
+            "Multiple identical/recurring newsletter emails received \u2014 indicates subscription to Messari marketing/newsletters",
+            "Exposure to Messari product promotion and discounts"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:03:37.974859+00:00",
+          "last_updated": "2025-09-29T14:03:37.974860+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for The Market Ear in Financial / Market Newsletters",
+          "evidence": [
+            "Receives weekly market newsletter (one instance in dataset) \u2014 interest in market analysis content"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:03:37.974866+00:00",
+          "last_updated": "2025-09-29T14:03:37.974866+00:00"
+        },
+        {
+          "insight_type": "brand_preference",
+          "description": "Brand preference for KuCoin / Hypervault / Solana (mentioned) in Crypto platforms & protocols",
+          "evidence": [
+            "Mentioned in newsletter content (no direct purchase or transaction evidence) \u2014 awareness but not demonstrated loyalty"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:03:37.974868+00:00",
+          "last_updated": "2025-09-29T14:03:37.974868+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "Purchases are aligned with the start of the colder season \u2014 a cold-weather accessory (rechargeable hand warmers) was purchased/ dispatched in late September, and there is interest in autumn event tickets (fireworks event at the end of September). This suggests seasonal needs (warmth/comfort) and seasonal leisure spending (autumn events).",
+          "evidence": [
+            "Dispatched: \u20182-Pack Hand Warmer\u2026\u2019 \u2014 2025-09-26T15:16:05+00:00 (shipment from Amazon)",
+            "FIREWORKS TICKET LAUNCH - Tuesday 30th September, 9am \u2014 2025-09-22T11:00:12 (promotional ticket sale for end-September event)"
+          ],
+          "confidence": 0.75,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T14:04:04.876071+00:00",
+          "last_updated": "2025-09-29T14:04:04.876077+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "Purchases (or purchase triggers) cluster around late September. Evidence shows a completed small-item purchase and a near-term ticket sale notification within the same week, indicating occasional but clustered activity rather than regular daily/weekly purchases.",
+          "evidence": [
+            "Fireworks ticket promotion email dated 2025-09-22 indicating an event sale date of 2025-09-30",
+            "Amazon dispatch email for hand warmers dated 2025-09-26"
+          ],
+          "confidence": 0.6,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:04:04.876082+00:00",
+          "last_updated": "2025-09-29T14:04:04.876083+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "Marketing communications (club ticket launch) are present and likely act as purchase triggers for experience-based spending; transactional confirmation (Amazon dispatch) shows responsiveness to e-commerce purchases for utility items. This suggests the user responds to both local promotional triggers and routine online retail activity.",
+          "evidence": [
+            "\"St George's Hill Lawn Tennis Club\" marketing email promoting tickets \u2014 2025-09-22",
+            "shipment-tracking@amazon.co.uk dispatch for hand warmers \u2014 2025-09-26"
+          ],
+          "confidence": 0.65,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:04:04.876085+00:00",
+          "last_updated": "2025-09-29T14:04:04.876086+00:00"
+        },
+        {
+          "insight_type": "purchase_behavior",
+          "description": "Hand warmer purchase appears need-driven/planned given seasonal timing (preparing for colder weather). Ticket purchase behavior is likely planned or time-sensitive (buy at launch for an event) and may be influenced by marketing; there is no strong evidence of purely spontaneous impulse buys from these emails alone.",
+          "evidence": [
+            "Hand warmers dispatched (completed e-commerce purchase) on 2025-09-26 \u2014 aligns with seasonal need",
+            "Ticket launch marketing on 2025-09-22 for sale on 2025-09-30 \u2014 implies planned/time-sensitive purchase opportunity"
+          ],
+          "confidence": 0.6,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:04:04.876088+00:00",
+          "last_updated": "2025-09-29T14:04:04.876089+00:00"
+        },
+        {
+          "insight_type": "purchase_category",
+          "description": "Regular purchases in Cold-weather accessories / personal comfort (hand warmers)",
+          "evidence": [
+            "Dispatched: \u20182-Pack Hand Warmer\u2026\u2019 \u2014 shipment email from Amazon dated 2025-09-26T15:16:05+00:00"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:04:04.876107+00:00",
+          "last_updated": "2025-09-29T14:04:04.876108+00:00"
+        },
+        {
+          "insight_type": "purchase_category",
+          "description": "Regular purchases in Local events / experiential (fireworks tickets)",
+          "evidence": [
+            "FIREWORKS TICKET LAUNCH - Tuesday 30th September, 9am \u2014 promotional email from St George's Hill Lawn Tennis Club dated 2025-09-22T11:00:12"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:04:04.876110+00:00",
+          "last_updated": "2025-09-29T14:04:04.876111+00:00"
+        },
+        {
+          "insight_type": "purchase_category",
+          "description": "Regular purchases in Online retail (low-to-mid value items)",
+          "evidence": [
+            "Amazon shipment for a small accessory item (hand warmers) \u2014 2025-09-26"
+          ],
+          "confidence": 0.5,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:04:04.876113+00:00",
+          "last_updated": "2025-09-29T14:04:04.876114+00:00"
+        }
+      ],
+      "behavior_patterns": [
+        {
+          "pattern_id": "c5727559-5c71-487c-b40b-42368651c7e7",
+          "pattern_type": "brand_engagement",
+          "description": "Regular engagement with Stghltc",
+          "frequency": 2,
+          "recency": "2025-09-29T14:03:37.975408",
+          "confidence": 0.2,
+          "evidence": [
+            "Received 2 communications from stghltc"
+          ],
+          "tags": [
+            "brand",
+            "loyalty",
+            "stghltc"
+          ]
+        },
+        {
+          "pattern_id": "c3015afe-0a12-4eec-86dc-189ebc029ef0",
+          "pattern_type": "brand_engagement",
+          "description": "Regular engagement with Marketing",
+          "frequency": 2,
+          "recency": "2025-09-29T14:03:37.975420",
+          "confidence": 0.2,
+          "evidence": [
+            "Received 2 communications from marketing"
+          ],
+          "tags": [
+            "brand",
+            "loyalty",
+            "marketing"
+          ]
+        },
+        {
+          "pattern_id": "946befd2-2e9f-44ed-9f54-b4c949fa8266",
+          "pattern_type": "price_sensitivity",
+          "description": "High engagement with promotional offers",
+          "frequency": 3,
+          "recency": "2025-09-29T14:04:04.877795",
+          "confidence": 1.0,
+          "evidence": [
+            "Received 3 promotional emails out of 6 total"
+          ],
+          "tags": [
+            "price_sensitive",
+            "deal_seeker",
+            "promotional"
+          ]
+        },
+        {
+          "pattern_id": "20408b3b-1754-4067-8ea4-778946de7092",
+          "pattern_type": "weekly_shopping_pattern",
+          "description": "Higher shopping activity on: Friday",
+          "frequency": 1,
+          "recency": "2025-09-29T14:04:04.888299",
+          "confidence": 0.6,
+          "evidence": [
+            "Peak activity on: ['Friday']"
+          ],
+          "tags": [
+            "weekly_pattern",
+            "timing",
+            "friday"
+          ]
+        }
+      ],
+      "preferences": {},
+      "engagement_score": 0.5640625,
+      "last_analyzed": "2025-09-29T14:04:04.891201+00:00",
+      "analysis_count": 0
+    },
+    "travel": {
+      "insights": [
+        {
+          "insight_type": "lifestyle_travel_preference",
+          "description": "Tech/Business/Innovation travel interest: Strong interest in blockchain, crypto, AI and developer-focused technologies indicates travel driven by conferences, meetups, hackathons, investor roadshows and startup events. Likely to prioritise global innovation hubs and finance-tech centres where industry networking, venture fundraising, and product launches happen. \u2192 Suggested destinations: San Francisco / Bay Area (USA), New York City (USA), London (UK), Berlin (Germany), Singapore, Zurich (Switzerland), Lisbon (Portugal), Dubai (UAE)",
+          "evidence": [
+            "Messari Research Alerts: multiple crypto-focused research emails (Crypto Venture Weekly; TEE research; State of Babylon)",
+            "Civic Nexus roadmap and other product/tech marketing emails",
+            "Asset Review (trading/asset video) and Seeking Alpha / Litquidity market newsletters"
+          ],
+          "confidence": 0.9,
+          "confidence_level": "very_high",
+          "created_at": "2025-09-29T14:04:52.276661",
+          "last_updated": "2025-09-29T14:04:52.276662"
+        },
+        {
+          "insight_type": "lifestyle_travel_preference",
+          "description": "Family/Education-Linked/Domestic travel interest: Signals point to a household connection to the UK school calendar and local planning activity, suggesting travel patterns oriented around school terms and family-friendly domestic breaks (weekend escapes, countryside cottages, visits to family). Likely to prefer short domestic trips in the UK and short-haul European breaks that align with school holidays. \u2192 Suggested destinations: Elmbridge / Surrey (UK) \u2014 local stays and property visits, Cotswolds (UK), Cornwall / Dorset (UK), South of France (short-haul Europe), Northern Spain (short-haul Europe), Paris (Eurostar weekend)",
+          "evidence": [
+            "Google Classroom daily summary for 'William Longcroft' (Autumn Term lesson) \u2014 implies child/education scheduling matters",
+            "Distill Alert for Elmbridge Borough Council active planning search (KT12 4BX) \u2014 local property/area interest",
+            "Telegraph UK political newsletters \u2014 reads UK media relevant for domestic life"
+          ],
+          "confidence": 0.75,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T14:04:52.276677",
+          "last_updated": "2025-09-29T14:04:52.276678"
+        },
+        {
+          "insight_type": "lifestyle_travel_preference",
+          "description": "Media/Creative travel interest: Engagement with video platforms and creative design tools signals interest in media, production and creative-scene travel \u2014 attending film/tech festivals, workshops, or visiting cities with strong media industries. \u2192 Suggested destinations: Los Angeles (USA) \u2014 media and film industry, New York City (USA) \u2014 media and creative agencies, London (UK) \u2014 TV, post-production and creative tech, Berlin (Germany) \u2014 creative tech scene",
+          "evidence": [
+            "Vimeo Summer \u201925 product updates (Canva integration, Apple TV app, HeyGen integration)",
+            "Pikto AI Studio promotional email (design/creative tooling)"
+          ],
+          "confidence": 0.7,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T14:04:52.276682",
+          "last_updated": "2025-09-29T14:04:52.276682"
+        },
+        {
+          "insight_type": "lifestyle_travel_preference",
+          "description": "Finance/Investment travel interest: Active interest in markets, trading, asset reviews and finance newsletters suggests travel for investor conferences, meetings with fund managers, or attending finance/IPO events in global financial centres. \u2192 Suggested destinations: London (UK) \u2014 financial centre, New York City (USA) \u2014 Wall Street/finance events, Zurich & Geneva (Switzerland) \u2014 private banking and wealth events, Singapore / Hong Kong \u2014 APAC finance hubs",
+          "evidence": [
+            "Asset Review email covering Platinum, BNBUSD, ARM, SOLUSD",
+            "Seeking Alpha and Litquidity newsletters covering market moves, IPOs and investment strategies"
+          ],
+          "confidence": 0.8,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T14:04:52.276685",
+          "last_updated": "2025-09-29T14:04:52.276685"
+        },
+        {
+          "insight_type": "lifestyle_travel_preference",
+          "description": "Local Property / Suburban Lifestyle travel interest: Interest in local council planning suggests involvement in property ownership, management or development \u2014 translating to frequent local travel for inspections, meetings, or renovation oversight within the commuter-belt and to London. \u2192 Suggested destinations: Elmbridge / KT12 area (Surrey, UK), Greater London (for commuting or business), Nearby commuter towns in Surrey/Kent/Hampshire",
+          "evidence": [
+            "Distill alerts for Elmbridge Borough Council active planning applications (KT12 4BX)"
+          ],
+          "confidence": 0.6,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:04:52.276691",
+          "last_updated": "2025-09-29T14:04:52.276691"
+        },
+        {
+          "insight_type": "direct_travel_interest",
+          "description": "Direct travel interest in Elmbridge (KT12 4BX), Surrey, UK (local interest / property planning)",
+          "evidence": [
+            "Distill Alert emails referencing active planning applications for KT12 4BX in Elmbridge Borough Council"
+          ],
+          "confidence": 0.8,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T14:04:52.276698",
+          "last_updated": "2025-09-29T14:04:52.276698"
+        },
+        {
+          "insight_type": "direct_travel_interest",
+          "description": "Direct travel interest in none explicit (no explicit bookings or destination planning found)",
+          "evidence": [
+            "No flight, hotel, car rental confirmations, or trip-planning emails present in the dataset"
+          ],
+          "confidence": 1.0,
+          "confidence_level": "very_high",
+          "created_at": "2025-09-29T14:04:52.276702",
+          "last_updated": "2025-09-29T14:04:52.276702"
+        },
+        {
+          "insight_type": "travel_timing_preference",
+          "description": "Seasonal travel preference: summer (family/school-holiday periods) season \u2192 Best timing: school summer holidays (July\u2013August) and school half-terms / long weekends (October half-term, Easter), plus conference seasons (spring and autumn for tech & finance conferences)",
+          "evidence": [
+            "Google Classroom 'Autumn Term' summary implies planning around school-term cycles and therefore trips during school holidays (summer, half-terms)",
+            "Engagement with product updates announced in summer (Vimeo Summer \u201925) shows attention to summer-season activity but not explicit personal travel"
+          ],
+          "confidence": 0.6,
+          "confidence_level": "medium",
+          "created_at": "2025-09-29T14:04:52.276715",
+          "last_updated": "2025-09-29T14:04:52.276715"
+        },
+        {
+          "insight_type": "travel_personality",
+          "description": "Travel personality: family and business (mix of family trips and business/conference travel) traveler, mid-range to luxury (professional investor and property signals point to comfortable budget for business-class or higher-end accommodation when travelling for work) budget, moderate (business and cultural activities, networking; not extreme adventure-focused) activity level",
+          "evidence": [
+            "Analysis based on lifestyle patterns across email communications"
+          ],
+          "confidence": 0.7,
+          "confidence_level": "high",
+          "created_at": "2025-09-29T14:04:52.276720",
+          "last_updated": "2025-09-29T14:04:52.276721"
+        }
+      ],
+      "behavior_patterns": [
+        {
+          "pattern_id": "dc94246a-a0f7-45b1-82c9-614d548dd959",
+          "pattern_type": "frequent_travel_planner",
+          "description": "Very active in travel planning and research",
+          "frequency": 200,
+          "recency": "2025-09-27T06:33:43+00:00",
+          "confidence": 0.8,
+          "evidence": [
+            "Found 200 travel emails over 5 days"
+          ],
+          "tags": [
+            "frequency",
+            "planning"
+          ]
+        },
+        {
+          "pattern_id": "00678e31-46bf-4235-80ba-2f5aec336f20",
+          "pattern_type": "seasonal_travel_preference",
+          "description": "Prefers to plan/book travel during fall months",
+          "frequency": 200,
+          "recency": "2025-09-27T06:33:43+00:00",
+          "confidence": 0.6,
+          "evidence": [
+            "Most travel activity (200 emails) during fall"
+          ],
+          "tags": [
+            "seasonal",
+            "fall"
+          ]
+        },
+        {
+          "pattern_id": "49258848-ce03-43e9-8fa1-2035d19f587a",
+          "pattern_type": "budget_travel_focus",
+          "description": "Actively seeks budget-friendly travel options and deals",
+          "frequency": 3,
+          "recency": "2025-09-29T14:04:52.295955",
+          "confidence": 0.8,
+          "evidence": [
+            "Found 3 budget travel indicators"
+          ],
+          "tags": [
+            "budget",
+            "deals",
+            "value"
+          ]
+        }
+      ],
+      "preferences": {},
+      "engagement_score": 0.95,
+      "last_analyzed": "2025-09-29T14:04:52.295978",
+      "analysis_count": 1
+    },
+    "entertainment": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    },
+    "health": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    },
+    "restaurants": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    },
+    "recipes": {
+      "insights": [],
+      "behavior_patterns": [],
+      "preferences": {},
+      "engagement_score": 0.0,
+      "last_analyzed": null,
+      "analysis_count": 0
+    }
+  },
+  "behavioral_patterns": [],
+  "demographic_insights": {},
+  "temporal_patterns": {},
+  "memories": [],
+  "data_sources": [],
+  "analysis_history": [
+    {
+      "timestamp": "2025-09-29T09:03:20.522170+00:00",
+      "analysis_type": "comprehensive_profile_analysis",
+      "categories_analyzed": [],
+      "insights_generated": 0,
+      "confidence_score": 0.0
+    },
+    {
+      "timestamp": "2025-09-29T14:04:52.296026+00:00",
+      "analysis_type": "comprehensive_profile_analysis",
+      "categories_analyzed": [
+        "shopping",
+        "travel"
+      ],
+      "insights_generated": 25,
+      "confidence_score": 0.6274639214409722
+    }
+  ],
+  "confidence_score": 0.6274639214409722
+}

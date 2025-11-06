@@ -1,0 +1,126 @@
+{
+  "user_id": "e2e_verification",
+  "profile_version": 1,
+  "generated_at": "2025-10-01T12:40:14.820791",
+  "schema_version": "1.0",
+  "generator": {
+    "system": "email_parser_iab_taxonomy",
+    "llm_model": "openai:default",
+    "workflow_version": "1.0"
+  },
+  "data_coverage": {
+    "total_emails_analyzed": 5,
+    "emails_this_run": 5,
+    "date_range": "2025-10-01 to 2025-10-01"
+  },
+  "demographics": {
+    "age_range": null,
+    "gender": null,
+    "education": null,
+    "occupation": null,
+    "marital_status": null,
+    "language": null
+  },
+  "household": {
+    "location": null,
+    "income": null,
+    "length_of_residence": null,
+    "life_stage": null,
+    "median_home_value": null,
+    "monthly_housing_payment": null,
+    "number_of_adults": null,
+    "number_of_children": null,
+    "number_of_individuals": null,
+    "ownership": null,
+    "property_type": null,
+    "urbanization": null
+  },
+  "personal_finance": null,
+  "interests": [
+    {
+      "taxonomy_id": 156,
+      "tier_path": "Interest | Technology",
+      "value": "Technology",
+      "confidence": 0.886,
+      "evidence_count": 2,
+      "last_validated": "2025-10-01T11:40:14.797558Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 250,
+      "tier_path": "Interest | Fitness",
+      "value": "Fitness",
+      "confidence": 0.9,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T11:40:12.071121Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 342,
+      "tier_path": "Interest | Cryptocurrency",
+      "value": "Cryptocurrency",
+      "confidence": 0.85,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T11:40:14.789236Z",
+      "days_since_validation": 0
+    }
+  ],
+  "purchase_intent": [
+    {
+      "taxonomy_id": 510,
+      "tier_path": "Purchase Intent | Confirmed Purchase",
+      "value": "Confirmed Purchase",
+      "confidence": 0.95,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T11:40:10.256562Z",
+      "days_since_validation": 0,
+      "classifications": null
+    },
+    {
+      "taxonomy_id": 511,
+      "tier_path": "Purchase Intent | Shipped Order",
+      "value": "Shipped Order",
+      "confidence": 0.9,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T11:40:10.266908Z",
+      "days_since_validation": 0,
+      "classifications": null
+    },
+    {
+      "taxonomy_id": 520,
+      "tier_path": "Purchase Intent | Electronics",
+      "value": "Electronics",
+      "confidence": 0.9,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T11:40:10.273076Z",
+      "days_since_validation": 0,
+      "classifications": null
+    },
+    {
+      "taxonomy_id": 500,
+      "tier_path": "Purchase Intent | PIPR_High",
+      "value": "PIPR_High",
+      "confidence": 0.9,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T11:40:10.276288Z",
+      "days_since_validation": 0,
+      "classifications": null
+    }
+  ],
+  "actual_purchases": [],
+  "memory_stats": {
+    "total_facts_stored": 7,
+    "high_confidence_facts": 7,
+    "moderate_confidence_facts": 0,
+    "low_confidence_facts": 0,
+    "facts_needing_validation": 0,
+    "average_confidence": 0.8980000000000002
+  },
+  "section_confidence": {
+    "demographics": 0.7,
+    "household": 0.7,
+    "interests": 0.8786666666666667,
+    "purchase_intent": 0.9125,
+    "actual_purchases": 0.0
+  }
+}

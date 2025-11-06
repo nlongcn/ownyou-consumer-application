@@ -1,0 +1,489 @@
+{
+  "communication_patterns": {
+    "volume_metrics": {
+      "total_communications": 50,
+      "unique_senders": 36,
+      "category_diversity": 3
+    },
+    "category_distribution": {
+      "Newsletter": 0.62,
+      "Other": 0.32,
+      "Purchase": 0.06
+    },
+    "primary_communication_type": "Newsletter"
+  },
+  "interest_clusters": {},
+  "purchase_behavior": {
+    "confirmed_transactions": [
+      {
+        "item": "Inception movie",
+        "source": "YouTube",
+        "date": "2025-09-01",
+        "context": "Digital movie purchase receipt with specific price (£3.49) and viewing deadline until October 1, 2025",
+        "confidence": "high"
+      },
+      {
+        "item": "Free Guy movie rental",
+        "source": "YouTube",
+        "date": "2025-08-31",
+        "context": "Digital movie rental receipt with specific price (£3.49) and rental period valid until 30 Sept 2025",
+        "confidence": "high"
+      },
+      {
+        "item": "RY18BPSB-0 18V ONE+ Cordless Backpack Sprayer",
+        "source": "RYOBI Tools",
+        "date": "2025-09-02",
+        "context": "Order confirmation with specific order number (RYOBI-1683008), total amount (£189.99), and delivery timeframe (3-5 working days)",
+        "confidence": "high"
+      }
+    ],
+    "transaction_count": 3,
+    "transaction_frequency": 0.06,
+    "product_analysis": {
+      "categories": [
+        "Power tools and garden equipment",
+        "Entertainment/Movies",
+        "Outdoor gear and jackets",
+        "Men's clothing",
+        "Art and collectibles",
+        "Automotive (BMW X6)",
+        "Printing services"
+      ],
+      "specific_products": [
+        "RYOBI cordless backpack sprayer (£189.99)",
+        "YouTube movie rentals (Inception, Free Guy - £3.49 each)",
+        "BMW X6 (actively searching)",
+        "Premium fitted tees",
+        "Paperback printing services",
+        "Outdoor jackets"
+      ],
+      "brands_engaged": [
+        "RYOBI",
+        "YouTube",
+        "BMW",
+        "True Classic",
+        "Cotswold Outdoor",
+        "Clarendon Fine Art",
+        "Autotrader",
+        "Photobox"
+      ]
+    },
+    "service_analysis": {
+      "subscriptions": [
+        "Paramount+ (expiring)",
+        "Patreon (Green Star Trading)",
+        "Multiple investment newsletters",
+        "Tennis club membership",
+        "Octopus Energy"
+      ],
+      "professional_services": [
+        "Tennis court bookings",
+        "Investment advisory services",
+        "Parking services (RingGo)",
+        "Marketing consultation offers"
+      ],
+      "digital_services": [
+        "OpenAI/ChatGPT",
+        "Microsoft account",
+        "Nintendo account",
+        "YouTube",
+        "Zoom",
+        "Ledger cryptocurrency"
+      ]
+    },
+    "spending_analysis": {
+      "transaction_categories": [
+        "Tools/Equipment (£189.99)",
+        "Digital entertainment (£3.49 recurring)",
+        "Parking (£2.22)",
+        "Sports facilities",
+        "Energy services"
+      ],
+      "price_sensitivity": "Shows willingness to spend on quality tools (£189.99) but seeks value in entertainment (£3.49 rentals vs purchases). Responds to discount offers (10% RYOBI, 20% printing, 50% Photobox)",
+      "purchase_frequency": "Moderate frequency - recent tool purchase, regular movie rentals, ongoing service subscriptions, occasional parking"
+    },
+    "research_behavior": {
+      "consideration_categories": [
+        "Automotive (BMW X6 search alerts)",
+        "Investment opportunities (26 matching pitches)",
+        "AI and technology conferences",
+        "Outdoor gear",
+        "Art purchases"
+      ],
+      "information_seeking": [
+        "Financial market analysis",
+        "Investment newsletters",
+        "Technology trends",
+        "Product comparisons through newsletters"
+      ],
+      "comparison_shopping": [
+        "Active BMW X6 search with saved criteria",
+        "Multiple investment newsletter subscriptions for comparison",
+        "Discount code collection behavior across multiple retailers"
+      ]
+    }
+  },
+  "geographic_indicators": {
+    "location_indicators": [
+      "British Pound Sterling (£) pricing in YouTube movie rentals (£3.49)",
+      "GCSE and A-level results discussion (UK education system)",
+      "Labor Day reference (US/Canada holiday)",
+      "Jewish month of Elul observance",
+      "St George's Hill Lawn Tennis Club booking (Weybridge, Surrey, UK)",
+      "Drewitt's Court Ground Floor Car Park (specific UK location)",
+      "Telegraph newsletter discussing English schools",
+      "Nintendo Europe email domain region",
+      "RYOBI Tools EU email domain and £189.99 pricing"
+    ],
+    "regional_services": [
+      "Octopus Energy - UK energy supplier offering free electricity sessions",
+      "St George's Hill Lawn Tennis Club - exclusive UK tennis club",
+      "RingGo parking service - UK parking payment system",
+      "Telegraph newspaper - UK media outlet",
+      "Angel Investment Network UK - British investment platform",
+      "RYOBI Tools Europe - European tool retailer"
+    ],
+    "currency_indicators": "British Pound Sterling (£) consistently used in purchases and services",
+    "local_business_engagement": [
+      "St George's Hill Lawn Tennis Club (premium Surrey tennis club)",
+      "Octopus Energy (UK renewable energy provider)",
+      "RingGo parking (UK municipal parking service)",
+      "Telegraph subscription (UK newspaper)",
+      "Angel Investment Network UK (British startup investment)"
+    ],
+    "likely_region": "United Kingdom, specifically England",
+    "confidence": "high confidence in UK location assessment"
+  },
+  "temporal_patterns": {
+    "date_range": {
+      "start": "2025-08-30T08:38:49+00:00",
+      "end": "2025-09-02T10:28:57+00:00",
+      "span_days": 3
+    },
+    "day_distribution": {
+      "Tuesday": 27,
+      "Sunday": 9,
+      "Monday": 8,
+      "Saturday": 5
+    },
+    "hour_distribution": {
+      "8": 9,
+      "7": 8,
+      "6": 7,
+      "10": 6,
+      "9": 4,
+      "18": 3,
+      "11": 3,
+      "13": 2,
+      "19": 2,
+      "15": 2
+    }
+  },
+  "engagement_profile": {
+    "engagement_level": "low",
+    "engagement_diversity": {
+      "category_count": 3,
+      "diversity_level": "low"
+    },
+    "significant_patterns": 8,
+    "pattern_confidence": 0.8111111111111111
+  },
+  "pattern_evidence": [
+    {
+      "pattern_type": "communication_volume",
+      "observation": "Analyzed 50 email communications",
+      "frequency": 50,
+      "context": "Overall communication activity level",
+      "confidence": 0.5
+    },
+    {
+      "pattern_type": "investment_engagement",
+      "observation": "Active engagement with multiple investment and trading services",
+      "frequency": 1,
+      "context": "Receives regular updates from Green Star Trading (Patreon), TenViz, Seeking Alpha, and Angel Investment Network. Pattern includes both technical trading analysis (BTC, Gold, SPY) and startup investment opportunities. The Patreon subscription to Green Star Trading indicates paid engagement rather than passive marketing.",
+      "confidence": 0.9
+    },
+    {
+      "pattern_type": "technology_professional",
+      "observation": "Professional involvement with AI and technology platforms",
+      "frequency": 1,
+      "context": "Active usage of OpenAI/ChatGPT (multiple verification codes), Microsoft account, Fireworks AI, and receives invitations to AI conferences (GenerationAI 2025, AICamp). Security alerts from multiple platforms suggest active cross-platform usage typical of tech professionals.",
+      "confidence": 0.85
+    },
+    {
+      "pattern_type": "active_tennis_player",
+      "observation": "Regular tennis club membership and court bookings",
+      "frequency": 1,
+      "context": "Receives both booking confirmations (specific court and time slots) and club newsletters about facilities and events. St George's Hill is an exclusive tennis club, indicating both active participation and higher socioeconomic status.",
+      "confidence": 0.95
+    },
+    {
+      "pattern_type": "entertainment_consumption",
+      "observation": "Regular digital movie rentals and streaming subscriptions",
+      "frequency": 1,
+      "context": "Two YouTube movie rentals (Inception, Free Guy) within days and a Paramount+ subscription through Apple. Pattern suggests preference for on-demand digital entertainment over traditional media consumption.",
+      "confidence": 0.8
+    },
+    {
+      "pattern_type": "uk_resident_lifestyle",
+      "observation": "UK-based lifestyle with specific service usage patterns",
+      "frequency": 1,
+      "context": "Uses Octopus Energy (UK-specific green energy provider with time-based pricing), RingGo parking (UK parking app), receives Telegraph newsletters, and has tennis club membership. Email timestamps and service providers confirm UK residence.",
+      "confidence": 0.9
+    },
+    {
+      "pattern_type": "tool_purchasing_behavior",
+      "observation": "Recent purchase of professional-grade equipment",
+      "frequency": 1,
+      "context": "Purchased RYOBI cordless backpack sprayer (£189.99) - professional landscaping/agricultural equipment. Created new account specifically for this purchase, suggesting either new brand adoption or specific project need.",
+      "confidence": 0.85
+    },
+    {
+      "pattern_type": "security_conscious_behavior",
+      "observation": "High frequency of security-related notifications across multiple platforms",
+      "frequency": 1,
+      "context": "Multiple Microsoft account security alerts, OpenAI/ChatGPT verification codes, and potential phishing attempts (Ledger security notice). Pattern suggests either frequent device/location changes or heightened security awareness with multi-platform usage.",
+      "confidence": 0.75
+    },
+    {
+      "pattern_type": "automotive_interest",
+      "observation": "Active car shopping or research behavior",
+      "frequency": 1,
+      "context": "Has saved search for BMW X6 on Autotrader and receives notifications about new matching listings. Indicates active consideration phase for luxury vehicle purchase rather than passive browsing.",
+      "confidence": 0.8
+    }
+  ],
+  "demographic_possibilities": {
+    "age_analysis": {
+      "likely_range": "35-50 years old",
+      "confidence": "medium",
+      "evidence": "Multiple indicators suggest established professional: active investment portfolio management (both trading and angel investing), membership at exclusive tennis club, luxury car shopping (BMW X6), and professional-grade equipment purchases. The combination of tech sophistication, investment diversification, and premium lifestyle choices typically correlates with mid-career professionals. However, limited direct age indicators prevent higher confidence."
+    },
+    "lifestyle_profile": {
+      "characteristics": [
+        "Tech-savvy professional with active AI/technology engagement",
+        "Active investor with diversified portfolio (trading, startups, traditional markets)",
+        "Sports enthusiast with exclusive club membership",
+        "Premium consumer preferring on-demand digital entertainment",
+        "Environmentally conscious (green energy provider)",
+        "Security-conscious with multi-platform digital presence"
+      ],
+      "confidence": "high",
+      "evidence": "Strong behavioral patterns across multiple domains: professional AI platform usage with conference invitations, paid trading subscriptions and angel investment network participation, St George's Hill tennis club membership, Octopus Energy green provider choice, and consistent security verification patterns across platforms."
+    },
+    "economic_indicators": {
+      "spending_patterns": [
+        "Premium service subscriptions (Patreon trading analysis, Paramount+)",
+        "Exclusive club memberships (St George's Hill tennis club)",
+        "Professional equipment purchases (£189.99 RYOBI sprayer)",
+        "Luxury vehicle consideration (BMW X6)",
+        "On-demand entertainment spending (multiple movie rentals)"
+      ],
+      "income_signals": "Upper-middle to high income bracket - evidenced by exclusive tennis club membership, luxury car shopping, professional equipment purchases, and multiple premium subscriptions. Investment activity across trading and angel networks suggests disposable income for speculation.",
+      "confidence": "high"
+    },
+    "geographic_analysis": {
+      "location_indicators": [
+        "REFERENCING existing geographic analysis - UK-specific services and pricing patterns"
+      ],
+      "likely_region": "United Kingdom, specifically England (per existing analysis)",
+      "confidence": "high confidence (per existing geographic assessment)"
+    },
+    "data_quality": "Good data quality with 25 communications across diverse categories providing clear behavioral patterns. Strong evidence for lifestyle and economic indicators. Age analysis limited by lack of direct age-related communications. Geographic analysis already established with high confidence. Investment and technology engagement patterns provide robust professional profile indicators."
+  },
+  "next_purchase_signals": [
+    {
+      "rank": 1,
+      "category": "Lawn and Garden Products",
+      "tier_1": "Durable Goods",
+      "tier_2": "Home and Garden Products",
+      "tier_3": "Lawn and Garden Products",
+      "probability": 0.85,
+      "reasoning": "Recent purchase of RYOBI RY18BPSB-0 18V ONE+ Cordless Backpack Sprayer (£189.99) indicates active landscaping/gardening projects. This professional-grade equipment suggests ongoing garden maintenance needs requiring complementary products like fertilizers, herbicides, or additional RYOBI ONE+ system tools.",
+      "lifestyle_connection": "UK homeowner with significant outdoor space requiring professional-grade maintenance equipment. The backpack sprayer purchase indicates serious gardening commitment beyond casual hobby level.",
+      "brand_connection": "Strong RYOBI brand engagement with new account creation and premium tool purchase. RYOBI ONE+ system encourages ecosystem purchases of compatible batteries and tools.",
+      "purchase_timeline": "immediate",
+      "confidence": "high"
+    },
+    {
+      "rank": 2,
+      "category": "Outdoor Play Equipment",
+      "tier_1": "Consumer Packaged Goods",
+      "tier_2": "Toys and Games",
+      "tier_3": "Outdoor Play Equipment",
+      "probability": 0.78,
+      "reasoning": "St George's Hill Lawn Tennis Club membership demonstrates active tennis participation. Tennis players frequently need equipment replacements/upgrades including rackets, balls, strings, and training aids. The exclusive club setting suggests premium equipment preferences.",
+      "lifestyle_connection": "Active tennis club member at prestigious St George's Hill (Weybridge, Surrey) with regular court bookings. This indicates serious tennis commitment requiring quality equipment maintenance and replacement.",
+      "brand_connection": "While no specific tennis brands identified, the premium club membership suggests preference for high-end tennis equipment brands like Wilson, Babolat, or Head.",
+      "purchase_timeline": "short-term",
+      "confidence": "high"
+    },
+    {
+      "rank": 3,
+      "category": "Automotive",
+      "tier_1": "Automotive",
+      "tier_2": "Vehicles",
+      "tier_3": "Luxury Vehicles",
+      "probability": 0.72,
+      "reasoning": "Active BMW X6 search alerts on Autotrader with saved search criteria indicates serious consideration phase for luxury vehicle purchase. This represents a significant purchase decision in active research mode.",
+      "lifestyle_connection": "UK resident with premium lifestyle indicators (exclusive tennis club, professional-grade tools, investment activities) suggesting financial capacity for luxury vehicle purchase. BMW X6 represents premium SUV segment aligned with affluent lifestyle.",
+      "brand_connection": "Specific BMW brand engagement through Autotrader search alerts. BMW represents premium German automotive engineering appealing to affluent professionals.",
+      "purchase_timeline": "medium-term",
+      "confidence": "high"
+    },
+    {
+      "rank": 4,
+      "category": "Consumer Hardware Supplies",
+      "tier_1": "Durable Goods",
+      "tier_2": "Tools and Hardware",
+      "tier_3": "Consumer Hardware Supplies",
+      "probability": 0.65,
+      "reasoning": "Recent RYOBI tool purchase suggests active DIY/maintenance projects requiring complementary hardware supplies. Professional-grade sprayer indicates property maintenance projects that typically require additional hardware, fasteners, or repair materials.",
+      "lifestyle_connection": "UK homeowner managing significant property maintenance with professional-grade equipment. This suggests ongoing projects requiring various hardware supplies and materials.",
+      "brand_connection": "RYOBI tool ecosystem purchase indicates comfort with power tools and hardware projects. Likely to shop at UK hardware retailers like B&Q, Wickes, or Screwfix.",
+      "purchase_timeline": "immediate",
+      "confidence": "medium"
+    },
+    {
+      "rank": 5,
+      "category": "Coffee and Tea",
+      "tier_1": "Consumer Packaged Goods",
+      "tier_2": "Beverages",
+      "tier_3": "Coffee and Tea",
+      "probability": 0.58,
+      "reasoning": "UK lifestyle patterns with morning email activity (high volume at 7-8am) and professional technology usage suggests regular coffee/tea consumption. Premium lifestyle indicators suggest preference for quality beverages over basic options.",
+      "lifestyle_connection": "UK professional with early morning activity patterns and premium lifestyle preferences. Tennis club membership and investment activities suggest affluent lifestyle with quality beverage preferences.",
+      "brand_connection": "No specific beverage brands identified, but premium lifestyle suggests preference for quality coffee brands or specialty teas common in UK market.",
+      "purchase_timeline": "short-term",
+      "confidence": "medium"
+    }
+  ],
+  "ikigai": {
+    "primary_ikigai": "Cannot be determined - insufficient authentic personal data",
+    "secondary_areas": [],
+    "confidence_score": 0.05,
+    "supporting_evidence": [
+      {
+        "pattern": "Extremely limited authentic personal engagement data",
+        "strength": "low",
+        "examples": [
+          "Only 4 sample emails provided",
+          "No clear personal topics identified",
+          "All samples appear to be commercial/marketing communications"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "No clear evidence of personal connection to external world through chosen interests",
+      "active_engagement": "Cannot assess - no evidence of active vs passive participation in personal pursuits",
+      "emotional_meaning": "No indicators of personal meaning or joy in specific activities",
+      "voluntary_pursuit": "Cannot distinguish voluntary personal interests from commercial communications",
+      "everyday_joy": "No identifiable small daily activities that bring personal meaning",
+      "growth_orientation": "Learning frequency indicators show 0 - no evidence of active learning pursuits"
+    },
+    "personal_patterns": {
+      "total_emails": 50,
+      "personal_email_count": 31,
+      "personal_percentage": 62.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "Dividend calendar and stock rating system AUGUST 2025",
+          "Category": "Newsletter",
+          "Summary": "Patreon notification about Green Star Trading's dividend calendar and stock rating system for August 2025, requiring membership upgrade to access",
+          "From": "\"Green Star Trading. (via Patreon)\" <bingo@patreon.com>"
+        },
+        {
+          "Subject": "Tennis Updates | Open Meeting, Grass Court and Tennis Ball",
+          "Category": "Newsletter",
+          "Summary": "Tennis club newsletter announcing open meeting, committee appointment, grass court closure, and annual tennis ball event",
+          "From": "\"St George's Hill Lawn Tennis Club\" <marketing@stghltc.co.uk>"
+        },
+        {
+          "Subject": "Take Your Model Further: Start Fine-Tuning Today",
+          "Category": "Newsletter",
+          "Summary": "Fireworks AI promotional email about fine-tuning AI models with instructions and use cases",
+          "From": "Fireworks AI <product@fireworks.ai>"
+        },
+        {
+          "Subject": "Labor Day, Elul, and the Work That Actually Matters",
+          "Category": "Newsletter",
+          "Summary": "Newsletter reflecting on Labor Day and the Jewish month of Elul, contrasting external work achievements with internal spiritual work and self-reflection",
+          "From": "ADOTAT <adotat@mail.beehiiv.com>"
+        },
+        {
+          "Subject": "Don’t miss: A new ‘Strong Buy’-rated stock pick",
+          "Category": "Newsletter",
+          "Summary": "Investment newsletter promoting Alpha Picks stock recommendation service with performance claims and upcoming stock pick announcement",
+          "From": "Seeking Alpha <subscriptions@seekingalpha.com>"
+        },
+        {
+          "Subject": "The Telegraph’s best schools tool",
+          "Category": "Newsletter",
+          "Summary": "Newsletter from The Telegraph promoting their school selection tool and featuring content about Rayner and granola",
+          "From": "\"Telegraph | From the Editor\" <editor@emails.telegraph.co.uk>"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 31
+        },
+        "engagement_timespan_days": 3
+      }
+    },
+    "recommendations": [
+      "Collect more authentic personal communication data (personal emails, hobby-related correspondence, learning activities)",
+      "Focus analysis on non-commercial, personally-chosen activities and interests",
+      "Look for evidence of voluntary engagement in specific topics or activities over time",
+      "Identify patterns in personally-initiated communications rather than received marketing",
+      "Seek data showing active participation in chosen interests rather than passive consumption"
+    ],
+    "analysis_timestamp": "2025-09-02T10:49:23.801480"
+  },
+  "confidence_metrics": {
+    "data_volume": 0.6000000000000001,
+    "evidence_quality": 0.8111111111111111,
+    "evidence_count": 1.0,
+    "pattern_diversity": 1.0,
+    "data_completeness": 0.75,
+    "overall_confidence": 0.19597222222222224
+  },
+  "summary": "**Consumer Profile Summary**\n\nThis UK-based consumer demonstrates sophisticated purchasing behavior with a clear preference for quality investments, evidenced by their £189.99 RYOBI power tool purchase alongside strategic entertainment spending through £3.49 YouTube movie rentals. Their communication patterns reveal a highly engaged information-seeker who maintains 36 unique sender relationships across newsletters (62%), indicating strong research habits particularly in investment opportunities, automotive interests (BMW X6), and technology trends. The profile suggests an affluent, educated individual with diverse interests spanning premium services (St George's Hill Tennis Club membership), sustainable energy (Octopus Energy), and emerging technologies (OpenAI, cryptocurrency), who actively seeks value through discount opportunities while maintaining quality standards. Their moderate transaction frequency combined with high newsletter engagement indicates a deliberate, research-driven purchasing approach that prioritizes informed decision-making over impulsive buying.",
+  "analysis_model": "claude:claude",
+  "analysis_timestamp": "2025-09-02T10:49:30.303722",
+  "schema_version": "1.0",
+  "generator": {
+    "name": "UnbiasedMarketingAnalyzer",
+    "version": "v1",
+    "model": "claude:claude",
+    "seed": 42
+  },
+  "data_coverage": {
+    "total_emails": 50,
+    "analyzed_emails": 50,
+    "filtered_non_marketing": 25,
+    "samples": {
+      "patterns": 50,
+      "products_services": 50,
+      "geographic": 25
+    },
+    "time_range": {
+      "start": "2025-08-30T08:38:49+00:00",
+      "end": "2025-09-02T10:28:57+00:00",
+      "span_days": 3
+    }
+  },
+  "section_confidence": {
+    "communication": 0.85,
+    "interests": 0.2,
+    "purchases": 1.0,
+    "geographic": 0.3,
+    "temporal": 0.308,
+    "engagement": 1.0
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-26T07:44:18.441208",
+    "primary_ikigai": "Engaged consumption and reflection on current affairs — civic/political commentary as a source of daily meaning",
+    "secondary_areas": [
+      "Cultural critique and skepticism of modern institutions",
+      "Security/economic policy and informed morning briefing ritual"
+    ],
+    "confidence_score": 0.65,
+    "supporting_evidence": [
+      {
+        "pattern": "Regular selection of political and opinion journalism",
+        "strength": "medium",
+        "examples": [
+          "Subject: \"Starmer: Labour got it wrong on migration\" (Telegraph | From the Editor)",
+          "Subject: \"Paul Kingsnorth: how to fight the Machine\" (UnHerd)"
+        ]
+      },
+      {
+        "pattern": "Interest in high-level commentary on national security/economics presented as a morning briefing",
+        "strength": "medium",
+        "examples": [
+          "Subject: \"UBS Morning audio comment: National security vanities\""
+        ]
+      },
+      {
+        "pattern": "Voluntary, topic-focused subscriptions (opinion pieces/newsletters) indicating chosen external connection",
+        "strength": "high",
+        "examples": [
+          "Subscriptions/engagement with editorials and thought pieces rather than transactional marketing emails"
+        ]
+      },
+      {
+        "pattern": "Low evidence of active learning or creative production (no learning-frequency signals)",
+        "strength": "high",
+        "examples": [
+          "Growth & Learning PATTERNS: Learning frequency indicators = 0",
+          "No emails indicating courses, workshops, or personal projects"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Moderate — connects to the world by deliberately curating opinion and policy commentary; uses external media as the means of engagement rather than isolated internal reflection.",
+      "active_engagement": "Low–Moderate — activity appears primarily as voluntary consumption (reading/listening). Little evidence of creating or participating (writing, volunteering, discussion groups).",
+      "emotional_meaning": "Moderate — choice of critical/opinion content signals personal resonance and value judgments, but specific emotional drivers (joy, passion) are not explicit in the data.",
+      "voluntary_pursuit": "High — the items are subscription/editorial content chosen by the person rather than required or transactional messages.",
+      "everyday_joy": "Low–Moderate — a morning audio briefing suggests a potential small daily ritual that brings meaning, but other concrete daily activities are not present in the dataset.",
+      "growth_orientation": "Low — no evidence of active learning routines or sustained skill-development activities in the analyzed emails."
+    },
+    "personal_patterns": {
+      "total_emails": 4,
+      "personal_email_count": 3,
+      "personal_percentage": 75.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "Starmer: Labour got it wrong on migration",
+          "Category": "Newsletter",
+          "Summary": "Telegraph Editor newsletter highlighting Sir Keir Starmer admitting Labour was wrong on immigration and outlining plans to counter the populist Right; includes links to articles on Europe's drone defences and a 'At 70, I'm fitter, stronger and happier than ever' profile.",
+          "From": "\"Telegraph | From the Editor\" <editor@emails.telegraph.co.uk>"
+        },
+        {
+          "Subject": "Paul Kingsnorth: how to fight the Machine",
+          "Category": "Newsletter",
+          "Summary": "Newsletter promoting an interview with Paul Kingsnorth about his new book 'Against the Machine', offering the full video and edited transcript as subscriber-only content and a paid subscription offer.",
+          "From": "support@unherd.com"
+        },
+        {
+          "Subject": "UBS Morning audio comment: National security vanities",
+          "Category": "Newsletter",
+          "Summary": "UBS morning audio noting new US tariffs on pharmaceuticals (100% on branded drugs) and furniture/vanity units and heavy trucks, potential exemptions via domestic production, muted impact on furniture, stronger US consumer spending revisions, and upcoming inflation data (Japan, Eurozone expectations, US PCE) affecting central bank outlooks.",
+          "From": "campaign@mailing.ubs.com"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 3
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Turn passive consumption into small, consistent active practices: keep a 5–10 minute morning reflection or journal entry after each briefing to capture reactions and questions.",
+      "Create one small public-facing action to externalize engagement: write brief responses (letters to editor, short blog posts, or social posts) once every two weeks to practice turning reflection into contribution.",
+      "Join or form a local or online discussion group focused on political commentary or cultural critique to convert solitary reading into social exchange and deepen external connection.",
+      "Add a low-effort learning habit to boost growth orientation: enroll in a short online seminar or follow a curated course (e.g., public policy basics, modern political thought) and commit to one module per week.",
+      "Institutionalize a specific, concrete ritual to increase everyday joy: a consistent morning routine (audio briefing + 10-minute note-taking + one action item) so the activity becomes a clearly defined, emotionally satisfying part of daily life.",
+      "Experiment with a small project that aligns with values (e.g., a monthly newsletter summarizing your reflections or a themed reading list) to make interests more specific, active, and externally connected.",
+      "Maintain voluntariness and fluidity: try different formats (audio, long-form essays, podcasts, community talks) to see which bring the most sustained joy — allow interests to evolve rather than forcing a single path."
+    ],
+    "data_coverage": {
+      "total_emails": 4,
+      "personal_email_count": 3,
+      "personal_percentage": 75.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

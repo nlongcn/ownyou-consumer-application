@@ -1,0 +1,125 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-02T10:49:42.897551",
+    "primary_ikigai": "Cannot be determined - insufficient authentic personal data",
+    "secondary_areas": [],
+    "confidence_score": 0.05,
+    "supporting_evidence": [
+      {
+        "pattern": "Extremely limited authentic personal engagement data",
+        "strength": "low",
+        "examples": [
+          "Only 4 sample emails provided",
+          "No clear personal topics identified",
+          "All samples appear to be commercial/marketing communications"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "No clear evidence of personal connection to external world through chosen interests",
+      "active_engagement": "Cannot assess - no evidence of active vs passive participation in personal pursuits",
+      "emotional_meaning": "No indicators of personal meaning or joy in specific activities",
+      "voluntary_pursuit": "Cannot distinguish voluntary personal interests from commercial communications",
+      "everyday_joy": "No identifiable small daily activities that bring personal meaning",
+      "growth_orientation": "Learning frequency indicators show 0 - no evidence of active learning pursuits"
+    },
+    "personal_patterns": {
+      "total_emails": 50,
+      "personal_email_count": 31,
+      "personal_percentage": 62.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "Dividend calendar and stock rating system AUGUST 2025",
+          "Category": "Newsletter",
+          "Summary": "Patreon notification about Green Star Trading's dividend calendar and stock rating system for August 2025, requiring membership upgrade to access",
+          "From": "\"Green Star Trading. (via Patreon)\" <bingo@patreon.com>"
+        },
+        {
+          "Subject": "Tennis Updates | Open Meeting, Grass Court and Tennis Ball",
+          "Category": "Newsletter",
+          "Summary": "Tennis club newsletter announcing open meeting, committee appointment, grass court closure, and annual tennis ball event",
+          "From": "\"St George's Hill Lawn Tennis Club\" <marketing@stghltc.co.uk>"
+        },
+        {
+          "Subject": "Take Your Model Further: Start Fine-Tuning Today",
+          "Category": "Newsletter",
+          "Summary": "Fireworks AI promotional email about fine-tuning AI models with instructions and use cases",
+          "From": "Fireworks AI <product@fireworks.ai>"
+        },
+        {
+          "Subject": "Labor Day, Elul, and the Work That Actually Matters",
+          "Category": "Newsletter",
+          "Summary": "Newsletter reflecting on Labor Day and the Jewish month of Elul, contrasting external work achievements with internal spiritual work and self-reflection",
+          "From": "ADOTAT <adotat@mail.beehiiv.com>"
+        },
+        {
+          "Subject": "Don’t miss: A new ‘Strong Buy’-rated stock pick",
+          "Category": "Newsletter",
+          "Summary": "Investment newsletter promoting Alpha Picks stock recommendation service with performance claims and upcoming stock pick announcement",
+          "From": "Seeking Alpha <subscriptions@seekingalpha.com>"
+        },
+        {
+          "Subject": "The Telegraph’s best schools tool",
+          "Category": "Newsletter",
+          "Summary": "Newsletter from The Telegraph promoting their school selection tool and featuring content about Rayner and granola",
+          "From": "\"Telegraph | From the Editor\" <editor@emails.telegraph.co.uk>"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 31
+        },
+        "engagement_timespan_days": 3
+      }
+    },
+    "recommendations": [
+      "Collect more authentic personal communication data that excludes all marketing/commercial emails",
+      "Look for emails about hobbies, personal interests, family activities, or voluntary pursuits",
+      "Focus on communications the person initiates or actively chooses to engage with",
+      "Identify patterns in personally meaningful activities rather than commercial subscriptions",
+      "Track actual participation in activities that bring daily joy and satisfaction"
+    ],
+    "data_coverage": {
+      "total_emails": 50,
+      "personal_email_count": 31,
+      "personal_percentage": 62.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "claude-sonnet-4-20250514"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

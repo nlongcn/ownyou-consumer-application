@@ -1,0 +1,128 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-26T11:37:53.462291",
+    "primary_ikigai": "Hands-on stewardship of personal technology and security—finding small, steady satisfaction in keeping accounts protected, devices synced, and tools responsive.",
+    "secondary_areas": [
+      "Cause-driven social connection through sport, especially memorial and charity golf events",
+      "Everyday readiness and wellbeing supported by wearable prompts and quick, practical actions"
+    ],
+    "confidence_score": 0.44,
+    "supporting_evidence": [
+      {
+        "pattern": "Prompt attention to account security and device events, suggesting calm and satisfaction from making systems work as intended",
+        "strength": "medium",
+        "examples": [
+          "New sign-in detected for your Microsoft account",
+          "A sound was played on N E S’s Apple Watch"
+        ],
+        "email_count": 3
+      },
+      {
+        "pattern": "Engagement with a memorial charity golf event indicates meaning in honoring others and contributing to a health cause via social sport",
+        "strength": "medium",
+        "examples": [
+          "RE: INVITATION: 6th Annual Edition of the Kohler Cup in memory of Rod and for Pancreatic Cancer Action, Friday 3rd October 2025 at Goodwood",
+          "Re: INVITATION: 6th Annual Edition of the Kohler Cup in memory of Rod and for Pancreatic Cancer Action, Friday 3rd October 2025 at Goodwood"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Inbox dominated by low-ikigai, low-autonomy items; meaning shows up in brief, intentional touchpoints rather than long threads",
+        "strength": "high",
+        "examples": [
+          "Low Relevance emails: 167",
+          "Average Choice Autonomy: 0.30"
+        ],
+        "email_count": 167
+      },
+      {
+        "pattern": "Preference for short trigger-action cycles over extended correspondence (alerts prompt immediate resolution)",
+        "strength": "medium",
+        "examples": [
+          "New sign-in detected for your Microsoft account",
+          "A sound was played on N E S’s Apple Watch"
+        ],
+        "email_count": 3
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Connects through technology and selective community events—uses devices to stay organized and engages in cause-linked gatherings (e.g., charity golf) for social meaning.",
+      "active_engagement": "Acts quickly on alerts and invitations (reply chains and device pings), showing hands-on, solution-focused behavior over passive consumption.",
+      "emotional_meaning": "Derives reassurance and quiet pride from keeping things safe and working; finds significance in honoring a person (Rod) and supporting pancreatic cancer action via sport.",
+      "voluntary_pursuit": "Charity event participation is clearly voluntary; tech caretaking is partly prompted by alerts but embraced as a chosen, gratifying routine.",
+      "everyday_joy": "Small wins such as locating a watch with a ping, clearing a security alert, and confirming attendance create daily feelings of order, readiness, and connection.",
+      "growth_orientation": "Natural path to deepen skills in digital security/automation and expand community impact by pairing sport with fundraising or volunteer roles."
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [],
+        "interest_areas": [],
+        "behavioral_patterns": {},
+        "value_indicators": [],
+        "temporal_patterns": {},
+        "engagement_styles": {},
+        "commercial_insights": {},
+        "confidence_factors": []
+      },
+      "score_statistics": {
+        "average_ikigai_score": 0.34949999999999987,
+        "median_ikigai_score": 0.3,
+        "score_std": 0.1252986432488397,
+        "high_score_count": 22,
+        "medium_score_count": 11,
+        "low_score_count": 167,
+        "average_autonomy": 0.29999999999999993,
+        "category_distribution": {
+          "Low": 178,
+          "Medium": 22
+        },
+        "top_themes": [],
+        "total_emails": 200
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Create a weekly 15-minute 'systems tidy' ritual (review security alerts, backups, updates) and note one small win to reinforce daily satisfaction.",
+      "Channel tech stewardship into community value: help a friend/family member harden accounts or set up wearables; consider a simple checklist you can share.",
+      "Lean into cause-driven sport: commit to the Kohler Cup early, invite one person, and set a modest fundraising goal (e.g., a per-hole pledge) to add meaning.",
+      "Use the Apple Watch for wellbeing micro-rituals (brief walks, breath sessions) that pair readiness with mood lift; track a single daily streak.",
+      "Reduce low-autonomy noise: unsubscribe or filter routine system mail into a 'Triggers' folder and convert only key items into tasks.",
+      "Pursue one micro-learning on account security or automation (e.g., passkeys, authenticator flow, or Shortcuts) and apply immediately to your setup.",
+      "After events, capture a two-sentence reflection (what felt meaningful, who you connected with) to reinforce the social-purpose dimension of your ikigai."
+    ],
+    "data_coverage": {
+      "total_emails": 200
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 0.34949999999999987,
+    "median_ikigai_score": 0.3,
+    "score_std": 0.1252986432488397,
+    "high_score_count": 22,
+    "medium_score_count": 11,
+    "low_score_count": 167,
+    "average_autonomy": 0.29999999999999993,
+    "category_distribution": {
+      "Low": 178,
+      "Medium": 22
+    },
+    "top_themes": [],
+    "total_emails": 200
+  },
+  "email_count": 200
+}

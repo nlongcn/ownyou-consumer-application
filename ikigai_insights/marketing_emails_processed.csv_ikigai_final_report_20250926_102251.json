@@ -1,0 +1,132 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-26T09:22:51.635602",
+    "primary_ikigai": "Digital account management / personal-security upkeep (practical everyday administration)",
+    "secondary_areas": [
+      "Digital organization & monitoring (email/account hygiene)",
+      "Possible curiosity about ad/tech topics (uncertain — marketing content)"
+    ],
+    "confidence_score": 0.3,
+    "supporting_evidence": [
+      {
+        "pattern": "High proportion of personal/transactional emails (3 of 4 = 75%) indicating attention to personal accounts",
+        "strength": "medium",
+        "examples": [
+          "3 personal engagement emails out of 4 total"
+        ]
+      },
+      {
+        "pattern": "Repeated security notifications for the same account (sign-in alerts) — consistent, concrete daily/periodic activity related to checking and maintaining account safety",
+        "strength": "medium",
+        "examples": [
+          "Subject: \"New sign-in detected for your Microsoft account\"",
+          "Two identical Microsoft account alerts"
+        ]
+      },
+      {
+        "pattern": "Presence of an ad tech message (The Trade Desk) that could indicate interest in technology/ads — however this is marketing content and excluded from core ikigai assessment, so treated as low-evidence",
+        "strength": "low",
+        "examples": [
+          "Subject: \"Google ad tech remedies trial: Explained\" — from info@thetradedesk.com"
+        ]
+      },
+      {
+        "pattern": "No detected learning-frequency signals or active growth patterns in the personal emails",
+        "strength": "low",
+        "examples": [
+          "Growth & Learning frequency indicators: 0"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Low-to-moderate — connection is functional (account providers) rather than social or community-based; external world appears primarily as service notifications.",
+      "active_engagement": "Low — most items are passive receipts (alerts). There is potential for active engagement if the user regularly reviews and responds to account alerts, but evidence is limited.",
+      "emotional_meaning": "Minimal evidence — transactional nature of messages suggests limited emotional/joyful attachment; no clear signs of activities that bring everyday delight.",
+      "voluntary_pursuit": "Low — security alerts are system-generated rather than voluntary personal pursuits. The one ad-tech item is marketing and cannot be confidently classed as chosen interest.",
+      "everyday_joy": "Not apparent — no small, specific daily activities expressing joy are visible in the email sample.",
+      "growth_orientation": "Absent in the data — zero indicators of active learning, courses, or personal-development communications."
+    },
+    "personal_patterns": {
+      "total_emails": 4,
+      "personal_email_count": 3,
+      "personal_percentage": 75.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "New sign-in detected for your Microsoft account",
+          "Category": "Personal Communication",
+          "Summary": "Security alert for Microsoft account sign-in; details provided and instructions to review activity if suspicious.",
+          "From": "Microsoft account team <account-security-noreply@accountprotection.microsoft.com>"
+        },
+        {
+          "Subject": "New sign-in detected for your Microsoft account",
+          "Category": "Personal Communication",
+          "Summary": "Security alert about a new sign-in for a Microsoft account; review account activity if not recognized.",
+          "From": "Microsoft account team <account-security-noreply@accountprotection.microsoft.com>"
+        },
+        {
+          "Subject": "Google ad tech remedies trial: Explained",
+          "Category": "Newsletter",
+          "Summary": "Newsletter summarizing updates on Google's ad tech remedies trial and related industry insights from The Current Newsletter.",
+          "From": "info@thetradedesk.com"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Personal Communication": 2,
+          "Newsletter": 1
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Treat current pattern as administrative, not ikigai — if you want to surface authentic ikigai, track emails or actions that you proactively seek out (newsletters you open for pleasure, invitations you respond to enthusiastically, project updates you act on).",
+      "Convert passive notifications into an active practice: make a brief routine when a security alert arrives (review activity, update passwords if unfamiliar, note trends). That turns upkeep into a small, chosen ritual.",
+      "Create a simple folder/tag system to capture emails that genuinely spark curiosity or joy. Over 30 days, note which tagged emails you eagerly open — these will reveal authentic, repeat interests.",
+      "If ad/tech topics matter, deliberately subscribe to a small number of non-commercial learning sources (1–2 trustworthy blogs or short newsletters) and commit 10 minutes daily to read; this will create measurable learning frequency.",
+      "Introduce one small voluntary daily activity (eg, 10-minute walk, photo a day, short journaling) connected to external interaction. Mitsuhashi’s ikigai emphasizes everyday, active, voluntary pursuits — start with something concrete and observable.",
+      "Reduce marketing noise (filters, unsubscribes) so genuine personal-engagement emails stand out. More signal will improve identification of authentic ikigai patterns."
+    ],
+    "data_coverage": {
+      "total_emails": 4,
+      "personal_email_count": 3,
+      "personal_percentage": 75.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

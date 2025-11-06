@@ -1,0 +1,234 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-26T07:46:21.657085",
+    "primary_ikigai": "Making sense of the political and cultural forces that shape society — staying well-informed, thinking critically, and interpreting policy and market implications",
+    "secondary_areas": [
+      "Independent intellectual / contrarian cultural critique",
+      "Macroeconomics & policy analysis (market impact)",
+      "Digital prudence & account stewardship"
+    ],
+    "confidence_score": 0.89,
+    "supporting_evidence": [
+      {
+        "pattern": "Consistent attention to current affairs and political analysis",
+        "strength": "high",
+        "examples": [
+          "Starmer: Labour got it wrong on migration",
+          "UBS Morning audio comment: National security vanities"
+        ],
+        "email_count": 3
+      },
+      {
+        "pattern": "Attraction to independent, contrarian intellectual voices and cultural critique",
+        "strength": "high",
+        "examples": [
+          "Paul Kingsnorth: how to fight the Machine",
+          "Starmer piece framed as critical reinterpretation of mainstream positions"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Focus on macroeconomics, policy and market impacts — reading that links government decisions to economic consequences",
+        "strength": "high",
+        "examples": [
+          "UBS Morning audio comment: National security vanities (tariffs, national-security framing and market effects)"
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Prudence in digital security and account management as an everyday responsibility",
+        "strength": "medium",
+        "examples": [
+          "New sign-in detected for your Microsoft account"
+        ],
+        "email_count": 1
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Engages with the external world through curated, analytical media — newsletters, audio market briefs and long-form contrarian essays that explain policy, politics and cultural trends.",
+      "active_engagement": "Mixed: primarily an active consumer and synthesizer (research-driven reading, selective subscriptions). Evidence of autonomy in choices (average choice autonomy 0.88) suggests voluntary, intentional engagement rather than passive exposure.",
+      "emotional_meaning": "Finds meaning in intellectual clarity, being informed and understanding societal consequences — intellectual stimulation and seeing the real-world implications of ideas deliver satisfaction.",
+      "voluntary_pursuit": "Strongly voluntary: subscription choices and varied brand preferences indicate interests are chosen and cultivated rather than imposed.",
+      "everyday_joy": "Small daily practices likely include reading or listening to political/economic briefings, following a contrarian essay or newsletter, and keeping digital accounts secure — these routines provide steady purpose.",
+      "growth_orientation": "Research-driven and moderately consistent: shows openness to contrarian viewpoints and continued learning about policy-market interactions; likely to deepen expertise over time with intentional effort."
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [
+          "Current affairs & politics",
+          "Intellectual/contrarian ideas and cultural critique",
+          "Macroeconomics & policy (market impact of government decisions)"
+        ],
+        "interest_areas": [
+          {
+            "area": "Current affairs & politics",
+            "strength": "high",
+            "indicators": [
+              "Subscription to a major political newsletter (Telegraph Editor) covering party strategy and migration",
+              "Receipt of topical analysis (UBS note on US tariffs framed in national security terms)",
+              "Timing: multiple news/analysis emails clustered in the morning (suggests a routine of keeping up with news)"
+            ],
+            "frequency": 3,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Intellectual/contrarian thought & cultural critique",
+            "strength": "medium",
+            "indicators": [
+              "Subscription/paid access to UnHerd content promoting a long-form interview with Paul Kingsnorth (Against the Machine)",
+              "Interest in ideas that critique modernity/technology and offer alternative narratives"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Macroeconomics, markets & policy impact",
+            "strength": "medium",
+            "indicators": [
+              "Receipt of UBS morning audio focusing on tariffs and their impact on pharmaceuticals, furniture and heavy trucks",
+              "Appears to follow how policy decisions affect markets and supply chains"
+            ],
+            "frequency": 1,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Digital security & account management",
+            "strength": "low",
+            "indicators": [
+              "Microsoft security alert about a new sign-in (indicates active Microsoft account and exposure to account security flows)",
+              "Inclusion of an 'Other' transactional/security email rather than promotional content"
+            ],
+            "frequency": 1,
+            "consistency": "consistent"
+          }
+        ],
+        "behavioral_patterns": {
+          "engagement_style": "mixed",
+          "information_preferences": "educational",
+          "decision_making": "research-driven",
+          "temporal_consistency": "moderately_consistent"
+        },
+        "value_indicators": [
+          "Prudence and digital responsibility (presence of security-related account email)",
+          "Interest in the societal implications of policy (tariffs framed as national-security and economic issues)",
+          "Intellectual curiosity and open-mindedness toward contrarian perspectives (UnHerd/Paul Kingsnorth content)",
+          "Being informed and politically literate (regular consumption of political newsletters and analysis)"
+        ],
+        "temporal_patterns": {
+          "evolution_trend": "stable_interests",
+          "seasonal_patterns": "not_detected",
+          "engagement_frequency": "medium"
+        },
+        "engagement_styles": {
+          "engagement_style": "mixed",
+          "information_preferences": "educational",
+          "decision_making": "research-driven",
+          "temporal_consistency": "moderately_consistent"
+        },
+        "commercial_insights": {
+          "purchase_alignment": "aligned_with_interests",
+          "subscription_choices": "intentional",
+          "brand_preferences": "varied"
+        },
+        "confidence_factors": [
+          "Presence of paid/subscriber content and multiple morning news sources increases confidence that information-seeking and political/economic interest are genuine",
+          "Small sample size (4 emails) limits granularity — patterns are indicative, not definitive"
+        ]
+      },
+      "score_statistics": {
+        "average_ikigai_score": 0.8925000000000001,
+        "median_ikigai_score": 0.895,
+        "score_std": 0.021650635094610987,
+        "high_score_count": 4,
+        "medium_score_count": 0,
+        "low_score_count": 0,
+        "average_autonomy": 0.8750000000000001,
+        "category_distribution": {
+          "High": 1,
+          "Commercial-Personal": 3
+        },
+        "top_themes": [
+          [
+            "Current affairs & politics",
+            3
+          ],
+          [
+            "Intellectual/contrarian thought & cultural critique",
+            2
+          ],
+          [
+            "Prudence and digital responsibility",
+            1
+          ],
+          [
+            "Macroeconomics, markets & policy impact",
+            1
+          ]
+        ],
+        "total_emails": 4
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Systematize weekly synthesis: set aside 60–90 minutes once a week to summarize major political, economic and cultural threads (notes, short blog posts, or private memos). This converts consumption into creation and deepens meaning.",
+      "Pair listening with active reflection: after audio briefings (e.g., UBS morning audio), write one short paragraph on market/policy implications to reinforce learning and prepare for discussion.",
+      "Cultivate a small public or semi-public outlet for contrarian critique (substack, a newsletter thread, or moderated forum) to test ideas and get feedback — this sustains intellectual curiosity and social connection.",
+      "Deepen macro-policy expertise: choose one focused learning project every quarter (e.g., trade policy and national-security framing) with curated readings and a final 1,000-word briefing to consolidate understanding.",
+      "Maintain and automate digital hygiene: keep two-factor authentication, device checks, and periodic security reviews as part of your routine to preserve the practical foundations of your work and peace of mind.",
+      "Join selective communities: engage with one or two specialist communities (policy roundtables, economics discussion groups, or contrarian reading circles) to convert solitary reading into active debate and collaboration.",
+      "Monetize selectively: if passionate about particular commentary, consider paid subscription or patronage for favorite writers and experiment with a modest paid offering of your own — commercial choices can reinforce authentic values and sustain the activity.",
+      "Balance critique with constructive alternatives: when engaging contrarian ideas, try pairing criticism with a short proposal or alternative framing; this increases influence and personal fulfillment from contributions."
+    ],
+    "data_coverage": {
+      "total_emails": 4
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 0.8925000000000001,
+    "median_ikigai_score": 0.895,
+    "score_std": 0.021650635094610987,
+    "high_score_count": 4,
+    "medium_score_count": 0,
+    "low_score_count": 0,
+    "average_autonomy": 0.8750000000000001,
+    "category_distribution": {
+      "High": 1,
+      "Commercial-Personal": 3
+    },
+    "top_themes": [
+      [
+        "Current affairs & politics",
+        3
+      ],
+      [
+        "Intellectual/contrarian thought & cultural critique",
+        2
+      ],
+      [
+        "Prudence and digital responsibility",
+        1
+      ],
+      [
+        "Macroeconomics, markets & policy impact",
+        1
+      ]
+    ],
+    "total_emails": 4
+  },
+  "email_count": 4
+}

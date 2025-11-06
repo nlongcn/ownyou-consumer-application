@@ -1,0 +1,257 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-26T08:56:47.294073",
+    "primary_ikigai": "Local-first, privacy-respecting tech tinkering and digital self-reliance",
+    "secondary_areas": [
+      "Performance-oriented outdoor activity supported by well-chosen gear",
+      "Staying informed and reflective about UK politics and civic life",
+      "Proactive troubleshooting with services and vendors to improve outcomes"
+    ],
+    "confidence_score": 0.85,
+    "supporting_evidence": [
+      {
+        "pattern": "Consistent preference for autonomous, privacy-first computing and security vigilance",
+        "strength": "high",
+        "examples": [
+          "Ollama's web search",
+          "New sign-in detected for your Microsoft account"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Active, hands-on problem-solving with vendors/services to optimize performance and resolve issues",
+        "strength": "high",
+        "examples": [
+          "Re: Re: Order Confirmation SG-1063009",
+          "New sign-in detected for your Microsoft account"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Quality and performance orientation in outdoor/sport gear enabling an active lifestyle",
+        "strength": "medium",
+        "examples": [
+          "Re: Re: Order Confirmation SG-1063009"
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Informed engagement with UK politics/current affairs as a regular cognitive anchor",
+        "strength": "medium",
+        "examples": [
+          "Starmer: Labour got it wrong on migration"
+        ],
+        "email_count": 1
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Connects to the world through civic awareness and responsible tech use; engages thoughtfully with vendors and platforms.",
+      "active_engagement": "High. Takes deliberate actions (local AI setup, account security responses, vendor follow-ups) rather than consuming passively.",
+      "emotional_meaning": "Derives satisfaction from control, competence, and making systems work well; small joys in well-secured accounts, smooth tools, and dialed-in gear.",
+      "voluntary_pursuit": "Primarily self-chosen interests (local AI adoption, performance gear selection, political reading). Security alerts are imposed but the response reflects a chosen standard of digital hygiene.",
+      "everyday_joy": "Tinkering with local AI setups, quick security check-ins, fine-tuning or testing gear before activities, a concise scan of UK political news.",
+      "growth_orientation": "Research-driven learning and iterative improvement (exploring AI features, refining security practices, optimizing gear choices, evolving political understanding)."
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [
+          "Tech-forward, privacy/security-aware computing (local AI tools, account vigilance)",
+          "Informed engagement with UK politics/current affairs",
+          "Performance-oriented, active/outdoor lifestyle supported by quality gear",
+          "Proactive, hands-on problem-solving with services and vendors"
+        ],
+        "interest_areas": [
+          {
+            "area": "AI and local developer tools",
+            "strength": "medium",
+            "indicators": [
+              "Subscription/engagement with Ollama product update on web search capability",
+              "Signal toward local/open-source tooling preference"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          },
+          {
+            "area": "UK news and politics",
+            "strength": "medium",
+            "indicators": [
+              "Direct-from-editor newsletter from The Telegraph on national politics",
+              "Editor email format implies intentional subscription to current affairs"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Outdoor/sport eyewear and performance gear",
+            "strength": "medium",
+            "indicators": [
+              "Order confirmation with ongoing reply thread (Re: Re:) indicating active engagement",
+              "Brand choice (SunGod) associated with performance and durability"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Account security and digital hygiene",
+            "strength": "low",
+            "indicators": [
+              "Microsoft account sign-in alert suggests attention to account access events",
+              "Presence across major platforms indicates need for secure, cross-service management"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          }
+        ],
+        "behavioral_patterns": {
+          "engagement_style": "mixed",
+          "information_preferences": "practical/educational",
+          "decision_making": "research-driven",
+          "temporal_consistency": "varied"
+        },
+        "value_indicators": [
+          "Quality and performance orientation in lifestyle purchases",
+          "Being well-informed about civic/political developments",
+          "Autonomy and privacy in tech choices, with security consciousness"
+        ],
+        "temporal_patterns": {
+          "evolution_trend": "stable_interests",
+          "seasonal_patterns": "not_detected",
+          "engagement_frequency": "medium"
+        },
+        "engagement_styles": {
+          "engagement_style": "mixed",
+          "information_preferences": "practical/educational",
+          "decision_making": "research-driven",
+          "temporal_consistency": "varied"
+        },
+        "commercial_insights": {
+          "purchase_alignment": "aligned_with_interests",
+          "subscription_choices": "intentional",
+          "brand_preferences": "unclear"
+        },
+        "confidence_factors": [
+          "Single-day snapshot with four emails; limited longitudinal evidence of consistency",
+          "Content unavailable; inferences drawn from senders and subject lines only"
+        ]
+      },
+      "score_statistics": {
+        "average_ikigai_score": 0.8825000000000001,
+        "median_ikigai_score": 0.875,
+        "score_std": 0.022776083947860768,
+        "high_score_count": 4,
+        "medium_score_count": 0,
+        "low_score_count": 0,
+        "average_autonomy": 0.8625,
+        "category_distribution": {
+          "High": 2,
+          "Commercial-Personal": 2
+        },
+        "top_themes": [
+          [
+            "Autonomy and privacy in tech choices, with security consciousness",
+            2
+          ],
+          [
+            "Proactive, hands-on problem-solving with services and vendors",
+            2
+          ],
+          [
+            "Being well-informed about civic/political developments",
+            1
+          ],
+          [
+            "Informed engagement with UK politics/current affairs",
+            1
+          ],
+          [
+            "AI and local developer tools",
+            1
+          ],
+          [
+            "Outdoor/sport eyewear and performance gear",
+            1
+          ],
+          [
+            "Quality and performance orientation in lifestyle purchases",
+            1
+          ]
+        ],
+        "total_emails": 4
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Consolidate a local-first AI workflow (e.g., Ollama plus privacy-preserving search) and keep a lightweight experiment log for weekly iterations.",
+      "Elevate digital hygiene: hardware security keys, password manager health checks, and an automated rule to triage sign-in alerts.",
+      "Schedule brief daily tech-tinker slots (10–15 minutes) to keep curiosity rewarding without becoming a time sink.",
+      "Create a simple vendor-resolution playbook (issue, steps taken, outcome) to speed future troubleshooting and capture lessons learned.",
+      "Plan periodic outdoor gear shakedowns (short test sessions) and note fit/performance tweaks to enhance activity enjoyment.",
+      "Curate a minimal, high-trust UK news stack (1–2 newsletters plus a weekly long-form read) to balance being informed with mental clarity.",
+      "Blend civic interest with action by sampling low-commitment engagements (local forum, MP newsletter Q&A, or civic-tech meetup).",
+      "Set a monthly mini-audit ritual: review security posture, update AI tools, and retire unused services for a clean, in-control digital life."
+    ],
+    "data_coverage": {
+      "total_emails": 4
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 0.8825000000000001,
+    "median_ikigai_score": 0.875,
+    "score_std": 0.022776083947860768,
+    "high_score_count": 4,
+    "medium_score_count": 0,
+    "low_score_count": 0,
+    "average_autonomy": 0.8625,
+    "category_distribution": {
+      "High": 2,
+      "Commercial-Personal": 2
+    },
+    "top_themes": [
+      [
+        "Autonomy and privacy in tech choices, with security consciousness",
+        2
+      ],
+      [
+        "Proactive, hands-on problem-solving with services and vendors",
+        2
+      ],
+      [
+        "Being well-informed about civic/political developments",
+        1
+      ],
+      [
+        "Informed engagement with UK politics/current affairs",
+        1
+      ],
+      [
+        "AI and local developer tools",
+        1
+      ],
+      [
+        "Outdoor/sport eyewear and performance gear",
+        1
+      ],
+      [
+        "Quality and performance orientation in lifestyle purchases",
+        1
+      ]
+    ],
+    "total_emails": 4
+  },
+  "email_count": 4
+}

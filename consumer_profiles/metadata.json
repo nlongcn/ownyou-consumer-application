@@ -1,0 +1,65 @@
+{
+  "profiles": {
+    "testuser": {
+      "last_saved": "2025-09-27T06:38:28.936871+00:00",
+      "file_size": 400,
+      "checksum": "27b8423009ad88c6c1ffcf549461cfad",
+      "version": 1
+    },
+    "testuser2": {
+      "last_saved": "2025-09-27T06:38:59.701310+00:00",
+      "file_size": 401,
+      "checksum": "fb4429fde73a66e4af10a7f3c28e51fd",
+      "version": 1
+    },
+    "testuser3": {
+      "last_saved": "2025-09-27T06:52:10.396351+00:00",
+      "file_size": 414,
+      "checksum": "28f617064f483a116a8cb58f120cff6c",
+      "version": 1
+    },
+    "your_profile_name": {
+      "last_saved": "2025-09-29T07:37:09.854444+00:00",
+      "file_size": 789,
+      "checksum": "fb72a5f0c9bb39db464047b091477c8c",
+      "version": 1
+    },
+    "test_user_fixed": {
+      "last_saved": "2025-09-29T07:06:33.413044+00:00",
+      "file_size": 2568,
+      "checksum": "6d26548f904dd0470be5716b32cd0e07",
+      "version": 1
+    },
+    "clean_test_user": {
+      "last_saved": "2025-09-29T07:35:10.199657+00:00",
+      "file_size": 2904,
+      "checksum": "280d6ade9206de1b983aa520ec041c36",
+      "version": 1
+    },
+    "Nick": {
+      "last_saved": "2025-09-29T14:04:52.298829+00:00",
+      "file_size": 23672,
+      "checksum": "7801987940a6a0b913ab81e572b1eea0",
+      "version": 1
+    },
+    "JSONTest": {
+      "last_saved": "2025-09-29T08:44:32.713706+00:00",
+      "file_size": 14470,
+      "checksum": "cc4b399af37ae2204ec926bed4b3e5ec",
+      "version": 1
+    },
+    "TestUser": {
+      "last_saved": "2025-09-29T09:07:09.453515+00:00",
+      "file_size": 14224,
+      "checksum": "ad0ca80767708bf9c6c5f058b020f98d",
+      "version": 1
+    },
+    "FullSystemTest": {
+      "last_saved": "2025-09-29T13:29:44.422927+00:00",
+      "file_size": 63465,
+      "checksum": "3f6958c1ea810d4ee2ba6153377f9c58",
+      "version": 1
+    }
+  },
+  "last_cleanup": "2025-09-27T06:38:28.912847+00:00"
+}

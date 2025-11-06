@@ -1,0 +1,307 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-29T07:39:07.338076",
+    "primary_ikigai": "Local planning and environmental stewardship (Elmbridge Borough Council monitoring)",
+    "secondary_areas": [
+      "Decentralized systems and crypto learning/experimentation",
+      "Digital privacy and account security practice"
+    ],
+    "confidence_score": 0.83,
+    "supporting_evidence": [
+      {
+        "pattern": "Sustained, self-configured monitoring of local planning activity and environmental impact",
+        "strength": "high",
+        "examples": [
+          "Elmbridge Borough Council referenced 5+6 times; KT12 4BX and environmental impact assessment appear repeatedly",
+          "Distill alerts set to track planning applications and details (e.g., irrigation reservoir EIA, boundary fence/realignment, landscaping, gatehouse)"
+        ]
+      },
+      {
+        "pattern": "Ongoing curiosity about decentralized tech and markets",
+        "strength": "medium",
+        "examples": [
+          "Consistent interests over time: Bitcoin (4), Blockchain consensus mechanisms (4)",
+          "Chosen topics include DeFi (3) and S&P 500 (3), indicating self-directed research outside marketing"
+        ]
+      },
+      {
+        "pattern": "Active care for privacy and account security",
+        "strength": "medium",
+        "examples": [
+          "Microsoft account (4) and security alert (4) appear as consistent interests",
+          "Privacy noted among chosen topics (3), suggesting a voluntary focus on digital hygiene"
+        ]
+      },
+      {
+        "pattern": "Growth and learning orientation embedded in daily habits",
+        "strength": "medium",
+        "examples": [
+          "Learning indicators present 6 times; terms like course (3), tutorial (1), develop (4), education/growth (3 total) show active skill-building",
+          "AI agents (3) suggests hands-on exploration of new tools"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Strong tie to the external world via local government processes—tracking Elmbridge Borough Council applications tied to real places (e.g., KT12 4BX) and environmental assessments connects personal choices to community outcomes.",
+      "active_engagement": "Evidence of action over passive consumption: configuring Distill page monitors, repeatedly checking planning updates, and digging into technical topics (consensus mechanisms, AI agents) rather than only reading headlines.",
+      "emotional_meaning": "Repeated attention to environmental impact and neighborhood planning implies care for place, landscape, and shared spaces—sources of quiet, everyday satisfaction.",
+      "voluntary_pursuit": "Topics are self-chosen (alerts set up by the user; repeated crypto/privacy queries); not driven by required communications or commercial pushes.",
+      "everyday_joy": "Small, regular check-ins on planning pages; following specific application changes; tinkering with agents/tech; maintaining account security—all modest, daily actions that add meaning.",
+      "growth_orientation": "Clear learning signals (courses, tutorials, developing) across technical domains suggest enjoyment in incremental mastery and evolving interests."
+    },
+    "personal_patterns": {
+      "total_emails": 200,
+      "personal_email_count": 160,
+      "personal_percentage": 80.0,
+      "personal_topics": [
+        [
+          "Elmbridge Borough Council",
+          5
+        ],
+        [
+          "KT12 4BX",
+          3
+        ],
+        [
+          "environmental impact assessment",
+          3
+        ],
+        [
+          "DeFi",
+          3
+        ],
+        [
+          "S&P 500",
+          3
+        ],
+        [
+          "Microsoft account",
+          3
+        ],
+        [
+          "Goodwood",
+          3
+        ],
+        [
+          "team names",
+          3
+        ],
+        [
+          "AI agents",
+          3
+        ],
+        [
+          "privacy",
+          3
+        ],
+        [
+          "IMF research",
+          3
+        ],
+        [
+          "Layer 2 scalability",
+          3
+        ],
+        [
+          "Online Safety Act",
+          3
+        ],
+        [
+          "age verification",
+          3
+        ],
+        [
+          "irrigation reservoir",
+          2
+        ]
+      ],
+      "growth_patterns": {
+        "growth_indicators": [
+          {
+            "keyword": "course",
+            "frequency": 3
+          },
+          {
+            "keyword": "tutorial",
+            "frequency": 1
+          },
+          {
+            "keyword": "develop",
+            "frequency": 4
+          },
+          {
+            "keyword": "growth",
+            "frequency": 2
+          },
+          {
+            "keyword": "education",
+            "frequency": 1
+          },
+          {
+            "keyword": "training",
+            "frequency": 2
+          }
+        ],
+        "learning_frequency": 6
+      },
+      "consistent_interests": [
+        {
+          "topic": "Elmbridge Borough Council",
+          "frequency": 6,
+          "first_seen": "2025-09-23T07:49:11+00:00",
+          "last_seen": "2025-09-26T17:49:36+00:00"
+        },
+        {
+          "topic": "security alert",
+          "frequency": 4,
+          "first_seen": "2025-09-25T10:07:03-07:00",
+          "last_seen": "2025-09-26T07:42:43+00:00"
+        },
+        {
+          "topic": "Microsoft account",
+          "frequency": 4,
+          "first_seen": "2025-09-25T23:04:39-07:00",
+          "last_seen": "2025-09-26T10:01:55+00:00"
+        },
+        {
+          "topic": "Bitcoin",
+          "frequency": 4,
+          "first_seen": "2025-09-26T11:15:38+00:00",
+          "last_seen": "2025-09-27T01:13:01+00:00"
+        },
+        {
+          "topic": "Blockchain consensus mechanisms",
+          "frequency": 4,
+          "first_seen": "2025-09-26T14:02:27+00:00",
+          "last_seen": "2025-09-26T15:03:27+00:00"
+        },
+        {
+          "topic": "planning applications",
+          "frequency": 3,
+          "first_seen": "2025-09-23T08:19:18+00:00",
+          "last_seen": "2025-09-26T17:49:36+00:00"
+        },
+        {
+          "topic": "KT12 4BX",
+          "frequency": 3,
+          "first_seen": "2025-09-23T08:19:18+00:00",
+          "last_seen": "2025-09-26T17:49:36+00:00"
+        },
+        {
+          "topic": "environmental impact assessment",
+          "frequency": 3,
+          "first_seen": "2025-09-23T08:19:18+00:00",
+          "last_seen": "2025-09-26T17:49:36+00:00"
+        },
+        {
+          "topic": "planning search",
+          "frequency": 3,
+          "first_seen": "2025-09-23T07:49:11+00:00",
+          "last_seen": "2025-09-26T17:19:28+00:00"
+        },
+        {
+          "topic": "DeFi",
+          "frequency": 3,
+          "first_seen": "2025-09-25T16:17:55+00:00",
+          "last_seen": "2025-09-26T22:12:33+00:00"
+        }
+      ],
+      "personal_samples": [
+        {
+          "Subject": "King’s key role in Trump’s u-turn",
+          "Key_Topics": "Trump, Zelensky, Ukraine, peace, politics",
+          "Category": "Newsletter",
+          "Summary": "Newsletter discussing Trump's sudden shift in Ukraine policy and Zelensky's role.",
+          "From": "\"Telegraph | From the Editor\" <editor@emails.telegraph.co.uk>"
+        },
+        {
+          "Subject": "New Research: Crypto Venture Weekly: September 22-26, 2025",
+          "Key_Topics": "fundraising, treasury allocations, acquisitions, valuations, crypto market",
+          "Category": "Newsletter",
+          "Summary": "Crypto Venture Weekly: September 22-26, 2025 highlights fundraising by Kraken and Fnality, treasury allocations by Strive and ETHZilla, acquisitions including Naver-Upbit, Archetype fund launch, and discussions on valuation and Tether; includes notable industry analysis.",
+          "From": "Messari Research Alerts <research@messari.io>"
+        },
+        {
+          "Subject": "Alert: Active pages | Elmbridge Borough Council",
+          "Key_Topics": "planning applications, Elmbridge Borough Council, KT12 4BX, irrigation reservoir, environmental impact assessment, boundary fence, realignment, landscaping, gatehouse",
+          "Category": "Newsletter",
+          "Summary": "Alert listing active planning applications for KT12 4BX in Elmbridge Borough, with statuses and links to view applications.",
+          "From": "Distill Alert <alert@distill.io>"
+        },
+        {
+          "Subject": "Alert: Active pages | Elmbridge Borough Council",
+          "Key_Topics": "Elmbridge Borough Council, planning search, data retrieval issue, Distill alert, terms and conditions",
+          "Category": "Newsletter",
+          "Summary": "Distill alert about Elmbridge Borough Council active planning search pages, reporting a data retrieval issue and retry guidance.",
+          "From": "Distill Alert <alert@distill.io>"
+        },
+        {
+          "Subject": "Explore our Summer ’25 product updates ✨",
+          "Key_Topics": "Summer 2025 Release, Canva integration, Watch, Feed, Apple TV app, HeyGen integration, Video transitions",
+          "Category": "Newsletter",
+          "Summary": "Vimeo announces Summer 2025 product updates including Canva integration, refreshed Watch and Feed, and the Apple TV app back, plus HeyGen integration and video transitions.",
+          "From": "Vimeo <vimeo@vimeo.com>"
+        },
+        {
+          "Subject": "New Research: TEE: Building Trust for the AI Era",
+          "Key_Topics": "TEEs, AI, blockchain, confidential computing, secure enclaves",
+          "Category": "Newsletter",
+          "Summary": "Research alert discussing how trusted execution environments (TEEs) and blockchain enable secure, confidential AI, with examples from iExec RLC, Phala Network, and Oasis.",
+          "From": "Messari Research Alerts <research@messari.io>"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 135,
+          "Personal Communication": 25
+        },
+        "engagement_timespan_days": 5
+      }
+    },
+    "recommendations": [
+      "Keep a simple planning log: when an Elmbridge application changes, note what changed and why it matters to you; aim for 5-minute entries.",
+      "Translate one planning item into action each month (e.g., submit a public comment, attend or watch a council session, or visit the site).",
+      "Create a lightweight EIA checklist to quickly assess new proposals (flooding, biodiversity, traffic, noise) during your routine checks.",
+      "Run one hands-on crypto experiment per month (e.g., simulate a consensus mechanism, run a testnet node, or compare staking vs. PoW security) and journal key learnings.",
+      "Build or refine a small AI agent to summarize council updates or track specific planning keywords (e.g., “EIA,” “boundary,” your postcode).",
+      "Establish a monthly privacy cadence: security key/passkey check, password manager audit, and recovery-code review—treat it as a quick, satisfying ritual.",
+      "Protect joy by scoping: 15-minute daily planning review, one deeper dive per week, and one tangible contribution per month to avoid overwhelm."
+    ],
+    "data_coverage": {
+      "total_emails": 200,
+      "personal_email_count": 160,
+      "personal_percentage": 80.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

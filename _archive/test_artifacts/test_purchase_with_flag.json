@@ -1,0 +1,136 @@
+{
+  "user_id": "test_purchase_intent",
+  "profile_version": 1,
+  "generated_at": "2025-10-06T15:21:20.937887",
+  "schema_version": "1.0",
+  "generator": {
+    "system": "email_parser_iab_taxonomy",
+    "llm_model": "claude:default",
+    "workflow_version": "1.0"
+  },
+  "data_coverage": {
+    "total_emails_analyzed": 12,
+    "emails_this_run": 12,
+    "date_range": "2025-10-06 to 2025-10-06"
+  },
+  "demographics": {
+    "age_range": {
+      "taxonomy_id": 7,
+      "tier_path": "Demographic | 35-39",
+      "value": "35-39",
+      "confidence": 0.6719999999999999,
+      "evidence_count": 1,
+      "last_validated": "2025-10-06T14:20:58.217621Z",
+      "days_since_validation": 0
+    },
+    "gender": {
+      "taxonomy_id": 20,
+      "tier_path": "Demographic | Male",
+      "value": "Male",
+      "confidence": 0.7629999999999999,
+      "evidence_count": 1,
+      "last_validated": "2025-10-06T14:21:15.200076Z",
+      "days_since_validation": 0
+    },
+    "education": {
+      "taxonomy_id": 32,
+      "tier_path": "Demographic | Bachelor's Degree",
+      "value": "Bachelor's Degree",
+      "confidence": 0.85302225978125,
+      "evidence_count": 3,
+      "last_validated": "2025-10-06T14:20:58.211366Z",
+      "days_since_validation": 0
+    },
+    "occupation": null,
+    "marital_status": null,
+    "language": null
+  },
+  "household": {
+    "location": null,
+    "income": null,
+    "length_of_residence": null,
+    "life_stage": null,
+    "median_home_value": null,
+    "monthly_housing_payment": null,
+    "number_of_adults": null,
+    "number_of_children": null,
+    "number_of_individuals": null,
+    "ownership": null,
+    "property_type": null,
+    "urbanization": null
+  },
+  "personal_finance": null,
+  "interests": [
+    {
+      "taxonomy_id": 350,
+      "tier_path": "Interest | Travel (General)",
+      "value": "Travel (General)",
+      "confidence": 0.9642499999999999,
+      "evidence_count": 1,
+      "last_validated": "2025-10-06T14:20:53.036933Z",
+      "days_since_validation": 0
+    }
+  ],
+  "purchase_intent": [
+    {
+      "taxonomy_id": 712,
+      "tier_path": "Purchase Intent | Cryptocurrency & Digital Assets",
+      "value": "Cryptocurrency & Digital Assets",
+      "confidence": 0.9744387499999999,
+      "evidence_count": 2,
+      "last_validated": "2025-10-06T14:20:29.551112Z",
+      "days_since_validation": 0,
+      "purchase_intent_flag": "ACTUAL_PURCHASE",
+      "classifications": null
+    },
+    {
+      "taxonomy_id": 751,
+      "tier_path": "Purchase Intent | Computers & Laptops",
+      "value": "Computers & Laptops",
+      "confidence": 0.9642499999999999,
+      "evidence_count": 1,
+      "last_validated": "2025-10-06T14:20:33.592889Z",
+      "days_since_validation": 0,
+      "purchase_intent_flag": "ACTUAL_PURCHASE",
+      "classifications": null
+    },
+    {
+      "taxonomy_id": 1001,
+      "tier_path": "Purchase Intent | Music Services",
+      "value": "Music Services",
+      "confidence": 0.9642499999999999,
+      "evidence_count": 1,
+      "last_validated": "2025-10-06T14:21:05.766502Z",
+      "days_since_validation": 0,
+      "purchase_intent_flag": "ACTUAL_PURCHASE",
+      "classifications": null
+    },
+    {
+      "taxonomy_id": 902,
+      "tier_path": "Purchase Intent | Grocery Delivery",
+      "value": "Grocery Delivery",
+      "confidence": 0.9642499999999999,
+      "evidence_count": 1,
+      "last_validated": "2025-10-06T14:21:09.185045Z",
+      "days_since_validation": 0,
+      "purchase_intent_flag": "ACTUAL_PURCHASE",
+      "classifications": null
+    }
+  ],
+  "actual_purchases": [],
+  "memory_stats": {
+    "total_facts_stored": 5,
+    "high_confidence_facts": 5,
+    "moderate_confidence_facts": 0,
+    "low_confidence_facts": 0,
+    "facts_needing_validation": 0,
+    "average_confidence": 0.9662877499999999
+  },
+  "section_confidence": {
+    "demographics": 0.7,
+    "household": 0.7,
+    "interests": 0.9642499999999999,
+    "purchase_intent": 0.9667971874999999,
+    "actual_purchases": 0.0
+  }
+}

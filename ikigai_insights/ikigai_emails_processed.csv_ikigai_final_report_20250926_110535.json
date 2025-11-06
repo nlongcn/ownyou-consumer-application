@@ -1,0 +1,124 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-26T10:05:35.422238",
+    "primary_ikigai": "Keeping up with financial markets and macroeconomics via daily briefings (reading habit)",
+    "secondary_areas": [
+      "Civic/economic policy awareness"
+    ],
+    "confidence_score": 0.34,
+    "supporting_evidence": [
+      {
+        "pattern": "Voluntary subscriptions to finance/economics briefings suggest a chosen interest in market movements and policy impacts",
+        "strength": "low",
+        "examples": [
+          "🔔Opening Bell Daily: Froth makes sense",
+          "Economics: Will the Budget crash the pound?"
+        ]
+      },
+      {
+        "pattern": "Security alert emails dominate remaining data but are required utilities, not voluntary pursuits; excluded from ikigai inference",
+        "strength": "high",
+        "examples": [
+          "New sign-in detected for your Microsoft account",
+          "New sign-in detected for your Microsoft account"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Connects to the external world by tracking markets and macro news; engagement appears one-way (reading) with no visible interaction.",
+      "active_engagement": "Evidence points to passive consumption; no actions, creation, or discussion captured.",
+      "emotional_meaning": "Subject choices imply curiosity about market dynamics and policy risk, but no explicit affect or personal reflection is present.",
+      "voluntary_pursuit": "Newsletters indicate opted-in interests; security notices are non-voluntary and excluded.",
+      "everyday_joy": "Possible micro-habit of scanning a market/economics brief; frequency and enjoyment level are unclear.",
+      "growth_orientation": "Learning indicators are zero; no signs of practice, reflection, or skill development tied to the interest."
+    },
+    "personal_patterns": {
+      "total_emails": 4,
+      "personal_email_count": 4,
+      "personal_percentage": 100.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "New sign-in detected for your Microsoft account",
+          "Category": "Personal Communication",
+          "Summary": "Microsoft account security alert about a new sign-in; provides details (country, date, IP) and links to review activity and security notifications; advises reviewing if unsure.",
+          "From": "Microsoft account team <account-security-noreply@accountprotection.microsoft.com>"
+        },
+        {
+          "Subject": "New sign-in detected for your Microsoft account",
+          "Category": "Personal Communication",
+          "Summary": "Security alert about a new sign-in to a Microsoft account, with options to review activity and update security settings.",
+          "From": "Microsoft account team <account-security-noreply@accountprotection.microsoft.com>"
+        },
+        {
+          "Subject": "🔔Opening Bell Daily: Froth makes sense",
+          "Category": "Newsletter",
+          "Summary": "Newsletter analysis of why record stock valuations and market froth may be justified by structural shifts and seasonal tailwinds, with coverage of tariff news and market metrics.",
+          "From": "opening-bell@mail.beehiiv.com"
+        },
+        {
+          "Subject": "Economics: Will the Budget crash the pound?",
+          "Category": "Newsletter",
+          "Summary": "Digest of The Spectator's economics highlights on the pound, the Budget's potential impact on sterling, and forecasts from Oxford Economics that the pound could be overvalued and risk a sharp correction, possibly leading to stagflation if debt becomes unsustainable.",
+          "From": "noreply@spectator.co.uk"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Personal Communication": 2,
+          "Newsletter": 2
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Turn reading into a 5-minute daily note: write one takeaway and one question from each market/economics email.",
+      "Track one simple thesis for 2–4 weeks (e.g., a currency or sector) and log what confirms or challenges it.",
+      "Create a tiny application loop: apply one insight to a personal budget tweak or a small mock portfolio and review weekly.",
+      "Add external connection: share a weekly summary with a friend or a forum thread; ask for one piece of feedback.",
+      "Reduce noise, deepen signal: keep one high-quality briefing; add one long-form source or podcast for context.",
+      "Separate utility alerts from interests with inbox filters so chosen pursuits stay salient and feel voluntary."
+    ],
+    "data_coverage": {
+      "total_emails": 4,
+      "personal_email_count": 4,
+      "personal_percentage": 100.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

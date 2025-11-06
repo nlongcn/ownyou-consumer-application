@@ -1,0 +1,249 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-26T08:26:44.673189",
+    "primary_ikigai": "Digital security & personal account stewardship (keeping digital life safe, controlled and up-to-date)",
+    "secondary_areas": [
+      "Deliberate consumerism — quality outdoor/eyewear purchases and control over transactions",
+      "Staying informed and civically aware — following UK current affairs and political news"
+    ],
+    "confidence_score": 0.85,
+    "supporting_evidence": [
+      {
+        "pattern": "Active monitoring and response to digital security events",
+        "strength": "medium-high",
+        "examples": [
+          "Email: 'New sign-in detected for your Microsoft account' — indicates attention to sign-in/security alerts",
+          "High ikigai score (0.95) on security-related email"
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Deliberate, autonomy-driven commerce around outdoor eyewear (order, cancellation, follow-up)",
+        "strength": "high",
+        "examples": [
+          "Email: 'Re: Re: Order Confirmation SG-1063009' — user actively cancelled/refunded an eyewear order",
+          "Follow-up order-related correspondence shows deliberate decision-making rather than passive acceptance"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Consuming and engaging with current affairs / political commentary (UK-focused)",
+        "strength": "medium",
+        "examples": [
+          "Email: 'Starmer: Labour got it wrong on migration' — subscription/editorial news consumption",
+          "Scores show this is a consistent interest though less frequent than commerce/security in this sample"
+        ],
+        "email_count": 1
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Practical and transactional connection: uses external channels (security providers, retailers, editorial sources) to maintain control and stay informed rather than for purely social reasons.",
+      "active_engagement": "Primarily active — the user responds to security events, cancels purchases deliberately, and maintains subscriptions; engagement is purposeful and self-directed.",
+      "emotional_meaning": "Meaning appears tied to autonomy, safety and competence — small daily reassurance from secure accounts and correct purchasing decisions, plus satisfaction from being well-informed.",
+      "voluntary_pursuit": "Interests appear chosen: subscription to editorial news and careful purchase management are voluntary. Commercial activity aligns with personal preferences rather than imposed obligations.",
+      "everyday_joy": "Small daily joys likely include the routine of staying on top of account security, reading curated news, and making confident consumer choices (e.g., selecting or canceling a purchase deliberately).",
+      "growth_orientation": "Evidence of deliberate decision-making and learning (research-driven purchases, attention to security) suggests a growth orientation focused on competence, not necessarily formal learning or broad explorations."
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [
+          "Digital security & account management",
+          "Current affairs / political news",
+          "E‑commerce / consumer purchases (outdoor eyewear)"
+        ],
+        "interest_areas": [
+          {
+            "area": "Consumer goods — outdoor / eyewear",
+            "strength": "medium",
+            "indicators": [
+              "Order and shipment/cancellation messages from SunGod for Custom Renegades™",
+              "Follow-up request to rate the conversation about the order"
+            ],
+            "frequency": 2,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Transactional account management (orders, refunds)",
+            "strength": "low",
+            "indicators": [
+              "Customer-initiated cancellation and merchant confirmation of refund",
+              "Automated follow-up asking for feedback on the order interaction"
+            ],
+            "frequency": 2,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Digital security & account management",
+            "strength": "medium",
+            "indicators": [
+              "Microsoft account new sign‑in notification (security alert)",
+              "Presence of multi‑device/location activity implied by unfamiliar IP/location"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Current affairs / politics (UK-focused)",
+            "strength": "medium",
+            "indicators": [
+              "Subscription to Telegraph editor newsletter about Sir Keir Starmer and immigration",
+              "Regular editorial-style news (implies interest in political analysis)"
+            ],
+            "frequency": 1,
+            "consistency": "consistent"
+          }
+        ],
+        "behavioral_patterns": {
+          "engagement_style": "mixed",
+          "information_preferences": "practical + informational (security alerts and news)",
+          "decision_making": "deliberate / research-driven (evidence: customer requested cancellation rather than passively accepting shipment; subscribes to editorial news)",
+          "temporal_consistency": "varied"
+        },
+        "value_indicators": [
+          "Staying informed and civically aware (editorial news subscription)",
+          "Account safety and control (responds to/monitors security events)",
+          "Quality/brand consideration and control over purchases (custom eyewear order, then cancel/refund)",
+          "Autonomy in consumption decisions (actively cancelled purchase)"
+        ],
+        "temporal_patterns": {
+          "evolution_trend": "stable_interests",
+          "seasonal_patterns": "not_detected",
+          "engagement_frequency": "low"
+        },
+        "engagement_styles": {
+          "engagement_style": "mixed",
+          "information_preferences": "practical + informational (security alerts and news)",
+          "decision_making": "deliberate / research-driven (evidence: customer requested cancellation rather than passively accepting shipment; subscribes to editorial news)",
+          "temporal_consistency": "varied"
+        },
+        "commercial_insights": {
+          "purchase_alignment": "aligned_with_interests",
+          "subscription_choices": "intentional",
+          "brand_preferences": "unclear (some preference indicated for direct-to-consumer outdoor eyewear — SunGod — but single brand datapoint)"
+        },
+        "confidence_factors": [
+          "Small sample (4 emails, single‑day snapshot) limits long‑term trend certainty",
+          "Mix of automated/system messages and subscription/commercial emails provides clear signals for some areas (news, a specific purchase) but not for broader lifestyle patterns"
+        ]
+      },
+      "score_statistics": {
+        "average_ikigai_score": 0.845,
+        "median_ikigai_score": 0.89,
+        "score_std": 0.1171537451385998,
+        "high_score_count": 3,
+        "medium_score_count": 1,
+        "low_score_count": 0,
+        "average_autonomy": 0.7999999999999999,
+        "category_distribution": {
+          "High": 3,
+          "Commercial-Personal": 1
+        },
+        "top_themes": [
+          [
+            "E-commerce / consumer purchases (outdoor / eyewear)",
+            2
+          ],
+          [
+            "Digital security & account management",
+            1
+          ],
+          [
+            "Transactional account management (security events)",
+            1
+          ],
+          [
+            "Current affairs / political news",
+            1
+          ],
+          [
+            "Staying informed and civically aware",
+            1
+          ],
+          [
+            "Transactional account management (order follow-up)",
+            1
+          ],
+          [
+            "Transactional account management (orders, refunds)",
+            1
+          ]
+        ],
+        "total_emails": 4
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Formalize the security ritual: set up a concise daily/weekly security check (e.g., security dashboard, login/activity review, two-factor checks) to convert vigilance into a low-effort habit that provides ongoing reassurance.",
+      "Curate news for meaningful civic engagement: keep the editorial subscription but refine filters or a morning digest to ensure news consumption stays informative without creating information overload.",
+      "Channel deliberate consumerism into communities: join niche communities or product beta groups for outdoor eyewear (forums, brand communities, Reddit) to turn transactional interest into social and skill-building engagement.",
+      "Document purchase decision criteria: create a short checklist (fit, lens specs, return policy, price) to make future purchases faster and to capture the learning that led to past cancellations/refunds.",
+      "Leverage commercial choices to express values: when buying, favor brands that align with preferences for quality, transparency, and good returns/ergonomics to reduce post-purchase friction.",
+      "Build small daily rituals that combine these areas: e.g., 10-minute morning routine of scanning security alerts + 10 minutes of curated news to reinforce the sense of control and being well-informed.",
+      "Explore lightweight learning paths: short courses or newsletters on digital privacy, personal data hygiene, or consumer rights can deepen competence and turn pragmatic tasks into growth opportunities.",
+      "Use automation intelligently: employ alerts, price-watches, and security notifications to free cognitive bandwidth while keeping control — automations should support, not replace, deliberate choices."
+    ],
+    "data_coverage": {
+      "total_emails": 4
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 0.845,
+    "median_ikigai_score": 0.89,
+    "score_std": 0.1171537451385998,
+    "high_score_count": 3,
+    "medium_score_count": 1,
+    "low_score_count": 0,
+    "average_autonomy": 0.7999999999999999,
+    "category_distribution": {
+      "High": 3,
+      "Commercial-Personal": 1
+    },
+    "top_themes": [
+      [
+        "E-commerce / consumer purchases (outdoor / eyewear)",
+        2
+      ],
+      [
+        "Digital security & account management",
+        1
+      ],
+      [
+        "Transactional account management (security events)",
+        1
+      ],
+      [
+        "Current affairs / political news",
+        1
+      ],
+      [
+        "Staying informed and civically aware",
+        1
+      ],
+      [
+        "Transactional account management (order follow-up)",
+        1
+      ],
+      [
+        "Transactional account management (orders, refunds)",
+        1
+      ]
+    ],
+    "total_emails": 4
+  },
+  "email_count": 4
+}

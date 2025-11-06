@@ -1,0 +1,199 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-26T09:19:46.985366",
+    "primary_ikigai": "Maintaining digital safety and seamless access to core tools—especially within the Microsoft ecosystem—as a daily practice that brings calm, control, and readiness.",
+    "secondary_areas": [
+      "Streamlined, reliable productivity routines in familiar Microsoft tools",
+      "Practical risk-reduction habits and light systems maintenance"
+    ],
+    "confidence_score": 0.6,
+    "supporting_evidence": [
+      {
+        "pattern": "Digital security vigilance triggers timely action and attention.",
+        "strength": "medium",
+        "examples": [
+          "New sign-in detected for your Microsoft account"
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Comfort and reliance on the Microsoft ecosystem for everyday operations.",
+        "strength": "medium",
+        "examples": [
+          "Security alert originating from Microsoft account services"
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Utility-first, transactional communication—engages when information is actionable.",
+        "strength": "medium",
+        "examples": [
+          "Security notification framed as an immediate task to verify activity"
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Values of safety, continuity, and data protection guide routine decisions.",
+        "strength": "medium",
+        "examples": [
+          "Monitoring sign-ins to protect account integrity and uninterrupted access"
+        ],
+        "email_count": 1
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Connects to the world through mainstream, stable platforms; prioritizes trustworthy identity and uninterrupted access to services over novelty.",
+      "active_engagement": "Primarily passive and reactive (alert-driven) with moderate autonomy; engages decisively when risks or security checks arise.",
+      "emotional_meaning": "Calm, relief, and confidence when accounts are protected and tools work without disruption; satisfaction from keeping things safe and orderly.",
+      "voluntary_pursuit": "Signals come from imposed system alerts, yet the ongoing choice to use and maintain Microsoft accounts shows a voluntary maintenance mindset.",
+      "everyday_joy": "Small wins like approving a 2FA prompt, seeing 'no suspicious activity' status, smooth logins, and predictable tool behavior that keeps the day frictionless.",
+      "growth_orientation": "Latent potential to move from reactive vigilance to proactive hygiene and light optimization (e.g., structured reviews, feature mastery); limited direct evidence so far."
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [
+          "Digital security vigilance",
+          "Reliance on mainstream tech ecosystems (Microsoft)",
+          "Utility-first, transactional communication"
+        ],
+        "interest_areas": [
+          {
+            "area": "Digital security & account protection",
+            "strength": "low",
+            "indicators": [
+              "Receipt of a Microsoft security alert",
+              "Prompt to review account activity/settings"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Microsoft ecosystem / productivity tools",
+            "strength": "low",
+            "indicators": [
+              "Active Microsoft account presence",
+              "Engagement with platform security workflows"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          }
+        ],
+        "behavioral_patterns": {
+          "engagement_style": "passive",
+          "information_preferences": "practical",
+          "decision_making": "habitual",
+          "temporal_consistency": "varied"
+        },
+        "value_indicators": [
+          "Safety and risk mitigation",
+          "Protection of personal data",
+          "Reliability and continuity of access"
+        ],
+        "temporal_patterns": {
+          "evolution_trend": "insufficient_data",
+          "seasonal_patterns": "not_detected",
+          "engagement_frequency": "low"
+        },
+        "engagement_styles": {
+          "engagement_style": "passive",
+          "information_preferences": "practical",
+          "decision_making": "habitual",
+          "temporal_consistency": "varied"
+        },
+        "commercial_insights": {
+          "purchase_alignment": "unclear",
+          "subscription_choices": "unclear",
+          "brand_preferences": "unclear"
+        },
+        "confidence_factors": [
+          "No longitudinal or cross-category data to validate consistency",
+          "Single automated security email limits pattern inference"
+        ]
+      },
+      "score_statistics": {
+        "average_ikigai_score": 1.0,
+        "median_ikigai_score": 1.0,
+        "score_std": 0.0,
+        "high_score_count": 1,
+        "medium_score_count": 0,
+        "low_score_count": 0,
+        "average_autonomy": 0.6,
+        "category_distribution": {
+          "High": 1
+        },
+        "top_themes": [
+          [
+            "Digital security vigilance",
+            1
+          ],
+          [
+            "Microsoft ecosystem / productivity tools",
+            1
+          ],
+          [
+            "Utility-first, transactional communication",
+            1
+          ]
+        ],
+        "total_emails": 1
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Establish a 10-minute weekly security check ritual: review recent activity, sign-in log, recovery info, and devices on the Microsoft account dashboard.",
+      "Consolidate authentication: use Microsoft Authenticator with number matching and store backup codes securely (offline or in a password manager).",
+      "Adopt a reputable password manager and rotate high-value credentials on a 6–12 month cadence; enable breach alerts.",
+      "Enable and standardize security notifications across key services (email, SMS, authenticator) and remove redundant or noisy channels.",
+      "Use Microsoft’s built-in features: OneDrive Personal Vault for sensitive files, security defaults, device sign-out, and review of app permissions.",
+      "Create a simple personal security playbook: what to do if you see an unfamiliar sign-in, lose a device, or need to lock down accounts.",
+      "Translate vigilance into productive ease: pin most-used Microsoft tools, set predictable start-of-day routines, and automate low-level tasks where possible.",
+      "Review quarterly: retire unused apps/devices, simplify your tech stack, and note one new security or productivity feature to learn for steady, low-effort growth."
+    ],
+    "data_coverage": {
+      "total_emails": 1
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 1.0,
+    "median_ikigai_score": 1.0,
+    "score_std": 0.0,
+    "high_score_count": 1,
+    "medium_score_count": 0,
+    "low_score_count": 0,
+    "average_autonomy": 0.6,
+    "category_distribution": {
+      "High": 1
+    },
+    "top_themes": [
+      [
+        "Digital security vigilance",
+        1
+      ],
+      [
+        "Microsoft ecosystem / productivity tools",
+        1
+      ],
+      [
+        "Utility-first, transactional communication",
+        1
+      ]
+    ],
+    "total_emails": 1
+  },
+  "email_count": 1
+}

@@ -1,0 +1,375 @@
+{
+  "communication_patterns": {
+    "volume_metrics": {
+      "total_communications": 4,
+      "unique_senders": 3,
+      "category_diversity": 2
+    },
+    "category_distribution": {
+      "Other": 0.5,
+      "Newsletter": 0.5
+    },
+    "primary_communication_type": "Other"
+  },
+  "interest_clusters": {},
+  "purchase_behavior": {
+    "confirmed_transactions": [],
+    "transaction_count": 0,
+    "transaction_frequency": 0,
+    "product_analysis": {
+      "categories": [
+        "Digital identity and interoperability standards",
+        "Industry events and conferences",
+        "News and culture commentary newsletters"
+      ],
+      "specific_products": [
+        "ISO interoperability test event (invitation received; potential consideration)",
+        "Clothes-minded newsletter (subscribed/reading)"
+      ],
+      "brands_engaged": [
+        "ISO",
+        "OpenID"
+      ]
+    },
+    "service_analysis": {
+      "subscriptions": [
+        "Clothes-minded newsletter",
+        "[Openid-dcp] standards/mailing list"
+      ],
+      "professional_services": [],
+      "digital_services": [
+        "Standards/mailing list platforms (OpenID/ISO)",
+        "Newsletter platform (Clothes-minded)"
+      ]
+    },
+    "spending_analysis": {
+      "transaction_categories": [],
+      "price_sensitivity": "No price-related signals present.",
+      "purchase_frequency": "No purchase-related communications observed."
+    },
+    "research_behavior": {
+      "consideration_categories": [
+        "Professional standards/interoperability events"
+      ],
+      "information_seeking": [
+        "Event details and logistics for standards interoperability testing (via invitation)"
+      ],
+      "comparison_shopping": []
+    }
+  },
+  "geographic_indicators": {
+    "location_indicators": [
+      "Wellington, New Zealand",
+      "NZ (in event dates: Nov 16-18, NZ)"
+    ],
+    "regional_services": [],
+    "currency_indicators": "None observed",
+    "local_business_engagement": [],
+    "likely_region": "New Zealand (Wellington)",
+    "confidence": "low"
+  },
+  "temporal_patterns": {
+    "date_range": {
+      "start": "2025-09-26T08:49:36+00:00",
+      "end": "2025-09-26T10:23:03+00:00",
+      "span_days": 0
+    },
+    "day_distribution": {
+      "Friday": 4
+    },
+    "hour_distribution": {
+      "10": 3,
+      "8": 1
+    }
+  },
+  "engagement_profile": {
+    "engagement_level": "low",
+    "engagement_diversity": {
+      "category_count": 2,
+      "diversity_level": "low"
+    },
+    "significant_patterns": 3,
+    "pattern_confidence": 0.6571428571428571
+  },
+  "pattern_evidence": [
+    {
+      "pattern_type": "communication_volume",
+      "observation": "Analyzed 4 email communications",
+      "frequency": 4,
+      "context": "Overall communication activity level",
+      "confidence": 0.5
+    },
+    {
+      "pattern_type": "service_engagement",
+      "observation": "Active Microsoft account with security notifications enabled; multiple new sign-in alerts in short succession",
+      "frequency": 1,
+      "context": "Two distinct 'New sign-in detected' emails suggest actual sign-in events (new device/location or VPN) and indicate the user monitors account security. This reflects active use of the Microsoft ecosystem and a security-aware posture.",
+      "confidence": 0.85
+    },
+    {
+      "pattern_type": "professional_community_engagement",
+      "observation": "Subscribed to OpenID Digital Credentials Protocols mailing list; receiving ISO interop event invitation",
+      "frequency": 1,
+      "context": "Listserv traffic for a standards-focused group is typically opt-in and targeted to practitioners. Receiving an ISO interoperability test event invite indicates involvement or sustained interest in digital identity and credential standards.",
+      "confidence": 0.72
+    },
+    {
+      "pattern_type": "interest_engagement",
+      "observation": "Subscribed to a geopolitics-focused newsletter (International Intrigue)",
+      "frequency": 1,
+      "context": "Opt-in, topic-specific newsletter implies deliberate interest in global affairs and culture beyond generic marketing. With only one instance, it signals an existing subscription but not yet a strong consumption pattern.",
+      "confidence": 0.55
+    },
+    {
+      "pattern_type": "technology_usage_pattern",
+      "observation": "Concentration in identity/security technologies",
+      "frequency": 1,
+      "context": "Email mix is skewed toward authentication, digital credentials, and security topics, suggesting the user's professional domain or active technical focus centers on identity and access management.",
+      "confidence": 0.78
+    },
+    {
+      "pattern_type": "communication_behavior",
+      "observation": "Off-hours account activity indicated by sign-in alerts",
+      "frequency": 1,
+      "context": "Security alerts timestamped in the early morning imply late-night usage, automation, cross-time-zone work, or device changes during off-hours. Exact reading behavior is unknown, but the trigger times reflect user/account activity.",
+      "confidence": 0.6
+    },
+    {
+      "pattern_type": "geographic_cultural_indicator",
+      "observation": "International orientation in content and communities",
+      "frequency": 1,
+      "context": "Content spans international news/culture and a global standards event (Wellington, NZ), indicating engagement with globally distributed communities and topics. This suggests a globally oriented professional/personal interest set, not merely local marketing.",
+      "confidence": 0.6
+    }
+  ],
+  "demographic_possibilities": {
+    "age_analysis": {
+      "likely_range": "25-44",
+      "confidence": "medium",
+      "evidence": "Participation in OpenID Digital Credentials Protocols mailing list and receipt of an ISO interop event invite indicate a practitioner/standards-engaged role; active Microsoft account with security alerts suggests working-age professional habits; interest in geopolitics/newsletter consumption aligns with adult information-seeking behavior."
+    },
+    "lifestyle_profile": {
+      "characteristics": [
+        "security- and privacy-conscious (monitors account sign-ins, uses security notifications)",
+        "professionally engaged with identity and access management/digital identity standards",
+        "globally oriented information diet and community participation",
+        "irregular or cross-time-zone activity patterns",
+        "active Microsoft ecosystem user",
+        "email stream skewed toward professional/technical content rather than retail/promotional traffic"
+      ],
+      "confidence": "medium",
+      "evidence": "Multiple new sign-in alerts in short succession with security monitoring; subscription to OpenID Digital Credentials Protocols list and ISO interop invite; subscription to an international affairs newsletter; off-hours timestamps on security alerts; concentration in identity/security technologies."
+    },
+    "economic_indicators": {
+      "spending_patterns": [
+        "No direct purchase receipts or transactional emails observed in the sample",
+        "Observed emails are primarily security notifications and professional/news newsletters",
+        "No evidence of subscriptions with billing notices or retail activity in the dataset"
+      ],
+      "income_signals": "Engagement in niche technical standards (IAM/digital identity) is consistent with knowledge-worker roles that often fall into mid-to-high income brackets, but there is no direct financial evidence in the communications.",
+      "confidence": "low"
+    },
+    "geographic_analysis": {
+      "location_indicators": [
+        "Existing analysis references an event invitation listing Wellington, New Zealand (Nov 16–18, NZ) as context"
+      ],
+      "likely_region": "Wellington, New Zealand",
+      "confidence": "low"
+    },
+    "data_quality": "Limited dataset (reported 3 total communications vs. 4 analyzed creates a minor inconsistency). Heavily skewed toward automated security alerts and a single standards/event invite plus one newsletter, which may overrepresent professional interests and underrepresent general behavior or spending. Time span unknown; off-hours inference is tentative. Conclusions emphasize behavioral indicators where repeated patterns exist but remain constrained by sample size."
+  },
+  "next_purchase_signals": [
+    {
+      "rank": 1,
+      "category": "Hotels and Resorts",
+      "tier_1": "Travel and Tourism",
+      "tier_2": "Accommodations",
+      "tier_3": "Hotels and Resorts",
+      "probability": 0.58,
+      "reasoning": "Received an ISO interoperability test event invitation for Nov 16–18 in Wellington, NZ. Attending a multi-day standards interop typically requires nearby lodging, especially given off-hours activity patterns that suggest long working windows around events.",
+      "lifestyle_connection": "Active in professional standards communities (OpenID DCP list; ISO invite) with global orientation; travel/lodging is a direct complement to conference participation.",
+      "brand_connection": "None observed in this category (travel need is driven by ISO/OpenID engagement rather than a hotel brand).",
+      "purchase_timeline": "short-term (pre-Nov 16–18 event)",
+      "confidence": "medium"
+    },
+    {
+      "rank": 2,
+      "category": "Laptops",
+      "tier_1": "Consumer Electronics",
+      "tier_2": "Computers",
+      "tier_3": "Laptops",
+      "probability": 0.5,
+      "reasoning": "Multiple Microsoft account new sign-in alerts and ongoing involvement in digital identity/interoperability indicate active device use and security-aware workflows. Upcoming ISO interop testing often requires a reliable, portable dev/test machine.",
+      "lifestyle_connection": "Identity/security practitioner behavior (OpenID DCP subscription, ISO interop invite) suggests need for a capable laptop for protocol testing, demos, and travel-ready work.",
+      "brand_connection": "Microsoft (active account ecosystem) — likely consideration of Surface family or Windows-first devices.",
+      "purchase_timeline": "short-term",
+      "confidence": "medium"
+    },
+    {
+      "rank": 3,
+      "category": "Office Products",
+      "tier_1": "Consumer Packaged Goods",
+      "tier_2": "Office/School Supplies",
+      "tier_3": "Office Products",
+      "probability": 0.42,
+      "reasoning": "Standards event participation and mailing list work imply planning, note-taking, document organization, and on-site logistics (folders, notebooks, badge holders). These complement conference attendance.",
+      "lifestyle_connection": "Professionally engaged in standards communities; preparing for sessions and capturing interop findings requires basic office supplies.",
+      "brand_connection": "None observed in this category (digital brand activity is Microsoft/ISO/OpenID, not a physical office-supplies brand).",
+      "purchase_timeline": "short-term",
+      "confidence": "medium"
+    },
+    {
+      "rank": 4,
+      "category": "Coffee and Tea",
+      "tier_1": "Consumer Packaged Goods",
+      "tier_2": "Beverages",
+      "tier_3": "Coffee and Tea",
+      "probability": 0.38,
+      "reasoning": "Off-hours sign-in alerts suggest early/late work sessions; preparing for a multi-day interop event also correlates with higher caffeine consumption. Wellington has a strong coffee culture, aligning with local availability.",
+      "lifestyle_connection": "Knowledge worker in global standards contexts; caffeinated beverages support extended and cross-time-zone work rhythms.",
+      "brand_connection": "None observed (no beverage brands in communications).",
+      "purchase_timeline": "immediate",
+      "confidence": "low-medium"
+    },
+    {
+      "rank": 5,
+      "category": "Socks",
+      "tier_1": "Consumer Packaged Goods",
+      "tier_2": "Hosiery",
+      "tier_3": "Socks",
+      "probability": 0.26,
+      "reasoning": "Subscription to a fashion/culture newsletter (Clothes-minded) plus an upcoming professional event suggests light wardrobe refreshes for conference days; hosiery/socks are common, low-friction updates.",
+      "lifestyle_connection": "Style-aware content consumption paired with public-facing professional attendance (interop event) supports minor apparel tune-ups.",
+      "brand_connection": "Clothes-minded (fashion content brand engaged; no specific apparel brand observed).",
+      "purchase_timeline": "short-term",
+      "confidence": "low"
+    }
+  ],
+  "ikigai": {
+    "primary_ikigai": "Technical community collaboration (standards / interoperability / hands-on events)",
+    "secondary_areas": [
+      "Cultural / clothing interest (style, global culture)",
+      "Curiosity-driven subscriptions (light, exploratory interests)"
+    ],
+    "confidence_score": 0.4,
+    "supporting_evidence": [
+      {
+        "pattern": "Engagement with technical community invitations (suggests willingness to participate in external, collaborative events)",
+        "strength": "medium",
+        "examples": [
+          "[Openid-dcp] ISO interoperability Test Event Invitation (Nov 16-18, NZ)"
+        ]
+      },
+      {
+        "pattern": "Subscription to a culturally framed clothing newsletter (indicates an interest in culture/style that connects to the world externally)",
+        "strength": "low",
+        "examples": [
+          "🌍 Clothes-minded — newsletter@internationalintrigue.io"
+        ]
+      },
+      {
+        "pattern": "Balanced mix of personal vs non-personal emails (50% personal engagement rate) — indicates some deliberate selection of communications but low volume overall",
+        "strength": "low",
+        "examples": [
+          "Personal engagement emails: 2 of 4 (50.0%)"
+        ]
+      },
+      {
+        "pattern": "Little direct evidence of routine learning activity (learning frequency indicators: 0)",
+        "strength": "low",
+        "examples": [
+          "Growth & Learning Patterns: Learning frequency indicators: 0"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Present — interest appears to connect outwardly via community technical events and culturally oriented newsletters; interaction likely with communities and global content rather than purely internal reflection.",
+      "active_engagement": "Limited but present — the OpenID test-event invitation implies an opportunity for active participation; the newsletter appears more passive unless consciously acted on.",
+      "emotional_meaning": "Unclear/low evidence — there are signals of personal taste (clothing/culture) and professional engagement, but no explicit language of joy or meaning in the data.",
+      "voluntary_pursuit": "Likely voluntary — subscriptions and mailing-list invitations point to chosen interests rather than imposed communications, though some items may be marketing.",
+      "everyday_joy": "Sparse evidence — no clear small daily practices found; current data suggests intermittent engagement rather than daily rituals.",
+      "growth_orientation": "Weakly indicated — technical event involvement implies potential skill/development interest, but explicit learning frequency is absent."
+    },
+    "personal_patterns": {
+      "total_emails": 4,
+      "personal_email_count": 2,
+      "personal_percentage": 50.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "🌍 Clothes-minded",
+          "Category": "Newsletter",
+          "Summary": "Newsletter briefing highlighting geopolitics of fashion week, a Norwegian comedy, and the line 'They finally opened her house'.",
+          "From": "newsletter@internationalintrigue.io"
+        },
+        {
+          "Subject": "[Openid-dcp] ISO interoperability Test Event Invitation (Nov 16-18, NZ)",
+          "Category": "Newsletter",
+          "Summary": "Invitation to ISO interoperability test event (Nov 16-18) in Wellington, New Zealand; invitation attached.",
+          "From": "openid-specs-digital-credentials-protocols-bounces@lists.openid.net"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 2
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Lean into the technical-community ikigai: accept or attend one interoperability/test event or related meetup in the next 3 months to convert passive receipt of invitations into active participation.",
+      "Turn the clothing/culture interest into a small daily practice: e.g., a weekly micro-project (style mood board, short cultural reading) to create consistent, concrete activity that brings everyday joy.",
+      "Increase visible learning signals: schedule 15–30 minutes twice a week for focused learning (standards notes, blog posts, hands-on test cases) and track it to strengthen growth_orientation evidence.",
+      "Convert subscriptions into interaction: reply, ask a question, or contribute to a mailing list thread to shift from passive consumption to voluntary external connection and emotional engagement.",
+      "Prefer specific, small activities over abstract goals: set one concrete action per week tied to each ikigai area (attend an event, create one outfit/culture post, document one learning takeaway).",
+      "Audit marketing vs authentic content: remove or reclassify newsletters that are clearly commercial so genuine personal interests stand out and can be nurtured."
+    ],
+    "analysis_timestamp": "2025-09-26T10:31:43.945930"
+  },
+  "confidence_metrics": {
+    "data_volume": 0.232,
+    "evidence_quality": 0.6571428571428571,
+    "evidence_count": 1.0,
+    "pattern_diversity": 1.0,
+    "data_completeness": 0.75,
+    "overall_confidence": 0.1595
+  },
+  "summary": "Communication patterns (4 total, split between newsletters and other) indicate a professional orientation toward digital identity and interoperability standards (OpenID/ISO) alongside light engagement with culture/news commentary via a Clothes-minded newsletter. With no purchase activity or price signals, interactions are subscription-driven and event-curious, suggesting value in concise, logistics-forward updates, clear CTAs for standards events, and options to manage or tailor subscriptions. Geographic cues suggest Wellington, New Zealand (low confidence), so test NZ-friendly send times and localized references while confirming location and content preferences. Given low overall confidence (~0.16) due to sparse data, prioritize preference capture and incremental testing of cadence and topic depth across standards updates and newsletter content to sharpen relevance.",
+  "analysis_model": "ollama:openai:gpt-5",
+  "analysis_timestamp": "2025-09-26T10:31:59.304296",
+  "schema_version": "1.0",
+  "generator": {
+    "name": "UnbiasedMarketingAnalyzer",
+    "version": "v1",
+    "model": "ollama:openai:gpt-5",
+    "seed": 42
+  },
+  "data_coverage": {
+    "total_emails": 4,
+    "analyzed_emails": 4,
+    "filtered_non_marketing": 3,
+    "samples": {
+      "patterns": 4,
+      "products_services": 4,
+      "geographic": 3
+    },
+    "time_range": {
+      "start": "2025-09-26T08:49:36+00:00",
+      "end": "2025-09-26T10:23:03+00:00",
+      "span_days": 0
+    }
+  },
+  "section_confidence": {
+    "communication": 0.62,
+    "interests": 0.2,
+    "purchases": 0.2,
+    "geographic": 0.3,
+    "temporal": 0.2,
+    "engagement": 0.957
+  }
+}

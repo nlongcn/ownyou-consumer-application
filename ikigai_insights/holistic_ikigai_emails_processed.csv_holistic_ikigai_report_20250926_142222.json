@@ -1,0 +1,236 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-26T13:22:22.694384",
+    "primary_ikigai": "Turning complex digital-asset and ETF structures into compliant, tax‑efficient client solutions through ongoing, research‑driven learning",
+    "secondary_areas": [
+      "Cutting-edge crypto research and product scouting",
+      "Continuing education and credential maintenance"
+    ],
+    "confidence_score": 0.85,
+    "supporting_evidence": [
+      {
+        "pattern": "Professional finance practice anchored in tax-aware structuring and CE-driven mastery",
+        "strength": "high",
+        "examples": [
+          "Today: Webcast - From Lockups to Liquidity: Using 351 Conversions to enter ETFs - 1 CE Credit",
+          "Grayscale® Near Trust Now Trading Publicly (Ticker: GSNR)"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Sustained interest in digital assets infrastructure and new investable vehicles",
+        "strength": "high",
+        "examples": [
+          "New Research: State of Babylon Q2 2025",
+          "Grayscale® Near Trust Now Trading Publicly (Ticker: GSNR)"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Continuous learning and market vigilance via research alerts and structured education",
+        "strength": "high",
+        "examples": [
+          "New Research: State of Babylon Q2 2025",
+          "Today: Webcast - From Lockups to Liquidity: Using 351 Conversions to enter ETFs - 1 CE Credit"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Peripheral curiosity about advertising/adtech news",
+        "strength": "low",
+        "examples": [
+          "WEEKLY REVIEW: Fake Ads, Fake Snacks, Real Panic"
+        ],
+        "email_count": 1
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Connects through advisor-focused CE providers, issuer/product updates, and research publishers—leveraging compliant, data-backed sources to stay aligned with client-facing standards.",
+      "active_engagement": "High autonomy (0.76) and three high-relevance emails show chosen participation: registering for CE webcasts, subscribing to targeted research, and tracking new product launches.",
+      "emotional_meaning": "Finds satisfaction in decoding structures, optimizing tax outcomes, and being early yet rigorous—translating complexity into clean, client-ready solutions.",
+      "voluntary_pursuit": "Signals of intentional subscriptions and consistent brand preferences indicate these are self-chosen information streams rather than imposed communications.",
+      "everyday_joy": "Scanning research alerts, bookmarking CE sessions, comparing trust/ETF mechanics, and refining playbooks for liquidity and tax efficiency provide small, daily wins.",
+      "growth_orientation": "Clear cadence of CE and research consumption; embraces innovation (digital-asset infrastructure, new wrappers) while maintaining compliance and analytical depth."
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [
+          "Digital assets and crypto investment research/products",
+          "Professional finance practice with tax-aware ETF structuring",
+          "Continuous learning and market vigilance"
+        ],
+        "interest_areas": [
+          {
+            "area": "Continuing education and credential maintenance",
+            "strength": "medium",
+            "indicators": [
+              "Webcast offering 1 CE credit",
+              "Preference for research-heavy/industry review content (Messari, ADOTAT)"
+            ],
+            "frequency": 3,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Digital assets and crypto investment research",
+            "strength": "high",
+            "indicators": [
+              "Messari research alert on Babylon ecosystem and Bitcoin-native restaking",
+              "Grayscale Near Trust (NEAR) public quotation update"
+            ],
+            "frequency": 2,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Professional finance/ETF structuring and tax optimization",
+            "strength": "medium",
+            "indicators": [
+              "RIA Database webcast on IRS Section 351 conversions to enter ETFs",
+              "CE credit positioning aimed at advisors"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Advertising/adtech industry awareness",
+            "strength": "low",
+            "indicators": [
+              "ADOTAT weekly review on advertising fraud and industry topics",
+              "Promotion of ADOTAT+ industry subscription"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          }
+        ],
+        "behavioral_patterns": {
+          "engagement_style": "mixed",
+          "information_preferences": "educational/practical",
+          "decision_making": "research-driven",
+          "temporal_consistency": "moderately_consistent"
+        },
+        "value_indicators": [
+          "Professional credibility and compliance (advisor-focused CE, structured strategies)",
+          "Mastery and continual learning (seeks research alerts, CE opportunities)",
+          "Innovation/early adoption (interest in emerging crypto infrastructure and products)",
+          "Analytical rigor and due diligence (prefers data-backed research and structured investment vehicles)",
+          "Efficiency and tax optimization (focus on liquidity and tax-deferral mechanisms)"
+        ],
+        "temporal_patterns": {
+          "evolution_trend": "stable_interests",
+          "seasonal_patterns": "not_detected",
+          "engagement_frequency": "medium"
+        },
+        "engagement_styles": {
+          "engagement_style": "mixed",
+          "information_preferences": "educational/practical",
+          "decision_making": "research-driven",
+          "temporal_consistency": "moderately_consistent"
+        },
+        "commercial_insights": {
+          "purchase_alignment": "aligned_with_interests",
+          "subscription_choices": "intentional",
+          "brand_preferences": "consistent"
+        },
+        "confidence_factors": [
+          "Highly specialized, professional-grade content suggests deliberate selection and authentic interest",
+          "Limited sample from a single day constrains temporal trend inference"
+        ]
+      },
+      "score_statistics": {
+        "average_ikigai_score": 0.7324999999999999,
+        "median_ikigai_score": 0.885,
+        "score_std": 0.31235996862594284,
+        "high_score_count": 3,
+        "medium_score_count": 0,
+        "low_score_count": 1,
+        "average_autonomy": 0.7575000000000001,
+        "category_distribution": {
+          "High": 2,
+          "Pure-Commercial": 1,
+          "Commercial-Personal": 1
+        },
+        "top_themes": [
+          [
+            "Digital assets and crypto investment research/products",
+            2
+          ],
+          [
+            "Continuous learning and market vigilance",
+            2
+          ],
+          [
+            "Innovation/early adoption",
+            2
+          ],
+          [
+            "Professional finance practice with tax-aware ETF structuring",
+            2
+          ]
+        ],
+        "total_emails": 4
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Maintain a quarterly CE cadence tied to practice goals (e.g., one tax-structure webinar per quarter) and summarize key takeaways in a one-page internal memo.",
+      "Build a living “tax-efficient digital-asset playbook” covering 351 conversions, trust-to-ETF progressions, and liquidity considerations with example case studies.",
+      "Create a lightweight research workflow: weekly 30-minute review block, highlight notes, and a decision log capturing thesis, risks, and triggers for action.",
+      "Track a product-structure watchlist (new trusts, ETF conversions, and wrappers) with dates, custodians, liquidity metrics, and tax angles to aid quick client communication.",
+      "Join issuer/research office hours or webinars and pose one technical question each session to deepen practical understanding and network with product teams.",
+      "Translate learning into client value: a quarterly client-facing explainer on one structure (e.g., lockups to liquidity via 351) with plain-language tax implications.",
+      "Pursue a targeted credential or micro-badge (e.g., advisor-focused digital asset CE) to reinforce credibility and signal ongoing mastery.",
+      "Protect the joy: pair research reviews with brief synthesis rituals (checklists, highlights) so daily learning feels rewarding, not burdensome."
+    ],
+    "data_coverage": {
+      "total_emails": 4
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 0.7324999999999999,
+    "median_ikigai_score": 0.885,
+    "score_std": 0.31235996862594284,
+    "high_score_count": 3,
+    "medium_score_count": 0,
+    "low_score_count": 1,
+    "average_autonomy": 0.7575000000000001,
+    "category_distribution": {
+      "High": 2,
+      "Pure-Commercial": 1,
+      "Commercial-Personal": 1
+    },
+    "top_themes": [
+      [
+        "Digital assets and crypto investment research/products",
+        2
+      ],
+      [
+        "Continuous learning and market vigilance",
+        2
+      ],
+      [
+        "Innovation/early adoption",
+        2
+      ],
+      [
+        "Professional finance practice with tax-aware ETF structuring",
+        2
+      ]
+    ],
+    "total_emails": 4
+  },
+  "email_count": 4
+}

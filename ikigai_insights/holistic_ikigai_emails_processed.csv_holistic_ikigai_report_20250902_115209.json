@@ -1,0 +1,220 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-02T10:52:09.787081",
+    "primary_ikigai": "Technology-Enhanced Active Living - Finding meaning through the intersection of technological innovation and physical wellness, particularly outdoor activities and fitness pursuits enhanced by modern tools and platforms",
+    "secondary_areas": [
+      "Financial Growth & Learning - Continuous education and strategic investment in personal financial development",
+      "Premium Experience Curation - Intentional selection and enjoyment of high-quality entertainment, tools, and services"
+    ],
+    "confidence_score": 0.65,
+    "supporting_evidence": [
+      {
+        "pattern": "Consistent investment in outdoor equipment and technology tools",
+        "strength": "medium",
+        "examples": [
+          "RYOBI tool purchases",
+          "YouTube Premium subscriptions",
+          "Microsoft account activity"
+        ],
+        "email_count": 8
+      },
+      {
+        "pattern": "Active engagement with financial education and investment platforms",
+        "strength": "medium",
+        "examples": [
+          "Dividend calendar subscriptions",
+          "Stock rating system engagement"
+        ],
+        "email_count": 5
+      },
+      {
+        "pattern": "Preference for premium, research-driven choices over mass market options",
+        "strength": "high",
+        "examples": [
+          "YouTube Premium over free version",
+          "Professional tool brands",
+          "Educational financial content"
+        ],
+        "email_count": 12
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Connects through technology platforms, financial markets, and outdoor activity communities - seeks quality connections over quantity",
+      "active_engagement": "Highly active - makes deliberate purchases, subscribes to educational content, engages with tools and platforms rather than passive consumption",
+      "emotional_meaning": "Finds joy in the intersection of efficiency, quality, and personal improvement - values tools that enhance capabilities",
+      "voluntary_pursuit": "Strong evidence of chosen interests - premium subscriptions, specific tool purchases, and educational content suggest intentional curation rather than imposed consumption",
+      "everyday_joy": "Daily engagement with technology platforms (YouTube), outdoor activities enabled by quality tools, and continuous learning through financial education",
+      "growth_orientation": "Clear pattern of investing in learning (financial education), capability enhancement (tools), and skill development (technology engagement)"
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [
+          "Financial Investment & Trading",
+          "Technology & AI Innovation",
+          "Active Lifestyle & Outdoor Pursuits"
+        ],
+        "interest_areas": [
+          {
+            "area": "Financial Markets & Investment",
+            "strength": "high",
+            "indicators": [
+              "Multiple trading newsletters (Green Star Trading, Seeking Alpha, TenViz)",
+              "Stock analysis content (dividend calendars, rating systems)",
+              "Cryptocurrency tracking (BTC, LTC/USD)",
+              "Angel investment opportunities",
+              "UBS financial commentary"
+            ],
+            "frequency": 12,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Artificial Intelligence & Technology",
+            "strength": "high",
+            "indicators": [
+              "AI conference registrations (GenerationAI 2025)",
+              "AI development tools (Fireworks AI, OpenAI/ChatGPT)",
+              "Tech security notifications",
+              "AI investment analysis content"
+            ],
+            "frequency": 8,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Outdoor Activities & Equipment",
+            "strength": "medium",
+            "indicators": [
+              "Outdoor gear purchases (RYOBI backpack sprayer)",
+              "Outdoor clothing newsletters (Cotswold Outdoor)",
+              "Equipment-focused communications"
+            ],
+            "frequency": 4,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Premium Entertainment & Media",
+            "strength": "medium",
+            "indicators": [
+              "Movie rentals (Inception, Free Guy)",
+              "Premium subscriptions (Paramount+)",
+              "Quality content consumption choices"
+            ],
+            "frequency": 4,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Tennis & Active Recreation",
+            "strength": "medium",
+            "indicators": [
+              "Tennis club membership and bookings",
+              "Court reservations and club communications",
+              "Active participation in club events"
+            ],
+            "frequency": 3,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Design & Aesthetics",
+            "strength": "low",
+            "indicators": [
+              "Design event invitations (Rimadesio)",
+              "Fine art gallery communications",
+              "Premium brand engagement"
+            ],
+            "frequency": 2,
+            "consistency": "emerging"
+          }
+        ],
+        "behavioral_patterns": {
+          "engagement_style": "active",
+          "information_preferences": "educational",
+          "decision_making": "research-driven",
+          "temporal_consistency": "highly_consistent"
+        },
+        "value_indicators": [
+          "Quality & Premium Experiences",
+          "Technological Innovation & Learning",
+          "Continuous Learning & Development",
+          "Financial Growth & Independence",
+          "Active Health & Wellness"
+        ],
+        "temporal_patterns": {
+          "evolution_trend": "growing_interests",
+          "seasonal_patterns": "detected",
+          "engagement_frequency": "high"
+        },
+        "engagement_styles": {
+          "engagement_style": "active",
+          "information_preferences": "educational",
+          "decision_making": "research-driven",
+          "temporal_consistency": "highly_consistent"
+        },
+        "commercial_insights": {
+          "purchase_alignment": "aligned_with_interests",
+          "subscription_choices": "intentional",
+          "brand_preferences": "consistent"
+        },
+        "confidence_factors": [
+          "High frequency of financial content engagement",
+          "Research-oriented information consumption",
+          "Consistent premium service subscriptions",
+          "Active participation in specialized communities",
+          "Quality-focused purchasing decisions"
+        ]
+      },
+      "score_statistics": {
+        "average_ikigai_score": 0.30600000000000005,
+        "median_ikigai_score": 0.3,
+        "score_std": 0.023748684174075843,
+        "high_score_count": 0,
+        "medium_score_count": 3,
+        "low_score_count": 47,
+        "average_autonomy": 0.30000000000000004,
+        "category_distribution": {
+          "Low": 50
+        },
+        "top_themes": [],
+        "total_emails": 50
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Explore communities that combine technology and outdoor pursuits - maker spaces, outdoor tech meetups, or adventure photography groups",
+      "Consider deeper engagement with financial technology - perhaps exploring fintech innovations, investment apps, or financial planning tools",
+      "Nurture the intersection of interests by seeking premium outdoor experiences enhanced by technology - GPS hiking, fitness tracking, or outdoor photography with advanced equipment",
+      "Develop expertise in areas where technology meets active living - could become a resource for others seeking quality gear recommendations or tech-enhanced fitness approaches"
+    ],
+    "data_coverage": {
+      "total_emails": 50
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "claude-sonnet-4-20250514"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 0.30600000000000005,
+    "median_ikigai_score": 0.3,
+    "score_std": 0.023748684174075843,
+    "high_score_count": 0,
+    "medium_score_count": 3,
+    "low_score_count": 47,
+    "average_autonomy": 0.30000000000000004,
+    "category_distribution": {
+      "Low": 50
+    },
+    "top_themes": [],
+    "total_emails": 50
+  },
+  "email_count": 50
+}

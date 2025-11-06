@@ -1,0 +1,339 @@
+{
+  "user_id": "user_123",
+  "profile_version": 1,
+  "generated_at": "2025-10-02T07:14:20.736491",
+  "schema_version": "1.0",
+  "generator": {
+    "system": "email_parser_iab_taxonomy",
+    "llm_model": "openai:default",
+    "workflow_version": "1.0"
+  },
+  "data_coverage": {
+    "total_emails_analyzed": 8,
+    "emails_this_run": 8,
+    "date_range": "2025-10-02 to 2025-10-02"
+  },
+  "demographics": {
+    "age_range": {
+      "taxonomy_id": 5,
+      "tier_path": "Demographic | 25-29",
+      "value": "25-29",
+      "confidence": 0.7,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T12:25:18.598176Z",
+      "days_since_validation": 0
+    },
+    "gender": {
+      "taxonomy_id": 20,
+      "tier_path": "Demographic | Male",
+      "value": "Male",
+      "confidence": 0.7,
+      "evidence_count": 1,
+      "last_validated": "2025-10-02T06:14:20.675965Z",
+      "days_since_validation": 0
+    },
+    "education": {
+      "taxonomy_id": 30,
+      "tier_path": "Demographic | High School",
+      "value": "High School",
+      "confidence": 0.8,
+      "evidence_count": 1,
+      "last_validated": "2025-10-02T06:13:51.077815Z",
+      "days_since_validation": 0
+    },
+    "occupation": null,
+    "marital_status": {
+      "taxonomy_id": 41,
+      "tier_path": "Demographic | Married",
+      "value": "Married",
+      "confidence": 0.7,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T12:25:18.602650Z",
+      "days_since_validation": 0
+    },
+    "language": null
+  },
+  "household": {
+    "location": null,
+    "income": null,
+    "length_of_residence": null,
+    "life_stage": null,
+    "median_home_value": null,
+    "monthly_housing_payment": null,
+    "number_of_adults": null,
+    "number_of_children": null,
+    "number_of_individuals": null,
+    "ownership": null,
+    "property_type": {
+      "taxonomy_id": 121,
+      "tier_path": "Household | House",
+      "value": "House",
+      "confidence": 0.814016825,
+      "evidence_count": 4,
+      "last_validated": "2025-10-01T12:27:17.930698Z",
+      "days_since_validation": 0
+    },
+    "urbanization": {
+      "taxonomy_id": 101,
+      "tier_path": "Household | Suburban",
+      "value": "Suburban",
+      "confidence": 0.71825,
+      "evidence_count": 2,
+      "last_validated": "2025-10-01T12:25:04.333811Z",
+      "days_since_validation": 0
+    }
+  },
+  "personal_finance": null,
+  "interests": [
+    {
+      "taxonomy_id": 342,
+      "tier_path": "Interest | Cryptocurrency",
+      "value": "Cryptocurrency",
+      "confidence": 0.9999865963333487,
+      "evidence_count": 27,
+      "last_validated": "2025-10-02T06:14:03.045604Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 343,
+      "tier_path": "Interest | Blockchain",
+      "value": "Blockchain",
+      "confidence": 0.9960406690922853,
+      "evidence_count": 13,
+      "last_validated": "2025-10-02T06:12:16.756585Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 156,
+      "tier_path": "Interest | Technology",
+      "value": "Technology",
+      "confidence": 0.9999999362908638,
+      "evidence_count": 46,
+      "last_validated": "2025-10-02T06:14:02.403167Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 157,
+      "tier_path": "Interest | Software Development",
+      "value": "Software Development",
+      "confidence": 0.942212540896,
+      "evidence_count": 7,
+      "last_validated": "2025-10-02T06:14:08.731625Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 200,
+      "tier_path": "Interest | Personal Finance",
+      "value": "Personal Finance",
+      "confidence": 0.9923659455998861,
+      "evidence_count": 13,
+      "last_validated": "2025-10-02T06:14:02.398783Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 201,
+      "tier_path": "Interest | Investing",
+      "value": "Investing",
+      "confidence": 0.9998526316939036,
+      "evidence_count": 24,
+      "last_validated": "2025-10-02T06:14:11.838944Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 202,
+      "tier_path": "Interest | Stock Market",
+      "value": "Stock Market",
+      "confidence": 0.9859584980089896,
+      "evidence_count": 10,
+      "last_validated": "2025-10-02T06:14:11.844518Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 252,
+      "tier_path": "Interest | Wellness",
+      "value": "Wellness",
+      "confidence": 0.91674625,
+      "evidence_count": 3,
+      "last_validated": "2025-10-02T06:08:04.963141Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 250,
+      "tier_path": "Interest | Fitness",
+      "value": "Fitness",
+      "confidence": 0.75,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T12:25:37.652624Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 400,
+      "tier_path": "Interest | Cooking",
+      "value": "Cooking",
+      "confidence": 0.8815,
+      "evidence_count": 2,
+      "last_validated": "2025-10-02T06:08:08.971025Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 401,
+      "tier_path": "Interest | Restaurants",
+      "value": "Restaurants",
+      "confidence": 0.7765,
+      "evidence_count": 2,
+      "last_validated": "2025-10-01T12:27:34.072524Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 251,
+      "tier_path": "Interest | Nutrition",
+      "value": "Nutrition",
+      "confidence": 0.7,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T12:26:50.716818Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 302,
+      "tier_path": "Interest | Gaming",
+      "value": "Gaming",
+      "confidence": 0.75,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T12:27:04.849153Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 303,
+      "tier_path": "Interest | Books",
+      "value": "Books",
+      "confidence": 0.8,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T12:27:21.736819Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 402,
+      "tier_path": "Interest | Wine & Spirits",
+      "value": "Wine & Spirits",
+      "confidence": 0.75,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T12:27:34.077017Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 300,
+      "tier_path": "Interest | Music",
+      "value": "Music",
+      "confidence": 0.7,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T12:27:34.081516Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 304,
+      "tier_path": "Interest | Television",
+      "value": "Television",
+      "confidence": 0.75,
+      "evidence_count": 1,
+      "last_validated": "2025-10-02T06:08:08.958364Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 350,
+      "tier_path": "Interest | Travel (General)",
+      "value": "Travel (General)",
+      "confidence": 0.65,
+      "evidence_count": 1,
+      "last_validated": "2025-10-02T06:13:16.256732Z",
+      "days_since_validation": 0
+    }
+  ],
+  "purchase_intent": [
+    {
+      "taxonomy_id": 510,
+      "tier_path": "Purchase Intent | Confirmed Purchase",
+      "value": "Confirmed Purchase",
+      "confidence": 0.9982174273425911,
+      "evidence_count": 10,
+      "last_validated": "2025-10-02T06:13:54.789753Z",
+      "days_since_validation": 0,
+      "classifications": null
+    },
+    {
+      "taxonomy_id": 500,
+      "tier_path": "Purchase Intent | PIPR_High",
+      "value": "PIPR_High",
+      "confidence": 0.9919353990810592,
+      "evidence_count": 8,
+      "last_validated": "2025-10-02T06:13:54.795858Z",
+      "days_since_validation": 0,
+      "classifications": null
+    },
+    {
+      "taxonomy_id": 521,
+      "tier_path": "Purchase Intent | Clothing & Apparel",
+      "value": "Clothing & Apparel",
+      "confidence": 0.91674625,
+      "evidence_count": 3,
+      "last_validated": "2025-10-01T12:24:55.006103Z",
+      "days_since_validation": 0,
+      "classifications": null
+    },
+    {
+      "taxonomy_id": 501,
+      "tier_path": "Purchase Intent | PIPR_Medium",
+      "value": "PIPR_Medium",
+      "confidence": 0.75,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T12:24:59.424054Z",
+      "days_since_validation": 0,
+      "classifications": null
+    },
+    {
+      "taxonomy_id": 522,
+      "tier_path": "Purchase Intent | Home & Garden",
+      "value": "Home & Garden",
+      "confidence": 0.85,
+      "evidence_count": 1,
+      "last_validated": "2025-10-01T12:25:50.452508Z",
+      "days_since_validation": 0,
+      "classifications": null
+    },
+    {
+      "taxonomy_id": 502,
+      "tier_path": "Purchase Intent | PIPR_Low",
+      "value": "PIPR_Low",
+      "confidence": 0.8420000000000001,
+      "evidence_count": 2,
+      "last_validated": "2025-10-02T06:07:32.487213Z",
+      "days_since_validation": 0,
+      "classifications": null
+    },
+    {
+      "taxonomy_id": 525,
+      "tier_path": "Purchase Intent | Books & Media",
+      "value": "Books & Media",
+      "confidence": 0.85,
+      "evidence_count": 1,
+      "last_validated": "2025-10-02T06:07:37.222836Z",
+      "days_since_validation": 0,
+      "classifications": null
+    }
+  ],
+  "actual_purchases": [],
+  "memory_stats": {
+    "total_facts_stored": 25,
+    "high_confidence_facts": 16,
+    "moderate_confidence_facts": 9,
+    "low_confidence_facts": 0,
+    "facts_needing_validation": 0,
+    "average_confidence": 0.8616024857735571
+  },
+  "section_confidence": {
+    "demographics": 0.7,
+    "household": 0.7,
+    "interests": 0.8522868371064044,
+    "purchase_intent": 0.8855570109176644,
+    "actual_purchases": 0.0
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "user_id": "taxonomy_fix_test",
+  "profile_version": 1,
+  "generated_at": "2025-10-07T09:19:19.729255",
+  "schema_version": "2.0",
+  "generator": {
+    "system": "email_parser_iab_taxonomy",
+    "llm_model": "claude:default",
+    "workflow_version": "1.0"
+  },
+  "data_coverage": {
+    "total_emails_analyzed": 3,
+    "emails_this_run": 3,
+    "date_range": "2025-10-07 to 2025-10-07"
+  },
+  "demographics": {
+    "age_range": null,
+    "gender": null,
+    "education": {
+      "taxonomy_id": 20,
+      "tier_path": "Demographic | Education & Occupation | Education (Highest Level) | College Education",
+      "value": "College Education",
+      "confidence": 0.7629999999999999,
+      "evidence_count": 2,
+      "last_validated": "2025-10-07T08:19:15.056329Z",
+      "days_since_validation": 0
+    },
+    "occupation": null,
+    "marital_status": null,
+    "language": null
+  },
+  "household": {
+    "location": null,
+    "income": null,
+    "length_of_residence": null,
+    "life_stage": null,
+    "median_home_value": null,
+    "monthly_housing_payment": null,
+    "number_of_adults": null,
+    "number_of_children": null,
+    "number_of_individuals": null,
+    "ownership": null,
+    "property_type": null,
+    "urbanization": null
+  },
+  "personal_finance": null,
+  "interests": [
+    {
+      "taxonomy_id": 522,
+      "tier_path": "Interest | News and Politics",
+      "value": "Technology & Computing",
+      "confidence": 0.9,
+      "evidence_count": 1,
+      "last_validated": "2025-10-07T08:19:19.690307Z",
+      "days_since_validation": 0
+    },
+    {
+      "taxonomy_id": 523,
+      "tier_path": "Interest | News and Politics | Crime",
+      "value": "Consumer Electronics",
+      "confidence": 0.85,
+      "evidence_count": 1,
+      "last_validated": "2025-10-07T08:19:19.696716Z",
+      "days_since_validation": 0
+    }
+  ],
+  "purchase_intent": [],
+  "actual_purchases": [],
+  "memory_stats": {
+    "total_facts_stored": 2,
+    "high_confidence_facts": 2,
+    "moderate_confidence_facts": 0,
+    "low_confidence_facts": 0,
+    "facts_needing_validation": 0,
+    "average_confidence": 0.875
+  },
+  "section_confidence": {
+    "demographics": 0.7,
+    "household": 0.7,
+    "interests": 0.875,
+    "purchase_intent": 0.0,
+    "actual_purchases": 0.0
+  },
+  "tiered_classifications": {
+    "demographics": {
+      "education": {
+        "primary": {
+          "taxonomy_id": 20,
+          "tier_path": "Demographic | Education & Occupation | Education (Highest Level) | College Education",
+          "value": "College Education",
+          "confidence": 0.7629999999999999,
+          "evidence_count": 2,
+          "last_validated": "2025-10-07T08:19:15.056329Z",
+          "days_since_validation": 0,
+          "tier_depth": 4,
+          "granularity_score": 0.9629999999999999,
+          "classification_type": "primary",
+          "confidence_delta": null
+        },
+        "alternatives": [],
+        "selection_method": "granularity_weighted"
+      },
+      "employment_role": {
+        "primary": {
+          "taxonomy_id": 30,
+          "tier_path": "Demographic | Education & Occupation | Employment Role | Professional",
+          "value": "Professional",
+          "confidence": 0.75,
+          "evidence_count": 1,
+          "last_validated": "2025-10-07T08:19:15.063830Z",
+          "days_since_validation": 0,
+          "tier_depth": 4,
+          "granularity_score": 0.95,
+          "classification_type": "primary",
+          "confidence_delta": null
+        },
+        "alternatives": [],
+        "selection_method": "granularity_weighted"
+      },
+      "occupation": {
+        "primary": {
+          "taxonomy_id": 44,
+          "tier_path": "Demographic | Education & Occupation | Employment Status | Employed | Full-Time",
+          "value": "Full-Time",
+          "confidence": 0.65,
+          "evidence_count": 1,
+          "last_validated": "2025-10-07T08:19:15.070868Z",
+          "days_since_validation": 0,
+          "tier_depth": 5,
+          "granularity_score": 0.65,
+          "classification_type": "primary",
+          "confidence_delta": null
+        },
+        "alternatives": [],
+        "selection_method": "non_exclusive"
+      }
+    },
+    "household": {},
+    "interests": [
+      {
+        "primary": {
+          "taxonomy_id": 522,
+          "tier_path": "Interest | News and Politics",
+          "value": "Technology & Computing",
+          "confidence": 0.9,
+          "evidence_count": 1,
+          "last_validated": "2025-10-07T08:19:19.690307Z",
+          "days_since_validation": 0,
+          "tier_depth": 2,
+          "granularity_score": 1.0,
+          "classification_type": "primary",
+          "confidence_delta": null
+        },
+        "alternatives": [],
+        "selection_method": "granularity_weighted",
+        "granularity_score": 1.0
+      }
+    ],
+    "purchase_intent": []
+  }
+}

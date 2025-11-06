@@ -1,0 +1,117 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-26T09:23:48.683124",
+    "primary_ikigai": "Not identifiable from current dataset",
+    "secondary_areas": [],
+    "confidence_score": 0.12,
+    "supporting_evidence": [
+      {
+        "pattern": "Emails are dominated by automated security alerts and a vendor newsletter, which do not meet Mitsuhashi’s criteria (voluntary, emotionally meaningful, non-commercial) for authentic ikigai.",
+        "strength": "high",
+        "examples": [
+          "New sign-in detected for your Microsoft account (x2) — system/required",
+          "Google ad tech remedies trial: Explained — commercial sender (excluded)"
+        ]
+      },
+      {
+        "pattern": "No observable learning or consistent personal topics over time.",
+        "strength": "high",
+        "examples": [
+          "Learning frequency indicators: 0",
+          "Consistent personal interests: none listed"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Not evidenced. Messages are transactional or commercial; no chosen communities, hobbies, or relationships visible.",
+      "active_engagement": "Low. No signs of replies, event participation, or project-related exchanges.",
+      "emotional_meaning": "Unknown/low. Security alerts and vendor content are unlikely to convey everyday joy.",
+      "voluntary_pursuit": "Low. Security emails are imposed; the vendor email is commercial and excluded from authentic assessment.",
+      "everyday_joy": "No small, concrete daily activities (e.g., cooking, exercise, crafting, club chatter) visible in the email set.",
+      "growth_orientation": "Absent in this dataset; no learning signals or practice streaks detected."
+    },
+    "personal_patterns": {
+      "total_emails": 4,
+      "personal_email_count": 3,
+      "personal_percentage": 75.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "New sign-in detected for your Microsoft account",
+          "Category": "Personal Communication",
+          "Summary": "Security alert for Microsoft account sign-in; details provided and instructions to review activity if suspicious.",
+          "From": "Microsoft account team <account-security-noreply@accountprotection.microsoft.com>"
+        },
+        {
+          "Subject": "New sign-in detected for your Microsoft account",
+          "Category": "Personal Communication",
+          "Summary": "Security alert about a new sign-in for a Microsoft account; review account activity if not recognized.",
+          "From": "Microsoft account team <account-security-noreply@accountprotection.microsoft.com>"
+        },
+        {
+          "Subject": "Google ad tech remedies trial: Explained",
+          "Category": "Newsletter",
+          "Summary": "Newsletter summarizing updates on Google's ad tech remedies trial and related industry insights from The Current Newsletter.",
+          "From": "info@thetradedesk.com"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Personal Communication": 2,
+          "Newsletter": 1
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Capture authentic pursuits via email: send yourself short notes or photos about daily joys (e.g., morning walk observations, a recipe you tried, a song you practiced) and label them “ikigai”.",
+      "Subscribe to non-commercial, community-run updates aligned to your interests (e.g., local library events, volunteer groups, open-source mailing lists, hobby clubs) and engage by RSVPing or replying.",
+      "Join a small practice circle (book club, language exchange, running group); use email for coordination and weekly check-ins to create active, external connection.",
+      "Start a micro-project (e.g., balcony garden, sketch-a-day, learning a piece on an instrument) and share periodic progress via email to a friend or community list to add accountability and meaning.",
+      "Add one learning thread you genuinely choose (e.g., a university extension newsletter, public-interest blog, community workshop notices) and reflect via a weekly email to yourself on what you explored.",
+      "Filter transactional/security alerts into a separate folder so personal, voluntary communications stand out for future ikigai analysis.",
+      "If ad-tech is a genuine personal curiosity beyond work, seek neutral/community sources (standards groups, research labs, community forums) and engage with commentary or questions rather than vendor marketing."
+    ],
+    "data_coverage": {
+      "total_emails": 4,
+      "personal_email_count": 3,
+      "personal_percentage": 75.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

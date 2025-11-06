@@ -1,0 +1,275 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-26T10:07:32.934485",
+    "primary_ikigai": "A morning macro-market briefing ritual that creates calm, control, and readiness for the day",
+    "secondary_areas": [
+      "Proactive digital security hygiene to safeguard autonomy",
+      "Global macroeconomic inquiry (policy, currencies, valuation logic)"
+    ],
+    "confidence_score": 0.86,
+    "supporting_evidence": [
+      {
+        "pattern": "Structured pre-market information priming to start the day intentionally",
+        "strength": "high",
+        "examples": [
+          "🔔Opening Bell Daily: Froth makes sense"
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Sustained curiosity about macro-finance and how policy, markets, and valuation interact",
+        "strength": "high",
+        "examples": [
+          "🔔Opening Bell Daily: Froth makes sense",
+          "Economics: Will the Budget crash the pound?"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Risk management and security vigilance as an ongoing habit",
+        "strength": "high",
+        "examples": [
+          "New sign-in detected for your Microsoft account",
+          "New sign-in detected for your Microsoft account"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Global outlook spanning US market dynamics and UK macro-policy risks",
+        "strength": "medium",
+        "examples": [
+          "🔔Opening Bell Daily: Froth makes sense (US market context)",
+          "Economics: Will the Budget crash the pound? (UK macro/currency risk)"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Preference for analysis over noise and intentional subscription choices",
+        "strength": "medium",
+        "examples": [
+          "🔔Opening Bell Daily: Froth makes sense (valuation and structure focus)",
+          "Economics: Will the Budget crash the pound? (policy-mechanism reasoning)"
+        ],
+        "email_count": 2
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Connects daily with global market flows and policy discourse across US and UK, using curated briefings to stay aligned with macro signals.",
+      "active_engagement": "High choice autonomy (0.92) and intentional subscriptions indicate proactive engagement; security alerts reflect an active risk posture rather than passive consumption.",
+      "emotional_meaning": "Derives calm, control, and intellectual satisfaction from decoding complex systems and beginning the day prepared; reassurance comes from tightened account security.",
+      "voluntary_pursuit": "Market and economics content are clearly chosen; while security alerts are system-triggered, attending to them aligns with a self-directed risk mindset.",
+      "everyday_joy": "A concise pre-market read, a quick scan of a macro explainer, and brief security check-ins create small, repeatable moments of readiness and clarity.",
+      "growth_orientation": "Research-driven habits and a global lens suggest ongoing learning; expanding across US/UK macro and building repeatable routines reflects evolving depth over time."
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [
+          "Macro-finance curiosity and market orientation",
+          "Proactive risk management and security vigilance",
+          "Structured pre-market information priming"
+        ],
+        "interest_areas": [
+          {
+            "area": "Financial markets and investing",
+            "strength": "high",
+            "indicators": [
+              "Multiple market-focused newsletters received together, suggesting intentional pre-market briefing",
+              "Content emphasizes valuation frameworks, seasonal tailwinds, and market metrics rather than headlines"
+            ],
+            "frequency": 2,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Macroeconomics and policy analysis",
+            "strength": "medium",
+            "indicators": [
+              "Economics-focused digest on currency and budget policy implications",
+              "Interest in structural shifts (tariffs, overvaluation risks) indicates appetite for systems-level thinking"
+            ],
+            "frequency": 2,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Digital security and account hygiene",
+            "strength": "medium",
+            "indicators": [
+              "Multiple security alerts clustered in the same night point to active cross-device sign-ins or travel and heightened awareness of account protection",
+              "Exposure to security workflows (review activity, update settings) indicates familiarity with safeguarding accounts"
+            ],
+            "frequency": 2,
+            "consistency": "emerging"
+          },
+          {
+            "area": "International perspective (US and UK economics)",
+            "strength": "medium",
+            "indicators": [
+              "Mix of a US market ‘opening bell’ brief with UK-focused economics newsletter",
+              "Cross-Atlantic lens suggests a broader, global macro viewpoint"
+            ],
+            "frequency": 2,
+            "consistency": "emerging"
+          }
+        ],
+        "behavioral_patterns": {
+          "engagement_style": "mixed",
+          "information_preferences": "educational",
+          "decision_making": "research-driven",
+          "temporal_consistency": "moderately_consistent"
+        },
+        "value_indicators": [
+          "Desire for autonomy and control through informed, early-day briefings",
+          "Preparedness and risk management (monitoring accounts, preemptive security posture)",
+          "Intellectual curiosity for complex systems (markets, currencies, policy interactions)",
+          "Preference for analysis over noise (valuation logic, structural explanations)",
+          "Global outlook (attention to both US market dynamics and UK macro risks)"
+        ],
+        "temporal_patterns": {
+          "evolution_trend": "stable_interests",
+          "seasonal_patterns": "not_detected",
+          "engagement_frequency": "medium"
+        },
+        "engagement_styles": {
+          "engagement_style": "mixed",
+          "information_preferences": "educational",
+          "decision_making": "research-driven",
+          "temporal_consistency": "moderately_consistent"
+        },
+        "commercial_insights": {
+          "purchase_alignment": "unclear",
+          "subscription_choices": "intentional",
+          "brand_preferences": "unclear"
+        },
+        "confidence_factors": [
+          "Security alerts are automated and may reflect context (travel/new device) rather than a stable preference",
+          "Convergence of two distinct finance/economics newsletters supports a genuine macro-market interest",
+          "Small sample size over a single day limits longitudinal certainty",
+          "Tight timing around pre-market hours suggests a real routine but needs more days to confirm"
+        ]
+      },
+      "score_statistics": {
+        "average_ikigai_score": 0.8875,
+        "median_ikigai_score": 0.88,
+        "score_std": 0.0420565096031518,
+        "high_score_count": 4,
+        "medium_score_count": 0,
+        "low_score_count": 0,
+        "average_autonomy": 0.9225,
+        "category_distribution": {
+          "Commercial-Personal": 2,
+          "High": 2
+        },
+        "top_themes": [
+          [
+            "Proactive risk management and security vigilance",
+            2
+          ],
+          [
+            "Digital security and account hygiene",
+            2
+          ],
+          [
+            "Desire for autonomy and control through informed, early-day briefings",
+            2
+          ],
+          [
+            "Macro-finance curiosity and market orientation",
+            2
+          ],
+          [
+            "Structured pre-market information priming",
+            1
+          ],
+          [
+            "Financial markets and investing",
+            1
+          ],
+          [
+            "Macroeconomics and policy analysis",
+            1
+          ],
+          [
+            "Intellectual curiosity for complex systems (markets, currencies, policy interactions)",
+            1
+          ]
+        ],
+        "total_emails": 4
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Codify a 15–20 minute morning briefing stack (one market note + one macro explainer) and timebox it.",
+      "Maintain a one-page weekly market thesis with key drivers, risks, and a short post-week reflection.",
+      "Create a lightweight security hygiene checklist (password manager, 2FA audit, sign-in alert review) to run weekly.",
+      "Keep a small watchlist and jot pre/opening notes plus end-of-day outcomes to reinforce learning loops.",
+      "Balance sources: one US market newsletter, one UK policy/macro source, and one FX/currency strategist for triangulation.",
+      "Set notification filters to minimize noise, preserving only high-signal alerts that support the morning ritual."
+    ],
+    "data_coverage": {
+      "total_emails": 4
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 0.8875,
+    "median_ikigai_score": 0.88,
+    "score_std": 0.0420565096031518,
+    "high_score_count": 4,
+    "medium_score_count": 0,
+    "low_score_count": 0,
+    "average_autonomy": 0.9225,
+    "category_distribution": {
+      "Commercial-Personal": 2,
+      "High": 2
+    },
+    "top_themes": [
+      [
+        "Proactive risk management and security vigilance",
+        2
+      ],
+      [
+        "Digital security and account hygiene",
+        2
+      ],
+      [
+        "Desire for autonomy and control through informed, early-day briefings",
+        2
+      ],
+      [
+        "Macro-finance curiosity and market orientation",
+        2
+      ],
+      [
+        "Structured pre-market information priming",
+        1
+      ],
+      [
+        "Financial markets and investing",
+        1
+      ],
+      [
+        "Macroeconomics and policy analysis",
+        1
+      ],
+      [
+        "Intellectual curiosity for complex systems (markets, currencies, policy interactions)",
+        1
+      ]
+    ],
+    "total_emails": 4
+  },
+  "email_count": 4
+}

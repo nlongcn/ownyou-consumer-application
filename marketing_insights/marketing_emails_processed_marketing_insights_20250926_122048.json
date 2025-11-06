@@ -1,0 +1,606 @@
+{
+  "communication_patterns": {
+    "volume_metrics": {
+      "total_communications": 200,
+      "unique_senders": 120,
+      "category_diversity": 8
+    },
+    "category_distribution": {
+      "Newsletter": 0.67,
+      "Personal Communication": 0.11,
+      "Other": 0.09,
+      "Purchase": 0.055,
+      "Invoice": 0.035,
+      "Bank Related": 0.015,
+      "Shipment Related": 0.015,
+      "House Related": 0.01
+    },
+    "primary_communication_type": "Newsletter"
+  },
+  "interest_clusters": {},
+  "purchase_behavior": {
+    "confirmed_transactions": [
+      {
+        "item": "Auto-recharge credits",
+        "source": "Anthropic, PBC <invoice+statements@mail.anthropic.com>",
+        "date": "2025-09-24T12:31:20+00:00",
+        "context": "Receipt confirming $6.43 paid for auto-recharge credits (#2206-9075-7743).",
+        "confidence": "high"
+      },
+      {
+        "item": "Shovel & Spade Limited services (Invoice INV-1512)",
+        "source": "Max Wells <max@shovelandspade.co.uk>",
+        "date": "2025-09-22T18:41:24+00:00",
+        "context": "Payment received in full; account settled for Invoice INV-1512 (GBP 7,073.94).",
+        "confidence": "high"
+      },
+      {
+        "item": "Claude Pro subscription",
+        "source": "Anthropic, PBC <invoice+statements@mail.anthropic.com>",
+        "date": "2025-09-22T17:31:28+00:00",
+        "context": "Receipt confirming £18.00 paid for Claude Pro (#2833-0353-0440).",
+        "confidence": "high"
+      },
+      {
+        "item": "Custom Renegades (prescription sunglasses) — Order SG-1063009",
+        "source": "hello@sungod.co",
+        "date": "2025-09-25T20:05:11+00:00",
+        "context": "Order confirmation showing payment of £168.00 (after £42 discount) and DHL Express shipping planned. Note: later emails indicate cancellation and refund were processed.",
+        "confidence": "medium"
+      }
+    ],
+    "transaction_count": 4,
+    "transaction_frequency": 0.02,
+    "product_analysis": {
+      "categories": [
+        "Home & garden maintenance/improvement",
+        "AI tools/assistants",
+        "Crypto/Web3 participation",
+        "General e-commerce/retail"
+      ],
+      "specific_products": [
+        "Claude Pro subscription (£18) – active and paid (Anthropic receipt)",
+        "Home/garden works via Shovel & Spade Limited – invoice INV-1512 (£7,073.94) settled",
+        "SPCB Mosskillers order – invoice MK2663 (£165.89) for moss/pest treatment",
+        "Amazon order #206-0907004-1706760 – delivery update (item unspecified)",
+        "XPL tokens – early participant access enabled"
+      ],
+      "brands_engaged": [
+        "Shovel & Spade Limited",
+        "SPCB Mosskillers",
+        "Amazon",
+        "Anthropic (Claude)",
+        "Microsoft (account/security activity)"
+      ]
+    },
+    "service_analysis": {
+      "subscriptions": [
+        "Claude Pro (Anthropic) – active paid subscription",
+        "Energy utility direct debit (£209.37) – active recurring charge",
+        "Multiple industry newsletters (ADOTAT, CB Insights, Messari, Litquidity, Telegraph, UBS, NFX, Carnegie, Bitwise) – ongoing free subscriptions"
+      ],
+      "professional_services": [
+        "Home/garden contractor – Shovel & Spade Limited (paid engagement)",
+        "Legal/project coordination for Mars/Novus – calls with law firms scheduled (in progress)"
+      ],
+      "digital_services": [
+        "Amazon shopping and delivery tracking",
+        "Microsoft account (active; security alerts received)",
+        "LinkedIn account (ToS updates acknowledged)",
+        "Garmin account (inactive; deletion warning)",
+        "Crypto/Web3 platform participation – XPL token access"
+      ]
+    },
+    "spending_analysis": {
+      "transaction_categories": [
+        "Home/garden services (contractor work)",
+        "Home/garden supplies (moss/pest control)",
+        "Utilities (energy direct debit)",
+        "Digital subscriptions (AI assistant)",
+        "General e-commerce (Amazon)"
+      ],
+      "price_sensitivity": "Low-to-moderate; promptly pays a large contractor invoice and maintains a paid AI subscription. Exposed to discount promotions but no clear redemption evidence.",
+      "purchase_frequency": "Recurring monthly charges (energy, Claude Pro) plus several ad hoc purchases in this period (contractor invoice, Amazon order, SPCB Mosskillers)."
+    },
+    "research_behavior": {
+      "consideration_categories": [
+        "AI agents and context engineering (webinars, product updates)",
+        "Crypto/Web3 assets and infrastructure (XPL, Oasis, Sia, Bitwise)",
+        "Adtech/CTV ecosystem",
+        "Finance/investing products and funds",
+        "Tech/crypto conferences (EDAS, DAS: London)",
+        "Pet adoption/purchase"
+      ],
+      "information_seeking": [
+        "Webinars and product content on AI tooling (Neo4j AI agents webinar; Gamma product updates)",
+        "Market/industry newsletters on tech, finance, crypto, and adtech (CB Insights, Messari, Litquidity, ADOTAT, UBS, Telegraph, NFX, Carnegie)",
+        "Conference agendas and networking tools (EDAS, DAS: London)",
+        "Platform/policy updates (LinkedIn ToS and data use)"
+      ],
+      "comparison_shopping": [
+        "Limited direct evidence; passive newsletter content mentions ecosystem comparisons (e.g., CTV platforms) and multi-option browsing (pet listings), but no explicit side-by-side quotes or price comparisons."
+      ]
+    }
+  },
+  "geographic_indicators": {
+    "location_indicators": [
+      "Elmbridge Borough Council planning alerts for postcode KT12 4BX (Walton-on-Thames area, Surrey, UK)",
+      "Member notice from St George's Hill Lawn Tennis Club (Weybridge, Surrey, UK)",
+      "Kohler Cup event hosted at Goodwood (West Sussex, UK) on 3 Oct 2025",
+      "Reference request for a tender in Ashtead (Surrey, UK)",
+      "Multiple newsletters and headlines referencing UK politics and places (Britain, Westminster, UK Budget, The Telegraph, The Spectator)",
+      "Ofcom investigations under the Online Safety Act (UK regulator and legislation)",
+      "Amazon order update for the UK storefront (Amazon.co.uk)",
+      "Energy bill from Octopus Energy with pricing in pounds (UK energy supplier)",
+      "Invoices/receipts in GBP for local goods/services (e.g., Shovel & Spade Limited; SPCB Mosskillers; SunGod)",
+      "Use of British terminology in school context (\"Autumn Term\") and colloquial language (\"chippy\" for carpenter)",
+      "HSBC Private Banking eStatement referencing Hong Kong",
+      "Invitation to 'Aiglon Meets Hong Kong' alumni event",
+      "Legal update mentioning the BVI Court (British Virgin Islands)",
+      "Invitation to ISO interoperability test event in Wellington, New Zealand",
+      "APAC Credentials CG calls leading up to TPAC Kobe (Kobe, Japan)"
+    ],
+    "regional_services": [
+      "Elmbridge Borough Council (local government, Surrey, UK)",
+      "Ofcom (UK communications regulator)",
+      "Octopus Energy (UK utility provider)",
+      "St George's Hill Lawn Tennis Club (local club in Weybridge, Surrey)",
+      "The Telegraph and The Spectator (UK news media)",
+      "Amazon UK storefront",
+      "Shovel & Spade Limited (local contractor; invoice in GBP)",
+      "The Grass People (UK lawn care retailer; shipment emails)",
+      "SPCB Mosskillers (UK retailer; invoice in GBP)",
+      "LexisNexis UK (UK-focused legal/news communications)",
+      "HSBC Private Banking (Hong Kong)"
+    ],
+    "currency_indicators": "Frequent GBP/£ pricing across purchases and subscriptions (e.g., £168.00 SunGod order, £209.37 Octopus Energy, Apple TV+ £8.99→£9.99, GBP 7,073.94 invoice); occasional USD $ amounts in global services receipts.",
+    "local_business_engagement": [
+      "Octopus Energy (direct debit notice in £)",
+      "Shovel & Spade Limited (invoice issued and confirmed paid in GBP)",
+      "SPCB Mosskillers (invoice in GBP)",
+      "The Grass People (shipment and order thread)",
+      "SunGod (order, prescription upload, cancellation, refund in GBP)",
+      "St George's Hill Lawn Tennis Club (member notice)",
+      "Amazon UK (order delivery estimate)"
+    ],
+    "likely_region": "Elmbridge, Surrey, United Kingdom (Weybridge / Walton-on-Thames area)",
+    "confidence": "high"
+  },
+  "temporal_patterns": {
+    "date_range": {
+      "start": "2025-09-19T15:23:51+00:00",
+      "end": "2025-09-26T10:23:03+00:00",
+      "span_days": 6
+    },
+    "day_distribution": {
+      "Thursday": 95,
+      "Friday": 42,
+      "Tuesday": 16,
+      "Wednesday": 14,
+      "Monday": 12,
+      "Sunday": 10,
+      "Saturday": 6
+    },
+    "hour_distribution": {
+      "16": 23,
+      "15": 16,
+      "17": 16,
+      "6": 15,
+      "10": 14,
+      "14": 14,
+      "12": 11,
+      "8": 11,
+      "13": 11,
+      "7": 10
+    }
+  },
+  "engagement_profile": {
+    "engagement_level": "moderate",
+    "engagement_diversity": {
+      "category_count": 8,
+      "diversity_level": "high"
+    },
+    "significant_patterns": 16,
+    "pattern_confidence": 0.8647058823529412
+  },
+  "pattern_evidence": [
+    {
+      "pattern_type": "communication_volume",
+      "observation": "Analyzed 200 email communications",
+      "frequency": 200,
+      "context": "Overall communication activity level",
+      "confidence": 0.9
+    },
+    {
+      "pattern_type": "service_relationship",
+      "observation": "Active paid LLM usage (Claude Pro subscription and API credits)",
+      "frequency": 1,
+      "context": "Recurring Claude Pro payment (£18) and auto-recharge credits ($6.43) indicate ongoing, non-trivial usage consistent with API integration or heavy usage beyond casual chat.",
+      "confidence": 0.95
+    },
+    {
+      "pattern_type": "technology_usage_pattern",
+      "observation": "Developer-level interest in AI agent tooling and search APIs",
+      "frequency": 1,
+      "context": "Multiple developer-focused announcements suggest hands-on evaluation or building with AI agents, context engineering, and retrieval/search APIs rather than passive consumer reading.",
+      "confidence": 0.9
+    },
+    {
+      "pattern_type": "shopping_behavior",
+      "observation": "Active property upkeep and contractor management",
+      "frequency": 1,
+      "context": "Payment to a contractor (~£7,074), purchase of moss control supplies, and snagging follow-up imply ongoing property maintenance/renovation; planning alerts indicate monitoring local developments affecting property.",
+      "confidence": 0.92
+    },
+    {
+      "pattern_type": "service_relationship",
+      "observation": "Energy account in active use with Direct Debit",
+      "frequency": 1,
+      "context": "Regular direct debit for utilities confirms an active residential service relationship in the UK.",
+      "confidence": 0.9
+    },
+    {
+      "pattern_type": "service_relationship",
+      "observation": "Membership at St George’s Hill Lawn Tennis Club",
+      "frequency": 1,
+      "context": "Operational member notices and program offers are typically sent to active members, indicating club membership and likely usage.",
+      "confidence": 0.85
+    },
+    {
+      "pattern_type": "shopping_behavior",
+      "observation": "Deliberate purchasing with rapid reconsideration (order cancelled and refunded same day)",
+      "frequency": 1,
+      "context": "A same-day cancel/refund suggests careful post-purchase evaluation and willingness to reverse purchases quickly when not ideal.",
+      "confidence": 0.88
+    },
+    {
+      "pattern_type": "professional_communication",
+      "observation": "Leads/coordinates multi-party response regarding alleged Mars/Novus fraud",
+      "frequency": 1,
+      "context": "Scheduling calls, coordinating with law firms, and sharing investigative details indicate an active coordinating role (professional or personal advocacy).",
+      "confidence": 0.9
+    },
+    {
+      "pattern_type": "professional_communication",
+      "observation": "Acts as a professional reference for a tender",
+      "frequency": 1,
+      "context": "Providing a reference on a tender implies standing in a professional network relevant to procurement/contracting.",
+      "confidence": 0.7
+    },
+    {
+      "pattern_type": "interest_engagement",
+      "observation": "Active participation in digital identity/linked data standards community",
+      "frequency": 1,
+      "context": "Standards event invite and technical hashing discussion reflect practitioner-level engagement; OTP suggests active management of related professional content preferences.",
+      "confidence": 0.88
+    },
+    {
+      "pattern_type": "interest_engagement",
+      "observation": "Sustained crypto/web3 engagement (research, events, tax readiness)",
+      "frequency": 1,
+      "context": "Mix of technical workshops, institutional research, conference networking, and tax tooling suggests more than casual interest—likely investing/building activity.",
+      "confidence": 0.8
+    },
+    {
+      "pattern_type": "technology_usage_pattern",
+      "observation": "Heightened security posture across services (alerts and OTP usage)",
+      "frequency": 1,
+      "context": "Multiple sign-in alerts and OTP codes show active monitoring and MFA/verification habits across key accounts; also indicates many services in use.",
+      "confidence": 0.9
+    },
+    {
+      "pattern_type": "geographic_cultural_indicator",
+      "observation": "UK-based, likely Elmbridge/Surrey area",
+      "frequency": 1,
+      "context": "Local council monitoring, UK utilities, UK e-commerce, and Surrey tennis club membership collectively indicate residence and community involvement in Surrey.",
+      "confidence": 0.95
+    },
+    {
+      "pattern_type": "lifestyle_indicator",
+      "observation": "Parent/guardian engaged with school updates",
+      "frequency": 1,
+      "context": "Guardian summaries are opt-in and imply active oversight of a child’s coursework.",
+      "confidence": 0.85
+    },
+    {
+      "pattern_type": "communication_behavior",
+      "observation": "Prompt operational follow-through (pays invoices and confirms quickly; quickly schedules calls)",
+      "frequency": 1,
+      "context": "Same-day payment confirmation and immediate coordination behavior suggest decisive, organized communication habits.",
+      "confidence": 0.82
+    },
+    {
+      "pattern_type": "technology_usage_pattern",
+      "observation": "Uses multiple email identities segmented by context (Gmail for professional; Hotmail for retail)",
+      "frequency": 1,
+      "context": "Address selection aligns with use-case, indicating deliberate compartmentalization of personal vs professional communications.",
+      "confidence": 0.75
+    },
+    {
+      "pattern_type": "interest_engagement",
+      "observation": "Regular consumption of finance and politics analysis",
+      "frequency": 1,
+      "context": "Consistent intake from financial and political outlets suggests an ongoing interest in markets and UK politics.",
+      "confidence": 0.85
+    }
+  ],
+  "demographic_possibilities": {
+    "age_analysis": {
+      "likely_range": "38-52",
+      "confidence": "medium",
+      "evidence": "Active parent/guardian for school updates (implies school-age child); homeowner conducting renovation-scale works (~£7,074 contractor payment) and monitoring council planning; serves as a professional reference and coordinates multi-party legal/fraud response (senior professional network signals); membership at a prestigious tennis club; regular consumption of finance/politics analysis; practitioner-level engagement in standards and developer-focused AI agent tooling consistent with a mid-career professional."
+    },
+    "lifestyle_profile": {
+      "characteristics": [
+        "Tech-forward and hands-on with AI tools (paid LLM subscription, API credits, developer-focused agent/search interest)",
+        "Security-conscious with active MFA/OTP and sign-in monitoring across services",
+        "Homeowner proactively maintaining and upgrading property; monitors local planning impacts",
+        "Physically active and socially networked via tennis club membership",
+        "Community-aware and locally engaged (Elmbridge planning alerts)",
+        "Globally connected professional (touchpoints with Hong Kong, BVI, NZ, Japan events/updates)",
+        "Investor/building mindset in crypto/web3 with tax readiness",
+        "Organized and decisive operational behavior (same-day invoice payments, rapid scheduling, quick purchase reversals)",
+        "Compartmentalizes communications with multiple email identities by context",
+        "Regular consumer of finance and UK politics analysis"
+      ],
+      "confidence": "high",
+      "evidence": "Converging signals across subscriptions (Claude Pro + API), security alerts/OTP, significant property spend and supplies, club membership comms, council planning alerts, international professional/event emails, crypto research/tax tooling, prompt operational follow-through, and segmented email usage."
+    },
+    "economic_indicators": {
+      "spending_patterns": [
+        "Large contractor payment (~£7,074) for property works",
+        "Ongoing utilities via UK direct debit (Octopus Energy)",
+        "Paid LLM subscription (£18) plus auto-recharge API credits ($6.43) indicating non-trivial usage",
+        "Property maintenance supplies purchases (e.g., moss control)",
+        "Club membership-related communications suggesting recurring dues",
+        "E-commerce with deliberate purchasing and same-day cancel/refund when unsuitable",
+        "Prompt settlement of invoices and confirmations",
+        "Engagement with crypto/web3 including research, events, and tax tooling"
+      ],
+      "income_signals": "Likely upper-middle to high income: HSBC Private Banking relationship, ownership/renovation of property in an affluent Surrey area, membership at St George’s Hill Lawn Tennis Club, capacity for sizeable contractor spend, and globally oriented professional/legal engagements.",
+      "confidence": "high"
+    },
+    "geographic_analysis": {
+      "location_indicators": [
+        "Elmbridge Borough Council planning alerts for KT12 4BX (Walton-on-Thames, Surrey)",
+        "Member notice from St George’s Hill Lawn Tennis Club (Weybridge, Surrey)",
+        "UK utilities and invoices in GBP (Octopus Energy, local suppliers)",
+        "UK-centric news/politics content and UK e-commerce (Amazon.co.uk)",
+        "Additional UK legal/regulatory references (Ofcom, Online Safety Act)"
+      ],
+      "likely_region": "Elmbridge, Surrey, United Kingdom (Weybridge / Walton-on-Thames area)",
+      "confidence": "high"
+    },
+    "data_quality": "Evidence is strong for location, property ownership/maintenance, tech/AI engagement, security posture, and professional network indicators. Age inference remains probabilistic (no explicit DOB; relies on parental status, property ownership, and seniority cues). Economic signals are robust but partly inferred from institutional affiliations (HSBC Private Banking) and lifestyle markers (tennis club). Dataset shows a mix of newsletters and transactional emails; some signals are single-occurrence but high-salience. Note minor discrepancy between the stated 200 analyzed emails and the 108-summary count, which may reflect different sampling windows or reporting layers."
+  },
+  "next_purchase_signals": [
+    {
+      "rank": 1,
+      "category": "Lawn and Garden Products",
+      "tier_1": "Durable Goods",
+      "tier_2": "Home and Garden Products",
+      "tier_3": "Lawn and Garden Products",
+      "probability": 0.88,
+      "reasoning": "Recent high-value contractor payment to Shovel & Spade Ltd (GBP 7,073.94), prior SPCB Mosskillers purchase, and shipment threads from The Grass People signal active property and lawn renovation. Autumn in Surrey is peak season for scarifying, overseeding, and winter lawn feed—natural next buys after moss treatment.",
+      "lifestyle_connection": "Suburban Surrey homeowner with ongoing garden works; prioritizes home upkeep and appearance in an affluent area (Elmbridge).",
+      "brand_connection": "The Grass People (seed/fertiliser shipments), SPCB Mosskillers (prior order), Amazon.co.uk (active channel for home/garden).",
+      "purchase_timeline": "immediate",
+      "confidence": "high"
+    },
+    {
+      "rank": 2,
+      "category": "Plants",
+      "tier_1": "Durable Goods",
+      "tier_2": "Home and Garden Products",
+      "tier_3": "Plants",
+      "probability": 0.62,
+      "reasoning": "Post-moss control and contractor landscaping typically lead to overseeding and planting. Autumn is prime in the UK for bulbs, turf repairs, and ornamental planting—complementary to the confirmed lawn/garden work.",
+      "lifestyle_connection": "Enhancing a family home’s outdoor space fits suburban lifestyle; club/community engagement and planning alerts indicate long-term property improvement interest.",
+      "brand_connection": "The Grass People (UK lawn brand already in use), Amazon.co.uk for garden supplies; local Surrey garden centres likely.",
+      "purchase_timeline": "short-term",
+      "confidence": "medium"
+    },
+    {
+      "rank": 3,
+      "category": "Pest Control",
+      "tier_1": "Consumer Packaged Goods",
+      "tier_2": "Pest Control",
+      "tier_3": "Pest Control",
+      "probability": 0.56,
+      "reasoning": "Confirmed SPCB Mosskillers purchase and broader garden remediation suggest continued need for chemical/biological controls (e.g., moss re-treatment, slug/rodent control) as weather shifts in autumn.",
+      "lifestyle_connection": "Active garden maintenance to protect lawn investments and keep outdoor areas family-friendly.",
+      "brand_connection": "SPCB Mosskillers (existing supplier), Amazon.co.uk (reorder channel).",
+      "purchase_timeline": "short-term",
+      "confidence": "medium"
+    },
+    {
+      "rank": 4,
+      "category": "Laptops",
+      "tier_1": "Consumer Electronics",
+      "tier_2": "Computers",
+      "tier_3": "Laptops",
+      "probability": 0.53,
+      "reasoning": "Ongoing paid Claude Pro subscription plus recent API auto-recharge credits indicate heavy AI/agent usage beyond casual chat; multiple security alerts and developer-focused content suggest hands-on building—often paired with upgrading/adding a capable laptop.",
+      "lifestyle_connection": "Professional/technical user balancing work and side projects; premium leaning and decisive purchasing behavior support investment in higher-spec hardware.",
+      "brand_connection": "Microsoft account ecosystem (Windows sign-in alerts), Anthropic (Claude Pro usage), Amazon.co.uk (likely purchase route).",
+      "purchase_timeline": "short-term",
+      "confidence": "medium"
+    },
+    {
+      "rank": 5,
+      "category": "Suntan Products",
+      "tier_1": "Consumer Packaged Goods",
+      "tier_2": "Skin Care",
+      "tier_3": "Suntan Products",
+      "probability": 0.38,
+      "reasoning": "Active membership at St George’s Hill Lawn Tennis Club indicates regular outdoor sport; a SunGod prescription sunglasses order was placed then cancelled—sun/UV protection need remains unmet. With the outdoor Goodwood event upcoming, sunscreen is a logical substitute/complement.",
+      "lifestyle_connection": "Sports/club lifestyle with outdoor exposure; health and performance mindset around tennis and events.",
+      "brand_connection": "SunGod (recent eyewear engagement, adjacent to UV protection), Amazon.co.uk or local pro shops for premium SPF.",
+      "purchase_timeline": "short-term",
+      "confidence": "medium"
+    }
+  ],
+  "ikigai": {
+    "primary_ikigai": "Everyday life organization & external information monitoring (managing accounts, staying informed)",
+    "secondary_areas": [
+      "Local community / club participation (tennis club)",
+      "Curiosity about technology / tools (occasional tech/product notices)",
+      "Current affairs / news-following"
+    ],
+    "confidence_score": 0.55,
+    "supporting_evidence": [
+      {
+        "pattern": "High personal engagement with routine, external-facing communications (account alerts, club notices, news)",
+        "strength": "high",
+        "examples": [
+          "New sign-in detected for your Microsoft account",
+          "Member Notice - Tree Removal",
+          "Starmer: Labour got it wrong on migration"
+        ]
+      },
+      {
+        "pattern": "Connection to local community through membership/club communication",
+        "strength": "medium",
+        "examples": [
+          "Member Notice - Tree Removal (St George's Hill Lawn Tennis Club)"
+        ]
+      },
+      {
+        "pattern": "Occasional interest in technology/product updates (passive receipt of product/API announcement)",
+        "strength": "low",
+        "examples": [
+          "Introducing Perplexity's new Search API"
+        ]
+      },
+      {
+        "pattern": "No measurable pattern of active learning frequency or structured growth activities (learning_frequency_indicators = 0)",
+        "strength": "high",
+        "examples": [
+          "Learning frequency indicators: 0 (no signals of regular learning engagements found)"
+        ]
+      },
+      {
+        "pattern": "Many communications appear informational/transactional rather than expressive or hobby-driven (little evidence of joy-driven, voluntary creative pursuits)",
+        "strength": "medium",
+        "examples": [
+          "New sign-in detected for your Microsoft account",
+          "Starmer: Labour got it wrong on migration"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Moderate — engagement is oriented toward external systems and communities (account security, local club, news). Connections are functional but present.",
+      "active_engagement": "Low-to-moderate — most items are notifications or information receipts; evidence of two-way, active participation (e.g., club attendance or replies) is limited in the data provided.",
+      "emotional_meaning": "Low — sample messages are largely transactional or informational; there are few clear signals of activities chosen for emotional satisfaction.",
+      "voluntary_pursuit": "Mixed — news and club membership are likely voluntarily followed, while account-security messages are required; overall the voluntary, joy-driven pursuits are not clearly visible.",
+      "everyday_joy": "Weak signal — small everyday routines (monitoring accounts, reading news, club membership) may provide structure, but direct evidence they produce joy is minimal.",
+      "growth_orientation": "Absent — the explicit learning indicator is 0 and there are no clear ongoing educational or skill-development patterns in the sampled communications."
+    },
+    "personal_patterns": {
+      "total_emails": 200,
+      "personal_email_count": 156,
+      "personal_percentage": 78.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "New sign-in detected for your Microsoft account",
+          "Category": "Personal Communication",
+          "Summary": "New sign-in detected for your Microsoft account; security alert advising to review activity if unsure.",
+          "From": "Microsoft account team <account-security-noreply@accountprotection.microsoft.com>"
+        },
+        {
+          "Subject": "Starmer: Labour got it wrong on migration",
+          "Category": "Newsletter",
+          "Summary": "Telegraph newsletter featuring an exclusive on Sir Keir Starmer admitting the Left has got immigration wrong and outlining his plan against the populist Right.",
+          "From": "\"Telegraph | From the Editor\" <editor@emails.telegraph.co.uk>"
+        },
+        {
+          "Subject": "Member Notice - Tree Removal",
+          "Category": "Newsletter",
+          "Summary": "Notice of beech tree removal due to decay for health and safety; oak tree deadwood reduction; work scheduled Oct 9 with disruptions to parking, access, classes, and gym use; Cottage closed for Physio/Pilates.",
+          "From": "\"St George's Hill Lawn Tennis Club\" <marketing@stghltc.co.uk>"
+        },
+        {
+          "Subject": "Introducing Perplexity's new Search API",
+          "Category": "Newsletter",
+          "Summary": "Perplexity launches the Perplexity Search API, offering real-time, factual web indexing with structured snippets and developer-friendly pricing ($5 per 1K requests).",
+          "From": "James at Perplexity <team@mail.perplexity.ai>"
+        },
+        {
+          "Subject": "A sound was played on N E S’s Apple Watch",
+          "Category": "Personal Communication",
+          "Summary": "Notification that a sound was played on N E S’s Apple Watch, with links to Find My and iCloud Find for further action.",
+          "From": "Find My <noreply@email.apple.com>"
+        },
+        {
+          "Subject": "AI Agents Spend Money, Online Betting Automates, ChatGPT Users Shift, Reinforcement Learning Accelerates",
+          "Category": "Newsletter",
+          "Summary": "DL AI newsletter noting China's ban on major tech firms purchasing Nvidia chips and discussing broader implications for AI hardware and policy.",
+          "From": "\"The Batch @ DeepLearning.AI\" <thebatch@deeplearning.ai>"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 134,
+          "Personal Communication": 22
+        },
+        "engagement_timespan_days": 6
+      }
+    },
+    "recommendations": [
+      "Clarify what activities feel energizing: keep a simple 1–2 week log of which emails prompt action that felt satisfying (e.g., replying, signing up for events, experimenting with a tool).",
+      "Convert passive information into active micro-engagements: if tech notices interest you, try a 30-minute hands-on experiment (e.g., explore the Perplexity API with a concrete small task) to shift from passive receipt to active learning.",
+      "Deepen local community involvement: use club notices as prompts to attend one event or volunteer once a month — this can turn a transactional membership into an emotionally meaningful, everyday joy.",
+      "Introduce brief, regular learning rituals: 10–20 minutes daily on a chosen topic (tech, tennis skills, current affairs reflection) to create measurable growth where none currently appears.",
+      "Reduce noise to reveal true interests: unsubscribe from system/marketing messages where possible so you can better notice which communications you seek out and which activities genuinely lift you.",
+      "Experiment and iterate (honor fluidity): treat ikigai as evolving — try 2–3 small voluntary projects (community, creative, technical) for a month each, then keep what consistently motivates you to get up in the morning."
+    ],
+    "analysis_timestamp": "2025-09-26T11:20:10.035494"
+  },
+  "confidence_metrics": {
+    "data_volume": 1.0,
+    "evidence_quality": 0.8647058823529412,
+    "evidence_count": 1.0,
+    "pattern_diversity": 1.0,
+    "data_completeness": 0.75,
+    "overall_confidence": 0.22566176470588237
+  },
+  "summary": "Communications are dominated by newsletters (≈67% of 200 messages across 120 senders), indicating an information-dense, newsletter-first consumer who prefers asynchronous updates over direct outreach (high confidence). Confirmed spend patterns show prompt payment of a large home/garden contractor invoice alongside recurring UK utilities and an AI subscription, pointing to low-to-moderate price sensitivity and residence in Elmbridge, Surrey, UK (high confidence). Research signals cluster around AI tools, crypto/finance, and adtech with strong UK media consumption, suggesting receptiveness to expert webinars, product updates, and compliance-focused messaging (medium confidence). Action: prioritize UK-localized, newsletter-led campaigns and premium home/tech offers that emphasize trust, ROI, and convenience (seamless recurring billing, expedited fulfillment), favoring loyalty/bundle value over discounts; overall profile confidence is moderate given strong payment/geography anchors but limited direct comparison-shopping evidence.",
+  "analysis_model": "ollama:openai:gpt-5",
+  "analysis_timestamp": "2025-09-26T11:20:48.854530",
+  "schema_version": "1.0",
+  "generator": {
+    "name": "UnbiasedMarketingAnalyzer",
+    "version": "v1",
+    "model": "ollama:openai:gpt-5",
+    "seed": 42
+  },
+  "data_coverage": {
+    "total_emails": 200,
+    "analyzed_emails": 200,
+    "filtered_non_marketing": 108,
+    "samples": {
+      "patterns": 100,
+      "products_services": 50,
+      "geographic": 100
+    },
+    "time_range": {
+      "start": "2025-09-19T15:23:51+00:00",
+      "end": "2025-09-26T10:23:03+00:00",
+      "span_days": 6
+    }
+  },
+  "section_confidence": {
+    "communication": 1.0,
+    "interests": 0.2,
+    "purchases": 0.52,
+    "geographic": 0.9,
+    "temporal": 0.316,
+    "engagement": 1.0
+  }
+}

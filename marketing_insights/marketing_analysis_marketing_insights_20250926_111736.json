@@ -1,0 +1,215 @@
+{
+  "communication_patterns": {
+    "volume_metrics": {
+      "total_communications": 4,
+      "unique_senders": 3,
+      "category_diversity": 3
+    },
+    "category_distribution": {
+      "Newsletter": 0.5,
+      "Personal Communication": 0.25,
+      "Other": 0.25
+    },
+    "primary_communication_type": "Newsletter"
+  },
+  "interest_clusters": {},
+  "purchase_behavior": {
+    "confirmed_transactions": [],
+    "transaction_count": 0,
+    "transaction_frequency": 0
+  },
+  "geographic_indicators": {},
+  "temporal_patterns": {
+    "date_range": {
+      "start": "2025-09-26T08:49:36+00:00",
+      "end": "2025-09-26T10:07:37+00:00",
+      "span_days": 0
+    },
+    "day_distribution": {
+      "Friday": 4
+    },
+    "hour_distribution": {
+      "10": 3,
+      "8": 1
+    }
+  },
+  "engagement_profile": {
+    "engagement_level": "low",
+    "engagement_diversity": {
+      "category_count": 3,
+      "diversity_level": "low"
+    },
+    "significant_patterns": 0,
+    "pattern_confidence": 0.5
+  },
+  "pattern_evidence": [
+    {
+      "pattern_type": "communication_volume",
+      "observation": "Analyzed 4 email communications",
+      "frequency": 4,
+      "context": "Overall communication activity level",
+      "confidence": 0.5
+    }
+  ],
+  "demographic_possibilities": {
+    "age_analysis": {
+      "likely_range": "18-65",
+      "confidence": "low",
+      "evidence": "Extremely limited dataset (3 total communications across 2 sources) with one newsletter subscription indicates basic digital subscription behavior common across adult age groups; no content, platform, or timing cues to narrow further."
+    },
+    "lifestyle_profile": {
+      "characteristics": [
+        "Low observed email engagement volume",
+        "Minimal subscription footprint (one newsletter)",
+        "Broad, non-specialized inbox usage (even split across personal/other/newsletter)",
+        "Possible new or lightly used email account"
+      ],
+      "confidence": "low",
+      "evidence": "Only 3 messages across 2 unique sources with equal distribution across categories suggests low-contact density and limited list membership; no recurring threads or high-frequency patterns observed."
+    },
+    "economic_indicators": {
+      "spending_patterns": [
+        "No purchase confirmations, invoices, or billing notices observed",
+        "No recurring subscription/renewal or shipping notifications detected"
+      ],
+      "income_signals": "No discernible signals from the available communications",
+      "confidence": "low"
+    },
+    "geographic_analysis": {
+      "location_indicators": [
+        "No existing geographic analysis provided; deferring to external source if available"
+      ],
+      "likely_region": "Not provided",
+      "confidence": "Not available"
+    },
+    "data_quality": "Very sparse and potentially inconsistent dataset (summary lists 3 communications, while observed patterns mention 4). No timestamps, content details, or service/platform metadata. The snapshot may not represent typical behavior, limiting demographic and economic inference. Conclusions are tentative and low confidence."
+  },
+  "next_purchase_signals": [],
+  "ikigai": {
+    "primary_ikigai": "Everyday social & sensory pleasure through local food/community events",
+    "secondary_areas": [
+      "Curiosity about media/tech strategy (informational engagement)",
+      "Personal account/housekeeping (digital self-care, low ikigai relevance)"
+    ],
+    "confidence_score": 0.6,
+    "supporting_evidence": [
+      {
+        "pattern": "Interest in local community events and food (concrete, social activity)",
+        "strength": "medium",
+        "examples": [
+          "Subject: \"Thursday Pie Club launches 2 Oct!\" — local venue announcement (info@thevictoriaoxshott.com)"
+        ]
+      },
+      {
+        "pattern": "Interest in tech/media analysis and strategic commentary (intellectual curiosity)",
+        "strength": "low-medium",
+        "examples": [
+          "Subject: \"The YouTube Juggernaut (This Week in Stratechery)\" — topical newsletter (email@stratechery.com)"
+        ]
+      },
+      {
+        "pattern": "Transactional/account notifications (operational, not ikigai)",
+        "strength": "low",
+        "examples": [
+          "Subject: \"New sign-in detected for your Microsoft account\" — security alert (account-security-noreply@accountprotection.microsoft.com)"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Present but limited — local event email points to connection with nearby community/venues; newsletters indicate connection to broader ideas and discourse.",
+      "active_engagement": "Mostly passive in the sample (reading emails/newsletters). The Pie Club item suggests potential for active participation (attending, socializing), whereas newsletters are consumption unless turned into discussion or projects.",
+      "emotional_meaning": "Possibly meaningful at a small-scale, everyday level (enjoyment of local food/club). Little explicit emotional language in the data, so inferred meaning is moderate for community/food and low for transactional emails.",
+      "voluntary_pursuit": "Evidence that at least some items are voluntary (subscribing to Stratechery, interest in Pie Club). The account alert is required/administrative and excluded from ikigai.",
+      "everyday_joy": "Likely expressed through concrete small activities (e.g., attending a weekly pie club, grabbing local food, reading a favorite newsletter). These are specific, everyday candidates for ikigai if acted on.",
+      "growth_orientation": "Low — the dataset shows zero learning-frequency indicators. The newsletter implies intellectual curiosity but no clear pattern of active learning or skill development."
+    },
+    "personal_patterns": {
+      "total_emails": 4,
+      "personal_email_count": 3,
+      "personal_percentage": 75.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "New sign-in detected for your Microsoft account",
+          "Category": "Personal Communication",
+          "Summary": "Security alert describing a new sign-in to a Microsoft account and suggesting to review activity if unfamiliar.",
+          "From": "Microsoft account team <account-security-noreply@accountprotection.microsoft.com>"
+        },
+        {
+          "Subject": "The YouTube Juggernaut (This Week in Stratechery)",
+          "Category": "Newsletter",
+          "Summary": "Weekly Stratechery digest highlighting The YouTube Juggernaut, Nvidia-Intel partnership, and sushi robots.",
+          "From": "email@stratechery.com"
+        },
+        {
+          "Subject": "Thursday Pie Club launches 2 Oct!",
+          "Category": "Newsletter",
+          "Summary": "Promotional email about Thursday Pie Club launch on 2 Oct offering pie and wine for £70.",
+          "From": "info@thevictoriaoxshott.com"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 2,
+          "Personal Communication": 1
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Lean into the local/community food interest as a primary everyday ikigai: RSVP to the Pie Club, attend one meetup, and make attendance a small recurring ritual (e.g., monthly).",
+      "Convert passive newsletter reading into active engagement: take one insight from each Stratechery piece and write a two-sentence reflection, or share a note with one friend to create social interaction around the idea.",
+      "Separate transactional emails (account/security) from personal-interest mail using filters so authentic personal signals are easier to spot and act on.",
+      "Create tiny, achievable actions that turn consumption into participation — e.g., volunteer to bring a pie to the next meeting, start a brief local-food photo log, or suggest a conversation topic at the Pie Club.",
+      "Introduce low-effort learning habits to strengthen growth orientation: set a weekly 20–30 minute window to read one analytical piece and summarize a practical takeaway.",
+      "Treat these interests as fluid: try 2–3 small experiments over the next month (attend an event, host a short discussion about a newsletter article, join a related local group) and observe which bring sustained daily uplift."
+    ],
+    "analysis_timestamp": "2025-09-26T10:17:36.684281"
+  },
+  "confidence_metrics": {
+    "data_volume": 0.232,
+    "evidence_quality": 0.5,
+    "evidence_count": 0.2,
+    "pattern_diversity": 0.2,
+    "data_completeness": 0.75,
+    "overall_confidence": 0.10575000000000001
+  },
+  "summary": "Communication pattern analysis completed on 4 email records with 11% overall confidence in pattern identification. Analysis focused on observed behavioral patterns without demographic assumptions. See detailed sections for specific communication and engagement patterns.",
+  "analysis_model": "ollama:openai:gpt-5",
+  "analysis_timestamp": "2025-09-26T10:17:36.687701",
+  "schema_version": "1.0",
+  "generator": {
+    "name": "UnbiasedMarketingAnalyzer",
+    "version": "v1",
+    "model": "ollama:openai:gpt-5",
+    "seed": 42
+  },
+  "data_coverage": {
+    "total_emails": 4,
+    "analyzed_emails": 4,
+    "filtered_non_marketing": 3,
+    "samples": {
+      "patterns": 4,
+      "products_services": 4,
+      "geographic": 3
+    },
+    "time_range": {
+      "start": "2025-09-26T08:49:36+00:00",
+      "end": "2025-09-26T10:07:37+00:00",
+      "span_days": 0
+    }
+  },
+  "section_confidence": {
+    "communication": 0.62,
+    "interests": 0.2,
+    "purchases": 0.2,
+    "geographic": 0.3,
+    "temporal": 0.2,
+    "engagement": 0.8
+  }
+}

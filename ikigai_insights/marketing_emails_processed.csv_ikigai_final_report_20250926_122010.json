@@ -1,0 +1,160 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-26T11:20:10.035494",
+    "primary_ikigai": "Everyday life organization & external information monitoring (managing accounts, staying informed)",
+    "secondary_areas": [
+      "Local community / club participation (tennis club)",
+      "Curiosity about technology / tools (occasional tech/product notices)",
+      "Current affairs / news-following"
+    ],
+    "confidence_score": 0.55,
+    "supporting_evidence": [
+      {
+        "pattern": "High personal engagement with routine, external-facing communications (account alerts, club notices, news)",
+        "strength": "high",
+        "examples": [
+          "New sign-in detected for your Microsoft account",
+          "Member Notice - Tree Removal",
+          "Starmer: Labour got it wrong on migration"
+        ]
+      },
+      {
+        "pattern": "Connection to local community through membership/club communication",
+        "strength": "medium",
+        "examples": [
+          "Member Notice - Tree Removal (St George's Hill Lawn Tennis Club)"
+        ]
+      },
+      {
+        "pattern": "Occasional interest in technology/product updates (passive receipt of product/API announcement)",
+        "strength": "low",
+        "examples": [
+          "Introducing Perplexity's new Search API"
+        ]
+      },
+      {
+        "pattern": "No measurable pattern of active learning frequency or structured growth activities (learning_frequency_indicators = 0)",
+        "strength": "high",
+        "examples": [
+          "Learning frequency indicators: 0 (no signals of regular learning engagements found)"
+        ]
+      },
+      {
+        "pattern": "Many communications appear informational/transactional rather than expressive or hobby-driven (little evidence of joy-driven, voluntary creative pursuits)",
+        "strength": "medium",
+        "examples": [
+          "New sign-in detected for your Microsoft account",
+          "Starmer: Labour got it wrong on migration"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Moderate — engagement is oriented toward external systems and communities (account security, local club, news). Connections are functional but present.",
+      "active_engagement": "Low-to-moderate — most items are notifications or information receipts; evidence of two-way, active participation (e.g., club attendance or replies) is limited in the data provided.",
+      "emotional_meaning": "Low — sample messages are largely transactional or informational; there are few clear signals of activities chosen for emotional satisfaction.",
+      "voluntary_pursuit": "Mixed — news and club membership are likely voluntarily followed, while account-security messages are required; overall the voluntary, joy-driven pursuits are not clearly visible.",
+      "everyday_joy": "Weak signal — small everyday routines (monitoring accounts, reading news, club membership) may provide structure, but direct evidence they produce joy is minimal.",
+      "growth_orientation": "Absent — the explicit learning indicator is 0 and there are no clear ongoing educational or skill-development patterns in the sampled communications."
+    },
+    "personal_patterns": {
+      "total_emails": 200,
+      "personal_email_count": 156,
+      "personal_percentage": 78.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "New sign-in detected for your Microsoft account",
+          "Category": "Personal Communication",
+          "Summary": "New sign-in detected for your Microsoft account; security alert advising to review activity if unsure.",
+          "From": "Microsoft account team <account-security-noreply@accountprotection.microsoft.com>"
+        },
+        {
+          "Subject": "Starmer: Labour got it wrong on migration",
+          "Category": "Newsletter",
+          "Summary": "Telegraph newsletter featuring an exclusive on Sir Keir Starmer admitting the Left has got immigration wrong and outlining his plan against the populist Right.",
+          "From": "\"Telegraph | From the Editor\" <editor@emails.telegraph.co.uk>"
+        },
+        {
+          "Subject": "Member Notice - Tree Removal",
+          "Category": "Newsletter",
+          "Summary": "Notice of beech tree removal due to decay for health and safety; oak tree deadwood reduction; work scheduled Oct 9 with disruptions to parking, access, classes, and gym use; Cottage closed for Physio/Pilates.",
+          "From": "\"St George's Hill Lawn Tennis Club\" <marketing@stghltc.co.uk>"
+        },
+        {
+          "Subject": "Introducing Perplexity's new Search API",
+          "Category": "Newsletter",
+          "Summary": "Perplexity launches the Perplexity Search API, offering real-time, factual web indexing with structured snippets and developer-friendly pricing ($5 per 1K requests).",
+          "From": "James at Perplexity <team@mail.perplexity.ai>"
+        },
+        {
+          "Subject": "A sound was played on N E S’s Apple Watch",
+          "Category": "Personal Communication",
+          "Summary": "Notification that a sound was played on N E S’s Apple Watch, with links to Find My and iCloud Find for further action.",
+          "From": "Find My <noreply@email.apple.com>"
+        },
+        {
+          "Subject": "AI Agents Spend Money, Online Betting Automates, ChatGPT Users Shift, Reinforcement Learning Accelerates",
+          "Category": "Newsletter",
+          "Summary": "DL AI newsletter noting China's ban on major tech firms purchasing Nvidia chips and discussing broader implications for AI hardware and policy.",
+          "From": "\"The Batch @ DeepLearning.AI\" <thebatch@deeplearning.ai>"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 134,
+          "Personal Communication": 22
+        },
+        "engagement_timespan_days": 6
+      }
+    },
+    "recommendations": [
+      "Clarify what activities feel energizing: keep a simple 1–2 week log of which emails prompt action that felt satisfying (e.g., replying, signing up for events, experimenting with a tool).",
+      "Convert passive information into active micro-engagements: if tech notices interest you, try a 30-minute hands-on experiment (e.g., explore the Perplexity API with a concrete small task) to shift from passive receipt to active learning.",
+      "Deepen local community involvement: use club notices as prompts to attend one event or volunteer once a month — this can turn a transactional membership into an emotionally meaningful, everyday joy.",
+      "Introduce brief, regular learning rituals: 10–20 minutes daily on a chosen topic (tech, tennis skills, current affairs reflection) to create measurable growth where none currently appears.",
+      "Reduce noise to reveal true interests: unsubscribe from system/marketing messages where possible so you can better notice which communications you seek out and which activities genuinely lift you.",
+      "Experiment and iterate (honor fluidity): treat ikigai as evolving — try 2–3 small voluntary projects (community, creative, technical) for a month each, then keep what consistently motivates you to get up in the morning."
+    ],
+    "data_coverage": {
+      "total_emails": 200,
+      "personal_email_count": 156,
+      "personal_percentage": 78.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

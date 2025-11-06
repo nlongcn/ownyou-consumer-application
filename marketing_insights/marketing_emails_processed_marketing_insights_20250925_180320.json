@@ -1,0 +1,534 @@
+{
+  "communication_patterns": {
+    "volume_metrics": {
+      "total_communications": 200,
+      "unique_senders": 103,
+      "category_diversity": 6
+    },
+    "category_distribution": {
+      "Newsletter": 0.68,
+      "Personal Communication": 0.165,
+      "Other": 0.06,
+      "Invoice": 0.045,
+      "Purchase": 0.03,
+      "House Related": 0.02
+    },
+    "primary_communication_type": "Newsletter"
+  },
+  "interest_clusters": {},
+  "purchase_behavior": {
+    "confirmed_transactions": [
+      {
+        "item": "Auto-recharge credits",
+        "source": "Anthropic, PBC",
+        "date": "2025-09-24",
+        "context": "Receipt for $6.43 payment with specific receipt number #2206-9075-7743",
+        "confidence": "high"
+      },
+      {
+        "item": "Claude Pro subscription",
+        "source": "Anthropic, PBC",
+        "date": "2025-09-22",
+        "context": "Receipt for £18.00 subscription payment with receipt #2833-0353-0440 covering Sep 22 – Oct 22, 2025",
+        "confidence": "high"
+      },
+      {
+        "item": "Mosskillers products",
+        "source": "SPCB Mosskillers",
+        "date": "2025-09-07",
+        "context": "Invoice MK2663 for £165.89 thanking customer for completed order",
+        "confidence": "high"
+      },
+      {
+        "item": "Wilson Tour Premier 4 Ball Tube",
+        "source": "Wigmore Sports",
+        "date": "2025-09-23",
+        "context": "Receipt #SGH3032 showing completed contactless Visa payment with VAT details",
+        "confidence": "high"
+      }
+    ],
+    "transaction_count": 4,
+    "transaction_frequency": 0.02,
+    "product_analysis": {
+      "categories": [
+        "Fine wine",
+        "Tennis equipment",
+        "Home improvement/landscaping",
+        "AI/technology tools",
+        "Educational courses"
+      ],
+      "specific_products": [
+        "Duckhorn Vineyards Chardonnay",
+        "Wilson Pro Staff 97UL V14 tennis racket",
+        "Mizuno Wave Exceed tennis shoes",
+        "Claude AI service",
+        "Moss killer products"
+      ],
+      "brands_engaged": [
+        "Majestic Wine",
+        "Tennis equipment retailers",
+        "SPCB Mosskillers",
+        "Anthropic (Claude)",
+        "Piktochart",
+        "LangChain Academy"
+      ]
+    },
+    "service_analysis": {
+      "subscriptions": [
+        "Claude AI credits (auto-recharge)",
+        "Truflation newsletter",
+        "Various research newsletters (Messari)",
+        "Sky TV",
+        "Superdrug Health & Beautycard"
+      ],
+      "professional_services": [
+        "Buzzacott LLP (accounting/legal)",
+        "Tennis club memberships (St. George's Hill LTC)",
+        "Home renovation contractors"
+      ],
+      "digital_services": [
+        "Adobe Sign",
+        "Piktochart Pro",
+        "DeepLearning.AI courses",
+        "England Hockey GMS registration"
+      ]
+    },
+    "spending_analysis": {
+      "transaction_categories": [
+        "Professional services (£6.43 AI credits)",
+        "Home services (£165.89 moss killer)",
+        "Sports/recreation (tennis court bookings)",
+        "Educational services"
+      ],
+      "price_sensitivity": "Shows engagement with discount offers (50% off lessons, 65% tennis sale, wine promotions) but also willing to pay for premium services",
+      "purchase_frequency": "Regular small transactions for digital services, periodic larger purchases for home/garden services, seasonal sports-related spending"
+    },
+    "research_behavior": {
+      "consideration_categories": [
+        "AI/ML technologies",
+        "Investment/trading platforms",
+        "Educational technology",
+        "Home improvement services",
+        "Sports equipment"
+      ],
+      "information_seeking": [
+        "Technical research on blockchain/AI (Messari reports)",
+        "Market analysis (trading updates)",
+        "Educational content (course announcements)",
+        "Local planning applications"
+      ],
+      "comparison_shopping": [
+        "Evidence of evaluating multiple AI platforms",
+        "Researching tennis equipment sales",
+        "Comparing educational course options"
+      ]
+    }
+  },
+  "geographic_indicators": {
+    "location_indicators": [
+      "Goodwood (venue for Kohler Cup golf event)",
+      "Killarney (team names referencing Irish location)",
+      "Elmbridge Borough Council planning applications",
+      "KT12 4BX postcode (Walton-on-Thames area)",
+      "Burhill Golf Club/Leisure (Surrey location)",
+      "Ashtead (location mentioned for tendered job)",
+      "North Downs Way (103-mile run route in Surrey/Kent)",
+      "Surbiton Hockey Club (Surrey location)",
+      "St George's Hill Lawn Tennis Club (Weybridge, Surrey)",
+      "Wellington College (Berkshire school)",
+      "Feltonfleet School (Surrey prep school)",
+      "Bank of England sports ground (fixture location)",
+      "Campaign Paintball location inquiry",
+      "Wigmore Sports (tennis retailer)"
+    ],
+    "regional_services": [
+      "NHS winter vaccination booking system",
+      "Octopus Energy (UK energy supplier)",
+      "England Hockey GMS registration system",
+      "Shovel & Spade Limited (UK landscaping company)",
+      "SPCB Mosskillers (UK garden services)",
+      "Buzzacott LLP (UK accounting firm)",
+      "Tax Assist (UK tax services)",
+      "Telegraph newspaper subscriptions",
+      "Apple TV+ UK pricing"
+    ],
+    "currency_indicators": "£ (British Pounds) - consistent use across invoices, energy bills, school fees, sports purchases, and subscription services",
+    "local_business_engagement": [
+      "Shovel & Spade Limited (landscaping invoice £7,073.94)",
+      "SPCB Mosskillers (garden services £165.89)",
+      "Wigmore Sports (tennis equipment purchase)",
+      "St George's Hill Lawn Tennis Club court bookings",
+      "Campaign Paintball & Laser Park booking inquiry",
+      "Buzzacott LLP professional services engagement"
+    ],
+    "likely_region": "Surrey/Greater London area, England, UK",
+    "confidence": "high confidence in UK location assessment"
+  },
+  "temporal_patterns": {
+    "date_range": {
+      "start": "2025-09-18T15:23:36+00:00",
+      "end": "2025-09-25T16:31:46+00:00",
+      "span_days": 7
+    },
+    "day_distribution": {
+      "Thursday": 56,
+      "Tuesday": 41,
+      "Wednesday": 39,
+      "Monday": 29,
+      "Sunday": 12,
+      "Friday": 12,
+      "Saturday": 6
+    },
+    "hour_distribution": {
+      "7": 27,
+      "16": 23,
+      "10": 17,
+      "6": 14,
+      "15": 14,
+      "13": 12,
+      "8": 11,
+      "14": 10,
+      "12": 10,
+      "9": 10
+    }
+  },
+  "engagement_profile": {
+    "engagement_level": "moderate",
+    "engagement_diversity": {
+      "category_count": 6,
+      "diversity_level": "moderate"
+    },
+    "significant_patterns": 11,
+    "pattern_confidence": 0.8772727272727273
+  },
+  "pattern_evidence": [
+    {
+      "pattern_type": "communication_volume",
+      "observation": "Analyzed 200 email communications",
+      "frequency": 200,
+      "context": "Overall communication activity level",
+      "confidence": 0.9
+    },
+    {
+      "pattern_type": "parental_engagement",
+      "observation": "Active parent with school-age children involved in multiple activities",
+      "frequency": 1,
+      "context": "Consistent engagement with Feltonfleet School communications, hockey club activities, tennis bookings, tutoring arrangements, and educational event planning. Shows active involvement in children's education and extracurricular activities including sports (hockey, tennis) and academic support.",
+      "confidence": 0.95
+    },
+    {
+      "pattern_type": "sports_participation",
+      "observation": "Regular tennis player with club membership and active sports engagement",
+      "frequency": 1,
+      "context": "Court bookings at St. George's Hill Lawn Tennis Club, tennis equipment shopping alerts, and sports gear newsletters suggest regular tennis playing. Combined with hockey club communications indicates active sports lifestyle.",
+      "confidence": 0.9
+    },
+    {
+      "pattern_type": "property_management",
+      "observation": "Property owner managing renovation/construction projects",
+      "frequency": 1,
+      "context": "Direct communications with contractors (Ian Paterson, Shovel & Spade), planning application monitoring for specific address (KT12 4BX), and completion of renovation work at 'Links Cottage' indicates active property management and development activities.",
+      "confidence": 0.9
+    },
+    {
+      "pattern_type": "financial_services_engagement",
+      "observation": "Engaged with professional financial and legal services",
+      "frequency": 1,
+      "context": "Active engagement with Buzzacott LLP (accounting), Adobe Sign document processes, and coordination around Mars/Novus investment matter suggests sophisticated financial affairs and professional service relationships.",
+      "confidence": 0.85
+    },
+    {
+      "pattern_type": "technology_adoption",
+      "observation": "Early adopter of AI and technology services",
+      "frequency": 1,
+      "context": "Active subscriptions to multiple AI services (Anthropic Claude, LangChain, DeepLearning.AI courses), crypto/blockchain research (Messari), and technology newsletters indicate strong interest in emerging technologies and continuous learning.",
+      "confidence": 0.9
+    },
+    {
+      "pattern_type": "investment_activity",
+      "observation": "Active investor with focus on alternative investments and crypto",
+      "frequency": 1,
+      "context": "Engagement with Mars/Novus investment coordination, Messari crypto research alerts, TenViz market analysis, and Litquidity financial newsletters suggests active investment portfolio management with interest in alternative assets.",
+      "confidence": 0.85
+    },
+    {
+      "pattern_type": "lifestyle_preferences",
+      "observation": "Upmarket lifestyle with interests in wine, fine art, and premium services",
+      "frequency": 1,
+      "context": "Engagement with Majestic Wine newsletters, Clarendon Fine Art events, Aspinal of London, Mercedes-Benz World activities, and premium club memberships (St. George's Hill) indicate affluent lifestyle preferences.",
+      "confidence": 0.8
+    },
+    {
+      "pattern_type": "geographic_location",
+      "observation": "UK-based, likely Surrey area resident",
+      "frequency": 1,
+      "context": "Job alerts for Walton-on-Thames, planning applications for KT12 4BX postcode, local school communications, and UK-specific services (NHS, Elmbridge Borough Council) clearly indicate Surrey/London area residence.",
+      "confidence": 0.95
+    },
+    {
+      "pattern_type": "learning_engagement",
+      "observation": "Continuous learner with focus on technology and professional development",
+      "frequency": 1,
+      "context": "Active enrollment in AI/ML courses (LangChain Academy, DeepLearning.AI), language learning (Preply Spanish), and technology webinars indicates commitment to ongoing skill development and learning.",
+      "confidence": 0.85
+    },
+    {
+      "pattern_type": "social_responsibility",
+      "observation": "Engaged in charitable activities and community events",
+      "frequency": 1,
+      "context": "Support for charity fundraising (Sick Children's Trust via Amy Valentine), participation in memorial golf events (Kohler Cup for Pancreatic Cancer Action), and community sports activities show social engagement and charitable giving.",
+      "confidence": 0.8
+    }
+  ],
+  "demographic_possibilities": {
+    "age_analysis": {
+      "likely_range": "35-50 years old",
+      "confidence": "high",
+      "evidence": "Active parent with school-age children at prep school (Feltonfleet) and involved in multiple youth activities including hockey and tennis. Property ownership with renovation projects, sophisticated financial affairs including alternative investments, and established professional service relationships all indicate mid-career adult. Technology adoption patterns (AI courses, crypto investments) suggest digital native comfort but with established wealth, pointing to millennial/Gen X demographic."
+    },
+    "lifestyle_profile": {
+      "characteristics": [
+        "Affluent family-oriented lifestyle with active parenting involvement",
+        "Sports enthusiast with regular tennis and hockey engagement",
+        "Technology early adopter with continuous learning mindset",
+        "Property investor/developer managing renovation projects",
+        "Active investor in alternative assets and crypto",
+        "Premium lifestyle preferences (wine, fine art, luxury brands)",
+        "Community-engaged with charitable giving",
+        "Professional with sophisticated financial affairs"
+      ],
+      "confidence": "high",
+      "evidence": "Consistent patterns across multiple domains: premium club memberships (St. George's Hill Tennis Club), luxury brand engagement (Mercedes-Benz, Aspinal of London), active investment portfolio management, property development activities, children's education at prep school, and charitable participation. Communication volume and diversity indicate highly active, affluent lifestyle."
+    },
+    "economic_indicators": {
+      "spending_patterns": [
+        "Premium education expenses (prep school fees)",
+        "Luxury club memberships and sports facilities",
+        "Property renovation and development investments",
+        "Alternative investment portfolio management",
+        "Premium lifestyle services and luxury goods",
+        "Professional services (accounting, legal)",
+        "Technology and continuous learning investments"
+      ],
+      "income_signals": "High income bracket - likely £150K+ annually based on prep school fees, premium club memberships, property investments, alternative asset portfolio, and luxury lifestyle indicators",
+      "confidence": "high"
+    },
+    "geographic_analysis": {
+      "location_indicators": [
+        "Using existing geographic analysis as instructed"
+      ],
+      "likely_region": "Surrey/Greater London area, England, UK",
+      "confidence": "high confidence in UK location assessment (referencing existing analysis)"
+    },
+    "data_quality": "Excellent data completeness with 200 email communications across 50 unique sources providing comprehensive behavioral patterns. Strong evidence across multiple life domains (family, sports, investments, property, education, lifestyle) enables high-confidence demographic profiling. Communication diversity and volume indicate active, engaged individual with well-documented lifestyle patterns."
+  },
+  "next_purchase_signals": [
+    {
+      "rank": 1,
+      "category": "Sports/Energy Drinks",
+      "tier_1": "Consumer Packaged Goods",
+      "tier_2": "Beverages",
+      "tier_3": "Sports/Energy Drinks",
+      "probability": 0.85,
+      "reasoning": "Active tennis player with confirmed Wilson tennis equipment purchase and St. George's Hill Lawn Tennis Club membership. Regular court bookings and sports equipment engagement indicate high sports activity requiring hydration products.",
+      "lifestyle_connection": "Multi-sport athlete (tennis and hockey club activities) with premium club memberships requiring performance hydration",
+      "brand_connection": "Engages with premium sports brands (Wilson, Mizuno) and likely to choose premium sports drink brands",
+      "purchase_timeline": "immediate",
+      "confidence": "high"
+    },
+    {
+      "rank": 2,
+      "category": "Lawn and Garden Products",
+      "tier_1": "Durable Goods",
+      "tier_2": "Home and Garden Products",
+      "tier_3": "Lawn and Garden Products",
+      "probability": 0.78,
+      "reasoning": "Recent £165.89 moss killer purchase from SPCB Mosskillers and £7,073.94 landscaping invoice from Shovel & Spade Limited. Property owner actively managing garden/lawn maintenance with ongoing renovation projects.",
+      "lifestyle_connection": "Property owner in Surrey with significant garden maintenance needs and willingness to invest in professional landscaping services",
+      "brand_connection": "Already engaged with SPCB Mosskillers and professional landscaping contractors",
+      "purchase_timeline": "short-term",
+      "confidence": "high"
+    },
+    {
+      "rank": 3,
+      "category": "Coffee and Tea",
+      "tier_1": "Consumer Packaged Goods",
+      "tier_2": "Beverages",
+      "tier_3": "Coffee and Tea",
+      "probability": 0.72,
+      "reasoning": "Professional lifestyle with AI/technology subscriptions, financial services engagement, and premium lifestyle indicators. High communication volume suggests busy professional requiring quality coffee/tea for home office or entertaining.",
+      "lifestyle_connection": "Affluent professional with premium lifestyle preferences (Majestic Wine, St. George's Hill club) likely to choose premium coffee/tea brands",
+      "brand_connection": "Premium brand preference evidenced by luxury club memberships and fine wine engagement",
+      "purchase_timeline": "immediate",
+      "confidence": "high"
+    },
+    {
+      "rank": 4,
+      "category": "Toys",
+      "tier_1": "Consumer Packaged Goods",
+      "tier_2": "Toys and Games",
+      "tier_3": "Toys",
+      "probability": 0.68,
+      "reasoning": "Strong parental engagement evidence with Feltonfleet School communications, children's hockey club activities, tennis bookings, and educational event planning. Active parent managing multiple children's activities.",
+      "lifestyle_connection": "Active parent with school-age children involved in sports (hockey, tennis) and educational activities, indicating need for recreational toys",
+      "brand_connection": "Premium lifestyle suggests preference for quality educational or sports-related toys",
+      "purchase_timeline": "medium-term",
+      "confidence": "medium"
+    },
+    {
+      "rank": 5,
+      "category": "Home Decor",
+      "tier_1": "Durable Goods",
+      "tier_2": "Home and Garden Products",
+      "tier_3": "Home Decor",
+      "probability": 0.61,
+      "reasoning": "Property renovation activities with completion of work at 'Links Cottage', significant landscaping investments, and engagement with Clarendon Fine Art events. Property owner with aesthetic interests completing home improvements.",
+      "lifestyle_connection": "Affluent homeowner in Surrey completing property renovations with interest in fine art and premium aesthetics",
+      "brand_connection": "Clarendon Fine Art engagement and premium lifestyle indicators suggest high-end home decor preferences",
+      "purchase_timeline": "medium-term",
+      "confidence": "medium"
+    }
+  ],
+  "ikigai": {
+    "primary_ikigai": "Unable to identify - insufficient authentic personal engagement data",
+    "secondary_areas": [],
+    "confidence_score": 0.15,
+    "supporting_evidence": [
+      {
+        "pattern": "High email volume with minimal personal topic identification",
+        "strength": "low",
+        "examples": [
+          "200 emails analyzed with 0 learning frequency indicators",
+          "Sample emails show no extracted personal topics"
+        ]
+      },
+      {
+        "pattern": "Potential interest in emerging technology and finance",
+        "strength": "low",
+        "examples": [
+          "THORChain research subscription",
+          "AI and bio intersection content"
+        ]
+      },
+      {
+        "pattern": "Social connection through charitable activities",
+        "strength": "low",
+        "examples": [
+          "Kohler Cup charity golf event invitation"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Minimal evidence - appears to receive content but unclear if actively chosen or engaged with",
+      "active_engagement": "No clear evidence of active participation vs passive consumption of information",
+      "emotional_meaning": "Cannot assess - no data on personal joy or meaning derived from activities",
+      "voluntary_pursuit": "Unclear - mix of subscriptions and invitations but no evidence of personal choice patterns",
+      "everyday_joy": "No identifiable small daily activities that bring meaning",
+      "growth_orientation": "Minimal evidence despite potential learning content subscriptions"
+    },
+    "personal_patterns": {
+      "total_emails": 200,
+      "personal_email_count": 169,
+      "personal_percentage": 84.5,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "New Research: Rujira Pulse: THORChain's App Layer",
+          "Category": "Newsletter",
+          "Summary": "Research alert introducing Rujira, THORChain's application layer, detailing RUJI Trade (decentralized orderbook), a BTC-backed stablecoin, upcoming Orbital Pools, RUJI token economics, and integration with THORChain liquidity.",
+          "From": "Messari Research Alerts <research@messari.io>"
+        },
+        {
+          "Subject": "RE: INVITATION: 6th Annual Edition of the Kohler Cup in memory of Rod and for Pancreatic Cancer Action, Friday 3rd October 2025 at Goodwood",
+          "Category": "Personal Communication",
+          "Summary": "Confirmation of team details and names for the 6th Annual Kohler Cup (3 Oct 2025) with thanks; final event email to be sent next week. Includes handicaps, dietary notes, and proposed team names (KILLARNEY ORIGINALS, KILLARNEY NKOTB).",
+          "From": "<merrickhaydon@gmail.com>"
+        },
+        {
+          "Subject": "Nicholas giveaways, updates, and what’s next",
+          "Category": "Newsletter",
+          "Summary": "Newsletter from UX Pilot with a link to view the HTML version and an unsubscribe link.",
+          "From": "Adam Fard <adam@uxpilot.ai>"
+        },
+        {
+          "Subject": "Why AI's Future Depends on Bio",
+          "Category": "Newsletter",
+          "Summary": "NFX newsletter arguing that the future benefits of AI depend on integrating AI with biology (AI+Bio), urging builders and investors to learn, engage, and invest; includes links to a related article, GTM playbook, and portfolio jobs.",
+          "From": "NFX <qed@nfx.com>"
+        },
+        {
+          "Subject": "New Research: Plume: From Genesis to Growth in the RWAfi Ecosystem",
+          "Category": "Newsletter",
+          "Summary": "Messari research alert highlighting Plume Network's strong first-month mainnet performance in the RWAfi sector, reporting $577M TVL, 200k+ wallets, growth of pUSD stablecoin and integrations with tokenized products and DeFi protocols, positioning Plume for institutional and retail RWA adoption.",
+          "From": "Messari Research Alerts <research@messari.io>"
+        },
+        {
+          "Subject": "Inside the Wreckage: How Google’s Trial Will Rewrite Ad Tech While Everyone Pretends Nothing’s Happening",
+          "Category": "Newsletter",
+          "Summary": "Promotional ADOTAT newsletter pitching investigative ad-tech coverage and ADOTAT+ subscription, with provocative commentary about media buyers, vendors, and industry upheaval (framed by Google trial in subject line).",
+          "From": "ADOTAT <adotat@mail.beehiiv.com>"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 136,
+          "Personal Communication": 33
+        },
+        "engagement_timespan_days": 7
+      }
+    },
+    "recommendations": [
+      "Data collection needs improvement - current analysis lacks authentic personal engagement indicators",
+      "Focus on identifying voluntary personal activities that bring daily joy rather than information consumption",
+      "Look for evidence of active participation in chosen interests rather than passive email receipt",
+      "Seek patterns in personally meaningful activities that connect to external world through individual choice"
+    ],
+    "analysis_timestamp": "2025-09-25T17:03:12.911567"
+  },
+  "confidence_metrics": {
+    "data_volume": 1.0,
+    "evidence_quality": 0.8772727272727273,
+    "evidence_count": 1.0,
+    "pattern_diversity": 1.0,
+    "data_completeness": 0.75,
+    "overall_confidence": 0.22676136363636365
+  },
+  "summary": "**Consumer Profile Summary**\n\nThis consumer demonstrates a sophisticated, multi-faceted lifestyle centered in the Surrey/Greater London area, with strong engagement across technology, sports, and premium services. Their communication patterns reveal a tech-savvy professional who actively subscribes to AI services (Claude Pro), investment research newsletters, and educational platforms, while maintaining active participation in tennis and golf communities through club memberships and equipment purchases. The spending behavior indicates selective price sensitivity—they respond to promotional offers for recreational activities and equipment while consistently investing in premium digital tools and professional services, suggesting discretionary income allocated strategically across personal development, technology adoption, and lifestyle enhancement. With 68% of communications being newsletters and a diverse transaction history spanning home services (£165+ moss treatment), sports equipment, and recurring tech subscriptions, this profile represents an informed, engaged consumer who values quality information sources and is willing to pay for convenience and expertise across multiple lifestyle categories.",
+  "analysis_model": "claude:claude",
+  "analysis_timestamp": "2025-09-25T17:03:20.369789",
+  "schema_version": "1.0",
+  "generator": {
+    "name": "UnbiasedMarketingAnalyzer",
+    "version": "v1",
+    "model": "claude:claude",
+    "seed": 42
+  },
+  "data_coverage": {
+    "total_emails": 200,
+    "analyzed_emails": 200,
+    "filtered_non_marketing": 92,
+    "samples": {
+      "patterns": 100,
+      "products_services": 50,
+      "geographic": 92
+    },
+    "time_range": {
+      "start": "2025-09-18T15:23:36+00:00",
+      "end": "2025-09-25T16:31:46+00:00",
+      "span_days": 7
+    }
+  },
+  "section_confidence": {
+    "communication": 1.0,
+    "interests": 0.2,
+    "purchases": 0.52,
+    "geographic": 0.3,
+    "temporal": 0.319,
+    "engagement": 1.0
+  }
+}

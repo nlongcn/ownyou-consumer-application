@@ -1,0 +1,139 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-25T17:03:12.911567",
+    "primary_ikigai": "Unable to identify - insufficient authentic personal engagement data",
+    "secondary_areas": [],
+    "confidence_score": 0.15,
+    "supporting_evidence": [
+      {
+        "pattern": "High email volume with minimal personal topic identification",
+        "strength": "low",
+        "examples": [
+          "200 emails analyzed with 0 learning frequency indicators",
+          "Sample emails show no extracted personal topics"
+        ]
+      },
+      {
+        "pattern": "Potential interest in emerging technology and finance",
+        "strength": "low",
+        "examples": [
+          "THORChain research subscription",
+          "AI and bio intersection content"
+        ]
+      },
+      {
+        "pattern": "Social connection through charitable activities",
+        "strength": "low",
+        "examples": [
+          "Kohler Cup charity golf event invitation"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Minimal evidence - appears to receive content but unclear if actively chosen or engaged with",
+      "active_engagement": "No clear evidence of active participation vs passive consumption of information",
+      "emotional_meaning": "Cannot assess - no data on personal joy or meaning derived from activities",
+      "voluntary_pursuit": "Unclear - mix of subscriptions and invitations but no evidence of personal choice patterns",
+      "everyday_joy": "No identifiable small daily activities that bring meaning",
+      "growth_orientation": "Minimal evidence despite potential learning content subscriptions"
+    },
+    "personal_patterns": {
+      "total_emails": 200,
+      "personal_email_count": 169,
+      "personal_percentage": 84.5,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "New Research: Rujira Pulse: THORChain's App Layer",
+          "Category": "Newsletter",
+          "Summary": "Research alert introducing Rujira, THORChain's application layer, detailing RUJI Trade (decentralized orderbook), a BTC-backed stablecoin, upcoming Orbital Pools, RUJI token economics, and integration with THORChain liquidity.",
+          "From": "Messari Research Alerts <research@messari.io>"
+        },
+        {
+          "Subject": "RE: INVITATION: 6th Annual Edition of the Kohler Cup in memory of Rod and for Pancreatic Cancer Action, Friday 3rd October 2025 at Goodwood",
+          "Category": "Personal Communication",
+          "Summary": "Confirmation of team details and names for the 6th Annual Kohler Cup (3 Oct 2025) with thanks; final event email to be sent next week. Includes handicaps, dietary notes, and proposed team names (KILLARNEY ORIGINALS, KILLARNEY NKOTB).",
+          "From": "<merrickhaydon@gmail.com>"
+        },
+        {
+          "Subject": "Nicholas giveaways, updates, and what’s next",
+          "Category": "Newsletter",
+          "Summary": "Newsletter from UX Pilot with a link to view the HTML version and an unsubscribe link.",
+          "From": "Adam Fard <adam@uxpilot.ai>"
+        },
+        {
+          "Subject": "Why AI's Future Depends on Bio",
+          "Category": "Newsletter",
+          "Summary": "NFX newsletter arguing that the future benefits of AI depend on integrating AI with biology (AI+Bio), urging builders and investors to learn, engage, and invest; includes links to a related article, GTM playbook, and portfolio jobs.",
+          "From": "NFX <qed@nfx.com>"
+        },
+        {
+          "Subject": "New Research: Plume: From Genesis to Growth in the RWAfi Ecosystem",
+          "Category": "Newsletter",
+          "Summary": "Messari research alert highlighting Plume Network's strong first-month mainnet performance in the RWAfi sector, reporting $577M TVL, 200k+ wallets, growth of pUSD stablecoin and integrations with tokenized products and DeFi protocols, positioning Plume for institutional and retail RWA adoption.",
+          "From": "Messari Research Alerts <research@messari.io>"
+        },
+        {
+          "Subject": "Inside the Wreckage: How Google’s Trial Will Rewrite Ad Tech While Everyone Pretends Nothing’s Happening",
+          "Category": "Newsletter",
+          "Summary": "Promotional ADOTAT newsletter pitching investigative ad-tech coverage and ADOTAT+ subscription, with provocative commentary about media buyers, vendors, and industry upheaval (framed by Google trial in subject line).",
+          "From": "ADOTAT <adotat@mail.beehiiv.com>"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 136,
+          "Personal Communication": 33
+        },
+        "engagement_timespan_days": 7
+      }
+    },
+    "recommendations": [
+      "Data collection needs improvement - current analysis lacks authentic personal engagement indicators",
+      "Focus on identifying voluntary personal activities that bring daily joy rather than information consumption",
+      "Look for evidence of active participation in chosen interests rather than passive email receipt",
+      "Seek patterns in personally meaningful activities that connect to external world through individual choice"
+    ],
+    "data_coverage": {
+      "total_emails": 200,
+      "personal_email_count": 169,
+      "personal_percentage": 84.5
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "claude-sonnet-4-20250514"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

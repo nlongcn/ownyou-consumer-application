@@ -1,0 +1,327 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-26T06:09:00.667774",
+    "primary_ikigai": "Technology & Standards — building and understanding reliable AI/developer tooling and web data integrity",
+    "secondary_areas": [
+      "Financial stability & practical money management",
+      "Local community and quality-of-life (club membership, everyday leisure)"
+    ],
+    "confidence_score": 0.85,
+    "supporting_evidence": [
+      {
+        "pattern": "Consistent engagement with AI, developer tooling and APIs",
+        "strength": "high",
+        "examples": [
+          "Introducing Perplexity's new Search API",
+          "Regular subscriptions and reading of technical AI/tooling communications",
+          "Active interest in new research and tooling announcements"
+        ],
+        "email_count": 4
+      },
+      {
+        "pattern": "Sustained focus on web standards, verifiable credentials and linked-data integrity",
+        "strength": "high",
+        "examples": [
+          "About linked data integrity issues: protecting from updates",
+          "Government Technology Agency FSA commitment for Verifiable Credential Rendering Methods v0.9",
+          "Following W3C and standards discussion threads"
+        ],
+        "email_count": 3
+      },
+      {
+        "pattern": "Prioritizing financial stability and status-sensitive services",
+        "strength": "medium",
+        "examples": [
+          "It is our privilege to start serving you (HSBC Premier Elite onboarding)",
+          "Practical interest in banking, wealth/status and financial services"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Valuing community, local belonging and small quality-of-life rituals",
+        "strength": "medium",
+        "examples": [
+          "Member Notice - Tree Removal",
+          "Active membership in a local tennis club and attention to community notices"
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Research-driven, educational decision-making and voluntary active engagement",
+        "strength": "high",
+        "examples": [
+          "Frequent technical reading and deliberate subscription choices",
+          "Choosing services and tools after investigation (mixed commercial decisions but intentional subscriptions)",
+          "Engaging voluntarily in standards and integrity discussions rather than passively receiving updates"
+        ],
+        "email_count": 6
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Primarily professional and intellectual: connects with developer communities, standards bodies, and vendor/tooling announcements; selectively engages with financial institutions and local community channels.",
+      "active_engagement": "Active — participates in discussions about standards and data integrity, subscribes to and reads technical communications, experiments with or follows APIs and tooling. Community engagement is present but lower frequency.",
+      "emotional_meaning": "Meaning derives from problem-solving, correctness, and mastery (getting technical details right), plus the security and confidence that comes from financial stability and local belonging.",
+      "voluntary_pursuit": "Mostly voluntary: interests in AI, web standards and community membership appear self-chosen and sustained. Commercial choices (banking tier, selected subscriptions) align with personal values rather than being imposed.",
+      "everyday_joy": "Small daily joys come from technical curiosity (reading/playing with new APIs, debugging integrity issues), routine community interactions (club visits, notices), and the comfort of well-managed financial arrangements.",
+      "growth_orientation": "Strong — demonstrates continuous learning (standards, research, tooling), follows evolving best practices, and shows moderate consistency in pursuing professional development."
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [
+          "Technology & AI (research, tooling, APIs)",
+          "Data integrity, privacy & web standards",
+          "Finance, status & practical money management"
+        ],
+        "interest_areas": [
+          {
+            "area": "AI & Machine Learning / Developer Tooling",
+            "strength": "high",
+            "indicators": [
+              "Perplexity Search API announcement (email #2)",
+              "DeepLearning.AI newsletter summarizing AI agent and reinforcement learning trends (email #4)",
+              "Subscription/receipts of technical newsletters and API product announcements"
+            ],
+            "frequency": 2,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Web standards, verifiable credentials & linked-data integrity",
+            "strength": "medium",
+            "indicators": [
+              "W3C notification about Verifiable Credential Rendering Methods FSA (email #10)",
+              "Personal technical reply discussing linked data integrity and hashlinks (email #7)"
+            ],
+            "frequency": 2,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Banking, wealth/status & financial services",
+            "strength": "medium",
+            "indicators": [
+              "HSBC Premier Elite onboarding/welcome (email #8)",
+              "Promotional loan offering (OnlineKredit) indicating attention to credit/loan products or exposure to such offers (email #9)"
+            ],
+            "frequency": 2,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Cryptocurrency / Blockchain research",
+            "strength": "low",
+            "indicators": [
+              "Messari Research alert on Siacoin Q2 2025 metrics (email #5)"
+            ],
+            "frequency": 1,
+            "consistency": "declining"
+          },
+          {
+            "area": "Local community / leisure (sports club membership)",
+            "strength": "low",
+            "indicators": [
+              "Member notice from St George's Hill Lawn Tennis Club about tree works and parking restrictions (email #1)"
+            ],
+            "frequency": 1,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Consumer goods / gifting / design",
+            "strength": "low",
+            "indicators": [
+              "Promotional discount from Jin Designs for gifts (email #6)"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Device security / personal safety",
+            "strength": "low",
+            "indicators": [
+              "Apple Find My notification that a sound was played on a family member's Apple Watch (email #3)"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          }
+        ],
+        "behavioral_patterns": {
+          "engagement_style": "mixed",
+          "information_preferences": "educational/practical",
+          "decision_making": "research-driven",
+          "temporal_consistency": "moderately_consistent"
+        },
+        "value_indicators": [
+          "Financial stability and professional status (HSBC Premier Elite onboarding suggests prioritizing relationship banking and tailored service)",
+          "Community and quality-of-life (active membership in local tennis club)",
+          "Intellectual curiosity and professional development (subscribes to technical AI and standards communications)",
+          "Practical convenience combined with aesthetics (interest in gifts/designs and attention to device/security notifications)",
+          "Concern for data integrity, privacy and correct technical approaches (engaged in linked-data integrity discussion and follows W3C work)"
+        ],
+        "temporal_patterns": {
+          "evolution_trend": "growing_interests",
+          "seasonal_patterns": "not_detected",
+          "engagement_frequency": "medium"
+        },
+        "engagement_styles": {
+          "engagement_style": "mixed",
+          "information_preferences": "educational/practical",
+          "decision_making": "research-driven",
+          "temporal_consistency": "moderately_consistent"
+        },
+        "commercial_insights": {
+          "purchase_alignment": "mixed",
+          "subscription_choices": "intentional",
+          "brand_preferences": "varied"
+        },
+        "confidence_factors": [
+          "Presence of active, technical personal communication about linked data integrity (email #7) increases confidence in technical expertise and values around data correctness",
+          "Multiple technical/newsletters (Perplexity, DeepLearning.AI, W3C) point to a coherent interest in AI, tooling and standards, but small sample size (10 emails) limits granularity"
+        ]
+      },
+      "score_statistics": {
+        "average_ikigai_score": 0.6829999999999999,
+        "median_ikigai_score": 0.86,
+        "score_std": 0.310517310306527,
+        "high_score_count": 6,
+        "medium_score_count": 1,
+        "low_score_count": 3,
+        "average_autonomy": 0.7350000000000001,
+        "category_distribution": {
+          "High": 4,
+          "Commercial-Personal": 2,
+          "Low": 1,
+          "Medium": 1,
+          "Pure-Commercial": 2
+        },
+        "top_themes": [
+          [
+            "Intellectual curiosity / professional development",
+            3
+          ],
+          [
+            "Finance",
+            2
+          ],
+          [
+            "Verifiable credentials & linked-data integrity",
+            2
+          ],
+          [
+            "Web standards",
+            2
+          ],
+          [
+            "Community and quality-of-life",
+            1
+          ],
+          [
+            "Local social belonging / sports",
+            1
+          ],
+          [
+            "AI & Machine Learning / Developer Tooling",
+            1
+          ],
+          [
+            "Tools & APIs",
+            1
+          ],
+          [
+            "Data integrity & privacy (weakly)",
+            1
+          ],
+          [
+            "Technology (consumer device)",
+            1
+          ]
+        ],
+        "total_emails": 10
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Nurture primary ikigai by allocating regular, small slots (e.g., 2–4 hours/week) for hands-on experimentation with new AI APIs and tooling; turn curiosity into short projects that produce visible artifacts (mini demos, blog posts).",
+      "Deepen standards engagement: join or observe a W3C or verifiable-credentials working group, contribute a short note or implementation report to threads you already follow to convert passive reading into influence.",
+      "Leverage professional credibility by publishing concise case studies on linked-data integrity problems you've tracked — this supports status, networking, and learning simultaneously.",
+      "Protect and ritualize everyday joy: keep weekly club/tennis time and simple 'play' sessions with tools to maintain balance between cognitive work and leisure.",
+      "Translate financial values into time-saving automation: consolidate banking and subscription reviews into a quarterly ritual so financial stability supports, rather than distracts from, creative and standards work.",
+      "Increase visible impact and community contribution: mentor a junior developer or host a short local meetup on verifiable credentials or AI tooling to convert individual expertise into social meaning.",
+      "Set one measurable growth goal per quarter (e.g., ship a small open-source integration for a verifiable-credentials renderer or publish a tutorial for a search API) to track development and sustain motivation."
+    ],
+    "data_coverage": {
+      "total_emails": 10
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 0.6829999999999999,
+    "median_ikigai_score": 0.86,
+    "score_std": 0.310517310306527,
+    "high_score_count": 6,
+    "medium_score_count": 1,
+    "low_score_count": 3,
+    "average_autonomy": 0.7350000000000001,
+    "category_distribution": {
+      "High": 4,
+      "Commercial-Personal": 2,
+      "Low": 1,
+      "Medium": 1,
+      "Pure-Commercial": 2
+    },
+    "top_themes": [
+      [
+        "Intellectual curiosity / professional development",
+        3
+      ],
+      [
+        "Finance",
+        2
+      ],
+      [
+        "Verifiable credentials & linked-data integrity",
+        2
+      ],
+      [
+        "Web standards",
+        2
+      ],
+      [
+        "Community and quality-of-life",
+        1
+      ],
+      [
+        "Local social belonging / sports",
+        1
+      ],
+      [
+        "AI & Machine Learning / Developer Tooling",
+        1
+      ],
+      [
+        "Tools & APIs",
+        1
+      ],
+      [
+        "Data integrity & privacy (weakly)",
+        1
+      ],
+      [
+        "Technology (consumer device)",
+        1
+      ]
+    ],
+    "total_emails": 10
+  },
+  "email_count": 10
+}

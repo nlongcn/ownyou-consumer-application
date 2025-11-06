@@ -1,0 +1,14 @@
+{
+  "folders": [
+	{
+		"path": "../../Colab Notebooks"
+	},
+	{
+		"path": "."
+	},
+	{
+		"path": "../Courses/LangChain/conversational-agents"
+	}
+],
+  "settings": {}
+}

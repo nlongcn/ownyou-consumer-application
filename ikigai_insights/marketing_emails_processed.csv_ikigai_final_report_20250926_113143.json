@@ -1,0 +1,124 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-26T10:31:43.945930",
+    "primary_ikigai": "Technical community collaboration (standards / interoperability / hands-on events)",
+    "secondary_areas": [
+      "Cultural / clothing interest (style, global culture)",
+      "Curiosity-driven subscriptions (light, exploratory interests)"
+    ],
+    "confidence_score": 0.4,
+    "supporting_evidence": [
+      {
+        "pattern": "Engagement with technical community invitations (suggests willingness to participate in external, collaborative events)",
+        "strength": "medium",
+        "examples": [
+          "[Openid-dcp] ISO interoperability Test Event Invitation (Nov 16-18, NZ)"
+        ]
+      },
+      {
+        "pattern": "Subscription to a culturally framed clothing newsletter (indicates an interest in culture/style that connects to the world externally)",
+        "strength": "low",
+        "examples": [
+          "🌍 Clothes-minded — newsletter@internationalintrigue.io"
+        ]
+      },
+      {
+        "pattern": "Balanced mix of personal vs non-personal emails (50% personal engagement rate) — indicates some deliberate selection of communications but low volume overall",
+        "strength": "low",
+        "examples": [
+          "Personal engagement emails: 2 of 4 (50.0%)"
+        ]
+      },
+      {
+        "pattern": "Little direct evidence of routine learning activity (learning frequency indicators: 0)",
+        "strength": "low",
+        "examples": [
+          "Growth & Learning Patterns: Learning frequency indicators: 0"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Present — interest appears to connect outwardly via community technical events and culturally oriented newsletters; interaction likely with communities and global content rather than purely internal reflection.",
+      "active_engagement": "Limited but present — the OpenID test-event invitation implies an opportunity for active participation; the newsletter appears more passive unless consciously acted on.",
+      "emotional_meaning": "Unclear/low evidence — there are signals of personal taste (clothing/culture) and professional engagement, but no explicit language of joy or meaning in the data.",
+      "voluntary_pursuit": "Likely voluntary — subscriptions and mailing-list invitations point to chosen interests rather than imposed communications, though some items may be marketing.",
+      "everyday_joy": "Sparse evidence — no clear small daily practices found; current data suggests intermittent engagement rather than daily rituals.",
+      "growth_orientation": "Weakly indicated — technical event involvement implies potential skill/development interest, but explicit learning frequency is absent."
+    },
+    "personal_patterns": {
+      "total_emails": 4,
+      "personal_email_count": 2,
+      "personal_percentage": 50.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "🌍 Clothes-minded",
+          "Category": "Newsletter",
+          "Summary": "Newsletter briefing highlighting geopolitics of fashion week, a Norwegian comedy, and the line 'They finally opened her house'.",
+          "From": "newsletter@internationalintrigue.io"
+        },
+        {
+          "Subject": "[Openid-dcp] ISO interoperability Test Event Invitation (Nov 16-18, NZ)",
+          "Category": "Newsletter",
+          "Summary": "Invitation to ISO interoperability test event (Nov 16-18) in Wellington, New Zealand; invitation attached.",
+          "From": "openid-specs-digital-credentials-protocols-bounces@lists.openid.net"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 2
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Lean into the technical-community ikigai: accept or attend one interoperability/test event or related meetup in the next 3 months to convert passive receipt of invitations into active participation.",
+      "Turn the clothing/culture interest into a small daily practice: e.g., a weekly micro-project (style mood board, short cultural reading) to create consistent, concrete activity that brings everyday joy.",
+      "Increase visible learning signals: schedule 15–30 minutes twice a week for focused learning (standards notes, blog posts, hands-on test cases) and track it to strengthen growth_orientation evidence.",
+      "Convert subscriptions into interaction: reply, ask a question, or contribute to a mailing list thread to shift from passive consumption to voluntary external connection and emotional engagement.",
+      "Prefer specific, small activities over abstract goals: set one concrete action per week tied to each ikigai area (attend an event, create one outfit/culture post, document one learning takeaway).",
+      "Audit marketing vs authentic content: remove or reclassify newsletters that are clearly commercial so genuine personal interests stand out and can be nurtured."
+    ],
+    "data_coverage": {
+      "total_emails": 4,
+      "personal_email_count": 2,
+      "personal_percentage": 50.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

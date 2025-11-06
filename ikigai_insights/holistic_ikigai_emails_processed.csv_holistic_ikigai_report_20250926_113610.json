@@ -1,0 +1,211 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-26T10:36:10.434822",
+    "primary_ikigai": "Advancing digital identity security and interoperability through open standards and collaborative professional communities",
+    "secondary_areas": [
+      "Personal cybersecurity hygiene and privacy vigilance",
+      "Global affairs learning with a cross-cultural lens"
+    ],
+    "confidence_score": 0.83,
+    "supporting_evidence": [
+      {
+        "pattern": "Active participation in standards-focused identity interoperability communities",
+        "strength": "high",
+        "examples": [
+          "[Openid-dcp] ISO interoperability Test Event Invitation (Nov 16-18, NZ)"
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Consistent attention to account security and sign-in monitoring",
+        "strength": "high",
+        "examples": [
+          "New sign-in detected for your Microsoft account (two instances)"
+        ],
+        "email_count": 2
+      },
+      {
+        "pattern": "Curiosity about global affairs via cross-cultural narratives",
+        "strength": "medium",
+        "examples": [
+          "🌍 Clothes-minded"
+        ],
+        "email_count": 1
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Engages globally through standards bodies (OpenID/ISO) and international commentary, valuing interoperability across borders.",
+      "active_engagement": "Proactively joins or follows standards test events and maintains vigilant account hygiene; overall mixed but leaning active.",
+      "emotional_meaning": "Derives purpose from making digital ecosystems safer and more interoperable, and joy from learning how different societies frame identity and culture.",
+      "voluntary_pursuit": "Chosen subscriptions to standards lists and global affairs content indicate voluntary interest; security alerts are reactive but stem from a self-chosen vigilance practice.",
+      "everyday_joy": "Small wins from checking sign-in activity, tightening settings, skimming standards updates, and reading concise cross-cultural pieces.",
+      "growth_orientation": "Research-driven learning with intentional subscriptions; participation in interoperability testing and international dialogues supports continual development."
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [
+          "Digital identity, security, and interoperability",
+          "Global affairs curiosity with a cross-cultural lens",
+          "Professional community participation and standards collaboration"
+        ],
+        "interest_areas": [
+          {
+            "area": "Cybersecurity & account hygiene",
+            "strength": "medium",
+            "indicators": [
+              "Multiple Microsoft security sign-in alerts on the same day indicate attention to account security",
+              "Microsoft ecosystem usage suggests practical concern for safeguarding access"
+            ],
+            "frequency": 2,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Digital identity standards & interoperability",
+            "strength": "high",
+            "indicators": [
+              "Subscribed to OpenID Foundation digital credentials protocols list (professional standards community)",
+              "ISO interoperability test event invitation implies engagement with conformance, testing, and cross-org collaboration"
+            ],
+            "frequency": 1,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Global affairs & geopolitics",
+            "strength": "medium",
+            "indicators": [
+              "Subscription to International Intrigue newsletter (curated world affairs)",
+              "Interest in the intersection of culture and politics (geopolitics of fashion week, cross-cultural references)"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          },
+          {
+            "area": "International professional engagement",
+            "strength": "medium",
+            "indicators": [
+              "Invitation to New Zealand ISO interop event signals openness to global collaboration and potential travel",
+              "Standards work across jurisdictions implies comfort with international coordination"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          }
+        ],
+        "behavioral_patterns": {
+          "engagement_style": "mixed",
+          "information_preferences": "educational/practical",
+          "decision_making": "research-driven",
+          "temporal_consistency": "moderately_consistent"
+        },
+        "value_indicators": [
+          "Global awareness and continual learning",
+          "Commitment to open standards and interoperability",
+          "Contribution to professional communities",
+          "Privacy and security vigilance",
+          "Bridging technology with societal contexts"
+        ],
+        "temporal_patterns": {
+          "evolution_trend": "stable_interests",
+          "seasonal_patterns": "not_detected",
+          "engagement_frequency": "low"
+        },
+        "engagement_styles": {
+          "engagement_style": "mixed",
+          "information_preferences": "educational/practical",
+          "decision_making": "research-driven",
+          "temporal_consistency": "moderately_consistent"
+        },
+        "commercial_insights": {
+          "purchase_alignment": "unclear",
+          "subscription_choices": "intentional",
+          "brand_preferences": "varied"
+        },
+        "confidence_factors": [
+          "Small, single-day sample with two automated security alerts may over-represent security signals",
+          "Chosen subscriptions (professional standards list, geopolitics newsletter) are strong but singular indicators of enduring interests"
+        ]
+      },
+      "score_statistics": {
+        "average_ikigai_score": 0.8775,
+        "median_ikigai_score": 0.89,
+        "score_std": 0.061796035471541354,
+        "high_score_count": 4,
+        "medium_score_count": 0,
+        "low_score_count": 0,
+        "average_autonomy": 0.75,
+        "category_distribution": {
+          "High": 4
+        },
+        "top_themes": [
+          [
+            "Digital identity, security, and interoperability",
+            3
+          ],
+          [
+            "Global affairs curiosity with a cross-cultural lens",
+            1
+          ],
+          [
+            "Professional community participation and standards collaboration",
+            1
+          ]
+        ],
+        "total_emails": 4
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Deepen participation in OpenID/ISO events by proposing test cases and writing short debriefs to share with the community.",
+      "Establish a monthly 30-minute security hygiene ritual (credential audit, 2FA review, recovery method check).",
+      "Bridge tech and society: keep brief notes comparing identity systems across countries and share insights with peers.",
+      "Strengthen international ties by attending one global standards meeting per quarter and initiating two new practitioner connections.",
+      "Streamline routine sign-in alerts into a dashboard or weekly digest to maintain vigilance without distraction.",
+      "Protect everyday joy: set a weekly 15-minute window for a cross-cultural read and one standards thread to stay inspired."
+    ],
+    "data_coverage": {
+      "total_emails": 4
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 0.8775,
+    "median_ikigai_score": 0.89,
+    "score_std": 0.061796035471541354,
+    "high_score_count": 4,
+    "medium_score_count": 0,
+    "low_score_count": 0,
+    "average_autonomy": 0.75,
+    "category_distribution": {
+      "High": 4
+    },
+    "top_themes": [
+      [
+        "Digital identity, security, and interoperability",
+        3
+      ],
+      [
+        "Global affairs curiosity with a cross-cultural lens",
+        1
+      ],
+      [
+        "Professional community participation and standards collaboration",
+        1
+      ]
+    ],
+    "total_emails": 4
+  },
+  "email_count": 4
+}

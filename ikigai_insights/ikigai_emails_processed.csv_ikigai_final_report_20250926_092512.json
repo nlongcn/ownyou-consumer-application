@@ -1,0 +1,106 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-26T08:25:12.790392",
+    "primary_ikigai": "News & current affairs (political interest — passive consumption)",
+    "secondary_areas": [
+      "Civic / political curiosity",
+      "Reading and staying informed"
+    ],
+    "confidence_score": 0.3,
+    "supporting_evidence": [
+      {
+        "pattern": "Single personal engagement is with a political/editorial email (news consumption)",
+        "strength": "low",
+        "examples": [
+          "Subject: \"Starmer: Labour got it wrong on migration\" from Telegraph editor"
+        ]
+      },
+      {
+        "pattern": "Overall low personal engagement and no measurable learning activity",
+        "strength": "high",
+        "examples": [
+          "Personal engagement emails: 1 of 4 (25.0%)",
+          "Learning frequency indicators: 0",
+          "No consistent personal interests recorded"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Limited — connection exists but is primarily one-way (receiving news/editorials). The person connects to the outside world through news consumption rather than active community involvement.",
+      "active_engagement": "Low — evidence points to passive consumption (reading an editorial) rather than active participation like writing, volunteering, or discussion.",
+      "emotional_meaning": "Unclear / minimal — a single news-related engagement does not show clear signs of personal joy or deep emotional meaning tied to the activity.",
+      "voluntary_pursuit": "Likely voluntary but unconfirmed — the engagement appears chosen (personal email opened) rather than imposed, yet frequency is low so it may not be a committed pursuit.",
+      "everyday_joy": "Not evident — no small daily rituals or specific activities identified that consistently bring meaning.",
+      "growth_orientation": "Absent in the data — learning frequency is zero and there is no sign of deliberate skill- or knowledge-building."
+    },
+    "personal_patterns": {
+      "total_emails": 4,
+      "personal_email_count": 1,
+      "personal_percentage": 25.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "Starmer: Labour got it wrong on migration",
+          "Category": "Newsletter",
+          "Summary": "Telegraph editor newsletter highlighting Sir Keir Starmer admitting Labour got immigration policy wrong and outlining plans to counter the populist Right; includes links to articles on Europe's drone defences and a 'fit at 70' feature.",
+          "From": "\"Telegraph | From the Editor\" <editor@emails.telegraph.co.uk>"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 1
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Treat this interest as a seed: pick a narrow topic (e.g., migration policy or a local issue) and follow it actively for a month to see if it sparks regular interest.",
+      "Convert passive reading into active engagement: comment on articles, discuss topics with friends, or write short reflections (1–2 paragraphs) after reading to deepen connection.",
+      "Establish a small daily ritual tied to the interest (e.g., 10 minutes of curated reading + 5 minutes of notes) to turn occasional consumption into everyday joy.",
+      "Create a low-effort project to test intrinsic motivation: a weekly newsletter draft, a short blog post, or joining a discussion group — projects reveal whether interest is voluntary and emotionally meaningful.",
+      "Introduce measurable learning goals (articles read, people spoken to, notes written) to shift from passive awareness to growth orientation.",
+      "If the goal is to discover authentic ikigai, try a short experiment: for two weeks note what activity you actually look forward to each morning. Compare those entries to your news-reading habits to see what truly energizes you."
+    ],
+    "data_coverage": {
+      "total_emails": 4,
+      "personal_email_count": 1,
+      "personal_percentage": 25.0
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

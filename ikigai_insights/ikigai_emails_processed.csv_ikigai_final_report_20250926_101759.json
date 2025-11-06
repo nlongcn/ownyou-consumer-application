@@ -1,0 +1,69 @@
+{
+  "ikigai_analysis_report": {
+    "schema_version": "1.0",
+    "analysis_type": "Authentic Ikigai Analysis",
+    "framework": "Yukari Mitsuhashi's Japanese Ikigai Research",
+    "analysis_timestamp": "2025-09-26T09:17:59.580974",
+    "primary_ikigai": "Insufficient Personal Data",
+    "secondary_areas": [],
+    "confidence_score": 0.0,
+    "supporting_evidence": [
+      {
+        "pattern": "No authentic personal communications identified in email data",
+        "strength": "low",
+        "examples": [
+          "Only commercial/marketing emails found"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "No personal external engagement patterns detected",
+      "active_engagement": "No evidence of chosen personal activities",
+      "emotional_meaning": "Limited personal meaning indicators in communications",
+      "voluntary_pursuit": "Mainly imposed/commercial communications detected",
+      "everyday_joy": "No clear patterns of everyday personal interests",
+      "growth_orientation": "Limited learning/growth indicators"
+    },
+    "personal_patterns": {
+      "message": "No personal patterns found - only commercial communications"
+    },
+    "recommendations": [
+      "Subscribe to educational or personal interest newsletters",
+      "Engage in online learning platforms or creative communities",
+      "Join personal development or hobby-related communications"
+    ],
+    "data_coverage": {
+      "total_emails": null,
+      "personal_email_count": null,
+      "personal_percentage": null
+    },
+    "generator": {
+      "name": "AuthenticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology": {
+    "approach": "Content-based filtering to identify authentic personal communications",
+    "excluded": [
+      "Marketing and promotional emails",
+      "Transactional communications",
+      "Commercial solicitations",
+      "Automated system messages"
+    ],
+    "included": [
+      "Personal communications",
+      "Educational content subscriptions",
+      "Creative and hobby-related content",
+      "Personal development materials",
+      "Voluntary community engagement"
+    ],
+    "framework_principles": {
+      "external_over_internal": "Connection to external world through personal choice",
+      "active_over_passive": "Active participation vs passive consumption",
+      "emotional_over_logical": "Personal meaning vs commercial transactions",
+      "voluntary_over_required": "Chosen activities vs imposed communications",
+      "everyday_joy": "Small daily activities that bring meaning (seikatsu ikigai)"
+    }
+  }
+}

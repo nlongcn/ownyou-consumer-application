@@ -1,0 +1,210 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-26T07:57:12.490726",
+    "primary_ikigai": "Protecting and controlling personal digital identity (account security & privacy)",
+    "secondary_areas": [
+      "Technology & productivity tooling (email and Microsoft ecosystem)",
+      "Automation and organization of digital life"
+    ],
+    "confidence_score": 0.85,
+    "supporting_evidence": [
+      {
+        "pattern": "Prioritizes account security and privacy as a daily concern",
+        "strength": "high",
+        "examples": [
+          "Notification: 'New sign-in detected for your Microsoft account' (direct evidence of attention to sign-ins and account access).",
+          "Holistic values emphasize 'Security and personal data protection' and 'Account security & privacy' as primary themes."
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Engages with established platform services (Microsoft ecosystem) for reliability and trust",
+        "strength": "medium-high",
+        "examples": [
+          "The single high-relevance email is from Microsoft, indicating active ties to major platform services.",
+          "Values list includes 'Reliability and trust in established platforms', suggesting platform-centered choices."
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Leans toward efficiency, organization and automated control of digital life",
+        "strength": "medium",
+        "examples": [
+          "Interest areas include 'Use of productivity / email tooling' and 'Automation and control of digital life'.",
+          "Behavioral style emphasizes practical information preferences and automation-friendly values."
+        ],
+        "email_count": 1
+      },
+      {
+        "pattern": "Decision style is cautious and habit-oriented with high choice autonomy",
+        "strength": "medium",
+        "examples": [
+          "Behavioral style: 'caution-oriented/habitual' and 'temporal_consistency': 'varied'.",
+          "Scoring shows high choice autonomy (0.90) and very high average ikigai score (0.95), indicating voluntary, self-directed attention to these themes."
+        ],
+        "email_count": 1
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Connects to the world through major, trusted platforms (Microsoft) and through maintaining secure account relationships rather than broad social or community signaling.",
+      "active_engagement": "Active monitoring and response-oriented — evidence is a reactive security alert and practical engagement with tooling; engagement is functional and intentional rather than exploratory.",
+      "emotional_meaning": "Meaning appears tied to calm, confidence and reduced friction (knowing accounts are secure and systems are organized) rather than expressive or social reward.",
+      "voluntary_pursuit": "Interests appear chosen and autonomy-driven (high choice autonomy), focused on pragmatic self-care of digital life rather than obligations.",
+      "everyday_joy": "Small daily satisfactions likely come from tidy inboxes, predictable security routines (alerts, updates, automated protections), and smooth functioning of the Microsoft/productivity stack.",
+      "growth_orientation": "Moderate — preference for practical learning and incremental improvement (automation, tools, habits) over radical reinvention; growth is pragmatic and skills-focused."
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [
+          "Digital security & account management",
+          "Technology / productivity tooling",
+          "Automation and control of digital life"
+        ],
+        "interest_areas": [
+          {
+            "area": "Account security & privacy",
+            "strength": "medium",
+            "indicators": [
+              "Receipt of a Microsoft 'new sign-in detected' security notification",
+              "Presence of account-review and security-update links indicates monitoring of account access"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Use of productivity / email tooling",
+            "strength": "low",
+            "indicators": [
+              "Products field lists 'Email Parser' alongside 'Microsoft account', implying use of tools to parse/organize email"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Engagement with major platform services (Microsoft ecosystem)",
+            "strength": "low",
+            "indicators": [
+              "Email originates from Microsoft account team, showing at least one active account with a major provider"
+            ],
+            "frequency": 1,
+            "consistency": "emerging"
+          }
+        ],
+        "behavioral_patterns": {
+          "engagement_style": "mixed",
+          "information_preferences": "practical",
+          "decision_making": "caution-oriented/habitual",
+          "temporal_consistency": "varied"
+        },
+        "value_indicators": [
+          "Efficiency and organization (automation/tools)",
+          "Security and personal data protection",
+          "Reliability and trust in established platforms"
+        ],
+        "temporal_patterns": {
+          "evolution_trend": "emerging_interests",
+          "seasonal_patterns": "not_detected",
+          "engagement_frequency": "low"
+        },
+        "engagement_styles": {
+          "engagement_style": "mixed",
+          "information_preferences": "practical",
+          "decision_making": "caution-oriented/habitual",
+          "temporal_consistency": "varied"
+        },
+        "commercial_insights": {
+          "purchase_alignment": "unclear",
+          "subscription_choices": "unclear",
+          "brand_preferences": "unclear"
+        },
+        "confidence_factors": [
+          "Analysis based on a single email — limited signal for strong inferences",
+          "Some indicators (security notifications, listed products) suggest active choices, but defaults from large services could also explain them"
+        ]
+      },
+      "score_statistics": {
+        "average_ikigai_score": 0.95,
+        "median_ikigai_score": 0.95,
+        "score_std": 0.0,
+        "high_score_count": 1,
+        "medium_score_count": 0,
+        "low_score_count": 0,
+        "average_autonomy": 0.9,
+        "category_distribution": {
+          "High": 1
+        },
+        "top_themes": [
+          [
+            "Account security & privacy",
+            1
+          ],
+          [
+            "Engagement with major platform services (Microsoft ecosystem)",
+            1
+          ],
+          [
+            "Automation and control of digital life",
+            1
+          ]
+        ],
+        "total_emails": 1
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Formalize simple, daily security rituals: a short weekly account-audit checklist (sign-in reviews, device list, app permissions) to convert reactive alerts into predictable routines.",
+      "Build a personal dashboard or single folder for security/productivity signals (security emails, shared docs, automation logs) so small wins are visible and repeated.",
+      "Invest time in one focused learning activity every quarter (e.g., Microsoft account advanced settings, password manager features, conditional access basics) to convert practical curiosity into durable expertise.",
+      "Automate low-effort protective actions (trusted device lists, multi-factor authentication apps, automated sign-in alerts) to align efficiency values with security outcomes.",
+      "Translate practical expertise into social value: document your routines (personal playbook) or mentor a peer on account hygiene — this reinforces meaning and turns private competence into contribution.",
+      "Explore integrated tooling that combines productivity and security (secure email add-ins, enterprise-grade password managers, Microsoft security features) to deepen engagement within trusted platforms.",
+      "Set measurable micro-goals (monthly reduction in unexpected alerts, time saved by automation) to maintain motivation through visible progress rather than abstract promises."
+    ],
+    "data_coverage": {
+      "total_emails": 1
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "gpt-5-mini-2025-08-07"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 0.95,
+    "median_ikigai_score": 0.95,
+    "score_std": 0.0,
+    "high_score_count": 1,
+    "medium_score_count": 0,
+    "low_score_count": 0,
+    "average_autonomy": 0.9,
+    "category_distribution": {
+      "High": 1
+    },
+    "top_themes": [
+      [
+        "Account security & privacy",
+        1
+      ],
+      [
+        "Engagement with major platform services (Microsoft ecosystem)",
+        1
+      ],
+      [
+        "Automation and control of digital life",
+        1
+      ]
+    ],
+    "total_emails": 1
+  },
+  "email_count": 1
+}

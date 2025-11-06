@@ -1,0 +1,205 @@
+{
+  "communication_patterns": {
+    "volume_metrics": {
+      "total_communications": 4,
+      "unique_senders": 3,
+      "category_diversity": 4
+    },
+    "category_distribution": {
+      "Other": 0.25,
+      "Newsletter": 0.25,
+      "Purchase": 0.25,
+      "Shipment Related": 0.25
+    },
+    "primary_communication_type": "Other"
+  },
+  "interest_clusters": {},
+  "purchase_behavior": {
+    "confirmed_transactions": [],
+    "transaction_count": 0,
+    "transaction_frequency": 0.0
+  },
+  "geographic_indicators": {},
+  "temporal_patterns": {
+    "date_range": {
+      "start": "2025-09-26T06:22:37+00:00",
+      "end": "2025-09-26T08:10:01+00:00",
+      "span_days": 0
+    },
+    "day_distribution": {
+      "Friday": 4
+    },
+    "hour_distribution": {
+      "8": 2,
+      "7": 1,
+      "6": 1
+    }
+  },
+  "engagement_profile": {
+    "engagement_level": "low",
+    "engagement_diversity": {
+      "category_count": 4,
+      "diversity_level": "moderate"
+    },
+    "significant_patterns": 0,
+    "pattern_confidence": 0.5
+  },
+  "pattern_evidence": [
+    {
+      "pattern_type": "communication_volume",
+      "observation": "Analyzed 4 email communications",
+      "frequency": 4,
+      "context": "Overall communication activity level",
+      "confidence": 0.5
+    }
+  ],
+  "demographic_possibilities": {
+    "age_analysis": {
+      "likely_range": "25-44",
+      "confidence": "low",
+      "evidence": "Presence of a purchase and a shipment-related communication indicates engagement in e-commerce and the ability to transact online. Total communication volume is low (3–4 messages), suggesting occasional transactional use rather than high-volume social emailing; combining these patterns is most consistent with working-age adults who make periodic online purchases. Sample size and missing content/timestamp metadata limit precision."
+    },
+    "lifestyle_profile": {
+      "characteristics": [
+        "Occasional online shopper (at least one purchase + shipment)",
+        "Transaction-focused digital behavior (communications primarily purchase/shipment/other rather than social)",
+        "Low overall email activity across observed window",
+        "Engages with multiple service sources (2 unique sources across few messages)"
+      ],
+      "confidence": "medium",
+      "evidence": "Communications categorized as Purchase and Shipment Related (each 33.3% of observed communications) directly indicate e-commerce interactions. Only 2 unique senders across the observed messages suggests engagement with more than one vendor/service but limited breadth of ongoing correspondence. Overall communication count is low (3 total in summary; noted 4 communications analyzed elsewhere), supporting the characterization of lower-frequency transactional use."
+    },
+    "economic_indicators": {
+      "spending_patterns": [
+        "At least one completed transaction (Purchase) followed by a Shipment communication, consistent with a fulfilled online purchase",
+        "Low transaction frequency in the sample — suggests occasional purchases rather than frequent/high-volume buying"
+      ],
+      "income_signals": "Insufficient data for a precise income bracket. Presence of completed online purchases implies some disposable income, which is most conservatively consistent with a middle-income profile, but this is speculative given the small dataset.",
+      "confidence": "low"
+    },
+    "geographic_analysis": {
+      "location_indicators": [
+        "REFERENCE existing geographic analysis - do not create new assessment"
+      ],
+      "likely_region": "USE existing geographic analysis result",
+      "confidence": "REFERENCE existing geographic confidence level"
+    },
+    "data_quality": "The dataset is very limited (3 total communications reported in the summary, but a separate note states 4 emails analyzed) and lacks critical metadata (timestamps, sender domains, message content, language, device or IP information). This restricts demographic inferences to broad, low-confidence conclusions. Observed patterns (purchase + shipment) are concrete signals, but sample size and internal inconsistency mean inferences about age, lifestyle, and income should be treated as tentative. Recommendations: provide more messages, include sender domains, timestamps, and message subjects/bodies for firmer analysis."
+  },
+  "next_purchase_signals": [],
+  "ikigai": {
+    "primary_ikigai": "News & current affairs (political interest / news consumption)",
+    "secondary_areas": [
+      "Civic engagement / public affairs",
+      "Passive information-seeking (reading/editorials)"
+    ],
+    "confidence_score": 0.28,
+    "supporting_evidence": [
+      {
+        "pattern": "Single clear personal engagement is political news/editorial",
+        "strength": "low",
+        "examples": [
+          "Subject: \"Starmer: Labour got it wrong on migration\" — From the Editor (Telegraph)"
+        ]
+      },
+      {
+        "pattern": "Low overall personal engagement rate and no recorded learning frequency",
+        "strength": "high",
+        "examples": [
+          "Total emails analyzed: 4; Personal engagement emails: 1; Personal engagement rate: 25.0%",
+          "Learning frequency indicators: 0"
+        ]
+      },
+      {
+        "pattern": "Engagement appears primarily passive (reading an editorial) rather than active participation",
+        "strength": "medium",
+        "examples": [
+          "The only personal communication is an editorial/news item with no evidence of reply, comment, or follow-up activity"
+        ]
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Connects to the external world through consumption of political news/editorial content — indicates interest in public affairs and societal issues.",
+      "active_engagement": "Predominantly passive: no evidence of active participation (comments, volunteering, content creation) in the dataset.",
+      "emotional_meaning": "Unclear — the chosen email suggests topical interest, but there is no explicit sign of personal joy or emotional investment in the data provided.",
+      "voluntary_pursuit": "Likely voluntary — the engagement is with editorial content rather than transactional or required communications, but confirmation is limited by sparse data.",
+      "everyday_joy": "Not apparent in the data — no repeated small daily activities were recorded that indicate everyday meaning.",
+      "growth_orientation": "No evidence of active learning or development (learning frequency = 0)."
+    },
+    "personal_patterns": {
+      "total_emails": 4,
+      "personal_email_count": 1,
+      "personal_percentage": 25.0,
+      "personal_topics": [],
+      "growth_patterns": {
+        "growth_indicators": [],
+        "learning_frequency": 0
+      },
+      "consistent_interests": [],
+      "personal_samples": [
+        {
+          "Subject": "Starmer: Labour got it wrong on migration",
+          "Category": "Newsletter",
+          "Summary": "Telegraph editor newsletter highlighting Sir Keir Starmer admitting Labour got immigration policy wrong and outlining plans to counter the populist Right; includes links to articles on Europe's drone defences and a 'fit at 70' feature.",
+          "From": "\"Telegraph | From the Editor\" <editor@emails.telegraph.co.uk>"
+        }
+      ],
+      "engagement_indicators": {
+        "category_distribution": {
+          "Newsletter": 1
+        },
+        "engagement_timespan_days": 0
+      }
+    },
+    "recommendations": [
+      "Treat this apparent interest in current affairs as a seed: intentionally make it active rather than purely passive (for example, write short reflections or keep a news journal to clarify why certain topics matter).",
+      "Increase frequency of voluntary engagement in small, daily ways: set a 10–15 minute morning routine to read one piece and note one personal reaction — this supports 'everyday joy' and helps reveal if this is a true ikigai.",
+      "Move from consumption to participation: join a local discussion group, online forum, or civic organization related to topics you care about (e.g., migration policy or local politics) to create external connection and active engagement.",
+      "Introduce learning goals to convert interest into growth: choose one subtopic (e.g., migration policy) and commit to a short course, a book, or a weekly deep-dive to build learning frequency.",
+      "Track patterns over time: collect more personal engagement signals (replies, saved articles, comments, event attendance) to raise confidence in whether this area is a stable ikigai.",
+      "Explore adjacent everyday activities that bring joy: where political interest overlaps with volunteering, community events, or discussion with friends — these small acts can anchor meaning in daily life."
+    ],
+    "analysis_timestamp": "2025-09-26T08:24:44.278529"
+  },
+  "confidence_metrics": {
+    "data_volume": 0.232,
+    "evidence_quality": 0.5,
+    "evidence_count": 0.2,
+    "pattern_diversity": 0.2,
+    "data_completeness": 0.75,
+    "overall_confidence": 0.10575000000000001
+  },
+  "summary": "The profile shows very low communication volume (4 messages from 3 unique senders) with evenly distributed categories (Other, Newsletter, Purchase, Shipment Related each ~25%) and “Other” identified as the primary communication type. There are no confirmed transactions and no interest or geographic signals, so near-term outreach should emphasize low-friction engagement (targeted newsletters, soft CTAs) and use shipment/purchase touchpoints as conditional cross-sell opportunities only if further signals emerge. Data completeness is moderate but evidence quantity and pattern diversity are sparse, so overall confidence in these findings is low (≈11%); treat recommendations as testable hypotheses rather than firm conclusions. Recommended next steps are to enrich the dataset (capture more communications, link transaction records, and collect interest/geolocation data) and run small-scale experiments to validate responsiveness before scaling.",
+  "analysis_model": "openai:gpt-5",
+  "analysis_timestamp": "2025-09-26T08:24:55.042176",
+  "schema_version": "1.0",
+  "generator": {
+    "name": "UnbiasedMarketingAnalyzer",
+    "version": "v1",
+    "model": "openai:gpt-5",
+    "seed": 42
+  },
+  "data_coverage": {
+    "total_emails": 4,
+    "analyzed_emails": 4,
+    "filtered_non_marketing": 3,
+    "samples": {
+      "patterns": 4,
+      "products_services": 4,
+      "geographic": 3
+    },
+    "time_range": {
+      "start": "2025-09-26T06:22:37+00:00",
+      "end": "2025-09-26T08:10:01+00:00",
+      "span_days": 0
+    }
+  },
+  "section_confidence": {
+    "communication": 0.62,
+    "interests": 0.2,
+    "purchases": 0.2,
+    "geographic": 0.3,
+    "temporal": 0.2,
+    "engagement": 0.8
+  }
+}

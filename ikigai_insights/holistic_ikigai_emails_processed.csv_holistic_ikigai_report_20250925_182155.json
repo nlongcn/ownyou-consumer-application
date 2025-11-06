@@ -1,0 +1,214 @@
+{
+  "holistic_ikigai_analysis": {
+    "schema_version": "1.0",
+    "analysis_type": "Multi-Phase Holistic Ikigai Analysis",
+    "methodology": "3-phase comprehensive analysis using full context windows",
+    "analysis_timestamp": "2025-09-25T17:21:55.669410",
+    "primary_ikigai": "Professional relationship building and meaningful networking within technology and finance communities",
+    "secondary_areas": [
+      "Continuous learning in emerging technologies (AI, crypto, fintech)",
+      "Strategic financial decision-making and investment optimization"
+    ],
+    "confidence_score": 0.75,
+    "supporting_evidence": [
+      {
+        "pattern": "High engagement with exclusive networking events and personal invitations",
+        "strength": "high",
+        "examples": [
+          "Kohler Cup charity golf event (multiple responses)",
+          "Aiglon alumni networking event",
+          "Mars/Novus business coordination"
+        ],
+        "email_count": 5
+      },
+      {
+        "pattern": "Consistent subscription to educational technology and finance content",
+        "strength": "medium",
+        "examples": [
+          "AI and ML newsletters",
+          "Cryptocurrency and DeFi platforms",
+          "Financial market analysis"
+        ],
+        "email_count": 15
+      },
+      {
+        "pattern": "Active participation in professional development opportunities",
+        "strength": "medium",
+        "examples": [
+          "Industry conference communications",
+          "Professional networking platforms",
+          "Business collaboration discussions"
+        ],
+        "email_count": 8
+      }
+    ],
+    "framework_dimensions": {
+      "external_connection": "Strong connection through exclusive professional networks, alumni communities, and industry relationships - values quality over quantity in connections",
+      "active_engagement": "Highly active in responding to personal invitations and networking opportunities, while maintaining selective engagement with commercial content",
+      "emotional_meaning": "Finds meaning in contributing to causes (charity events) and maintaining long-term relationships within professional communities",
+      "voluntary_pursuit": "Clear preference for chosen networking events and educational content over mass marketing - high autonomy in engagement decisions",
+      "everyday_joy": "Daily learning through curated technology and finance content, staying connected with professional community developments",
+      "growth_orientation": "Strong commitment to staying current with emerging technologies and financial innovations, continuous professional development"
+    },
+    "comprehensive_patterns": {
+      "holistic_context": {
+        "primary_themes": [
+          "Emerging Technology & AI",
+          "Financial Technology & Crypto",
+          "Professional Development & Networking"
+        ],
+        "interest_areas": [
+          {
+            "area": "Cryptocurrency & DeFi",
+            "strength": "high",
+            "indicators": [
+              "Messari research alerts (5 emails)",
+              "Crypto tax tools",
+              "Token launches and protocol updates",
+              "DePIN and blockchain infrastructure"
+            ],
+            "frequency": 12,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Artificial Intelligence & Machine Learning",
+            "strength": "high",
+            "indicators": [
+              "Multiple AI newsletters (Civic, NFX, Simtheory)",
+              "AI evaluation courses",
+              "AI asset valuation tools",
+              "GPT-5 and advanced model updates"
+            ],
+            "frequency": 8,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Financial Markets & Investment",
+            "strength": "medium",
+            "indicators": [
+              "Market intelligence tools",
+              "Tax optimization strategies",
+              "Investment research platforms",
+              "Financial advisor resources"
+            ],
+            "frequency": 6,
+            "consistency": "consistent"
+          },
+          {
+            "area": "Professional Networking & Events",
+            "strength": "medium",
+            "indicators": [
+              "Alumni gatherings",
+              "Industry conferences (EDAS)",
+              "Professional development courses",
+              "Business networking"
+            ],
+            "frequency": 5,
+            "consistency": "emerging"
+          },
+          {
+            "area": "Digital Marketing & Ad Tech",
+            "strength": "medium",
+            "indicators": [
+              "ADOTAT newsletter subscriptions",
+              "Marketing automation tools",
+              "Industry analysis content"
+            ],
+            "frequency": 4,
+            "consistency": "consistent"
+          }
+        ],
+        "behavioral_patterns": {
+          "engagement_style": "active",
+          "information_preferences": "educational",
+          "decision_making": "research-driven",
+          "temporal_consistency": "highly_consistent"
+        },
+        "value_indicators": [
+          "Continuous Learning",
+          "Data-Driven Decision Making",
+          "Professional Growth",
+          "Financial Optimization",
+          "Technology Innovation"
+        ],
+        "temporal_patterns": {
+          "evolution_trend": "growing_interests",
+          "seasonal_patterns": "not_detected",
+          "engagement_frequency": "high"
+        },
+        "engagement_styles": {
+          "engagement_style": "active",
+          "information_preferences": "educational",
+          "decision_making": "research-driven",
+          "temporal_consistency": "highly_consistent"
+        },
+        "commercial_insights": {
+          "purchase_alignment": "aligned_with_interests",
+          "subscription_choices": "intentional",
+          "brand_preferences": "consistent"
+        },
+        "confidence_factors": [
+          "Consistent engagement with emerging technology topics",
+          "High volume of specialized technical newsletters",
+          "Cross-domain interest integration (AI + Finance + Marketing)",
+          "Active participation in professional networks",
+          "Research-oriented subscription choices"
+        ]
+      },
+      "score_statistics": {
+        "average_ikigai_score": 0.38799999999999996,
+        "median_ikigai_score": 0.3,
+        "score_std": 0.16569852141766384,
+        "high_score_count": 11,
+        "medium_score_count": 0,
+        "low_score_count": 39,
+        "average_autonomy": 0.30000000000000004,
+        "category_distribution": {
+          "Low": 39,
+          "Medium": 11
+        },
+        "top_themes": [],
+        "total_emails": 50
+      },
+      "analysis_type": "Comprehensive Multi-Phase Holistic Analysis"
+    },
+    "recommendations": [
+      "Prioritize attending high-quality networking events and alumni gatherings that combine professional growth with personal relationships",
+      "Curate a focused learning routine around AI/ML and fintech developments to maintain expertise edge",
+      "Seek opportunities to mentor or contribute expertise within professional networks to deepen sense of purpose",
+      "Balance commercial learning with more hands-on experimentation in emerging technologies",
+      "Consider organizing or hosting networking events that align with both professional interests and charitable causes"
+    ],
+    "data_coverage": {
+      "total_emails": 50
+    },
+    "generator": {
+      "name": "HolisticIkigaiAnalyzer",
+      "version": "v1",
+      "model": "claude-sonnet-4-20250514"
+    }
+  },
+  "methodology_details": {
+    "phase_1": "Holistic overview analysis across all emails to extract themes and patterns",
+    "phase_2": "Contextual per-email scoring using holistic insights",
+    "phase_3": "Synthesis and validation for comprehensive ikigai profile",
+    "context_window_optimization": "Adaptive batching based on model capabilities",
+    "inclusive_approach": "Analyzes ALL email types including commercial for complete picture"
+  },
+  "scoring_summary": {
+    "average_ikigai_score": 0.38799999999999996,
+    "median_ikigai_score": 0.3,
+    "score_std": 0.16569852141766384,
+    "high_score_count": 11,
+    "medium_score_count": 0,
+    "low_score_count": 39,
+    "average_autonomy": 0.30000000000000004,
+    "category_distribution": {
+      "Low": 39,
+      "Medium": 11
+    },
+    "top_themes": [],
+    "total_emails": 50
+  },
+  "email_count": 50
+}

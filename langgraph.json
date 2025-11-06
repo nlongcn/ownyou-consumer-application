@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "email_taxonomy_workflow": "./src/email_parser/workflow/studio.py:create_graph"
+  },
+  "env": ".env"
+}
