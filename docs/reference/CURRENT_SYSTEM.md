@@ -1059,6 +1059,358 @@ LOG_LEVEL=WARNING  # Errors only
 - **Strategic Roadmap**: `docs/plans/2025-01-04-ownyou-strategic-roadmap.md` - Phase planning
 - **README**: `README.md` - Installation and usage guide
 - **Studio Quickstart**: `docs/STUDIO_QUICKSTART.md` - LangGraph Studio guide
+- **Legacy Code Integration**: `reference/LEGACY_CODE_INTEGRATION.md` - Complete integration guide
+
+---
+
+## Working With This System (For New Development)
+
+### Integration Points for New Code
+
+**When implementing Mission Agents (Phase 3+), you MUST integrate with email_parser, not replace it.**
+
+The email_parser is production code with users. New features should read from the Store that email_parser writes to, and reuse proven patterns.
+
+---
+
+#### 1. Reuse IAB Classification Workflow
+
+**Don't rebuild what works. Use the existing classification workflow for ANY data source:**
+
+```python
+# ✅ CORRECT: Reuse existing workflow
+from src.email_parser.workflow.graph import create_classification_graph
+from src.email_parser.workflow.state import AgentState
+
+# Use for ANY data source (not just emails)
+graph = create_classification_graph(store=mission_store)
+state = AgentState(
+    user_id="user_123",
+    classifiable_items=items,  # Can be calendar events, transactions, etc.
+    batch_config={"batch_size": 30, "parallel_executions": 4}
+)
+result = graph.invoke(state)
+
+# Get classifications
+all_classifications = result["all_classifications"]
+```
+
+**Why this works:**
+- The workflow is data-source agnostic (uses `ClassifiableItem` protocol)
+- Production-tested with 1000s of emails
+- Debuggable in LangGraph Studio
+- Batch-optimized (20-30x faster than sequential)
+
+---
+
+#### 2. Read from Store (email_parser Already Writes)
+
+**email_parser writes IAB classifications to Store. Just read them:**
+
+```python
+# ✅ CORRECT: Read from Store (email_parser writes here)
+from src.mission_agents.memory.store import MissionStore
+
+store = MissionStore(config)
+
+# Get all classifications for a user
+classifications = store.get_all_iab_classifications(user_id="user_123")
+
+# These classifications come from email_parser!
+for c in classifications:
+    print(f"{c['taxonomy_name']}: {c['confidence']}")
+
+# Get evidence for specific taxonomy
+evidence = store.get_iab_evidence(
+    user_id="user_123",
+    taxonomy_id=123  # Travel/Adventure Travel
+)
+
+# ❌ WRONG: Don't query SQLite directly
+import sqlite3
+conn = sqlite3.connect("iab_profiles.db")
+# This breaks abstraction and will fail when we migrate to PostgreSQL
+```
+
+**Why this works:**
+- Store is single source of truth (Architectural Decision #1)
+- Backward compatible with existing SQLite writes
+- Ready for PostgreSQL migration (Phase 7)
+- Shared namespace pattern: `(user_id, "iab_classifications")`
+
+---
+
+#### 3. Don't Break Backward Compatibility
+
+**Until Phase 5 (Dashboard Migration), BOTH SQLite and Store must work:**
+
+```python
+# ✅ CORRECT: Dual writes for backward compatibility
+from src.email_parser.memory.manager import MemoryManager
+from src.mission_agents.memory.store import MissionStore
+
+def update_memory_node(state, store: Optional[MissionStore] = None):
+    """Update both SQLite (legacy) and Store (new)"""
+
+    user_id = state["user_id"]
+    classifications = state["all_classifications"]
+
+    # Legacy write (KEEP until Phase 5)
+    memory_manager = MemoryManager(user_id)
+    memory_manager.update_classifications(classifications)
+
+    # New write (ADD for mission agents)
+    if store:
+        for c in classifications:
+            store.put_iab_classification(
+                user_id=user_id,
+                taxonomy_id=c["taxonomy_id"],
+                classification=c
+            )
+
+# ❌ WRONG: Remove SQLite, break dashboard
+def update_memory_node(state, store):
+    # Only Store write - dashboard queries SQLite and breaks!
+    for c in state["all_classifications"]:
+        store.put_iab_classification(...)
+```
+
+**Why dual writes:**
+- Dashboard reads from SQLite (`get_user_profile()` queries)
+- LangGraph Studio reads from SQLite (checkpointer)
+- Mission Agents need Store access
+- Phase 5 will migrate dashboard to Store, THEN remove SQLite
+
+---
+
+#### 4. Test Integration, Not Just Your Code
+
+**ALWAYS verify new code doesn't break email_parser:**
+
+```python
+# tests/integration/test_mission_agents_with_email_parser.py
+
+class TestMissionAgentsIntegration:
+    """Verify mission agents integrate with email_parser"""
+
+    def test_email_classification_still_works_after_mission_agent_init(self):
+        """CRITICAL: Email parser must continue working"""
+
+        # Baseline: Run email parser
+        from src.email_parser.main import EmailParserCLI
+
+        cli = EmailParserCLI()
+        result_before = cli.process_emails(max_count=10)
+
+        assert len(result_before["classifications"]) > 0
+        assert result_before["status"] == "success"
+
+        # Initialize mission agents (with shared Store)
+        from src.mission_agents.orchestrator import MissionOrchestrator
+
+        orchestrator = MissionOrchestrator(store=mission_store)
+        orchestrator.initialize()
+
+        # Verify: Email parser still works
+        result_after = cli.process_emails(max_count=10)
+
+        assert len(result_after["classifications"]) > 0
+        assert result_after["status"] == "success"
+
+    def test_mission_agents_read_email_parser_classifications(self):
+        """Verify mission agents can read email_parser Store writes"""
+
+        # Email parser writes classifications
+        from src.email_parser.workflow.graph import create_classification_graph
+
+        graph = create_classification_graph(store=mission_store)
+        state = AgentState(user_id="user_123", classifiable_items=emails)
+        result = graph.invoke(state)
+
+        # Mission agents read from same Store
+        from src.mission_agents.memory.store import MissionStore
+
+        store = MissionStore(config)
+        classifications = store.get_all_iab_classifications("user_123")
+
+        assert len(classifications) == len(result["all_classifications"])
+
+        # Verify data structure matches
+        assert "taxonomy_id" in classifications[0]
+        assert "confidence" in classifications[0]
+
+    def test_dashboard_queries_work_after_mission_agents(self):
+        """Verify dashboard can still read profile data"""
+
+        # Initialize mission agents
+        orchestrator = MissionOrchestrator(store=mission_store)
+        orchestrator.initialize()
+
+        # Dashboard queries (SQLite)
+        from dashboard.backend.db.queries import get_user_profile
+
+        profile = get_user_profile("user_123")
+
+        assert profile is not None
+        assert "demographics" in profile
+        assert "interests" in profile
+```
+
+**Before committing ANY mission agent code:**
+
+```bash
+# 1. Unit tests for mission agents
+pytest tests/unit/test_mission_agents/ -v
+
+# 2. Integration with email_parser (CRITICAL)
+pytest tests/integration/test_mission_agents_with_email_parser.py -v
+
+# 3. Master system test (CRITICAL)
+pytest tests/integration/test_complete_system.py -v
+
+# 4. Email parser tests still pass
+pytest tests/unit/test_batch_optimizer.py -v
+pytest tests/unit/test_classification_workflow.py -v
+
+# 5. LangGraph Studio works
+langgraph dev
+# Navigate to http://127.0.0.1:2024 and verify workflows visible
+
+# 6. Dashboard works
+cd dashboard/backend && python app.py &
+cd dashboard/frontend && npm run dev &
+# Navigate to http://localhost:3000 and verify profile displays
+```
+
+**Failure of ANY integration test = blocking issue. Do NOT commit.**
+
+---
+
+### When to Modify email_parser Code
+
+**Rarely. Only when:**
+1. **Fixing bugs** - Production workflow issues (full testing required)
+2. **Adding multi-source support** - Phase 2 requirement to handle calendar, transactions, etc.
+3. **Performance optimization** - Benchmark before/after, ensure improvements
+4. **Security patching** - Vulnerability fixes
+
+**Never:**
+- Don't refactor for style (it works, leave it alone)
+- Don't change working batch processing (it's optimized)
+- Don't remove SQLite writes (dashboard depends on them until Phase 5)
+- Don't break LangGraph Studio integration (debugging tool)
+
+---
+
+### Production Constraints
+
+**email_parser has users in production:**
+- ✅ Dashboard displays IAB profile data
+- ✅ LangGraph Studio debugging active
+- ✅ Batch processing tuned for 20-30x performance
+- ✅ OAuth tokens stored for Gmail/Outlook
+
+**Before changing email_parser code:**
+
+1. **Create feature branch**
+   ```bash
+   git checkout -b fix/email-parser-bug
+   ```
+
+2. **Run full test suite**
+   ```bash
+   pytest tests/integration/ -v
+   pytest tests/unit/ -v
+   ```
+
+3. **Test LangGraph Studio**
+   ```bash
+   langgraph dev
+   # Verify workflows still appear and execute
+   ```
+
+4. **Test dashboard**
+   ```bash
+   cd dashboard && npm run dev
+   # Verify profile data displays correctly
+   ```
+
+5. **Get code review**
+   - Someone who knows email_parser architecture
+   - Verify no regressions in production features
+
+6. **Deploy to staging first**
+   - Test with real user data
+   - Verify no performance regressions
+   - Check OAuth flows still work
+
+---
+
+### Common Integration Pitfalls
+
+**❌ Pitfall 1: Rebuilding IAB Classification**
+```python
+# WRONG: Don't rebuild what works
+def classify_calendar_events(events):
+    # Custom classification logic...
+    pass
+```
+**✅ Solution: Reuse existing workflow**
+```python
+from src.email_parser.workflow.graph import create_classification_graph
+graph = create_classification_graph(store=mission_store)
+result = graph.invoke(state)
+```
+
+**❌ Pitfall 2: Only Writing to Store**
+```python
+# WRONG: Breaks dashboard
+store.put_iab_classification(user_id, taxonomy_id, classification)
+```
+**✅ Solution: Dual writes until Phase 5**
+```python
+memory_manager.update_classifications(classifications)  # SQLite
+store.put_iab_classification(...)  # Store
+```
+
+**❌ Pitfall 3: Sequential Processing**
+```python
+# WRONG: 20-30x slower
+for email in emails:
+    classify(email)
+```
+**✅ Solution: Batch processing**
+```python
+from src.email_parser.workflow.batch_optimizer import calculate_optimal_batches
+batches = calculate_optimal_batches(len(emails))
+```
+
+**❌ Pitfall 4: Querying SQLite Directly**
+```python
+# WRONG: Breaks when we migrate to PostgreSQL
+conn = sqlite3.connect("iab_profiles.db")
+```
+**✅ Solution: Use Store abstraction**
+```python
+store = MissionStore(config)
+classifications = store.get_all_iab_classifications(user_id)
+```
+
+---
+
+### Summary: Integration Checklist
+
+Before implementing ANY mission agent feature:
+
+- [ ] Searched email_parser for existing patterns
+- [ ] Identified reusable workflows (classification, batch, Store)
+- [ ] Planned dual writes (SQLite + Store) until Phase 5
+- [ ] Created integration tests (email_parser must still work)
+- [ ] Verified dashboard queries won't break
+- [ ] Confirmed LangGraph Studio still works
+- [ ] Read `reference/LEGACY_CODE_INTEGRATION.md` for complete guide
+
+**See:** [docs/reference/LEGACY_CODE_INTEGRATION.md](docs/reference/LEGACY_CODE_INTEGRATION.md) for comprehensive integration patterns and examples.
 
 ---
 

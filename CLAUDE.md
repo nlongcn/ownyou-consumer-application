@@ -195,6 +195,64 @@ Contains:
 3. **Review integration points** - What depends on your code? What does your code depend on?
 4. **Check architectural decisions** - Are you using Store correctly? Using auth system?
 5. **Read relevant reference docs** - Don't guess, verify
+6. **Check for legacy/working code** - Don't reinvent, integrate with existing systems (especially email_parser)
+
+---
+
+## 🏛️ Working with Legacy Code
+
+**Email Parser (`src/email_parser/`) is WORKING production code. Respect it.**
+
+The email_parser system is already in production with users, processing emails for IAB classification. Before implementing new features, always check if email_parser already has the pattern you need.
+
+### When to Use vs. When to Change
+
+✅ **Use existing patterns for:**
+- IAB classification workflows - Already production-tested
+- Batch processing - 20-30x performance optimization
+- LangGraph workflows - Debuggable in LangGraph Studio
+- Store integration - Backward compatible with SQLite
+- Multi-provider LLM - Supports OpenAI, Claude, Gemini, Ollama
+
+⚠️ **Change carefully when:**
+- Fixing production bugs (full testing required)
+- Adding multi-source support (Phase 2 requirement)
+- Optimizing performance (benchmark before/after)
+- Patching security vulnerabilities
+
+❌ **Never change:**
+- Working batch optimizer without benchmarks
+- Production OAuth flows
+- LangGraph Studio integration
+- Backward compatible SQLite writes (until Phase 5)
+
+### Key Integration Patterns
+
+**Reuse IAB Classification Workflow:**
+```python
+from src.email_parser.workflow.graph import create_classification_graph
+
+# Use for ANY data source (not just emails)
+graph = create_classification_graph(store=mission_store)
+result = graph.invoke(state)
+```
+
+**Read from Store (email_parser already writes):**
+```python
+from src.mission_agents.memory.store import MissionStore
+
+store = MissionStore(config)
+classifications = store.get_all_iab_classifications(user_id)
+# These classifications come from email_parser!
+```
+
+**Test Integration, Not Just Isolation:**
+```bash
+# ALWAYS run integration test before committing
+pytest tests/integration/test_complete_system.py -v
+```
+
+**See:** [docs/reference/LEGACY_CODE_INTEGRATION.md](docs/reference/LEGACY_CODE_INTEGRATION.md) for complete integration guide.
 
 ---
 

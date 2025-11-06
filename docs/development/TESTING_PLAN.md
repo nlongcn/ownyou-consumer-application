@@ -432,6 +432,418 @@ class TestMultiSourceIntegration:
 
 ---
 
+## Integration Testing with Legacy Code (email_parser)
+
+### Critical: Don't Break What's Working
+
+**email_parser is production code. ALL new features MUST verify no regressions.**
+
+The email_parser system is already in production with users processing emails for IAB classification. Every new feature must be tested for backward compatibility and integration.
+
+---
+
+### Master Integration Test Template
+
+**Create this test file for EVERY new feature:**
+
+```python
+# tests/integration/test_new_feature_with_email_parser.py
+
+class TestNewFeatureIntegration:
+    """Verify new feature doesn't break email_parser"""
+
+    def test_email_classification_still_works_after_new_feature(self):
+        """
+        CRITICAL TEST: Email parser must continue working
+
+        This test verifies:
+        1. Email download still works
+        2. IAB classification still works
+        3. Store writes still work
+        4. Dashboard can still read data
+        """
+        # Setup: Run email parser (baseline)
+        from src.email_parser.main import EmailParserCLI
+
+        cli = EmailParserCLI()
+        result_before = cli.process_emails(max_count=10)
+
+        assert len(result_before["classifications"]) > 0
+        assert result_before["status"] == "success"
+
+        # Execute new feature
+        new_feature = NewFeature(config)
+        new_feature.execute()
+
+        # Verify: Email parser still works
+        result_after = cli.process_emails(max_count=10)
+
+        assert len(result_after["classifications"]) > 0
+        assert result_after["status"] == "success"
+
+    def test_store_reads_work_for_both_systems(self):
+        """Verify Store reads work for email_parser AND new system"""
+        from src.mission_agents.memory.store import MissionStore
+
+        store = MissionStore(config)
+
+        # Email parser writes IAB classifications
+        run_email_classification(store=store)
+
+        # New feature reads from same Store
+        classifications = store.get_all_iab_classifications("user_123")
+
+        assert len(classifications) > 0
+        assert "confidence" in classifications[0]
+        assert "taxonomy_id" in classifications[0]
+
+    def test_langgraph_studio_still_works(self):
+        """Verify LangGraph Studio visualization works"""
+        import subprocess
+        import time
+        import requests
+
+        # Start Studio server
+        studio_proc = subprocess.Popen(
+            ["langgraph", "dev"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+
+        # Wait for server to start
+        time.sleep(5)
+
+        # Verify Studio is accessible
+        response = requests.get("http://127.0.0.1:2024")
+        assert response.status_code == 200
+
+        # Run email classification workflow
+        result = run_classification_workflow()
+        assert result["status"] == "success"
+
+        # Cleanup
+        studio_proc.terminate()
+
+    def test_dashboard_queries_work(self):
+        """Verify dashboard can still read profile data"""
+        from dashboard.backend.db.queries import get_user_profile
+
+        # Run email parser
+        run_email_classification()
+
+        # Dashboard queries
+        profile = get_user_profile("user_123")
+
+        assert profile is not None
+        assert "demographics" in profile
+        assert "interests" in profile
+        assert len(profile["interests"]) > 0
+
+    def test_batch_processing_still_optimized(self):
+        """Verify batch processing performance not degraded"""
+        import time
+        from src.email_parser.workflow.batch_optimizer import calculate_optimal_batches
+
+        # Measure baseline performance
+        start = time.time()
+        batches = calculate_optimal_batches(num_items=100)
+        result_before = run_classification(batches)
+        baseline_time = time.time() - start
+
+        # Execute new feature
+        new_feature.execute()
+
+        # Measure after new feature
+        start = time.time()
+        batches = calculate_optimal_batches(num_items=100)
+        result_after = run_classification(batches)
+        after_time = time.time() - start
+
+        # Performance should not degrade more than 10%
+        assert after_time <= baseline_time * 1.1
+
+    def test_oauth_tokens_still_valid(self):
+        """Verify Gmail/Outlook OAuth still works"""
+        from src.email_parser.auth import check_oauth_status
+
+        # Check Gmail OAuth
+        gmail_status = check_oauth_status("gmail", user_id="user_123")
+        assert gmail_status["valid"] is True
+
+        # Check Outlook OAuth
+        outlook_status = check_oauth_status("outlook", user_id="user_123")
+        assert outlook_status["valid"] is True
+```
+
+---
+
+### Before Committing Checklist
+
+**Run this checklist BEFORE every commit:**
+
+```bash
+#!/bin/bash
+# integration_test_checklist.sh
+
+echo "=== Pre-Commit Integration Testing ==="
+
+# 1. Unit tests for new code
+echo "1. Running unit tests..."
+pytest tests/unit/test_new_feature.py -v
+if [ $? -ne 0 ]; then
+    echo "❌ Unit tests FAILED"
+    exit 1
+fi
+
+# 2. Integration test with email_parser (CRITICAL)
+echo "2. Running email_parser integration tests..."
+pytest tests/integration/test_new_feature_with_email_parser.py -v
+if [ $? -ne 0 ]; then
+    echo "❌ Integration tests FAILED - email_parser compatibility broken"
+    exit 1
+fi
+
+# 3. Master system test (CRITICAL)
+echo "3. Running master system test..."
+pytest tests/integration/test_complete_system.py -v
+if [ $? -ne 0 ]; then
+    echo "❌ Master system test FAILED"
+    exit 1
+fi
+
+# 4. Email parser tests still pass
+echo "4. Verifying email_parser tests..."
+pytest tests/unit/test_batch_optimizer.py -v
+pytest tests/unit/test_classification_workflow.py -v
+if [ $? -ne 0 ]; then
+    echo "❌ Email parser tests FAILED - regression detected"
+    exit 1
+fi
+
+# 5. LangGraph Studio works
+echo "5. Testing LangGraph Studio..."
+timeout 10 langgraph dev &
+STUDIO_PID=$!
+sleep 5
+curl -s http://127.0.0.1:2024 > /dev/null
+if [ $? -ne 0 ]; then
+    echo "❌ LangGraph Studio FAILED to start"
+    kill $STUDIO_PID
+    exit 1
+fi
+kill $STUDIO_PID
+
+# 6. Dashboard works
+echo "6. Testing dashboard..."
+cd dashboard/backend && python app.py &
+DASHBOARD_PID=$!
+sleep 5
+curl -s http://localhost:5000/api/profile/user_123 > /dev/null
+if [ $? -ne 0 ]; then
+    echo "❌ Dashboard FAILED"
+    kill $DASHBOARD_PID
+    exit 1
+fi
+kill $DASHBOARD_PID
+
+echo "✅ All integration tests PASSED - safe to commit"
+```
+
+---
+
+### Test Coverage Requirements
+
+**Minimum integration test coverage:**
+
+- ✅ **Email parser workflow** - Completes successfully after new feature
+- ✅ **IAB classifications** - Written to Store by email_parser
+- ✅ **Dashboard queries** - Return valid data from SQLite
+- ✅ **LangGraph Studio** - Visualization and debugging works
+- ✅ **Batch processing** - Performance not degraded
+- ✅ **OAuth tokens** - Gmail/Outlook authentication works
+- ✅ **Store reads** - Mission agents can read email_parser writes
+
+**Failure of ANY integration test = blocking issue**
+
+Do NOT commit if integration tests fail. Fix the issue first.
+
+---
+
+### Common Integration Test Patterns
+
+#### Pattern 1: Dual System Test
+
+```python
+def test_feature_works_with_both_systems():
+    """Test new feature works with email_parser AND mission agents"""
+
+    # Email parser system
+    email_result = email_parser_workflow(user_id)
+    assert len(email_result["classifications"]) > 0
+
+    # Mission agents system
+    mission_result = mission_agent_workflow(user_id)
+    assert len(mission_result["missions"]) > 0
+
+    # Verify data consistency
+    assert email_result["user_id"] == mission_result["user_id"]
+```
+
+#### Pattern 2: Backward Compatibility Test
+
+```python
+def test_backward_compatibility_maintained():
+    """Test old code paths still work"""
+
+    # Old path (SQLite)
+    old_profile = get_user_profile_sqlite(user_id)
+
+    # New path (Store)
+    new_profile = get_user_profile_store(user_id)
+
+    # Both should return same data
+    assert old_profile["demographics"] == new_profile["demographics"]
+```
+
+#### Pattern 3: Performance Regression Test
+
+```python
+def test_no_performance_regression():
+    """Test new feature doesn't slow down existing system"""
+    import time
+
+    # Baseline
+    start = time.time()
+    baseline_result = run_email_classification(count=100)
+    baseline_time = time.time() - start
+
+    # After new feature
+    new_feature.initialize()
+
+    start = time.time()
+    after_result = run_email_classification(count=100)
+    after_time = time.time() - start
+
+    # Allow max 10% performance degradation
+    assert after_time <= baseline_time * 1.1
+```
+
+---
+
+### Integration Test Organization
+
+**File structure:**
+
+```
+tests/
+├── integration/
+│   ├── test_complete_system.py           # Master test (existing)
+│   ├── test_phase2_with_email_parser.py  # Phase 2 integration
+│   ├── test_phase3_with_email_parser.py  # Phase 3 integration
+│   ├── test_phase4_with_email_parser.py  # Phase 4 integration
+│   └── test_mission_agents_with_email_parser.py  # Mission agents
+```
+
+**Each phase integration test includes:**
+1. Email parser still works test
+2. Store reads/writes test
+3. Dashboard queries test
+4. LangGraph Studio test
+5. Performance benchmark test
+
+---
+
+### CI/CD Integration
+
+**GitHub Actions workflow (`.github/workflows/integration.yml`):**
+
+```yaml
+name: Integration Tests
+
+on: [push, pull_request]
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run email_parser integration tests
+        run: |
+          pytest tests/integration/test_*_with_email_parser.py -v
+
+      - name: Run master system test
+        run: |
+          pytest tests/integration/test_complete_system.py -v
+
+      - name: Verify no performance regression
+        run: |
+          pytest tests/integration/ -v --benchmark-only
+```
+
+---
+
+### Debugging Failed Integration Tests
+
+**When an integration test fails:**
+
+1. **Check email_parser logs:**
+   ```bash
+   tail -f logs/email_parser_*.log
+   ```
+
+2. **Verify Store writes:**
+   ```python
+   from src.mission_agents.memory.store import MissionStore
+   store = MissionStore(config)
+   classifications = store.get_all_iab_classifications("user_123")
+   print(f"Found {len(classifications)} classifications")
+   ```
+
+3. **Test LangGraph Studio manually:**
+   ```bash
+   langgraph dev
+   # Navigate to http://127.0.0.1:2024
+   ```
+
+4. **Check dashboard queries:**
+   ```bash
+   cd dashboard/backend
+   python app.py
+   curl http://localhost:5000/api/profile/user_123
+   ```
+
+5. **Run email parser in isolation:**
+   ```bash
+   python -m src.email_parser.main --pull 10 --model openai
+   ```
+
+---
+
+### Summary
+
+**Integration testing is MANDATORY, not optional.**
+
+- Create integration tests for EVERY new feature
+- Run full integration suite before EVERY commit
+- Verify email_parser still works
+- Check dashboard queries work
+- Confirm LangGraph Studio works
+- Benchmark performance (no regressions)
+
+**See:** [docs/reference/LEGACY_CODE_INTEGRATION.md](docs/reference/LEGACY_CODE_INTEGRATION.md) for comprehensive integration patterns.
+
+---
+
 ## Phase 3: Agent Layer Testing
 
 ### What to Test
