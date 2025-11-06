@@ -146,6 +146,199 @@ cat reference/ARCHITECTURAL_DECISIONS.md  # Critical constraints
 
 ---
 
+### 7. Check for Legacy/Working Code
+
+**Before implementing a new feature, check if it already exists in email_parser:**
+
+```bash
+# Search for similar implementations
+grep -r "classification" src/email_parser/
+grep -r "batch" src/email_parser/
+grep -r "workflow" src/email_parser/
+
+# List email_parser structure
+ls -la src/email_parser/
+tree src/email_parser/ -L 2
+
+# Check for specific patterns
+grep -r "LangGraph" src/email_parser/
+grep -r "Store" src/email_parser/workflow/
+```
+
+**Questions to answer:**
+- Is this already implemented in email_parser?
+- Can I reuse the existing IAB classification workflow?
+- Should I integrate with existing Store writes?
+- Are there production-tested patterns I should follow?
+- What integration tests verify backward compatibility?
+
+**Why:** email_parser is working production code with paying users. Don't reinvent wheels, integrate smartly.
+
+---
+
+#### Key Patterns to Reuse
+
+**1. Batch Processing (`src/email_parser/workflow/batch_optimizer.py`)**
+
+The email_parser includes a sophisticated batch optimizer that provides 20-30x performance improvement:
+
+```python
+# ✅ CORRECT: Reuse batch optimizer
+from src.email_parser.workflow.batch_optimizer import (
+    calculate_optimal_batches,
+    create_batches
+)
+
+# Optimize any classifiable items (not just emails)
+optimal_batches = calculate_optimal_batches(
+    num_items=len(items),
+    parallel_executions=4,
+    model="openai"
+)
+
+batches = create_batches(items, optimal_batches)
+
+# ❌ WRONG: Process sequentially
+for item in items:
+    classify(item)  # 20-30x slower!
+```
+
+**2. LangGraph Workflows (`src/email_parser/workflow/graph.py`)**
+
+The email_parser workflow is production-tested and debuggable in LangGraph Studio:
+
+```python
+# ✅ CORRECT: Reuse existing workflow
+from src.email_parser.workflow.graph import create_classification_graph
+from src.email_parser.workflow.state import AgentState
+
+# Use for ANY data source (not just emails)
+graph = create_classification_graph(store=mission_store)
+state = AgentState(
+    user_id="user_123",
+    classifiable_items=items,  # Can be emails, calendar events, transactions, etc.
+    batch_config=optimal_batches
+)
+result = graph.invoke(state)
+
+# ❌ WRONG: Rebuild classification from scratch
+def my_custom_classifier():
+    # Don't rebuild what works!
+    pass
+```
+
+**3. Store Integration (`src/email_parser/workflow/nodes/update_memory.py`)**
+
+The email_parser writes to BOTH SQLite (legacy) and Store (new) for backward compatibility:
+
+```python
+# ✅ CORRECT: Dual writes for backward compatibility
+def update_memory_node(state, store):
+    # Legacy write (KEEP until Phase 5)
+    memory_manager.update_classifications(state["all_classifications"])
+
+    # New write (ADD for mission agents)
+    if store:
+        for classification in state["all_classifications"]:
+            store.put_iab_classification(
+                user_id=state["user_id"],
+                taxonomy_id=classification["taxonomy_id"],
+                classification=classification
+            )
+
+# ❌ WRONG: Remove SQLite, break dashboard
+def update_memory_node(state, store):
+    # Only Store write - dashboard breaks!
+    store.put_iab_classification(...)
+```
+
+**4. Multi-Provider LLM (`src/email_parser/llm_clients/`)**
+
+The email_parser supports 4 LLM providers with unified interface:
+
+```python
+# ✅ CORRECT: Reuse LLM client factory
+from src.email_parser.llm_clients.factory import create_llm_client
+
+client = create_llm_client("openai")  # or "claude", "gemini", "ollama"
+response = client.generate(prompt)
+
+# ❌ WRONG: Hardcode to one provider
+from openai import OpenAI
+client = OpenAI()  # Doesn't support other providers
+```
+
+---
+
+#### Integration Testing Required
+
+**Always test new code integrates with email_parser:**
+
+```python
+# tests/integration/test_new_feature_with_email_parser.py
+
+def test_new_feature_doesnt_break_email_classification():
+    """CRITICAL: Email parser must continue working after new feature"""
+
+    # Baseline: Run email parser
+    from src.email_parser.main import EmailParserCLI
+
+    cli = EmailParserCLI()
+    result_before = cli.process_emails(max_count=10)
+    assert len(result_before["classifications"]) > 0
+
+    # Execute new feature
+    new_feature = NewFeature(config)
+    new_feature.execute()
+
+    # Verify: Email parser still works
+    result_after = cli.process_emails(max_count=10)
+    assert len(result_after["classifications"]) > 0
+    assert result_after["status"] == "success"
+
+def test_store_reads_work_for_both_systems():
+    """Verify Store reads work for email_parser AND mission agents"""
+    from src.mission_agents.memory.store import MissionStore
+
+    store = MissionStore(config)
+
+    # Email parser writes
+    run_email_classification(store=store)
+
+    # Mission agents read
+    classifications = store.get_all_iab_classifications("user_123")
+
+    assert len(classifications) > 0
+    assert "confidence" in classifications[0]
+```
+
+**Before committing, run:**
+
+```bash
+# 1. Unit tests for new code
+pytest tests/unit/test_new_feature.py -v
+
+# 2. Integration with email_parser (CRITICAL)
+pytest tests/integration/test_new_feature_with_email_parser.py -v
+
+# 3. Master system test (CRITICAL)
+pytest tests/integration/test_complete_system.py -v
+
+# 4. Verify email_parser still works
+pytest tests/unit/test_batch_optimizer.py -v
+
+# 5. LangGraph Studio visualization
+langgraph dev  # Navigate to http://127.0.0.1:2024
+
+# 6. Dashboard queries
+cd dashboard && python backend/app.py &
+# Navigate to http://localhost:5000/api/profile/user_123
+```
+
+**See:** [docs/reference/LEGACY_CODE_INTEGRATION.md](docs/reference/LEGACY_CODE_INTEGRATION.md) for comprehensive integration guide.
+
+---
+
 ## Code Organization Principles
 
 ### DRY (Don't Repeat Yourself)
