@@ -198,3 +198,31 @@ dashboard/backend/backend.out
 
 # Git worktrees (isolated workspaces)
 .worktrees/
+
+# Node.js / JavaScript / TypeScript
+node_modules/
+.pnp
+.pnp.js
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Testing (JS)
+coverage/
+.nyc_output
+
+# Production build (JS)
+dist/
+build/
+
+# Vite
+.vite/
+
+# PGlite databases (for browser checkpointing)
+.pglite*/
+*.pglite
+
+# Research spike artifacts
+research_spike/node_modules/
+research_spike/.pglite*/
+research_spike/package-lock.json
