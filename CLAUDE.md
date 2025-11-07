@@ -349,7 +349,22 @@ mypy src/                                           # Type check
 
 ## ⚠️ Critical Constraints
 
+### Self-Sovereign Architecture Principle
+
+**CRITICAL:** OwnYou follows a **self-sovereign, local-first architecture**. ALL user personal data must remain on the user's device or in user-controlled decentralized storage.
+
+**Deployment Models (ALL are self-sovereign):**
+- ✅ **Local Python Agent** - Python backend runs on user's machine (like Signal Desktop, 1Password, Docker Desktop)
+- ✅ **Browser-Based PWA** - Data in IndexedDB, processing in browser (WebLLM)
+- ✅ **Hybrid** - Python agent (localhost) + browser UI (React frontend)
+
+**What Violates Self-Sovereignty:**
+- ❌ **Centralized Cloud Backend** - OwnYou servers (AWS/GCP/Azure) storing user personal data
+- ❌ **SaaS Model** - api.ownyou.com with PostgreSQL containing OAuth tokens, emails, transactions
+
 ### Never Do This ❌
+- **Build centralized cloud backend that stores user personal data** (OAuth tokens, raw emails/transactions, access credentials)
+- Send user data to OwnYou-controlled servers
 - Create separate databases (use LangGraph Store)
 - Build custom auth (use Phase 1 auth system)
 - Send raw personal data to external APIs without encryption
@@ -357,11 +372,15 @@ mypy src/                                           # Type check
 - Implement future phase features prematurely
 
 ### Always Do This ✅
+- **Keep ALL personal data on user's device** (Python agent on localhost OR browser IndexedDB)
+- Use local LangGraph Store (SQLite on user's filesystem) for Python deployments
+- Use IndexedDB with wallet-derived encryption for browser deployments
 - Read from Store for all memory needs
 - Use defined Pydantic models from Phase 1
 - Respect API contracts (OpenAPI spec)
 - Follow horizontal layer approach
 - Get explicit user consent before data sharing
+- Use wallet-derived keys for local encryption (deterministic, user-controlled)
 
 **Details:** See [docs/reference/DEVELOPMENT_GUIDELINES.md](docs/reference/DEVELOPMENT_GUIDELINES.md)
 
