@@ -1,0 +1,27 @@
+{
+  "name": "ownyou-indexeddb-store-spike",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Research spike: IndexedDB Store feasibility for OwnYou PWA",
+  "type": "module",
+  "scripts": {
+    "day1": "tsx day1-2_pglite_checkpointer/test-checkpointer.ts",
+    "day3": "tsx day3-4_custom_indexeddb_store/test-store.ts",
+    "day5": "tsx day5_integration_test/test-integration.ts",
+    "test": "echo \"Spike tests - run day1/day3/day5 scripts\""
+  },
+  "dependencies": {
+    "@langchain/anthropic": "^0.3.11",
+    "@langchain/core": "^0.3.24",
+    "@langchain/langgraph": "^0.2.26",
+    "@langchain/openai": "^0.3.15",
+    "@steerprotocol/langgraph-checkpoint-pglite": "latest",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "fake-indexeddb": "^6.2.4",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
