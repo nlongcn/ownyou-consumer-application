@@ -1,0 +1,16 @@
+{
+  "PIPR1": "<1 day",
+  "PIPR2": "<7 days",
+  "PIPR3": "<14 days",
+  "PIPR4": "<21 days",
+  "PIPR5": "<1 month",
+  "PIPR6": "<6 months",
+  "PIPR7": "<12 months",
+  "PIPR8": ">12 months",
+  "PIPF1": "Infrequent Purchaser",
+  "PIPF2": "Moderate Purchaser",
+  "PIPF3": "Frequent Purchaser",
+  "PIPV1": "Low Spender",
+  "PIPV2": "Average Spender",
+  "PIPV3": "High Spender"
+}
