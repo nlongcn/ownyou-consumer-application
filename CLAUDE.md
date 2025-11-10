@@ -284,6 +284,224 @@ todos = [
 
 ---
 
+## 🔄 Python to TypeScript Migration Discipline
+
+**MANDATORY: FULL AND PRECISE PORT - NO COMPROMISES**
+
+When migrating Python code to TypeScript/JavaScript (e.g., email_parser to browser PWA):
+
+### The Iron Law
+
+**NEVER claim migration complete without line-by-line source verification documented in writing.**
+
+**Lesson from IAB Classifier Migration (2025-01-07)**:
+- Initial "completion" claim WITHOUT line-by-line verification
+- User discovered missing `max_workers` parameter in 2 locations
+- User response: "My faith in your honest execution has been shattered"
+- Required complete restart with systematic review
+- **Root cause**: Assumed tests passing = correct port
+
+### Non-Negotiable Rules
+
+1. **Always Full Port** - Never simplified implementations, never "pragmatic alternatives"
+2. **Line-by-Line Verification BEFORE Claiming Success** - Every Python line verified against TypeScript
+3. **Document Review Findings** - Create `/tmp/migration_review.md` with EVIDENCE
+4. **Use Migration Skill** - `.claude/skills/python-typescript-migration/SKILL.md` at EVERY step
+5. **No Trade-offs** - Feature parity is mandatory, ALL parameters ported (even if unused)
+6. **Port Dependencies First** - If component needs 5 dependencies, port all 5 before the component
+
+### Migration Protocol (Mandatory)
+
+For EVERY component being migrated:
+
+1. **Read Python source** - Complete file(s), ALL lines (not just signatures)
+2. **Extract structure** - All classes, functions, parameters, defaults in detailed tables
+3. **Write TypeScript** - With `// Python line N` comments on EVERY function
+4. **Create verification table** - Parameter-by-parameter comparison
+5. **Document findings** - Record in `/tmp/migration_review.md`
+6. **Fix ALL issues** - Even "unused" parameters must be present for API compatibility
+7. **VERIFY COMPILATION** - Run `npx tsc --noEmit`, MUST have zero errors
+8. **Show user evidence** - Review document BEFORE claiming completion
+
+### CRITICAL: Two-Phase Verification (MANDATORY)
+
+**Phase 1: Source Verification**
+- Line-by-line comparison against Python source
+- Parameter-by-parameter function signature verification
+- **SCHEMA VERIFICATION**: For TypedDict → Annotation.Root, verify EVERY field exists in both interface AND schema
+- ALL constants, helpers, exports verified
+- Document findings in `/tmp/migration_review.md`
+
+**Phase 2: Build Verification (MUST run before claiming complete)**
+
+```bash
+# TypeScript Compilation (MANDATORY)
+npx tsc --noEmit
+
+# MUST output zero errors. If any errors, migration is INCOMPLETE.
+# Do NOT proceed until compilation passes.
+```
+
+```bash
+# Tests (after compilation passes)
+npm test
+
+# Integration tests
+npm run test:integration
+```
+
+**NEVER skip Phase 2. Compilation verification is MANDATORY.**
+
+### TypeScript-Specific Requirements
+
+When migrating to TypeScript, these additional checks are MANDATORY:
+
+#### Schema Field Verification (TypedDict → Annotation.Root)
+
+**Problem**: Interface may document fields that schema doesn't implement
+
+**MANDATORY Check**: For EVERY field in the interface, verify it exists in Annotation.Root:
+
+```typescript
+// ✅ CORRECT - Field in BOTH interface AND schema
+interface WorkflowStateInterface {
+  force_reprocess?: Annotation<boolean>  // In interface
+}
+
+export const WorkflowState = Annotation.Root({
+  force_reprocess: Annotation<boolean>({  // ✅ ALSO in schema
+    default: () => false
+  }),
+})
+```
+
+```typescript
+// ❌ WRONG - Field in interface but MISSING from schema
+interface WorkflowStateInterface {
+  force_reprocess?: Annotation<boolean>  // In interface
+}
+
+export const WorkflowState = Annotation.Root({
+  // force_reprocess: MISSING! ❌
+  // This will cause compilation errors
+})
+```
+
+#### Compilation Verification (NON-NEGOTIABLE)
+
+**BEFORE claiming migration complete, MUST run:**
+
+```bash
+npx tsc --noEmit
+```
+
+**Expected Output**: Zero errors
+
+**If ANY errors appear**:
+1. Migration is INCOMPLETE
+2. DO NOT claim success
+3. Fix all errors
+4. Re-run compilation
+5. Repeat until zero errors
+
+### CRITICAL: Testing ≠ Verification
+
+**WRONG Process**:
+```
+Write TypeScript → Tests pass → Claim success ❌
+```
+
+**CORRECT Process**:
+```
+Read Python → Write TypeScript → Verify line-by-line → Document findings →
+Fix issues → Show evidence → THEN claim success ✅
+```
+
+**Why**: Tests verify behavior, NOT source accuracy. Mock LLMs can mask missing parameters.
+
+### Red Flags = STOP IMMEDIATELY
+
+If you think ANY of these, you are taking a shortcut:
+
+- ❌ "This parameter isn't needed in TypeScript"  → **PORT IT ANYWAY**
+- ❌ "Tests pass, so port is correct"  → **VERIFY SOURCE FIRST**
+- ❌ "The types match, so it's fine"  → **CHECK PARAMETERS**
+- ❌ "I remember the Python code"  → **RE-READ IT**
+
+### When Dependencies Exist
+
+If Python code imports 5 modules:
+- ✅ **Port all 5 modules first** (with full verification each)
+- ✅ **Then port the component** (with full verification)
+- ❌ **Never stub dependencies** "for now"
+- ❌ **Never simplify** "to ship faster"
+- ❌ **Never ask** "should we simplify?"
+
+### Completion Checklist (MANDATORY)
+
+Migration is ONLY complete when ALL of these pass:
+
+**Phase 1 - Source Verification:**
+- [ ] ALL Python source files read completely
+- [ ] ALL functions have Python line comments
+- [ ] ALL parameters present (even if unused in TypeScript)
+- [ ] **SCHEMA FIELDS**: All interface fields exist in Annotation.Root
+- [ ] Review findings document created
+- [ ] ALL issues found are documented
+- [ ] ALL issues found are fixed
+
+**Phase 2 - Build Verification (NON-NEGOTIABLE):**
+- [ ] **TypeScript compiles with ZERO errors**: `npx tsc --noEmit`
+- [ ] Tests pass: `npm test`
+- [ ] Integration tests pass: `npm run test:integration`
+- [ ] **User has seen review findings document**
+
+**If ANY checkbox is unchecked, migration is INCOMPLETE.**
+
+**CRITICAL**: Run `npx tsc --noEmit` and verify zero errors before claiming success. Compilation verification is NON-NEGOTIABLE.
+
+**AI Assistants: NEVER offer alternatives, ask about trade-offs, or suggest compromises during migration. The answer is always: Full and precise port with complete verification BEFORE claiming success.**
+
+**Skills:**
+- `python-typescript-migration` (mandatory for Phase 1: source verification)
+- `typescript-verification` (mandatory for Phase 2: build verification)
+
+**Case Study:** [IAB Classifier Migration (2025-01-07)](docs/migration/2025-01-07-migration-lessons-learned.md)
+**Full Details:** See [docs/migration/](docs/migration/) for complete verification checklists and findings
+
+### Pre-Commit Hooks (Prevent Future Issues)
+
+**RECOMMENDED for TypeScript projects:**
+
+Install Husky:
+```bash
+npm install --save-dev husky
+npx husky init
+```
+
+Create `.husky/pre-commit`:
+```bash
+#!/bin/sh
+# Prevent commits with TypeScript compilation errors
+npm run type-check || {
+  echo "❌ TypeScript compilation failed. Fix errors before committing."
+  exit 1
+}
+```
+
+Add to `package.json`:
+```json
+{
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  }
+}
+```
+
+**This prevents committing non-compiling code.**
+
+---
+
 ## 🧪 Testing Discipline (TDD)
 
 **MANDATORY RED-GREEN-REFACTOR for ALL code:**
@@ -432,18 +650,63 @@ ownyou_consumer_application/
 │   │   ├── Ikigai.md
 │   │   └── LangGraph Memory.md
 │   │
-│   ├── reference/ ⭐               # HOW to build (technical)
+│   ├── reference/ ⭐               # HOW to build (technical guides)
 │   │   ├── ARCHITECTURAL_DECISIONS.md
 │   │   ├── DEVELOPMENT_GUIDELINES.md
 │   │   ├── CURRENT_SYSTEM.md
 │   │   ├── PROJECT_STRUCTURE.md
 │   │   └── CHECKPOINTER_OPTIONS.md
 │   │
-│   └── plans/ ⭐                   # WHEN to build (roadmap)
-│       ├── 2025-01-04-ownyou-strategic-roadmap.md
-│       ├── mission_agents_architecture.md
-│       ├── end-to-end-architecture.md
-│       └── 2025-01-04-ownyou-consumer-app-integration.md
+│   ├── plans/ ⭐                   # WHEN to build (strategic roadmap)
+│   │   ├── 2025-01-04-ownyou-strategic-roadmap.md  # 7-phase architecture
+│   │   ├── 2025-01-06-javascript-pwa-migration-strategy.md  # Tech decisions
+│   │   ├── mission_agents_architecture.md
+│   │   ├── end-to-end-architecture.md
+│   │   └── 2025-01-04-ownyou-consumer-app-integration.md
+│   │
+│   ├── development/                # Development workflows & testing
+│   │   ├── REPOSITORY_GUIDELINES.md
+│   │   ├── TESTING_PLAN.md
+│   │   ├── MIGRATION_DISCIPLINE.md
+│   │   ├── PLAYWRIGHT_MCP_SETUP.md
+│   │   └── BEST_PRACTICES.md
+│   │
+│   ├── technical/                  # Technical specifications
+│   │   ├── IAB_PROFILE_TECHNICAL_SPEC.md
+│   │   ├── LANGGRAPH_STUDIO_INTEGRATION.md
+│   │   ├── LLM_PROVIDER_CONFIGURATION.md
+│   │   ├── MEMORY_BACKEND_EVALUATION.md
+│   │   └── MEMORY_MANAGER_API.md
+│   │
+│   ├── frontend/                   # UI/UX specifications
+│   │   ├── DASHBOARD_REQUIREMENTS.md
+│   │   └── GUI_TIERED_CLASSIFICATION_PLAN.md
+│   │
+│   ├── architecture/               # ADRs and threat models
+│   │   ├── ADR-001-authentication.md
+│   │   └── THREAT-MODEL-authentication.md
+│   │
+│   ├── api/                        # API contracts
+│   │   └── openapi.yaml
+│   │
+│   ├── research/                   # Research papers & technical docs
+│   │   ├── code_execution_with_mcp.md
+│   │   └── 2510.09244v1.pdf
+│   │
+│   ├── migration/                  # IAB Classifier migration (Nov 2025)
+│   │   ├── README.md               # Migration index
+│   │   ├── 2025-01-07-migration-summary.md  # COMPLETE
+│   │   ├── 2025-01-07-migration-lessons-learned.md  # Critical lessons
+│   │   ├── *_VERIFICATION.md       # Proof of correct porting (10 files)
+│   │   └── archive/                # Historical docs (20 files archived)
+│   │
+│   └── STUDIO_QUICKSTART.md
+│
+├── research_spike/ ✅              # IndexedDB feasibility spike
+│   ├── README.md                   # Spike overview
+│   ├── FINAL_REPORT.md             # GO decision for JavaScript PWA
+│   ├── FINDINGS.md                 # Daily progress & technical details
+│   └── Status: COMPLETE (Jan 2025) # IndexedDB Store validated
 │
 ├── .claude/skills/ ⭐             # Project-specific skills
 │   ├── decentralized-consumer-app-authentication/  # Auth architecture & design
@@ -454,11 +717,15 @@ ownyou_consumer_application/
 │   └── ownyou-phase-1-contracts/          # Phase 1 deliverables
 │
 ├── src/
-│   ├── email_parser/              # Phase 0: Email-only IAB (WORKING)
-│   ├── mission_agents/            # Phase 1+: Mission system (IN PROGRESS)
+│   ├── email_parser/              # Phase 0: Email-only IAB (WORKING - Python)
+│   ├── browser/                   # JavaScript PWA implementation
+│   │   ├── store/                 # IndexedDBStore (COMPLETE)
+│   │   ├── agents/iab-classifier/ # IAB agents (COMPLETE - Nov 2025)
+│   │   ├── llm/                   # LLM clients (COMPLETE)
+│   │   └── taxonomy/              # IAB Taxonomy 1.1
+│   ├── mission_agents/            # Phase 1+: Mission system (PLANNED)
 │   ├── data_sources/              # Phase 2: Multi-source connectors (PLANNED)
-│   ├── auth/                      # Phase 1: Authentication (IN PROGRESS)
-│   └── sso/                       # Phase 6: SSO Integration (PLANNED)
+│   └── auth/                      # Phase 1: Authentication (PLANNED)
 │
 ├── tests/
 │   ├── mission_agents/            # Unit tests
@@ -474,12 +741,30 @@ ownyou_consumer_application/
 
 ---
 
-## 🎯 Current Phase: Phase 1 (Foundation & Contracts)
+## 🎯 Current Status
+
+**Architecture:** JavaScript/TypeScript PWA (browser-based)
+- **Decision:** Pure browser PWA (Jan 2025) for zero-friction user access
+- **Store:** IndexedDB-backed LangGraph Store (validated via research spike)
+- **Checkpointing:** PGlite with IndexedDB backend (`idb://`)
+- **Deployment:** Browser-only, no installation required
+
+**Strategic Plan:**
+- **7-Phase Roadmap:** Technology-agnostic architecture (see [Strategic Roadmap](docs/plans/2025-01-04-ownyou-strategic-roadmap.md))
+- **Implementation:** JavaScript/TypeScript (see [JavaScript Migration Strategy](docs/plans/2025-01-06-javascript-pwa-migration-strategy.md))
+- **Relationship:** Roadmap defines WHAT (phases), Migration Strategy defines HOW (JavaScript)
+
+**Current Phase:** Phase 1 (Foundation & Contracts)
 
 **Goal:** Define ALL contracts upfront to enable parallel development without rework
 
-**Deliverables:**
-- Complete data models (all card types) - Pydantic
+**Recent Milestones:**
+- ✅ Research Spike COMPLETE (Jan 2025) - IndexedDB Store feasibility validated
+- ✅ IAB Classifier Migration COMPLETE (Nov 2025) - Python→TypeScript port verified
+- ✅ All 4 IAB Analyzer Agents ported (Gender, Household, Interests, Purchase)
+
+**Deliverables (In Progress):**
+- Complete data models (all card types) - Pydantic/Zod
 - Complete Store schema (all namespaces) - documented
 - Complete API contracts - OpenAPI spec
 - Authentication system - self-sovereign

@@ -19,7 +19,6 @@ import purchaseData from '../data/iab_purchase_classifications.json'
 import sectionsData from '../data/iab_sections.json'
 import {
   IABTaxonomyEntry,
-  PurchaseClassification,
   TaxonomySection,
   SectionIndex,
   TaxonomySearchOptions,

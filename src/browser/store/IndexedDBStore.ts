@@ -30,10 +30,6 @@ import {
   BaseStore,
   Item,
   SearchItem,
-  GetOperation,
-  SearchOperation,
-  PutOperation,
-  ListNamespacesOperation,
   Operation,
   OperationResults
 } from "@langchain/langgraph-checkpoint";
@@ -164,7 +160,10 @@ export class IndexedDBStore extends BaseStore {
     for (const op of operations) {
       if ("key" in op && "namespace" in op && "value" in op) {
         // PutOperation
-        await this.put(op.namespace, op.key, op.value, op.index);
+        // Skip if value is null (tombstone/deletion marker)
+        if (op.value !== null) {
+          await this.put(op.namespace, op.key, op.value, op.index);
+        }
         results.push(undefined);
       } else if ("key" in op && "namespace" in op) {
         // GetOperation
@@ -311,24 +310,26 @@ export class IndexedDBStore extends BaseStore {
       // Check for operator-based filters
       if (typeof filterValue === "object" && filterValue !== null) {
         for (const [op, opValue] of Object.entries(filterValue)) {
+          // Type assertion: opValue is the comparison value (number, string, etc.)
+          const compareValue = opValue as any;
           switch (op) {
             case "$eq":
-              if (itemValue !== opValue) return false;
+              if (itemValue !== compareValue) return false;
               break;
             case "$ne":
-              if (itemValue === opValue) return false;
+              if (itemValue === compareValue) return false;
               break;
             case "$gt":
-              if (!(itemValue > opValue)) return false;
+              if (!(itemValue > compareValue)) return false;
               break;
             case "$gte":
-              if (!(itemValue >= opValue)) return false;
+              if (!(itemValue >= compareValue)) return false;
               break;
             case "$lt":
-              if (!(itemValue < opValue)) return false;
+              if (!(itemValue < compareValue)) return false;
               break;
             case "$lte":
-              if (!(itemValue <= opValue)) return false;
+              if (!(itemValue <= compareValue)) return false;
               break;
             default:
               // Unknown operator, treat as exact match
