@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { GmailClient } from '@/lib/gmail-client'
 import { OutlookClient } from '@/lib/outlook-client'
 
@@ -27,8 +28,11 @@ interface EmailWithClassification extends Email {
 }
 
 export default function EmailDownloadPage() {
+  const searchParams = useSearchParams()
   const [provider, setProvider] = useState<'gmail' | 'outlook'>('gmail')
   const [accessToken, setAccessToken] = useState('')
+  const [gmailConnected, setGmailConnected] = useState(false)
+  const [outlookConnected, setOutlookConnected] = useState(false)
   const [maxEmails, setMaxEmails] = useState(10)
   const [llmProvider, setLlmProvider] = useState('openai')
   const [llmModel, setLlmModel] = useState('gpt-4o-mini')
@@ -36,16 +40,45 @@ export default function EmailDownloadPage() {
   const [classifying, setClassifying] = useState(false)
   const [classificationProgress, setClassificationProgress] = useState({ current: 0, total: 0 })
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [emails, setEmails] = useState<EmailWithClassification[]>([])
 
+  // Check for OAuth callback status on mount
+  useEffect(() => {
+    const gmailConnectedParam = searchParams?.get('gmail_connected')
+    const outlookConnectedParam = searchParams?.get('outlook_connected')
+    const errorParam = searchParams?.get('error')
+
+    if (gmailConnectedParam === 'true') {
+      setGmailConnected(true)
+      setSuccess('Gmail connected successfully!')
+      setProvider('gmail')
+    }
+
+    if (outlookConnectedParam === 'true') {
+      setOutlookConnected(true)
+      setSuccess('Outlook connected successfully!')
+      setProvider('outlook')
+    }
+
+    if (errorParam) {
+      setError(`OAuth error: ${errorParam}`)
+    }
+  }, [searchParams])
+
   const handleDownloadAndClassify = async () => {
-    if (!accessToken.trim()) {
-      setError('Please enter an access token')
+    // Check if we have either OAuth connection or manual token
+    const hasGmailAuth = provider === 'gmail' && (gmailConnected || accessToken.trim())
+    const hasOutlookAuth = provider === 'outlook' && (outlookConnected || accessToken.trim())
+
+    if (!hasGmailAuth && !hasOutlookAuth) {
+      setError(`Please connect ${provider} using OAuth or enter an access token manually`)
       return
     }
 
     setLoading(true)
     setError(null)
+    setSuccess(null)
     setEmails([])
 
     try {
@@ -179,6 +212,10 @@ export default function EmailDownloadPage() {
     return 'bg-red-100 text-red-800'
   }
 
+  const handleConnect = (provider: 'gmail' | 'outlook') => {
+    window.location.href = `/api/auth/${provider}/authorize`
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -189,6 +226,88 @@ export default function EmailDownloadPage() {
         <p className="text-gray-600">
           Download emails from Gmail or Outlook and automatically run IAB classification
         </p>
+      </div>
+
+      {/* Success Message */}
+      {success && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="flex items-start">
+            <span className="text-green-600 mr-2">✓</span>
+            <div>
+              <div className="font-semibold text-green-800">Success</div>
+              <div className="text-sm text-green-600 mt-1">{success}</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* OAuth Connection Section */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Connect Email Provider
+        </h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Connect your Gmail or Outlook account to download and classify emails
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Gmail Connection */}
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center">
+                <span className="text-2xl mr-2">📧</span>
+                <div>
+                  <div className="font-medium text-gray-900">Gmail</div>
+                  <div className="text-xs text-gray-500">Google Workspace</div>
+                </div>
+              </div>
+              {gmailConnected && (
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                  Connected
+                </span>
+              )}
+            </div>
+            <button
+              onClick={() => handleConnect('gmail')}
+              disabled={loading || classifying}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm"
+            >
+              {gmailConnected ? 'Reconnect Gmail' : 'Connect Gmail'}
+            </button>
+          </div>
+
+          {/* Outlook Connection */}
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center">
+                <span className="text-2xl mr-2">📨</span>
+                <div>
+                  <div className="font-medium text-gray-900">Outlook</div>
+                  <div className="text-xs text-gray-500">Microsoft 365</div>
+                </div>
+              </div>
+              {outlookConnected && (
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                  Connected
+                </span>
+              )}
+            </div>
+            <button
+              onClick={() => handleConnect('outlook')}
+              disabled={loading || classifying}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm"
+            >
+              {outlookConnected ? 'Reconnect Outlook' : 'Connect Outlook'}
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+          <div className="text-xs text-blue-800">
+            <strong>Note:</strong> OAuth credentials must be configured in .env.local.
+            See .env.example for setup instructions.
+          </div>
+        </div>
       </div>
 
       {/* Configuration */}
@@ -227,21 +346,26 @@ export default function EmailDownloadPage() {
             </div>
           </div>
 
-          {/* Access Token */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              OAuth Access Token
-            </label>
+          {/* Access Token (Manual Entry - Optional) */}
+          <div className="border-t border-gray-200 pt-4">
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Manual Token Entry (Optional)
+              </label>
+              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                For Testing
+              </span>
+            </div>
             <input
               type="password"
               value={accessToken}
               onChange={(e) => setAccessToken(e.target.value)}
-              placeholder="Paste your OAuth access token"
+              placeholder="Paste OAuth access token for manual testing"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
               disabled={loading || classifying}
             />
             <p className="text-xs text-gray-500 mt-1">
-              Get token from:{' '}
+              Only needed if not using OAuth buttons above. Get token from:{' '}
               {provider === 'gmail' ? (
                 <a
                   href="https://developers.google.com/oauthplayground/"
@@ -341,11 +465,16 @@ export default function EmailDownloadPage() {
           <div>
             <button
               onClick={handleDownloadAndClassify}
-              disabled={loading || classifying || !accessToken}
+              disabled={loading || classifying || !(gmailConnected || outlookConnected || accessToken.trim())}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {loading ? 'Downloading...' : classifying ? `Classifying ${classificationProgress.current}/${classificationProgress.total}...` : 'Download & Classify Emails'}
             </button>
+            {!(gmailConnected || outlookConnected || accessToken.trim()) && (
+              <p className="text-xs text-gray-500 mt-2">
+                Connect an email provider or enter a manual token above to continue
+              </p>
+            )}
           </div>
         </div>
       </div>
