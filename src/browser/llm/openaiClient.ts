@@ -126,14 +126,20 @@ export class OpenAIClient extends BaseLLMClient {
     super(config)
 
     // Python lines 41-42: Get config from dict or fallback to environment variables
-    // NOTE: Browser adaptation - use import.meta.env instead of os.getenv
+    // NOTE: Universal adaptation - support both browser (import.meta.env) and Node.js (process.env)
     // self.api_key = config.get('openai_api_key') or os.getenv('OPENAI_API_KEY')
     this.apiKey =
-      config.openai_api_key || import.meta.env?.VITE_OPENAI_API_KEY || ''
+      config.openai_api_key ||
+      (typeof import.meta !== 'undefined' && import.meta.env?.VITE_OPENAI_API_KEY) ||
+      (typeof process !== 'undefined' && process.env?.OPENAI_API_KEY) ||
+      ''
 
     // self.default_model = config.get('openai_model') or os.getenv('OPENAI_MODEL')
     this.defaultModel =
-      config.openai_model || import.meta.env?.VITE_OPENAI_MODEL || ''
+      config.openai_model ||
+      (typeof import.meta !== 'undefined' && import.meta.env?.VITE_OPENAI_MODEL) ||
+      (typeof process !== 'undefined' && process.env?.OPENAI_MODEL) ||
+      ''
 
     // Python lines 44-45: Validate model
     // if not self.default_model:
@@ -148,14 +154,18 @@ export class OpenAIClient extends BaseLLMClient {
     // max_tokens_str = config.get('openai_max_tokens') or os.getenv('OPENAI_MAX_TOKENS')
     // self.max_tokens = int(max_tokens_str) if max_tokens_str else 16384
     const maxTokensStr =
-      config.openai_max_tokens || import.meta.env?.VITE_OPENAI_MAX_TOKENS
+      config.openai_max_tokens ||
+      (typeof import.meta !== 'undefined' && import.meta.env?.VITE_OPENAI_MAX_TOKENS) ||
+      (typeof process !== 'undefined' && process.env?.OPENAI_MAX_TOKENS)
     this.maxTokens = maxTokensStr ? parseInt(maxTokensStr, 10) : 16384
 
     // Python lines 52-53: temperature configuration
     // temperature_str = config.get('openai_temperature') or os.getenv('OPENAI_TEMPERATURE')
     // self.default_temperature = float(temperature_str) if temperature_str else 0.7
     const temperatureStr =
-      config.openai_temperature || import.meta.env?.VITE_OPENAI_TEMPERATURE
+      config.openai_temperature ||
+      (typeof import.meta !== 'undefined' && import.meta.env?.VITE_OPENAI_TEMPERATURE) ||
+      (typeof process !== 'undefined' && process.env?.OPENAI_TEMPERATURE)
     this.defaultTemperature = temperatureStr
       ? parseFloat(temperatureStr)
       : 0.7

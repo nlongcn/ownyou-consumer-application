@@ -10,7 +10,7 @@
  */
 
 import { WorkflowState } from '../state'
-import { IndexedDBStore } from '@browser/store'
+import { MemoryManager } from '@browser/memory/MemoryManager'
 import {
   updateConfidence,
   initializeConfidence,
@@ -148,7 +148,7 @@ function classifyEvidenceType(
  * Python source: reconciliation.py:81-288 (reconcile_evidence)
  */
 async function reconcileEvidence(
-  store: IndexedDBStore,
+  memoryManager: MemoryManager,
   taxonomy_id: number,
   section: string,
   new_value: string,
@@ -170,8 +170,8 @@ async function reconcileEvidence(
   const now = new Date().toISOString()
 
   // Python lines 153-154: Load existing memory (if any)
-  // TODO: Implement store.getSemanticMemory(memory_id)
-  const existing_memory: SemanticMemory | null = null
+  // Python line 154: existing_memory = memory_manager.get_semantic_memory(memory_id)
+  const existing_memory = await memoryManager.getSemanticMemory(memory_id)
 
   // Python lines 156-193: First evidence for this taxonomy classification
   if (existing_memory === null) {
@@ -212,15 +212,14 @@ async function reconcileEvidence(
     }
 
     // Python line 192: Store new memory
-    // TODO: Implement store.storeSemanticMemory(memory_id, new_memory)
+    // Python line 192: memory_manager.store_semantic_memory(memory_id, new_memory)
+    await memoryManager.storeSemanticMemory(memory_id, new_memory)
 
     return new_memory
   }
 
   // Python lines 195-288: Existing memory found - reconcile
-  // Type assertion: TypeScript flow analysis needs help here since existing_memory is currently always null (placeholder)
-  // When store.getSemanticMemory is implemented, this assertion won't be needed
-  const memory = existing_memory as SemanticMemory
+  const memory = existing_memory
   const existing_value = memory.value
   const current_confidence = memory.confidence
 
@@ -312,7 +311,8 @@ async function reconcileEvidence(
   }
 
   // Python lines 274-278: Update memory
-  // TODO: Implement store.updateSemanticMemory(memory_id, updates)
+  // Python line 275: memory_manager.update_semantic_memory(memory_id, updates)
+  await memoryManager.updateSemanticMemory(memory_id, updates)
 
   console.info(
     `Updated semantic memory: taxonomy_id=${taxonomy_id}, ` +
@@ -321,7 +321,6 @@ async function reconcileEvidence(
   )
 
   // Python lines 286-288: Return updated memory
-  // TODO: Re-fetch updated memory from store
   return { ...memory, ...updates } as SemanticMemory
 }
 
@@ -331,7 +330,7 @@ async function reconcileEvidence(
  * Python source: reconciliation.py:291-358 (reconcile_batch_evidence)
  */
 async function reconcileBatchEvidence(
-  store: IndexedDBStore,
+  memoryManager: MemoryManager,
   taxonomy_selections: TaxonomySelection[],
   email_id: string
 ): Promise<SemanticMemory[]> {
@@ -343,7 +342,7 @@ async function reconcileBatchEvidence(
     try {
       // Python lines 326-343: Call reconcile_evidence with all fields
       const updated_memory = await reconcileEvidence(
-        store,
+        memoryManager,
         selection.taxonomy_id,
         selection.section,
         selection.value,
@@ -386,12 +385,12 @@ async function reconcileBatchEvidence(
  * Python source: reconcile.py:19-101 (reconcile_evidence_node)
  *
  * @param state Current workflow state with analyzer results
- * @param store IndexedDBStore instance
+ * @param memoryManager MemoryManager instance
  * @returns Updated state with reconciliation_data
  */
 export async function reconcileEvidenceNode(
   state: typeof WorkflowState.State,
-  store: IndexedDBStore
+  memoryManager: MemoryManager
 ): Promise<Partial<typeof WorkflowState.State>> {
   try {
     // Python lines 45-49: Get current email
@@ -433,7 +432,7 @@ export async function reconcileEvidenceNode(
 
     // Python lines 74-79: Use Phase 2 reconciliation logic
     const reconciled_memories = await reconcileBatchEvidence(
-      store,
+      memoryManager,
       all_selections,
       email_id
     )

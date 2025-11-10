@@ -334,10 +334,10 @@ Return format (JSON) - YOU MUST INCLUDE email_numbers FOR EVERY CLASSIFICATION:
 {
   "classifications": [
     {
-      "taxonomy_id": 520,
-      "value": "Cryptocurrency",
+      "taxonomy_id": 688,
+      "value": "Artificial Intelligence",
       "confidence": 0.95,
-      "reasoning": "User subscribed to 5 crypto newsletters: CoinDesk (Email 1), Decrypt (Email 5), Bitcoin Magazine (Email 12), CoinTelegraph (Email 18), The Block (Email 24)",
+      "reasoning": "User subscribed to 5 AI newsletters: MIT Technology Review (Email 1), AI Weekly (Email 5), The Batch (Email 12), Import AI (Email 18), The Algorithm (Email 24)",
       "email_numbers": [1, 5, 12, 18, 24]  <-- REQUIRED: MUST be array of email numbers that support this classification
     }
   ]
@@ -367,12 +367,12 @@ Guidelines:
 - Cite specific evidence from emails in reasoning field
 - Users can have MULTIPLE interests - extract all strong signals
 
-Example: If user receives crypto content in emails 1, 5, 12, 18, 24:
+Example: If user receives AI content in emails 1, 5, 12, 18, 24:
 {
-  "taxonomy_id": 520,
-  "value": "Cryptocurrency",
+  "taxonomy_id": 688,
+  "value": "Artificial Intelligence",
   "confidence": 0.95,
-  "reasoning": "User subscribed to 5 crypto newsletters: CoinDesk (Email 1), Decrypt (Email 5), Bitcoin Magazine (Email 12), CoinTelegraph (Email 18), The Block (Email 24)",
+  "reasoning": "User subscribed to 5 AI newsletters: MIT Technology Review (Email 1), AI Weekly (Email 5), The Batch (Email 12), Import AI (Email 18), The Algorithm (Email 24)",
   "email_numbers": [1, 5, 12, 18, 24]
 }
 

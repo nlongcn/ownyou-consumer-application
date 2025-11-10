@@ -104,7 +104,7 @@ ${taxonomy_context}
 IMPORTANT:
 - Select the taxonomy_id from the list above (the number after "ID")
 - For the "value" field, use ONLY the FINAL tier value (rightmost part after last "|")
-- Example: For "ID 100: Household Data | Life Stage | Grandparents with Children", use taxonomy_id=100 and value="Grandparents with Children"
+- Example: For "ID 100: Demographic | Household Data | Life Stage | Multi Generation Household | Grandparents with Children", use taxonomy_id=100 and value="Grandparents with Children"
 - AVOID category entries (short paths with 2-3 tiers) - choose the most specific entry (4+ tiers when available)
 - Do NOT include the full tier path in the value field`                       // Python line 106
 

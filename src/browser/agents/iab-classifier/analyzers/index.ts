@@ -130,10 +130,16 @@ export async function demographicsAnalyzerNode(
       max_iterations: 3,  // Python line 214 (FIXED: was 1, should be 3)
     })
 
+    // Python lines 299-314: Add section field to each classification
+    const classificationsWithSection = result.classifications.map((classification: any) => ({
+      ...classification,
+      section: 'demographics'  // Python line 301
+    }))
+
     // Python line 314: Append to state
     return {
       ...state,
-      demographics_results: [...(state.demographics_results || []), ...result.classifications],
+      demographics_results: [...(state.demographics_results || []), ...classificationsWithSection],
     }
   } catch (error) {
     // Python lines 337-340
@@ -189,10 +195,16 @@ export async function householdAnalyzerNode(
       max_iterations: 1,  // Python line 394
     })
 
+    // Python lines 478-493: Add section field to each classification
+    const classificationsWithSection = result.classifications.map((classification: any) => ({
+      ...classification,
+      section: 'household'  // Python line 480
+    }))
+
     // Python line 493: Append to state
     return {
       ...state,
-      household_results: [...(state.household_results || []), ...result.classifications],
+      household_results: [...(state.household_results || []), ...classificationsWithSection],
     }
   } catch (error) {
     // Python lines 516-519
@@ -248,10 +260,16 @@ export async function interestsAnalyzerNode(
       max_iterations: 1,  // Python line 574
     })
 
+    // Python lines 659-674: Add section field to each classification
+    const classificationsWithSection = result.classifications.map((classification: any) => ({
+      ...classification,
+      section: 'interests'  // Python line 661
+    }))
+
     // Python line 674: Append to state
     return {
       ...state,
-      interests_results: [...(state.interests_results || []), ...result.classifications],
+      interests_results: [...(state.interests_results || []), ...classificationsWithSection],
     }
   } catch (error) {
     // Python lines 697-700
@@ -307,10 +325,16 @@ export async function purchaseAnalyzerNode(
       max_iterations: 1,  // Python line 755
     })
 
+    // Python lines 843-859: Add section field to each classification
+    const classificationsWithSection = result.classifications.map((classification: any) => ({
+      ...classification,
+      section: 'purchase_intent'  // Python line 845
+    }))
+
     // Python line 859: Append to state
     return {
       ...state,
-      purchase_results: [...(state.purchase_results || []), ...result.classifications],
+      purchase_results: [...(state.purchase_results || []), ...classificationsWithSection],
     }
   } catch (error) {
     // Python lines 882-885

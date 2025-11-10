@@ -12,7 +12,7 @@
  */
 
 import { WorkflowState } from '../state'
-import { IndexedDBStore } from '@browser/store'
+import { MemoryManager } from '@browser/memory/MemoryManager'
 
 /**
  * Helper Functions
@@ -57,12 +57,12 @@ function getCurrentEmail(state: typeof WorkflowState.State): Record<string, any>
  * Python source: update_memory.py:23-159 (update_memory_node)
  *
  * @param state Current workflow state with reconciliation_data
- * @param store IndexedDBStore instance
+ * @param memoryManager MemoryManager instance
  * @returns Updated state with updated_profile and workflow_completed_at
  */
 export async function updateMemoryNode(
   state: typeof WorkflowState.State,
-  store: IndexedDBStore
+  memoryManager: MemoryManager
 ): Promise<Partial<typeof WorkflowState.State>> {
   try {
     // Python lines 47-51: Get current email
@@ -123,16 +123,18 @@ export async function updateMemoryNode(
       llm_model: 'placeholder:phase3-stub' // Phase 4 will use actual model
     }
 
-    // TODO: Implement store.storeEpisodicMemory(episode_id, episodic_data)
+    // Python line 96: memory_manager.store_episodic_memory(episode_id, episodic_data)
+    await memoryManager.storeEpisodicMemory(episode_id, episodic_data)
     console.info(`Stored episodic memory: ${episode_id}`)
 
     // Python lines 99-101: Mark email as processed
-    // TODO: Implement store.markEmailAsProcessed(email_id)
+    // Python line 100: memory_manager.mark_email_as_processed(email_id)
+    await memoryManager.markEmailAsProcessed(email_id)
     console.info(`Marked email as processed: ${email_id}`)
 
     // Python lines 103-119: Update state with latest profile
-    // TODO: Implement store.getAllSemanticMemories()
-    const all_memories: Array<Record<string, any>> = []
+    // Python line 104: all_memories = memory_manager.get_all_semantic_memories()
+    const all_memories = await memoryManager.getAllSemanticMemories()
 
     // Group by section
     const updated_profile: Record<string, Array<Record<string, any>>> = {

@@ -46,31 +46,62 @@ PHASE 1: Foundation & Contracts (2 weeks)
 ├─ Define all data models, API contracts, Store schema
 ├─ Authentication architecture
 ├─ Multi-source connector architecture
+├─ TypeScript IAB Classifier COMPLETE ✅ (Nov 2025)
+├─ IndexedDB Store COMPLETE ✅ (Jan 2025)
 └─ OUTPUT: Complete contracts + working auth
+
+PHASE 1.5: Admin Dashboard Migration (4 weeks) ⭐ INTERIM DEVELOPMENT TOOL
+├─ Migrate Flask dashboard → TypeScript (browser-based PWA)
+├─ IndexedDB for all data storage (replace SQLite)
+├─ Browser extension for OAuth (Gmail/Outlook)
+├─ Development tool for IAB classifier & mission agents
+├─ Workflow debugger, Store browser, Evidence analyzer
+├─ Prompt editor, Mission agent tester
+├─ **DOCUMENT LEARNINGS** → Inform Phase 5 consumer UI design
+└─ OUTPUT: TypeScript admin dashboard + learnings document
+    ├─ File: docs/learnings/ADMIN_DASHBOARD_TO_CONSUMER_UI.md
+    ├─ Validates: Self-sovereign browser architecture
+    ├─ Proves: Browser extension OAuth patterns
+    ├─ Tests: IndexedDB performance at scale
+    └─ Establishes: React component patterns for IAB data
 
 PHASE 2: Data Layer (3 weeks)
 ├─ All data source connectors (email, calendar, financial, photos, health, social, browsing)
 ├─ IAB classification for all sources
 ├─ Store writers for all sources
+├─ **REUSE:** OAuth patterns from Phase 1.5 admin dashboard
+├─ **REUSE:** IndexedDB patterns from Phase 1.5
 └─ OUTPUT: Complete data ingestion pipeline
 
 PHASE 3: Agent Layer (4 weeks)
 ├─ All mission agents (Shopping, Restaurant, Travel, Events, Bill, Health, etc.)
 ├─ All triggers (memory, schedule, user, external)
 ├─ Mission orchestrator with complete routing
+├─ **USE ADMIN DASHBOARD:** Debug mission agents with Phase 1.5 tools
 └─ OUTPUT: All mission types generating cards
 
 PHASE 4: API Layer (2 weeks)
 ├─ All REST endpoints (missions, feedback, wallet, notifications, connections, settings)
 ├─ Mission cards persistence (database)
 ├─ Feedback processing with LLM analysis
+├─ **REUSE:** API route patterns from Phase 1.5 admin dashboard
 └─ OUTPUT: Complete API for frontend consumption
 
-PHASE 5: UI Layer (4 weeks)
-├─ React Native app with all screens
-├─ All card components (Savings, Ikigai, Health)
+PHASE 5: Consumer UI (4 weeks) ← INFORMED BY PHASE 1.5 LEARNINGS
+├─ React Native OR Next.js PWA (decision informed by Phase 1.5)
+├─ All card components (Savings, Ikigai, Health, etc.)
 ├─ Navigation, Wallet, Notifications, Connections, Settings
-└─ OUTPUT: Complete user experience
+├─ **APPLY LEARNINGS FROM PHASE 1.5:**
+│   • Browser extension OAuth patterns (proven in admin dashboard)
+│   • IndexedDB optimization strategies (benchmarked in admin dashboard)
+│   • React component architecture (validated in admin dashboard)
+│   • TypeScript IAB integration (tested in admin dashboard)
+│   • Real-time UI patterns (refined in admin dashboard)
+│   • Evidence visualization (prototyped in admin dashboard)
+├─ Polished consumer-facing UX (vs admin power-user UI)
+├─ Card-based interface (vs admin tables)
+├─ Mobile-first design (vs admin desktop-focused)
+└─ OUTPUT: Complete consumer user experience
 
 PHASE 6: SSO Integration (2 weeks)
 ├─ BBS+ pseudonymous IDs
@@ -86,7 +117,11 @@ PHASE 7: Production & Polish (3 weeks)
 ├─ Testing & QA
 └─ OUTPUT: Production-ready system
 
-TOTAL: ~20 weeks (~5 months)
+TOTAL: ~24 weeks (~6 months)
+  ├─ Was 20 weeks, added Phase 1.5 (+4 weeks)
+  ├─ Investment: Validates architecture early, documents learnings
+  ├─ ROI: Saves ~2 weeks in Phase 5, reduces rework risk
+  └─ Net cost: +2 weeks, but higher quality consumer UI
 ```
 
 ---
