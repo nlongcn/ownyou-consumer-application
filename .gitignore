@@ -121,7 +121,11 @@ celerybeat.pid
 
 # Environments
 .env
+.env.local
+.env.*.local
 .env.backup
+secrets.json
+*.key
 .venv
 env/
 venv/
