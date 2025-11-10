@@ -9,7 +9,7 @@
  */
 
 import { WorkflowState } from '../state'
-import { IndexedDBStore } from '@browser/store'
+import { MemoryManager } from '@browser/memory/MemoryManager'
 import { applyTemporalDecay, calculateDaysSinceValidation } from '../confidence'
 
 /**
@@ -25,20 +25,19 @@ import { applyTemporalDecay, calculateDaysSinceValidation } from '../confidence'
  * 5. Update state with existing_profile
  *
  * @param state Current workflow state with user_id
- * @param store IndexedDBStore instance
+ * @param memoryManager MemoryManager instance
  * @returns Updated state with existing_profile populated
  */
 export async function retrieveExistingProfileNode(
   state: typeof WorkflowState.State,
-  store: IndexedDBStore
+  memoryManager: MemoryManager
 ): Promise<Partial<typeof WorkflowState.State>> {
   try {
     console.info(`📂 Retrieving existing profile for user: ${state.user_id}`)
 
     // Python lines 50-52: Get all semantic memories
-    // TODO: Implement store.getAllSemanticMemories()
-    // For now, return empty profile
-    const all_memories: Array<Record<string, any>> = []
+    // Python line 51: all_memories = memory_manager.get_all_semantic_memories()
+    const all_memories = await memoryManager.getAllSemanticMemories()
     console.info(`Retrieved ${all_memories.length} memories from store`)
 
     // Python lines 54-76: Apply temporal decay to each memory

@@ -38,15 +38,17 @@ import { retrieveExistingProfileNode } from './nodes/retrieveProfile'           
 import { analyzeAllNode } from './analyzers'                                    // Python line 39
 import { reconcileEvidenceNode } from './nodes/reconcile'                       // Python line 40
 import { updateMemoryNode } from './nodes/updateMemory'                         // Python line 41
-import { IndexedDBStore } from '@browser/store'                                 // Python line 43
+import type { BaseStore } from '@langchain/langgraph'                           // Python line 43
+import { MemoryManager } from '@browser/memory/MemoryManager'                   // Python line 16
 
 /**
  * Build compiled StateGraph for IAB Taxonomy Profile workflow.
  *
  * Python source: graph.py:48-147 (build_workflow_graph)
  *
- * @param store IndexedDBStore instance for persistent storage
+ * @param store BaseStore instance for persistent storage
  * @param checkpointer Optional checkpointer for workflow state persistence (default: null)
+ * @param userId Optional user_id for MemoryManager (extracted from state if not provided)
  * @returns Compiled StateGraph ready for execution
  *
  * Example:
@@ -61,21 +63,34 @@ import { IndexedDBStore } from '@browser/store'                                 
  *   const result = await graph.invoke({ user_id: "user_123", emails: [...] })
  */
 export function buildWorkflowGraph(                                             // Python line 48
-  store: IndexedDBStore,                                                        // Python line 49
-  checkpointer: any = null                                                      // Python line 50
+  store: BaseStore,                                                             // Python line 49
+  checkpointer: any = null,                                                     // Python line 50
+  userId: string = 'default_user'                                               // For MemoryManager
 ) {
   // Initialize StateGraph with WorkflowState schema                            // Python line 86
   const workflow = new StateGraph(WorkflowState) as any                         // Python line 87
 
-  // Bind store to nodes using closures (TypeScript doesn't have functools.partial) // Python lines 89-93
-  const load_emails = async (state: typeof WorkflowState.State) =>             // Python line 90
-    loadNewEmailsNode(state, store)
-  const retrieve_profile = async (state: typeof WorkflowState.State) =>        // Python line 91
-    retrieveExistingProfileNode(state, store)
-  const reconcile = async (state: typeof WorkflowState.State) =>               // Python line 92
-    reconcileEvidenceNode(state, store)
-  const update_memory = async (state: typeof WorkflowState.State) =>           // Python line 93
-    updateMemoryNode(state, store)
+  // Python line 76: Create MemoryManager wrapper around store
+  // Note: In Python, user_id comes from state. Here we create a closure that extracts it.
+  // The MemoryManager is created per-invocation to support different users.
+
+  // Bind MemoryManager to nodes using closures                                 // Python lines 89-93
+  const load_emails = async (state: typeof WorkflowState.State) => {           // Python line 90
+    const memoryManager = new MemoryManager(state.user_id || userId, store)
+    return loadNewEmailsNode(state, memoryManager)
+  }
+  const retrieve_profile = async (state: typeof WorkflowState.State) => {      // Python line 91
+    const memoryManager = new MemoryManager(state.user_id || userId, store)
+    return retrieveExistingProfileNode(state, memoryManager)
+  }
+  const reconcile = async (state: typeof WorkflowState.State) => {             // Python line 92
+    const memoryManager = new MemoryManager(state.user_id || userId, store)
+    return reconcileEvidenceNode(state, memoryManager)
+  }
+  const update_memory = async (state: typeof WorkflowState.State) => {         // Python line 93
+    const memoryManager = new MemoryManager(state.user_id || userId, store)
+    return updateMemoryNode(state, memoryManager)
+  }
 
   // Add nodes to graph                                                         // Python line 95
   workflow.addNode('load_emails', load_emails)                                  // Python line 96

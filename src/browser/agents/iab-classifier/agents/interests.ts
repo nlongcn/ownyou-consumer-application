@@ -104,7 +104,7 @@ ${taxonomy_context}
 IMPORTANT:
 - Select the taxonomy_id from the list above (the number after "ID")
 - For the "value" field, use ONLY the FINAL tier value (rightmost part after last "|")
-- Example: For "ID 342: Interests | Technology & Computing | Cryptocurrency", use taxonomy_id=342 and value="Cryptocurrency"
+- Example: For "ID 688: Interest | Technology & Computing | Artificial Intelligence", use taxonomy_id=688 and value="Artificial Intelligence"
 - AVOID category entries (short paths with 2-3 tiers) - choose the most specific entry (4+ tiers when available)
 - Do NOT include the full tier path in the value field`                       // Python line 109
 

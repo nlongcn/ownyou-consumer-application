@@ -11,7 +11,7 @@
  */
 
 import { WorkflowState } from '../state'
-import { IndexedDBStore } from '@browser/store'
+import { MemoryManager } from '@browser/memory/MemoryManager'
 
 /**
  * Load new emails that haven't been processed yet
@@ -25,12 +25,12 @@ import { IndexedDBStore } from '@browser/store'
  * 4. Handle edge cases (no emails, all processed, etc.)
  *
  * @param state Current workflow state with user_id
- * @param store IndexedDBStore instance for retrieving processed IDs
+ * @param memoryManager MemoryManager instance for retrieving processed IDs
  * @returns Updated state with filtered emails
  */
 export async function loadNewEmailsNode(
   state: typeof WorkflowState.State,
-  store: IndexedDBStore
+  memoryManager: MemoryManager
 ): Promise<Partial<typeof WorkflowState.State>> {
   try {
     console.info(`🔄 Loading emails for user: ${state.user_id}`)
@@ -43,9 +43,8 @@ export async function loadNewEmailsNode(
     if (force_reprocess) {
       console.info('Force reprocess enabled - ignoring already-processed emails')
     } else {
-      // TODO: Implement store.getProcessedEmailIds()
-      // For now, use empty array (all emails are "new")
-      processed_ids = []
+      // Python line 58: processed_ids = memory_manager.get_processed_email_ids()
+      processed_ids = await memoryManager.getProcessedEmailIds()
       console.info(`Found ${processed_ids.length} already-processed emails`)
     }
 
