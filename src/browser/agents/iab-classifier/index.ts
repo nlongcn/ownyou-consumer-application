@@ -31,14 +31,14 @@
  * ```
  */
 
-import { StateGraph, END } from '@langchain/langgraph'                          // Python line 32
+import { StateGraph, END } from '@langchain/langgraph/web'                     // Browser-compatible import
 import { WorkflowState, hasMoreEmails, advanceToNextEmail } from './state'      // Python line 34
 import { loadNewEmailsNode } from './nodes/loadEmails'                          // Python line 37
 import { retrieveExistingProfileNode } from './nodes/retrieveProfile'           // Python line 38
 import { analyzeAllNode } from './analyzers'                                    // Python line 39
 import { reconcileEvidenceNode } from './nodes/reconcile'                       // Python line 40
 import { updateMemoryNode } from './nodes/updateMemory'                         // Python line 41
-import type { BaseStore } from '@langchain/langgraph'                           // Python line 43
+import type { BaseStore } from '@langchain/langgraph/web'                      // Browser-compatible import
 import { MemoryManager } from '@browser/memory/MemoryManager'                   // Python line 16
 
 // Re-export WorkflowState for external use

@@ -12,8 +12,8 @@ export async function GET() {
     const cookieStore = cookies()
 
     // Check for OAuth tokens in cookies
-    const gmailToken = cookieStore.get('gmail_token')
-    const outlookToken = cookieStore.get('outlook_token')
+    const gmailToken = cookieStore.get('gmail_access_token')
+    const outlookToken = cookieStore.get('outlook_access_token')
 
     return NextResponse.json({
       gmail: !!gmailToken?.value,
