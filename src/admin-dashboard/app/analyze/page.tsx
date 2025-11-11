@@ -205,7 +205,7 @@ export default function AnalyzePage() {
       await tracker.log('info', `Downloading from ${prov}...`, jobId)
 
       if (prov === 'gmail') {
-        const client = new GmailClient(getCookie('gmail_token') || '')
+        const client = new GmailClient(getCookie('gmail_access_token') || '')
         const response = await client.listMessages(undefined, maxEmails)
         const messageIds = response.messages || []
         for (const msg of messageIds) {
@@ -213,7 +213,7 @@ export default function AnalyzePage() {
           allEmails.push(convertGmailMessage(details))
         }
       } else {
-        const client = new OutlookClient(getCookie('outlook_token') || '')
+        const client = new OutlookClient(getCookie('outlook_access_token') || '')
         const response = await client.listMessages(undefined, maxEmails)
         const messages = response.value || []
         for (const msg of messages) {
