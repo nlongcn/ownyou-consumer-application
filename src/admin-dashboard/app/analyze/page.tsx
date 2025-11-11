@@ -18,7 +18,7 @@ import { getProgressTracker, type ProgressUpdate } from '@/lib/progress-tracker'
 
 type Mode = 'manual' | 'email'
 type Provider = 'gmail' | 'outlook' | 'both'
-type LLMProvider = 'openai' | 'anthropic' | 'google'
+type LLMProvider = 'openai' | 'claude' | 'gemini' | 'ollama'
 
 interface EmailMessage {
   id: string
@@ -26,6 +26,15 @@ interface EmailMessage {
   from: string
   body: string
   date: Date
+}
+
+// Helper to get cookie value
+function getCookie(name: string): string | undefined {
+  if (typeof document === 'undefined') return undefined
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop()?.split(';').shift()
+  return undefined
 }
 
 export default function AnalyzePage() {
@@ -131,7 +140,7 @@ export default function AnalyzePage() {
       const api = getClassifierAPI(userId)
 
       let processedCount = 0
-      const classificationResult = await api.classifyBatch(
+      const batchStatus = await api.classifyBatch(
         emails.map((email) => ({
           text: `Subject: ${email.subject}\nFrom: ${email.from}\n\n${email.body}`,
           source: `email_${provider}`,
@@ -157,7 +166,12 @@ export default function AnalyzePage() {
       })
 
       await tracker.log('info', 'Classification complete!', jobId)
-      setResult(classificationResult)
+
+      // Convert batch status to result format
+      setResult({
+        success: batchStatus.status === 'complete',
+        error: batchStatus.error,
+      })
     } catch (error) {
       const tracker = getProgressTracker()
       if (currentJob) {
@@ -191,17 +205,19 @@ export default function AnalyzePage() {
       await tracker.log('info', `Downloading from ${prov}...`, jobId)
 
       if (prov === 'gmail') {
-        const client = new GmailClient()
-        const messages = await client.fetchMessages(maxEmails)
-        for (const msg of messages) {
-          const details = await client.getMessageDetails(msg.id)
+        const client = new GmailClient(getCookie('gmail_token') || '')
+        const response = await client.listMessages(undefined, maxEmails)
+        const messageIds = response.messages || []
+        for (const msg of messageIds) {
+          const details = await client.getMessage(msg.id)
           allEmails.push(convertGmailMessage(details))
         }
       } else {
-        const client = new OutlookClient()
-        const messages = await client.fetchMessages(maxEmails)
+        const client = new OutlookClient(getCookie('outlook_token') || '')
+        const response = await client.listMessages(undefined, maxEmails)
+        const messages = response.value || []
         for (const msg of messages) {
-          const details = await client.getMessageDetails(msg.id)
+          const details = await client.getMessage(msg.id)
           allEmails.push(convertOutlookMessage(details))
         }
       }
@@ -420,8 +436,9 @@ export default function AnalyzePage() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="openai">OpenAI</option>
-                <option value="anthropic">Anthropic (Claude)</option>
-                <option value="google">Google (Gemini)</option>
+                <option value="claude">Anthropic (Claude)</option>
+                <option value="gemini">Google (Gemini)</option>
+                <option value="ollama">Ollama (Local)</option>
               </select>
             </div>
 
@@ -504,8 +521,8 @@ export default function AnalyzePage() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="openai">OpenAI</option>
-                <option value="anthropic">Anthropic (Claude)</option>
-                <option value="google">Google (Gemini)</option>
+                <option value="claude">Anthropic (Claude)</option>
+                <option value="gemini">Google (Gemini)</option>
               </select>
             </div>
 
