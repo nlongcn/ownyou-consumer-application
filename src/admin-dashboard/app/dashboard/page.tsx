@@ -37,12 +37,11 @@ export default function DashboardPage() {
         setLoading(true)
 
         // Query IndexedDB directly from browser
-        const store = new IndexedDBStore({ namespace: ['users', userId] })
-        await store.init()
+        const store = new IndexedDBStore('ownyou_store')
 
         // Search for all IAB classifications
-        // Namespace format: ['users', userId, 'iab_taxonomy_profile']
-        const classificationItems = await store.search(['users', userId, 'iab_taxonomy_profile'])
+        // Namespace format: [userId, 'iab_taxonomy_profile']
+        const classificationItems = await store.search([userId, 'iab_taxonomy_profile'])
 
         // Count by section
         let total = 0
@@ -104,15 +103,14 @@ export default function DashboardPage() {
       setDeleting(true)
 
       // Delete all data from IndexedDB
-      const store = new IndexedDBStore({ namespace: ['users', userId] })
-      await store.init()
+      const store = new IndexedDBStore('ownyou_store')
 
       // Get all classification items
-      const items = await store.search(['users', userId, 'iab_taxonomy_profile'])
+      const items = await store.search([userId, 'iab_taxonomy_profile'])
 
       // Delete each item
       for (const item of items) {
-        await store.delete(['users', userId, 'iab_taxonomy_profile'], item.key)
+        await store.delete([userId, 'iab_taxonomy_profile'], item.key)
       }
 
       // Refresh page
