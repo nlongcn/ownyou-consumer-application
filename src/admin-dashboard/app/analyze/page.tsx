@@ -11,7 +11,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getClassifierAPI, type ClassificationResult } from '@/lib/classifier-api'
+import { getBrowserClassifier, type ClassificationResult } from '@/lib/browser-classifier'
 import { GmailClient, type GmailMessage } from '@/lib/gmail-client'
 import { OutlookClient, type OutlookMessage } from '@/lib/outlook-client'
 import { getProgressTracker, type ProgressUpdate } from '@/lib/progress-tracker'
@@ -135,18 +135,20 @@ export default function AnalyzePage() {
         total: emails.length,
       })
 
-      // Classify emails
+      // Classify emails using browser classifier
       await tracker.log('info', `Starting classification of ${emails.length} emails...`, jobId)
-      const api = getClassifierAPI(userId)
+      const classifier = getBrowserClassifier(userId)
 
       let processedCount = 0
-      const batchStatus = await api.classifyBatch(
+      const batchStats = await classifier.classifyBatch(
         emails.map((email) => ({
           text: `Subject: ${email.subject}\nFrom: ${email.from}\n\n${email.body}`,
           source: `email_${provider}`,
         })),
-        async (status) => {
-          processedCount++
+        llmProvider,
+        llmModel,
+        async (processed, total, classificationsAdded) => {
+          processedCount = processed
           await tracker.updateProgress(jobId, {
             processed: processedCount,
           })
@@ -167,10 +169,10 @@ export default function AnalyzePage() {
 
       await tracker.log('info', 'Classification complete!', jobId)
 
-      // Convert batch status to result format
+      // Convert batch stats to result format
       setResult({
-        success: batchStatus.status === 'complete',
-        error: batchStatus.error,
+        success: true,
+        message: `Classified ${batchStats.classificationsAdded} categories from ${batchStats.processed} emails`,
       })
     } catch (error) {
       const tracker = getProgressTracker()
@@ -262,8 +264,9 @@ export default function AnalyzePage() {
     setResult(null)
 
     try {
-      const api = getClassifierAPI(userId)
-      const classificationResult = await api.classifyText({
+      // Use browser classifier instead of server API
+      const classifier = getBrowserClassifier(userId)
+      const classificationResult = await classifier.classifyText({
         user_id: userId,
         text: text.trim(),
         source: 'manual_input',
