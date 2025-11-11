@@ -1,162 +1,334 @@
-/**
- * Profile Page
- *
- * Displays user's IAB taxonomy profile with classification summary.
- *
- * This is a migration from Flask dashboard to TypeScript Next.js.
- * Key difference: Direct IndexedDB access (client-side) vs SQLite API calls (server-side).
- */
-
 'use client'
 
-import { useProfileSummary } from '@/lib/use-profile'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-export default function ProfilePage() {
-  // TODO: Get userId from authentication context
-  // For now, using default_user for POC
-  const userId = 'default_user'
-  const { summary, loading, error, refetch } = useProfileSummary(userId)
+interface TierEntry {
+  value: string
+  tier_path: string
+  confidence: number
+  evidence_count: number
+  tier_depth: number
+}
+
+interface TieredGroup {
+  primary: TierEntry
+  alternatives: TierEntry[]
+}
+
+interface TieredInterest {
+  primary: TierEntry
+  granularity_score: number
+}
+
+interface TieredPurchaseIntent {
+  primary: TierEntry
+  granularity_score: number
+  purchase_intent_flag?: string
+}
+
+interface TieredProfile {
+  schema_version: string
+  demographics: Record<string, TieredGroup>
+  household: Record<string, TieredGroup>
+  interests: TieredInterest[]
+  purchase_intent: TieredPurchaseIntent[]
+}
+
+export default function ProfileViewPage() {
+  const [profile, setProfile] = useState<TieredProfile | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        setLoading(true)
+
+        // Load tiered profile
+        const response = await fetch('/api/profile/tiered')
+        if (!response.ok) {
+          throw new Error(`Failed to load profile: ${response.statusText}`)
+        }
+
+        const data = await response.json()
+        setProfile(data)
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load tiered profile'
+        setError(errorMessage)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadProfile()
+  }, [])
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading profile...</p>
-        </div>
+        <p className="text-gray-600">Loading tiered profile...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="max-w-2xl mx-auto mt-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-red-900 mb-2">Error Loading Profile</h2>
-          <p className="text-red-700">{error.message}</p>
-          <button
-            onClick={refetch}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-          >
-            Retry
-          </button>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="bg-white rounded-lg shadow p-6 max-w-md">
+          <h2 className="text-xl font-bold text-red-600 mb-2">Error</h2>
+          <p className="text-gray-700">{error}</p>
         </div>
       </div>
     )
   }
 
-  if (!summary) {
+  const demographicsCount = Object.keys(profile?.demographics || {}).length
+  const householdCount = Object.keys(profile?.household || {}).length
+  const interestsCount = profile?.interests?.length || 0
+  const purchaseIntentCount = profile?.purchase_intent?.length || 0
+
+  const GranularityBadge = ({ score }: { score: number }) => {
+    const color = score >= 0.7 ? 'bg-green-100 text-green-800' : score >= 0.4 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
     return (
-      <div className="max-w-2xl mx-auto mt-8">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-yellow-900 mb-2">No Profile Data</h2>
-          <p className="text-yellow-700">No classifications found for this user.</p>
-        </div>
-      </div>
+      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${color}`}>
+        {(score * 100).toFixed(0)}
+      </span>
     )
   }
+
+  const TieredGroupCard = ({ group, fieldName }: { group: TieredGroup; fieldName: string }) => (
+    <div className="bg-white rounded-lg shadow p-6">
+      <div className="mb-4">
+        <h4 className="text-sm font-semibold text-gray-600 uppercase mb-2">{fieldName}</h4>
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <div className="font-medium text-gray-900">{group.primary.value}</div>
+            <div className="text-xs text-gray-600 mt-1">{group.primary.tier_path}</div>
+          </div>
+          <span className="ml-2 text-sm font-semibold text-blue-600">
+            {(group.primary.confidence * 100).toFixed(0)}%
+          </span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+          <div
+            className="bg-blue-500 h-2 rounded-full transition-all"
+            style={{ width: `${group.primary.confidence * 100}%` }}
+          />
+        </div>
+        <div className="text-xs text-gray-500 mt-2">
+          {group.primary.evidence_count} evidence items • Tier {group.primary.tier_depth}
+        </div>
+      </div>
+
+      {group.alternatives && group.alternatives.length > 0 && (
+        <div className="border-t border-gray-200 pt-3">
+          <div className="text-xs font-semibold text-gray-600 mb-2">Alternatives:</div>
+          <div className="space-y-2">
+            {group.alternatives.map((alt, idx) => (
+              <div key={idx} className="flex items-center justify-between text-sm">
+                <div className="flex-1">
+                  <span className="text-gray-900">{alt.value}</span>
+                  <span className="text-xs text-gray-500 ml-2">
+                    ({(alt.confidence * 100).toFixed(0)}%)
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
 
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto p-6 space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">IAB Taxonomy Profile</h1>
-          <p className="text-gray-600 mt-1">User: {summary.user_id}</p>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            IAB Consumer Profile
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Schema v{profile?.schema_version || '2.0'} - Tiered Classification View
+          </p>
         </div>
         <button
-          onClick={refetch}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          onClick={() => router.push('/emails')}
+          className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors text-gray-700"
         >
-          Refresh
+          Back to Emails
         </button>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <SummaryCard
-          title="Total Classifications"
-          count={summary.total_classifications}
-          color="blue"
-          description="All IAB taxonomy categories assigned"
-        />
-        <SummaryCard
-          title="Demographics"
-          count={summary.demographics}
-          color="purple"
-          description="Gender, age, education, etc."
-        />
-        <SummaryCard
-          title="Household"
-          count={summary.household}
-          color="green"
-          description="Family structure, income level"
-        />
-        <SummaryCard
-          title="Interests"
-          count={summary.interests}
-          color="orange"
-          description="Hobbies, topics, passions"
-        />
-        <SummaryCard
-          title="Purchase Intent"
-          count={summary.purchase_intent}
-          color="pink"
-          description="Products/services considering"
-        />
-        <SummaryCard
-          title="Actual Purchases"
-          count={summary.actual_purchases}
-          color="indigo"
-          description="Confirmed transactions"
-        />
+      <div className="grid gap-4 md:grid-cols-4">
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-sm text-gray-600 mb-2">Demographics</p>
+          <p className="text-3xl font-bold text-gray-900">{demographicsCount}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-sm text-gray-600 mb-2">Household</p>
+          <p className="text-3xl font-bold text-gray-900">{householdCount}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-sm text-gray-600 mb-2">Interests</p>
+          <p className="text-3xl font-bold text-gray-900">{interestsCount}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-sm text-gray-600 mb-2">Purchase Intent</p>
+          <p className="text-3xl font-bold text-gray-900">{purchaseIntentCount}</p>
+        </div>
       </div>
 
-      {/* Status Information */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-blue-900 mb-2">
-          Migration Status
-        </h3>
-        <p className="text-blue-700">
-          ✅ Profile Summary API migrated from Flask → TypeScript Next.js
-        </p>
-        <p className="text-blue-700 mt-1">
-          ✅ Data Source: IndexedDB (self-sovereign, browser-based)
-        </p>
-        <p className="text-blue-700 mt-1">
-          ⏳ Next: Migrate Classifications List, Evidence Viewer, Analysis Runner
-        </p>
-      </div>
-    </div>
-  )
-}
+      {/* Demographics Section */}
+      {demographicsCount > 0 && (
+        <section>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            Demographics
+            <span className="text-sm text-gray-600 font-normal ml-2">
+              (Primary & Alternatives)
+            </span>
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {Object.entries(profile?.demographics || {}).map(([field, group]) => (
+              <TieredGroupCard key={field} group={group} fieldName={field} />
+            ))}
+          </div>
+        </section>
+      )}
 
-// Summary Card Component
-function SummaryCard({
-  title,
-  count,
-  color,
-  description,
-}: {
-  title: string
-  count: number
-  color: 'blue' | 'purple' | 'green' | 'orange' | 'pink' | 'indigo'
-  description: string
-}) {
-  const colorClasses = {
-    blue: 'bg-blue-50 border-blue-200 text-blue-900',
-    purple: 'bg-purple-50 border-purple-200 text-purple-900',
-    green: 'bg-green-50 border-green-200 text-green-900',
-    orange: 'bg-orange-50 border-orange-200 text-orange-900',
-    pink: 'bg-pink-50 border-pink-200 text-pink-900',
-    indigo: 'bg-indigo-50 border-indigo-200 text-indigo-900',
-  }
+      {/* Household Section */}
+      {householdCount > 0 && (
+        <section>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            Household
+            <span className="text-sm text-gray-600 font-normal ml-2">
+              (Primary & Alternatives)
+            </span>
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {Object.entries(profile?.household || {}).map(([field, group]) => (
+              <TieredGroupCard key={field} group={group} fieldName={field} />
+            ))}
+          </div>
+        </section>
+      )}
 
-  return (
-    <div className={`${colorClasses[color]} border rounded-lg p-6`}>
-      <h3 className="text-sm font-medium mb-1">{title}</h3>
-      <p className="text-4xl font-bold mb-2">{count}</p>
-      <p className="text-sm opacity-80">{description}</p>
+      {/* Interests Section */}
+      {interestsCount > 0 && (
+        <section>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            Interests
+            <span className="text-sm text-gray-600 font-normal ml-2">
+              (Ranked by Granularity)
+            </span>
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {profile?.interests?.map((interest, idx) => (
+              <div key={idx} className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-base font-semibold text-gray-900">
+                    {interest.primary.value}
+                  </h4>
+                  <GranularityBadge score={interest.granularity_score} />
+                </div>
+                <p className="text-xs text-gray-600 mb-4">{interest.primary.tier_path}</p>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Confidence</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      {(interest.primary.confidence * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-500 h-2 rounded-full transition-all"
+                      style={{ width: `${interest.primary.confidence * 100}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-sm text-gray-600">Evidence</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      {interest.primary.evidence_count} item{interest.primary.evidence_count !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Tier {interest.primary.tier_depth}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Purchase Intent Section */}
+      {purchaseIntentCount > 0 && (
+        <section>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            Purchase Intent
+            <span className="text-sm text-gray-600 font-normal ml-2">
+              (Ranked by Granularity)
+            </span>
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {profile?.purchase_intent?.map((purchase, idx) => (
+              <div key={idx} className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-base font-semibold text-gray-900">
+                    {purchase.primary.value}
+                  </h4>
+                  <GranularityBadge score={purchase.granularity_score} />
+                </div>
+                <p className="text-xs text-gray-600 mb-4">{purchase.primary.tier_path}</p>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Confidence</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      {(purchase.primary.confidence * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-500 h-2 rounded-full transition-all"
+                      style={{ width: `${purchase.primary.confidence * 100}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-sm text-gray-600">Evidence</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      {purchase.primary.evidence_count} item{purchase.primary.evidence_count !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  {purchase.purchase_intent_flag && (
+                    <div className="mt-2 pt-2 border-t border-gray-200">
+                      <span className="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-800">
+                        {purchase.purchase_intent_flag}
+                      </span>
+                    </div>
+                  )}
+                  <div className="text-xs text-gray-500">
+                    Tier {purchase.primary.tier_depth}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Empty State */}
+      {demographicsCount === 0 && householdCount === 0 && interestsCount === 0 && purchaseIntentCount === 0 && (
+        <div className="bg-white rounded-lg shadow p-8 text-center">
+          <p className="text-gray-600">
+            No tiered classifications found. Download and classify emails to build your profile.
+          </p>
+        </div>
+      )}
     </div>
   )
 }

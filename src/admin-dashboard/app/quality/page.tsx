@@ -176,7 +176,7 @@ export default function QualityPage() {
             <li>❌ Low average confidence ({Math.round(metrics.avgConfidence * 100)}%) - classifications may need review</li>
           )}
           {metrics.lowConfidence > 0 && (
-            <li>• {metrics.lowConfidence} classifications have low confidence (<50%) - consider manual review</li>
+            <li>• {metrics.lowConfidence} classifications have low confidence (&lt;50%) - consider manual review</li>
           )}
           {metrics.sectionDistribution.interests > metrics.totalClassifications * 0.5 && (
             <li>• Interests dominate classification profile ({Math.round((metrics.sectionDistribution.interests / metrics.totalClassifications) * 100)}%)</li>

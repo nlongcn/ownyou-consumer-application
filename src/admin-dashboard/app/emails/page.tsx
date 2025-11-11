@@ -228,6 +228,59 @@ export default function EmailDownloadPage() {
         </p>
       </div>
 
+      {/* Navigation to Analyzer Pages */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Analysis & Insights
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <a
+            href="/evidence"
+            className="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-md transition-all cursor-pointer"
+          >
+            <div className="flex items-start">
+              <span className="text-2xl mr-3">🔍</span>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 mb-1">Evidence & Reasoning</h3>
+                <p className="text-sm text-gray-600">
+                  View LLM explanations and evidence for each classification
+                </p>
+              </div>
+            </div>
+          </a>
+
+          <a
+            href="/confidence"
+            className="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-md transition-all cursor-pointer"
+          >
+            <div className="flex items-start">
+              <span className="text-2xl mr-3">📊</span>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 mb-1">Confidence Analysis</h3>
+                <p className="text-sm text-gray-600">
+                  See classifications grouped by confidence level (high/medium/low)
+                </p>
+              </div>
+            </div>
+          </a>
+
+          <a
+            href="/profile"
+            className="border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-md transition-all cursor-pointer"
+          >
+            <div className="flex items-start">
+              <span className="text-2xl mr-3">👤</span>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 mb-1">Tiered Profile</h3>
+                <p className="text-sm text-gray-600">
+                  View complete IAB profile with demographics, interests, and purchase intent
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+
       {/* Success Message */}
       {success && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
