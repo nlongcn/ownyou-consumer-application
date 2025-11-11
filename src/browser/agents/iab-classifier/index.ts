@@ -41,6 +41,9 @@ import { updateMemoryNode } from './nodes/updateMemory'                         
 import type { BaseStore } from '@langchain/langgraph'                           // Python line 43
 import { MemoryManager } from '@browser/memory/MemoryManager'                   // Python line 16
 
+// Re-export WorkflowState for external use
+export { WorkflowState } from './state'
+
 /**
  * Build compiled StateGraph for IAB Taxonomy Profile workflow.
  *
