@@ -1,15 +1,14 @@
 /**
- * Dashboard Home Page - Enhanced with IndexedDB Analytics
+ * Dashboard Home Page - Analytics Summary
  *
- * Main landing page showing IAB profile summary from browser IndexedDB.
- * No Python backend - queries IndexedDBStore directly.
+ * Main landing page showing IAB profile summary counts.
+ * Queries server API which uses InMemoryStore (same store as /api/classify).
  */
 
 'use client'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { IndexedDBStore } from '@browser/store/IndexedDBStore'
 
 interface ProfileSummary {
   total: number
@@ -36,47 +35,27 @@ export default function DashboardPage() {
       try {
         setLoading(true)
 
-        // Query IndexedDB directly from browser
-        const store = new IndexedDBStore('ownyou_store')
+        // Query server API (same store as /api/classify writes to)
+        const response = await fetch(`/api/profile/tiered?user_id=${userId}`)
 
-        // Search for all IAB classifications
-        // Namespace format: [userId, 'iab_taxonomy_profile']
-        const classificationItems = await store.search([userId, 'iab_taxonomy_profile'])
-
-        // Count by section
-        let total = 0
-        let demographics = 0
-        let household = 0
-        let interests = 0
-        let purchaseIntent = 0
-        let actualPurchases = 0
-
-        for (const item of classificationItems) {
-          const value = item.value as any
-
-          // Extract section from key
-          // Key format: semantic_{section}_{taxonomy_id}_{name}
-          const key = item.key
-          const keyParts = key.split('_')
-          const section = keyParts.length >= 2 ? keyParts[1] : 'unknown'
-
-          // Count by section
-          if (section === 'demographics') {
-            demographics++
-          } else if (section === 'household') {
-            household++
-          } else if (section === 'interests') {
-            interests++
-          } else if (section === 'purchase' || section === 'purchase_intent') {
-            if (value.purchase_intent_flag === 'ACTUAL_PURCHASE') {
-              actualPurchases++
-            } else {
-              purchaseIntent++
-            }
-          }
-
-          total++
+        if (!response.ok) {
+          throw new Error(`Failed to load profile: ${response.statusText}`)
         }
+
+        const tieredProfile = await response.json()
+
+        // Count classifications from tiered profile
+        const demographics = Object.keys(tieredProfile.demographics || {}).length
+        const household = Object.keys(tieredProfile.household || {}).length
+        const interests = (tieredProfile.interests || []).length
+        const purchaseIntent = (tieredProfile.purchase_intent || []).filter(
+          (p: any) => p.purchase_intent_flag !== 'ACTUAL_PURCHASE'
+        ).length
+        const actualPurchases = (tieredProfile.purchase_intent || []).filter(
+          (p: any) => p.purchase_intent_flag === 'ACTUAL_PURCHASE'
+        ).length
+
+        const total = demographics + household + interests + purchaseIntent + actualPurchases
 
         setSummary({
           total,
@@ -102,15 +81,13 @@ export default function DashboardPage() {
     try {
       setDeleting(true)
 
-      // Delete all data from IndexedDB
-      const store = new IndexedDBStore('ownyou_store')
+      // Delete profile via server API
+      const response = await fetch(`/api/profile?user_id=${userId}`, {
+        method: 'DELETE',
+      })
 
-      // Get all classification items
-      const items = await store.search([userId, 'iab_taxonomy_profile'])
-
-      // Delete each item
-      for (const item of items) {
-        await store.delete([userId, 'iab_taxonomy_profile'], item.key)
+      if (!response.ok) {
+        throw new Error(`Failed to delete profile: ${response.statusText}`)
       }
 
       // Refresh page
