@@ -2,13 +2,14 @@
  * Dashboard Home Page - Analytics Summary
  *
  * Main landing page showing IAB profile summary counts.
- * Queries server API which uses InMemoryStore (same store as /api/classify).
+ * Reads from IndexedDB (browser storage) for true PWA architecture.
  */
 
 'use client'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { getBrowserProfileReader } from '@/lib/profile-reader'
 
 interface ProfileSummary {
   total: number
@@ -35,35 +36,17 @@ export default function DashboardPage() {
       try {
         setLoading(true)
 
-        // Query server API (same store as /api/classify writes to)
-        const response = await fetch(`/api/profile/tiered?user_id=${userId}`)
-
-        if (!response.ok) {
-          throw new Error(`Failed to load profile: ${response.statusText}`)
-        }
-
-        const tieredProfile = await response.json()
-
-        // Count classifications from tiered profile
-        const demographics = Object.keys(tieredProfile.demographics || {}).length
-        const household = Object.keys(tieredProfile.household || {}).length
-        const interests = (tieredProfile.interests || []).length
-        const purchaseIntent = (tieredProfile.purchase_intent || []).filter(
-          (p: any) => p.purchase_intent_flag !== 'ACTUAL_PURCHASE'
-        ).length
-        const actualPurchases = (tieredProfile.purchase_intent || []).filter(
-          (p: any) => p.purchase_intent_flag === 'ACTUAL_PURCHASE'
-        ).length
-
-        const total = demographics + household + interests + purchaseIntent + actualPurchases
+        // Read from IndexedDB (browser storage)
+        const reader = getBrowserProfileReader()
+        const counts = await reader.getCounts(userId)
 
         setSummary({
-          total,
-          demographics,
-          household,
-          interests,
-          purchase_intent: purchaseIntent,
-          actual_purchases: actualPurchases,
+          total: counts.total,
+          demographics: counts.demographics,
+          household: counts.household,
+          interests: counts.interests,
+          purchase_intent: counts.purchaseIntent,
+          actual_purchases: counts.actualPurchases,
         })
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load profile'
@@ -81,16 +64,11 @@ export default function DashboardPage() {
     try {
       setDeleting(true)
 
-      // Delete profile via server API
-      const response = await fetch(`/api/profile?user_id=${userId}`, {
-        method: 'DELETE',
-      })
+      // Delete profile from IndexedDB (browser storage)
+      const reader = getBrowserProfileReader()
+      await reader.clearProfile(userId)
 
-      if (!response.ok) {
-        throw new Error(`Failed to delete profile: ${response.statusText}`)
-      }
-
-      // Refresh page
+      // Refresh page to show empty state
       window.location.reload()
     } catch (err) {
       console.error('Delete profile failed:', err)

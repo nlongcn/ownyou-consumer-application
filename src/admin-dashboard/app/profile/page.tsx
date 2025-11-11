@@ -2,38 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-
-interface TierEntry {
-  value: string
-  tier_path: string
-  confidence: number
-  evidence_count: number
-  tier_depth: number
-}
-
-interface TieredGroup {
-  primary: TierEntry
-  alternatives: TierEntry[]
-}
-
-interface TieredInterest {
-  primary: TierEntry
-  granularity_score: number
-}
-
-interface TieredPurchaseIntent {
-  primary: TierEntry
-  granularity_score: number
-  purchase_intent_flag?: string
-}
-
-interface TieredProfile {
-  schema_version: string
-  demographics: Record<string, TieredGroup>
-  household: Record<string, TieredGroup>
-  interests: TieredInterest[]
-  purchase_intent: TieredPurchaseIntent[]
-}
+import {
+  getBrowserProfileReader,
+  type TieredProfile,
+  type TierEntry,
+  type TieredGroup,
+  type TieredInterest,
+  type TieredPurchaseIntent,
+} from '@/lib/profile-reader'
 
 export default function ProfileViewPage() {
   const [profile, setProfile] = useState<TieredProfile | null>(null)
@@ -46,13 +22,9 @@ export default function ProfileViewPage() {
       try {
         setLoading(true)
 
-        // Load tiered profile
-        const response = await fetch('/api/profile/tiered')
-        if (!response.ok) {
-          throw new Error(`Failed to load profile: ${response.statusText}`)
-        }
-
-        const data = await response.json()
+        // Load tiered profile from IndexedDB (browser storage)
+        const reader = getBrowserProfileReader()
+        const data = await reader.getTieredProfile('default_user')
         setProfile(data)
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load tiered profile'
