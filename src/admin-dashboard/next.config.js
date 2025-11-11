@@ -10,13 +10,20 @@ const nextConfig = {
   // Webpack configuration for IndexedDB and browser APIs
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Don't resolve 'fs' module on the client to prevent errors
+      // Don't resolve Node.js built-ins on the client to prevent errors
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
         net: false,
         tls: false,
         'async_hooks': false,
+        'node:async_hooks': false,
+      };
+
+      // Add alias to replace node: protocol imports with empty modules
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'node:async_hooks': false,
       };
     } else {
       // Server-side: externalize packages that use Node.js built-ins
@@ -26,11 +33,6 @@ const nextConfig = {
         '@langchain/core': '@langchain/core',
       });
     }
-
-    // Handle node: protocol imports
-    config.resolve.alias = {
-      ...config.resolve.alias,
-    };
 
     return config;
   },

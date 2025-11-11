@@ -13,7 +13,7 @@
  * Every type, field, and function has been verified against the Python source.
  */
 
-import { Annotation } from '@langchain/langgraph'
+import { Annotation } from '@langchain/langgraph/web'
 import {
   getBatchFromState,
   hasMoreBatches,
