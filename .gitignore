@@ -233,4 +233,4 @@ research_spike/package-lock.json
 .azure-client-id
 
 # Test artifacts (large databases)
-_archive/test_artifacts/
+_archive/
