@@ -5,9 +5,11 @@ import { useSearchParams } from 'next/navigation'
 import { getGmailOAuthClient } from '@/lib/gmail-oauth-client'
 import { getOutlookOAuthClient } from '@/lib/outlook-oauth-client'
 import { OutlookClient } from '@/lib/outlook-client'
+import { getLLMConfig } from '@/lib/llm-config'
+import { IndexedDBStore } from '@/lib/IndexedDBStore'
+import { buildWorkflowGraph } from '@browser/agents/iab-classifier'
 import { OpenAIClient } from '@browser/llm/openaiClient'
 import { GoogleClient } from '@browser/llm/googleClient'
-import { getLLMConfig } from '@/lib/llm-config'
 
 interface Email {
   id: string
@@ -45,12 +47,16 @@ interface ModelsResponse {
 
 export default function EmailDownloadPage() {
   const searchParams = useSearchParams()
+
+  // Get user_id from URL parameter, default to 'default_user'
+  const userId = searchParams.get('user_id') || 'default_user'
+
   const [provider, setProvider] = useState<'both' | 'gmail' | 'outlook'>('gmail')
   const [gmailConnected, setGmailConnected] = useState(false)
   const [outlookConnected, setOutlookConnected] = useState(false)
   const [gmailStatus, setGmailStatus] = useState<'checking' | 'connected' | 'not_connected'>('checking')
   const [outlookStatus, setOutlookStatus] = useState<'checking' | 'connected' | 'not_connected'>('checking')
-  const [maxEmails, setMaxEmails] = useState<number | string>(10)
+  const [maxEmails, setMaxEmails] = useState<number>(10)
   const [selectedEmailModel, setSelectedEmailModel] = useState<string>('')
   const [selectedTaxonomyModel, setSelectedTaxonomyModel] = useState<string>('')
   const [models, setModels] = useState<ModelsResponse | null>(null)
@@ -62,6 +68,94 @@ export default function EmailDownloadPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [emails, setEmails] = useState<EmailWithClassification[]>([])
+  const [store, setStore] = useState<IndexedDBStore | null>(null)
+  const [storeInitialized, setStoreInitialized] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
+
+  // Fix hydration error: mark as hydrated after client-side mount
+  useEffect(() => {
+    setHydrated(true)
+  }, [])
+
+  // Initialize IndexedDBStore on component mount
+  useEffect(() => {
+    try {
+      console.log('[IndexedDBStore] Initializing persistent store...')
+      const newStore = new IndexedDBStore('ownyou_store')
+      // IndexedDBStore lazily initializes on first operation (no explicit init() needed)
+      setStore(newStore)
+      setStoreInitialized(true)
+      console.log('[IndexedDBStore] ✅ Store initialized successfully')
+    } catch (err) {
+      console.error('[IndexedDBStore] ❌ Failed to initialize:', err)
+      setError('Failed to initialize persistent storage')
+    }
+  }, [])
+
+  // Load persisted emails and classifications from IndexedDB on page load
+  useEffect(() => {
+    if (!store || !storeInitialized) return
+
+    const loadPersistedData = async () => {
+      try {
+        console.log('[Persistence] Loading emails from IndexedDB...')
+
+        // Episodic memories are stored in namespace [user_id, 'iab_taxonomy_profile']
+        // Load ALL items from namespace (no filter), then filter by key in JavaScript
+        const allMemories = await store.search([userId, 'iab_taxonomy_profile'], {
+          limit: 1000 // High limit to get all emails
+        })
+
+        console.log(`[Persistence] Search returned ${allMemories?.length || 0} total memories`)
+
+        // Filter for episodic email memories only
+        const episodicMemories = allMemories.filter((item: any) =>
+          item.key && item.key.startsWith('episodic_email_')
+        )
+
+        console.log(`[Persistence] Found ${episodicMemories?.length || 0} episodic email memories`)
+
+        if (episodicMemories && episodicMemories.length > 0) {
+          console.log(`[Persistence] Found ${episodicMemories.length} episodic memories in IndexedDB`)
+
+          // Convert episodic memories to Email format
+          const persistedEmails: EmailWithClassification[] = episodicMemories
+            .map((item: any) => {
+              const episodic = item.value
+              if (!episodic || !episodic.email_id) {
+                console.warn('[Persistence] Skipping invalid episodic memory:', item)
+                return null
+              }
+
+              console.log(`[Persistence] Loading email: ${episodic.email_id} (${episodic.email_subject})`)
+
+              return {
+                id: episodic.email_id,
+                subject: episodic.email_subject || 'No subject',
+                from: 'Unknown', // Not stored in episodic memory
+                body: episodic.email_summary || '',
+                date: episodic.email_date || 'Unknown date',
+                provider: 'gmail',
+                summary: episodic.email_summary,
+                classification: null, // TODO: Load classifications from semantic memories
+                classifying: false,
+              }
+            })
+            .filter((email): email is EmailWithClassification => email !== null)
+
+          setEmails(persistedEmails)
+          console.log(`[Persistence] ✅ Loaded ${persistedEmails.length} emails from IndexedDB`)
+        } else {
+          console.log('[Persistence] No persisted emails found - starting fresh')
+        }
+      } catch (err) {
+        console.error('[Persistence] Failed to load from IndexedDB:', err)
+        // Don't show error to user - just start fresh
+      }
+    }
+
+    loadPersistedData()
+  }, [store, storeInitialized])
 
   // Automatically check Gmail OAuth tokens on page load (Python dashboard pattern)
   useEffect(() => {
@@ -127,16 +221,25 @@ export default function EmailDownloadPage() {
   useEffect(() => {
     const initModels = async () => {
       // Load models from API first
-      await loadModels(true)
+      const loadedModels = await loadModels(true)
+
+      if (!loadedModels) return
 
       // THEN restore settings from localStorage (takes precedence over API defaults)
       const savedEmailModel = localStorage.getItem('selectedEmailModel')
       const savedTaxonomyModel = localStorage.getItem('selectedTaxonomyModel')
 
+      // Restore email model if saved (no validation - trust user's choice)
+      // NO fallbacks - model selection is ONLY from user's localStorage
       if (savedEmailModel) {
+        console.log(`[Model Restore] Restoring email model: ${savedEmailModel}`)
         setSelectedEmailModel(savedEmailModel)
       }
+
+      // Restore taxonomy model if saved (no validation - trust user's choice)
+      // NO fallbacks - model selection is ONLY from user's localStorage
       if (savedTaxonomyModel) {
+        console.log(`[Model Restore] Restoring taxonomy model: ${savedTaxonomyModel}`)
         setSelectedTaxonomyModel(savedTaxonomyModel)
       }
     }
@@ -144,7 +247,7 @@ export default function EmailDownloadPage() {
     initModels()
   }, [])
 
-  const loadModels = async (refresh = false) => {
+  const loadModels = async (refresh = false): Promise<ModelsResponse | null> => {
     try {
       setLoadingModels(true)
       const url = `/api/analyze/models${refresh ? '?refresh=true' : ''}`
@@ -157,35 +260,26 @@ export default function EmailDownloadPage() {
       const data: ModelsResponse = await response.json()
       setModels(data)
 
-      // Set selected models to last used or defaults
-      // BUGFIX: Check localStorage first - it takes precedence over API defaults
-      const savedEmailModel = localStorage.getItem('selectedEmailModel')
-      const savedTaxonomyModel = localStorage.getItem('selectedTaxonomyModel')
-
-      if (!selectedEmailModel && !savedEmailModel && data.last_email_model) {
-        setSelectedEmailModel(data.last_email_model)
-      }
-      if (!selectedTaxonomyModel && !savedTaxonomyModel && data.last_taxonomy_model) {
-        setSelectedTaxonomyModel(data.last_taxonomy_model)
-      }
-
       // Set max emails to last used or default
       if (data.last_max_emails !== undefined) {
         setMaxEmails(data.last_max_emails)
       }
+
+      return data
     } catch (err) {
       console.error('Failed to load models:', err)
       // Set defaults if API fails
-      setModels({
+      const fallbackModels: ModelsResponse = {
         openai: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo'],
         anthropic: ['claude-3-7-sonnet-20250219', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],
         google: ['gemini-2.0-flash-exp', 'gemini-1.5-flash', 'gemini-1.5-pro'],
         ollama: [],
-        last_email_model: '',  // No default - user must select
-        last_taxonomy_model: ''  // No default - user must select
-      })
-      // Don't set defaults - let user choose
+        last_email_model: 'openai:gpt-4o-mini',
+        last_taxonomy_model: 'openai:gpt-4o-mini'
+      }
+      setModels(fallbackModels)
       setSelectedTaxonomyModel('openai:gpt-4o-mini')
+      return fallbackModels
     } finally {
       setLoadingModels(false)
     }
@@ -472,19 +566,75 @@ export default function EmailDownloadPage() {
               // OpenAIClient handles model-specific parameters correctly:
               // - gpt-5/o1 models: uses max_completion_tokens, no temperature
               // - gpt-4/3.5 models: uses max_tokens + temperature
+              //
+              // EMAIL SUBJECT DETECTION: Extend summarization to detect WHO the email is about
+              // This enables systematic handling of third-party emails (child, spouse, etc.)
               const response = await client.generate({
                 messages: [{
                   role: 'user',
-                  content: `Summarize this email in 2-3 sentences, focusing on the main purpose and any action items:\n\nSubject: ${email.subject}\nFrom: ${email.from}\n\n${email.body}`
+                  content: `Analyze this email and return ONLY valid JSON (no markdown, no code blocks):
+{
+  "summary": "2-3 sentence summary focusing on main purpose and action items",
+  "subject_of_email": "self|child|spouse|household|other",
+  "subject_reasoning": "Brief explanation of who the email is about"
+}
+
+Rules for subject_of_email:
+- "self": Email is directly about/addressed to the email account owner (default)
+- "child": Email is about the owner's child (school, activities, healthcare, parental monitoring)
+- "spouse": Email is about the owner's spouse/partner
+- "household": Email is about the household generally (bills, family plans)
+- "other": Email is about someone else (friend, colleague, forwarded content)
+
+Signals for "child":
+- Google Classroom, school emails, parent portal
+- "Daily summary for [Name]" where Name is NOT the email recipient
+- Homework, report cards, school activities
+- "Your child", "Your son/daughter", "Your student"
+- Parental monitoring or activity summaries for minors
+
+Email to analyze:
+Subject: ${email.subject}
+From: ${email.from}
+
+${email.body}`
                 }],
                 model: emailModel,
                 // Let OpenAIClient set correct parameters based on model
               })
 
               if (response.success) {
-                return {
-                  ...email,
-                  summary: response.content,
+                // Parse JSON response for subject detection
+                try {
+                  // Handle potential markdown code blocks
+                  let jsonContent = response.content.trim()
+                  if (jsonContent.startsWith('```json')) {
+                    jsonContent = jsonContent.slice(7)
+                  } else if (jsonContent.startsWith('```')) {
+                    jsonContent = jsonContent.slice(3)
+                  }
+                  if (jsonContent.endsWith('```')) {
+                    jsonContent = jsonContent.slice(0, -3)
+                  }
+                  jsonContent = jsonContent.trim()
+
+                  const parsed = JSON.parse(jsonContent)
+                  console.log(`[Subject Detection] Email ${email.id}: subject_of_email=${parsed.subject_of_email}, reason="${parsed.subject_reasoning}"`)
+                  return {
+                    ...email,
+                    summary: parsed.summary || response.content,
+                    subject_of_email: parsed.subject_of_email || 'self',
+                    subject_reasoning: parsed.subject_reasoning || '',
+                  }
+                } catch (parseErr) {
+                  // Fallback: if JSON parsing fails, use raw response as summary
+                  console.warn(`[Subject Detection] Failed to parse JSON for email ${email.id}, using raw response`)
+                  return {
+                    ...email,
+                    summary: response.content,
+                    subject_of_email: 'self',  // Default to self if parsing fails
+                    subject_reasoning: '',
+                  }
                 }
               } else {
                 console.error(`[Concurrent Summarization] Failed for email ${email.id}:`, response.error)
@@ -586,84 +736,104 @@ export default function EmailDownloadPage() {
               }))
             })
 
-            // Process this batch through the workflow
-            // DIAGNOSTIC: Log request payload
-            // Use 'default_user' for consistent profile lookup across sessions
-            const requestPayload = {
-              user_id: 'default_user',
-              emails: batchEmails.map(email => {
-                // [DIAGNOSTIC] Log exact summary values being sent to API
-                console.log(`[DEBUG] Email ${email.id} summary details:`, {
-                  has_summary: !!email.summary,
-                  summary_length: email.summary?.length || 0,
-                  summary_type: typeof email.summary,
-                  summary_preview: email.summary?.substring(0, 100) || 'NO SUMMARY',
-                  has_body: !!email.body,
-                  body_length: email.body?.length || 0,
-                })
-
-                return {
-                  id: email.id,
-                  subject: email.subject,
-                  from: email.from,
-                  // FIX Bug #1: Don't send raw body - analyzers only use summary
-                  // Sending full body wastes 10x-20x tokens (bodies: 1000s tokens, summaries: 100-200 tokens)
-                  summary: email.summary || email.body.substring(0, 500),  // Fallback to substring if no summary
-                }
-              }),
-              source: provider,
-              llm_provider: llmProvider,
-              llm_model: llmModel,
-              batch_index: batchIndex,
-              total_batches: batches.length,
+            // ✅ FIX: Run workflow IN BROWSER with IndexedDBStore (not server)
+            if (!store) {
+              throw new Error('IndexedDBStore not initialized')
             }
 
-            console.log('[DIAGNOSTIC] API Request:', {
-              url: '/api/classify',
-              payload_size: JSON.stringify(requestPayload).length,
+            console.log('[Browser Workflow] Processing batch in browser with IndexedDBStore')
+            console.log('[Browser Workflow] Batch:', {
+              batch_index: batchIndex + 1,
+              total_batches: batches.length,
               email_count: batchEmails.length,
               llm: `${llmProvider}:${llmModel}`,
             })
 
-            const response = await fetch('/api/classify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(requestPayload)
-            })
+            // Build workflow graph with persistent IndexedDBStore
+            const graph = buildWorkflowGraph(store, null, userId)
 
-            // DIAGNOSTIC: Log response details BEFORE parsing
-            console.log('[DIAGNOSTIC] API Response:', {
-              status: response.status,
-              statusText: response.statusText,
-              ok: response.ok,
-              headers: Object.fromEntries(response.headers.entries()),
-            })
+            // Get LLM config from localStorage
+            const llmConfig = getLLMConfig()
 
-            const result = await response.json()
-
-            // DIAGNOSTIC: Log parsed result
-            console.log('[DIAGNOSTIC] API Result:', {
-              success: result.success,
-              has_per_email: !!result.per_email_classifications,
-              per_email_count: result.per_email_classifications?.length,
-              error: result.error,
-              full_result: result,
-            })
-
-            // DIAGNOSTIC: Log sample classifications
-            if (result.per_email_classifications?.length > 0) {
-              console.log('[DIAGNOSTIC] Sample classifications:', {
-                first_email: result.per_email_classifications[0],
-                first_classification: result.per_email_classifications[0]?.classification,
-                first_all: result.per_email_classifications[0]?.all_classifications,
-              })
+            // Prepare LLM config for workflow (workflow expects this structure)
+            const workflowLLMConfig = {
+              api_key: llmProvider === 'openai' ? llmConfig.openai.api_key : llmConfig.google.api_key,
+              model: llmModel,
+              temperature: llmProvider === 'openai' ? llmConfig.openai.temperature : 1.0,
             }
 
-            if (result.success && result.per_email_classifications) {
-              console.log(`[Workflow Loop] Batch ${batchIndex + 1} complete: ${result.per_email_classifications.length} classifications`)
+            // Prepare workflow input (Python format)
+            const workflowInput = {
+              user_id: userId,
+              emails: batchEmails.map(email => ({
+                id: email.id,
+                subject: email.subject,
+                from: email.from,
+                body: email.body,
+                date: email.date,
+                summary: email.summary || email.body.substring(0, 500),
+              })),
+              llm_provider: llmProvider,
+              llm_model: llmModel,
+              llm_config: workflowLLMConfig,  // Pass LLM config with API keys
+              workflow_started_at: new Date().toISOString(),
+              batch_size: batchEmails.length,  // Tell workflow to process all emails in this batch at once
+            }
+
+            // Execute workflow in browser (data persists to IndexedDB!)
+            console.log('[Browser Workflow] Invoking LangGraph workflow...')
+            const workflowResult = await graph.invoke(workflowInput)
+
+            console.log('[Browser Workflow] Workflow complete:', {
+              demographics: workflowResult.demographics_results?.length || 0,
+              household: workflowResult.household_results?.length || 0,
+              interests: workflowResult.interests_results?.length || 0,
+              purchase: workflowResult.purchase_results?.length || 0,
+            })
+
+            // Extract per-email classifications from workflow results
+            // Group by email_id to get best classification per email
+            const perEmailClassifications = new Map()
+
+            const allResults = [
+              ...(workflowResult.demographics_results || []),
+              ...(workflowResult.household_results || []),
+              ...(workflowResult.interests_results || []),
+              ...(workflowResult.purchase_results || []),
+            ]
+
+            for (const classification of allResults) {
+              const emailIds = classification.email_ids || []
+              for (const emailId of emailIds) {
+                if (!perEmailClassifications.has(emailId)) {
+                  perEmailClassifications.set(emailId, {
+                    email_id: emailId,
+                    classification: {
+                      category: classification.value,
+                      confidence: classification.confidence,
+                      reasoning: classification.reasoning || '',
+                      section: classification.section,
+                      taxonomy_id: classification.taxonomy_id?.toString() || '',
+                    },
+                    all_classifications: [],
+                  })
+                }
+                perEmailClassifications.get(emailId).all_classifications.push(classification)
+              }
+            }
+
+            const per_email_array = Array.from(perEmailClassifications.values())
+
+            console.log('[Browser Workflow] Per-email classifications:', {
+              total_emails: batchEmails.length,
+              classified_emails: per_email_array.length,
+            })
+
+            if (per_email_array.length > 0) {
+              console.log(`[Workflow Loop] Batch ${batchIndex + 1} complete: ${per_email_array.length} classifications`)
 
               // Store classifications from this batch
-              result.per_email_classifications.forEach((emailResult: any) => {
+              per_email_array.forEach((emailResult: any) => {
                 allClassifications[emailResult.email_id] = emailResult.classification
               })
 
@@ -680,7 +850,7 @@ export default function EmailDownloadPage() {
                 return email
               }))
             } else {
-              console.error(`[Workflow Loop] Batch ${batchIndex + 1} failed:`, result.error)
+              console.warn(`[Workflow Loop] Batch ${batchIndex + 1} produced no classifications`)
               // Mark emails in this batch as failed
               batchEmails.forEach(email => {
                 allClassifications[email.id] = null
@@ -932,8 +1102,7 @@ export default function EmailDownloadPage() {
             <input
               type="number"
               value={maxEmails}
-              onChange={(e) => setMaxEmails(e.target.value)}
-              onBlur={(e) => {
+              onChange={(e) => {
                 const val = parseInt(e.target.value)
                 if (isNaN(val) || val < 1) {
                   setMaxEmails(1)
@@ -1135,7 +1304,7 @@ export default function EmailDownloadPage() {
       )}
 
       {/* Results Display */}
-      {emails.length > 0 && (
+      {emails.length > 0 && hydrated && (
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Email Classifications ({emails.length})
