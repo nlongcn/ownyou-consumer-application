@@ -164,6 +164,24 @@ export interface WorkflowStateInterface {
    */
   llm_model?: string
 
+  /**
+   * LLM configuration (API keys, etc.)
+   * NOTE: For Phase 1.5 development only (admin dashboard).
+   * In production (Phase 5), users provide their own keys via Settings UI.
+   */
+  llm_config?: {
+    api_key?: string
+    model?: string
+    temperature?: number
+    max_tokens?: number
+    base_url?: string
+  }
+
+  /**
+   * Injected LLM client (for testing)
+   */
+  llm_client?: any
+
   // ============================================================================
   // PROFILE DATA
   // ============================================================================
@@ -599,11 +617,11 @@ export const WorkflowState = Annotation.Root({
     default: () => [],
   }),
   interests_results: Annotation<Array<Record<string, any>>>({
-    value: (_prev, current) => current,
+    value: (prev, current) => prev.concat(current),
     default: () => [],
   }),
   purchase_results: Annotation<Array<Record<string, any>>>({
-    value: (_prev, current) => current,
+    value: (prev, current) => prev.concat(current),
     default: () => [],
   }),
 
@@ -683,6 +701,14 @@ export const WorkflowState = Annotation.Root({
   llm_model: Annotation<string>({
     value: (_prev, current) => current,
     default: () => '',
+  }),
+  llm_config: Annotation<any>({
+    value: (_prev, current) => current,
+    default: () => null,
+  }),
+  llm_client: Annotation<any>({
+    value: (_prev, current) => current,
+    default: () => null,
   }),
 
   // Routing (deprecated)

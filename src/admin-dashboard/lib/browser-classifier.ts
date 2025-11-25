@@ -28,6 +28,13 @@ export interface ClassificationInput {
   source_item_id?: string
   llm_provider?: 'openai' | 'claude' | 'gemini' | 'ollama'
   llm_model?: string
+  llm_config?: {
+    api_key?: string
+    model?: string
+    temperature?: number
+    max_tokens?: number
+    base_url?: string
+  }
 }
 
 export interface ClassificationResult {
@@ -83,6 +90,7 @@ export class BrowserClassifier {
         }],
         llm_provider: input.llm_provider || 'openai',
         llm_model: input.llm_model || 'gpt-4o-mini',
+        llm_config: input.llm_config, // Pass LLM config to workflow
         total_emails: 1,
         current_email_index: 0,
       }

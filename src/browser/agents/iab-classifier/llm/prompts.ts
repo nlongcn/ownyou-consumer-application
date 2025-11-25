@@ -100,6 +100,10 @@ export const INTERESTS_EVIDENCE_GUIDELINES = `
 ### INTERESTS - INVALID Evidence:
 ✗ Job-related content (required reading, not personal interest)
 ✗ One-off purchases without context
+✗ CHILD/FAMILY MONITORING emails (Google Classroom, school updates, homework reminders, children's activities)
+  - These indicate PARENTING, not the parent's personal interest in the subject
+  - Example: "History homework reminder for William" → Parent has children, NOT parent interested in History
+✗ Activity notifications for OTHER household members (spouse, roommates, parents)
 `
 
 export const PURCHASE_EVIDENCE_GUIDELINES = `
@@ -136,6 +140,19 @@ export const DEMOGRAPHICS_AGENT_SYSTEM_PROMPT = `You are a demographics classifi
 Your task: Extract demographic information from emails and map to IAB Taxonomy (ONLY existing taxonomy values).
 
 IMPORTANT: Return ONLY JSON classifications in the specified format. Do NOT use function calling or tool invocation syntax.
+
+## EMAIL SUBJECT CONTEXT - CRITICAL ##
+Each email includes a "subject_of_email" field indicating WHO the email is about:
+- "self": Email is about the account owner → Classify normally
+- "child": Email is about owner's child → DO NOT classify as owner's attributes (except for "Parents with Children" in household)
+- "spouse": Email is about owner's spouse → DO NOT classify as owner's attributes
+- "household": Email is about household generally → May indicate household composition
+- "other": Email is about someone else → Generally skip for personal classification
+
+⚠️ AUTOMATIC SKIP RULES:
+- If subject_of_email = "child" + Employment/Education signals → SKIP (child is student, not parent)
+- If subject_of_email = "spouse" + Demographics signals → SKIP (spouse's demographics, not owner's)
+- If subject_of_email = "other" → SKIP almost all demographics inferences
 
 ⛔ CRITICAL EXCLUSION ⛔:
 NEVER select taxonomy entries with "*Extension" in their name (e.g., "*Language Extension").
@@ -231,6 +248,19 @@ Your task: Extract household information from emails and map to IAB Taxonomy (ON
 
 IMPORTANT: Return ONLY JSON classifications in the specified format. Do NOT use function calling or tool invocation syntax.
 
+## EMAIL SUBJECT CONTEXT - CRITICAL ##
+Each email includes a "subject_of_email" field indicating WHO the email is about:
+- "self": Email is about the account owner → Classify normally
+- "child": Email is about owner's child → Evidence for "Parents with Children", household composition
+- "spouse": Email is about owner's spouse → Evidence for "Married/Partnered", household composition
+- "household": Email is about household generally → Full classification (bills, property, composition)
+- "other": Email is about someone else → Generally skip for household classification
+
+✓ POSITIVE INFERENCE RULES:
+- If subject_of_email = "child" → CAN classify household as "Parents with Children"
+- If subject_of_email = "spouse" → CAN classify marital status as "Married/Partnered"
+- If subject_of_email = "household" → Full household classification permitted
+
 ⛔ CRITICAL EXCLUSION ⛔:
 NEVER select taxonomy entries with "*Extension" in their name (e.g., "*Country Extension", "*City Extension", "*Language Extension").
 These are IAB placeholder entries and should NOT be used for classification.
@@ -316,6 +346,21 @@ Your task: Extract interest information from emails and map to IAB Taxonomy (ONL
 
 IMPORTANT: Return ONLY JSON classifications in the specified format. Do NOT use function calling or tool invocation syntax.
 
+## EMAIL SUBJECT CONTEXT - CRITICAL ##
+Each email includes a "subject_of_email" field indicating WHO the email is about:
+- "self": Email is about the account owner → Classify interests normally
+- "child": Email is about owner's child → DO NOT classify as owner's interests (child's school topics ≠ parent's interests)
+- "spouse": Email is about owner's spouse → DO NOT classify as owner's interests
+- "household": Email is about household generally → Generally skip for personal interests
+- "other": Email is about someone else → DO NOT classify as owner's interests
+
+⚠️ AUTOMATIC SKIP RULES:
+- If subject_of_email = "child" + ANY topic (History, Math, Sports, Art) → SKIP (child's subject, not parent's interest)
+- If subject_of_email = "spouse" + ANY topic → SKIP (spouse's interest, not owner's interest)
+- If subject_of_email = "other" → SKIP (not owner's interest)
+
+ONLY classify when subject_of_email = "self" (or missing/unknown, which defaults to self).
+
 Process:
 1. Analyze email batch for interest signals (newsletter topics, hobbies, activities)
 2. For each signal, identify the matching IAB taxonomy entry
@@ -329,6 +374,19 @@ Evidence Guidelines (CRITICAL):
 - Professional Interests: Industry focus, career topics (e.g., "AI/ML", "finance", "marketing")
 - Entertainment: Content consumption patterns (e.g., "Netflix", "podcasts", "sports")
 - Non-Exclusive: Users can have MULTIPLE interests (unlike demographics)
+
+⚠️ CHILD/FAMILY ACTIVITY WARNING ⚠️:
+DO NOT classify emails about a child's or family member's activities as the EMAIL ACCOUNT OWNER's personal interests.
+
+Examples to AVOID:
+- Google Classroom homework: "William's History assignment due" → This is PARENTING, not interest in History
+- School activity notifications: "Soccer practice for Emma" → Parent monitors child, not their own Sports interest
+- Family member's subscriptions: Spouse's cooking class reminders → Spouse's interest, not account owner's
+
+ONLY classify interests that are clearly the EMAIL ACCOUNT OWNER's personal engagement:
+- Direct newsletter subscriptions
+- Personal hobby purchases/activities
+- Self-enrolled courses/memberships
 
 Return format (JSON) - YOU MUST INCLUDE email_numbers FOR EVERY CLASSIFICATION:
 {
@@ -395,6 +453,22 @@ export const PURCHASE_AGENT_SYSTEM_PROMPT = `You are a purchase intent classific
 Your task: Extract purchase intent information from emails and map to IAB Taxonomy (ONLY existing taxonomy values).
 
 IMPORTANT: Return ONLY JSON classifications in the specified format. Do NOT use function calling or tool invocation syntax.
+
+## EMAIL SUBJECT CONTEXT - CRITICAL ##
+Each email includes a "subject_of_email" field indicating WHO the email is about:
+- "self": Email is about the account owner → Classify purchase intent normally
+- "child": Email is about owner's child → Generally skip (unless clearly parent buying FOR child)
+- "spouse": Email is about owner's spouse → DO NOT classify as owner's purchase intent
+- "household": Email is about household generally → May indicate household purchases
+- "other": Email is about someone else → Skip (not owner's purchase behavior)
+
+⚠️ AUTOMATIC SKIP RULES:
+- If subject_of_email = "spouse" + purchase/order → SKIP (spouse's purchase, not owner's intent)
+- If subject_of_email = "other" → SKIP (not owner's purchase behavior)
+
+✓ SPECIAL CASES:
+- If subject_of_email = "child" + purchase receipt → May indicate "Children's Products" if parent is purchaser
+- If subject_of_email = "household" + bills/subscriptions → May indicate "Household Services"
 
 Process:
 1. Analyze email batch for purchase signals (receipts, orders, cart, wishlist, browsing)
@@ -491,6 +565,25 @@ Your task: Evaluate if the provided reasoning is APPROPRIATE evidence for the cl
 
 ⚠️ CRITICAL DISTINCTION: The goal is to block STEREOTYPES and GUESSES, not reasonable INFERENCES from patterns. Be more lenient with contextual and weak evidence.
 
+## EMAIL SUBJECT CONTEXT - AUTOMATIC BLOCKS ##
+Check the email's "subject_of_email" field. If present, apply these rules:
+
+BLOCK if subject_of_email = "child" and classification is about the account owner's:
+- Employment/Education status (child is student, not parent)
+- Personal interests based on child's school subjects
+- Demographics (child's attributes, not parent's)
+✓ ALLOW: Household = "Parents with Children" from child emails
+
+BLOCK if subject_of_email = "spouse" and classification is about the account owner's:
+- Any demographics (spouse's attributes, not owner's)
+- Interests (spouse's interests, not owner's)
+- Purchase intent (spouse's purchases, not owner's)
+✓ ALLOW: Marital Status = "Married/Partnered" from spouse emails
+
+BLOCK if subject_of_email = "other":
+- Almost all personal classifications should be blocked
+- These emails are about third parties, not the account owner
+
 Evidence Quality Scale:
 - **EXPLICIT** (1.0): Direct statement with clear proof
   - Age: "I'm 32", "turning 40 next month", "born in 1985"
@@ -528,6 +621,8 @@ EXAMPLES OF CORRECT EVALUATION:
 ✅ WEAK (0.5): "One email mentions 'my kids'" → Has children (minimal evidence)
 ❌ INAPPROPRIATE (0.0): "User receives gaming emails" → Must be male (stereotype)
 ❌ INAPPROPRIATE (0.0): "Bought luxury product" → Must be wealthy (single product inference)
+❌ INAPPROPRIATE (0.0): "Google Classroom email about child's history homework" → Parent interested in History (wrong - this is parenting)
+❌ INAPPROPRIATE (0.0): "School notification about child's sports practice" → Parent interested in Sports (wrong - this is child monitoring)
 
 Return JSON:
 {
