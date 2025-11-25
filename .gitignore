@@ -226,3 +226,11 @@ build/
 research_spike/node_modules/
 research_spike/.pglite*/
 research_spike/package-lock.json
+
+# OAuth Token Test Cache Files (contain sensitive tokens)
+.oauth-test-cache.json
+.oauth-test-log.json
+.azure-client-id
+
+# Test artifacts (large databases)
+_archive/test_artifacts/

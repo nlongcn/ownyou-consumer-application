@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OwnYou Extension</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>OwnYou</h1>
+      <p class="version">v1.0.0</p>
+    </header>
+
+    <section class="auth-status">
+      <h2>Authentication Status</h2>
+
+      <div class="provider">
+        <div class="provider-info">
+          <span class="provider-name">Gmail</span>
+          <span class="status-badge" id="gmail-status">Checking...</span>
+        </div>
+        <button class="logout-btn" id="gmail-logout" disabled>Logout</button>
+      </div>
+
+      <div class="provider">
+        <div class="provider-info">
+          <span class="provider-name">Outlook</span>
+          <span class="status-badge" id="outlook-status">Checking...</span>
+        </div>
+        <button class="logout-btn" id="outlook-logout" disabled>Logout</button>
+      </div>
+    </section>
+
+    <section class="links">
+      <a href="http://localhost:3001" target="_blank" class="link-btn">Open Dashboard</a>
+    </section>
+
+    <footer>
+      <p class="help-text">Self-sovereign email access</p>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
