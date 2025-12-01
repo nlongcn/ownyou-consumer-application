@@ -1,0 +1,10 @@
+{
+  "node_version": "20",
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "iab_classifier": "./lib/studio-entry.ts:graph"
+  },
+  "env": ".env.local"
+}

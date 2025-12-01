@@ -1,0 +1,31 @@
+{
+  "name": "ceramic-network-research",
+  "version": "1.0.0",
+  "description": "Research evaluation of Ceramic Network for OwnYou mission card sync",
+  "type": "module",
+  "scripts": {
+    "exp:01": "tsx src/experiments/01-basic-latency.ts",
+    "exp:02": "tsx src/experiments/02-update-latency.ts",
+    "exp:03": "tsx src/experiments/03-composedb-queries.ts",
+    "exp:04": "tsx src/experiments/04-conflict-resolution.ts",
+    "test": "echo 'No tests yet'",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ceramic-sdk/events": "latest",
+    "@ceramic-sdk/identifiers": "latest",
+    "@ceramic-sdk/http-client": "latest",
+    "@ceramic-sdk/model-client": "latest",
+    "@ceramic-sdk/model-protocol": "latest",
+    "@ceramic-sdk/model-instance-client": "latest",
+    "@didtools/key-did": "latest",
+    "@composedb/client": "latest",
+    "did-session": "latest"
+  },
+  "devDependencies": {
+    "@composedb/types": "latest",
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

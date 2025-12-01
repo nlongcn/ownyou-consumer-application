@@ -1,0 +1,20 @@
+{
+  "name": "gun-evaluation",
+  "version": "1.0.0",
+  "description": "Gun.js evaluation for OwnYou mission card sync",
+  "type": "module",
+  "scripts": {
+    "exp:01": "tsx src/experiments/01-basic-latency.ts",
+    "exp:02": "tsx src/experiments/02-conflict-resolution.ts",
+    "exp:03": "tsx src/experiments/03-multi-device-sync.ts",
+    "relay": "gun-relay"
+  },
+  "dependencies": {
+    "gun": "^0.2020.1240"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

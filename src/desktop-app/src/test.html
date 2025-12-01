@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tauri API Test</title>
+</head>
+<body>
+  <h1>Tauri API Test</h1>
+  <button id="test-btn">Test Tauri Invoke</button>
+  <div id="result"></div>
+
+  <script type="module">
+    const resultDiv = document.getElementById('result');
+    const testBtn = document.getElementById('test-btn');
+
+    testBtn.addEventListener('click', async () => {
+      try {
+        resultDiv.textContent = 'Loading Tauri API...';
+
+        const { invoke } = await import('@tauri-apps/api/core');
+        resultDiv.textContent = 'Tauri API loaded! Calling greet...';
+
+        const greeting = await invoke('greet', { name: 'Test' });
+        resultDiv.textContent = 'Success! ' + greeting;
+      } catch (error) {
+        resultDiv.textContent = 'Error: ' + error.toString();
+        console.error(error);
+      }
+    });
+
+    resultDiv.textContent = 'Click the button to test Tauri invoke';
+  </script>
+</body>
+</html>

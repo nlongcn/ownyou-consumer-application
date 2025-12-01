@@ -176,6 +176,21 @@ def select_primary_and_alternatives(
     # Step 3: Sort by granularity score (highest first)
     scored.sort(reverse=True, key=lambda x: x["granularity_score"])
 
+    # REQ-1.4: Filter out "Unknown" classifications in mutually-exclusive tiers
+    # For mutually-exclusive tier groups (Gender, Age, Education, etc.), if the highest
+    # confidence classification value starts with "Unknown ", discard the entire tier group.
+    # Rationale: "Unknown [Field]" indicates inability to classify, not a valid classification.
+    if scored and scored[0]["classification"].get("tier_2", "").startswith("Unknown "):
+        logger.warning(
+            f"Filtered tier group '{scored[0]['classification'].get('tier_1', 'Unknown')}' - "
+            f"highest confidence classification is '{scored[0]['classification'].get('tier_2', 'Unknown')}' "
+            f"(confidence: {scored[0]['classification'].get('confidence', 0.0):.1%})"
+        )
+        return {
+            "primary": None,
+            "alternatives": []
+        }
+
     # Step 4: Select primary
     primary_entry = scored[0]
     primary = primary_entry["classification"].copy()

@@ -40,6 +40,7 @@ import { reconcileEvidenceNode } from './nodes/reconcile'                       
 import { updateMemoryNode } from './nodes/updateMemory'                         // Python line 41
 import type { BaseStore } from '@langchain/langgraph/web'                      // Browser-compatible import
 import { MemoryManager } from '@browser/memory/MemoryManager'                   // Python line 16
+import type { IndexedDBStore } from '../../store/IndexedDBStore'                // Type for createIABClassifier
 
 // Re-export WorkflowState for external use
 export { WorkflowState } from './state'
@@ -101,7 +102,7 @@ export function buildWorkflowGraph(                                             
   workflow.addNode('analyze_all', analyzeAllNode)                               // Python line 98
   workflow.addNode('reconcile', reconcile)                                      // Python line 99
   workflow.addNode('update_memory', update_memory)                              // Python line 100
-  workflow.addNode('advance_email', _advanceEmailNode)                          // Python line 101
+  // REMOVED: advance_email node (no longer needed - batch processing mode)
 
   // Define edges                                                               // Python line 103
   workflow.setEntryPoint('load_emails')                                         // Python line 104
@@ -126,18 +127,10 @@ export function buildWorkflowGraph(                                             
   // Reconciliation flows to memory update                                      // Python line 123
   workflow.addEdge('reconcile', 'update_memory')                                // Python line 124
 
-  // After updating memory, check if we should continue                         // Python line 126
-  workflow.addConditionalEdges(                                                 // Python line 127
-    'update_memory',                                                            // Python line 128
-    _checkContinuationConditional,                                              // Python line 129
-    {                                                                           // Python line 130
-      continue: 'advance_email', // Advance to next email                       // Python line 131
-      end: END,                                                                 // Python line 132
-    }
-  )
-
-  // After advancing, loop back to retrieve_profile                             // Python line 136
-  workflow.addEdge('advance_email', 'retrieve_profile')                         // Python line 137
+  // After updating memory, END workflow (batch processing complete)            // MODIFIED: No loop back
+  // In batch processing mode, the entire batch is processed in ONE pass
+  // The frontend workflow loop handles sending multiple batches sequentially
+  workflow.addEdge('update_memory', END)                                        // Python line 132
 
   // Compile graph (with optional checkpointer)                                 // Python line 139
   if (checkpointer) {                                                           // Python line 140
@@ -261,6 +254,7 @@ export function createIABClassifier(options: {
         }],
         llm_provider: 'openai',
         llm_model: 'gpt-4o',
+        llm_client: input.llm_client,
       }
 
       try {

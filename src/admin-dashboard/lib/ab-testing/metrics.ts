@@ -62,6 +62,8 @@ export function computeAgreementMetrics(
   let noAgreementCount = 0
 
   // For each email, check if models agree
+  // IMPORTANT: We only count agreement for emails classified by MULTIPLE models
+  // An email classified by only one model has no "agreement" to measure
   for (const emailId of emailIds) {
     const categories: string[] = []
 
@@ -75,7 +77,11 @@ export function computeAgreementMetrics(
       }
     }
 
+    // Skip emails not classified by any model
     if (categories.length === 0) continue
+
+    // Skip emails classified by only ONE model - can't measure agreement with only 1 classification
+    if (categories.length < 2) continue
 
     // Count frequency of each category
     const categoryCount = new Map<string, number>()
@@ -145,6 +151,8 @@ export function computeAgreementMetrics(
 }
 
 // Compute coverage metrics
+// FIXED: categoryFrequency now counts unique category occurrences per model,
+// not duplicates across all email classifications
 export function computeCoverageMetrics(
   results: Map<string, ModelResults>
 ): CoverageMetrics {
@@ -153,14 +161,19 @@ export function computeCoverageMetrics(
   const categoryFrequency: Record<string, number> = {}
 
   // Collect categories per model
+  // Fixed: Count each unique category ONCE per model (not once per email)
   results.forEach((modelResults, modelKey) => {
     const modelCategories = new Set<string>()
 
     for (const classification of modelResults.classifications) {
       modelCategories.add(classification.category)
       allCategories.add(classification.category)
-      categoryFrequency[classification.category] =
-        (categoryFrequency[classification.category] || 0) + 1
+    }
+
+    // Count category frequency based on unique categories per model
+    // This means if 3 models all find "Shopping", frequency = 3 (not 30 if each found it 10 times)
+    for (const category of modelCategories) {
+      categoryFrequency[category] = (categoryFrequency[category] || 0) + 1
     }
 
     categoriesByModel[modelKey] = Array.from(modelCategories).sort()

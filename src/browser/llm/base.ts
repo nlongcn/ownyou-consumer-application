@@ -32,6 +32,10 @@ export enum LLMProvider {
 
   // Python line 19: GOOGLE = "google"
   GOOGLE = 'google',
+
+  // Added Nov 2025: Zero-data-retention providers
+  GROQ = 'groq',
+  DEEPINFRA = 'deepinfra',
 }
 
 // ============================================================================
@@ -664,6 +668,14 @@ export class LLMClientFactory {
       //                        return GoogleClient(config)
       const { GoogleClient } = require('./googleClient')
       return new GoogleClient(config)
+    } else if (provider === LLMProvider.GROQ) {
+      // Added Nov 2025: Groq - fastest inference with ZDR
+      const { GroqClient } = require('./groqClient')
+      return new GroqClient(config)
+    } else if (provider === LLMProvider.DEEPINFRA) {
+      // Added Nov 2025: DeepInfra - best price with ZDR default
+      const { DeepInfraClient } = require('./deepinfraClient')
+      return new DeepInfraClient(config)
     } else {
       // Python line 299: raise ValueError(f"Unsupported LLM provider: {provider}")
       throw new Error(`Unsupported LLM provider: ${provider}`)

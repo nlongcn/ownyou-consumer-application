@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OwnYou Desktop - Microsoft OAuth Test</title>
+    <script src="/main.js" defer></script>
+  </head>
+
+  <body>
+    <main class="container">
+      <h1>OwnYou Desktop App</h1>
+      <h2>Microsoft OAuth Test</h2>
+
+      <!-- Auth Status -->
+      <div id="auth-status" class="status-box">
+        <h3>Authentication Status</h3>
+        <p id="status-message">Not authenticated</p>
+        <p id="token-info" style="display: none;"></p>
+      </div>
+
+      <!-- Sign In Button -->
+      <div class="auth-section" id="sign-in-section">
+        <button id="sign-in-btn" class="primary-btn">
+          Sign in with Microsoft
+        </button>
+        <p class="helper-text">Click to authenticate with your Microsoft account</p>
+      </div>
+
+      <!-- Token Display (after sign in) -->
+      <div class="auth-section" id="token-section" style="display: none;">
+        <h3>Token Information</h3>
+        <div class="token-display">
+          <div class="token-field">
+            <label>Access Token:</label>
+            <code id="access-token" class="token-value"></code>
+          </div>
+          <div class="token-field">
+            <label>Refresh Token:</label>
+            <code id="refresh-token" class="token-value"></code>
+          </div>
+          <div class="token-field">
+            <label>Expires At:</label>
+            <span id="expires-at"></span>
+          </div>
+          <div class="token-field">
+            <label>Scope:</label>
+            <span id="scope"></span>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button id="refresh-btn" class="secondary-btn">Refresh Token</button>
+          <button id="check-expiry-btn" class="secondary-btn">Check Expiration</button>
+          <button id="sign-out-btn" class="danger-btn">Sign Out</button>
+        </div>
+      </div>
+
+      <!-- OAuth Callback Handler (hidden) -->
+      <div id="callback-section" style="display: none;">
+        <h3>Step 2: Paste Callback URL</h3>
+        <p>After signing in with Microsoft, copy the full URL from your browser's address bar and paste it below:</p>
+        <input type="text" id="callback-url-input" placeholder="http://localhost:8080/callback?code=..." style="width: 100%; padding: 0.5rem; margin: 1rem 0; font-family: monospace; font-size: 0.9em;">
+        <button id="submit-callback-btn" class="primary-btn">Submit Callback URL</button>
+        <button id="cancel-callback-btn" class="secondary-btn">Cancel</button>
+        <p id="callback-message" style="margin-top: 1rem;"></p>
+      </div>
+
+      <!-- Debug Log -->
+      <div class="debug-section">
+        <h3>Debug Log</h3>
+        <div id="debug-log" class="debug-log"></div>
+        <button id="clear-log-btn" class="small-btn">Clear Log</button>
+      </div>
+    </main>
+  </body>
+</html>

@@ -10,6 +10,8 @@
 import { OpenAIClient } from '@browser/llm/openaiClient'
 import { ClaudeClient } from '@browser/llm/claudeClient'
 import { OllamaClient } from '@browser/llm/ollamaClient'
+import { GroqClient } from '@browser/llm/groqClient'
+import { DeepInfraClient } from '@browser/llm/deepinfraClient'
 
 // Import LLM types from base (shared across all clients)
 import type {
@@ -54,19 +56,21 @@ export class AnalyzerLLMClient {                                                
   max_retries: number                                                            // Python line 62
   cost_tracker: CostTracker | null                                               // Python line 63
   workflow_tracker: WorkflowTracker | null                                       // Python line 64
-  client: ClaudeClient | OpenAIClient | OllamaClient                             // Python line 67
+  client: ClaudeClient | OpenAIClient | OllamaClient | GroqClient | DeepInfraClient  // Python line 67
   model: string                                                                  // Python line 70
+  llm_config: any                                                                // Phase 1.5 development config
 
   /**
    * Initialize LLM client for analyzer use.
    *
    * Python lines 25-72
    *
-   * @param provider - "openai", "claude", or "ollama" (defaults to env LLM_PROVIDER)
+   * @param provider - "openai", "claude", "ollama", "groq", or "deepinfra" (defaults to env LLM_PROVIDER)
    * @param model - Specific model name (optional, uses default from client)
    * @param max_retries - Number of retry attempts on failure (default: 3)
    * @param cost_tracker - Optional CostTracker instance to track API costs
    * @param workflow_tracker - Optional WorkflowTracker instance for dashboard analytics
+   * @param llm_config - Optional LLM configuration (API keys, etc.) for Phase 1.5 development
    *
    * @example
    * const client = new AnalyzerLLMClient({ provider: "openai" })
@@ -78,6 +82,7 @@ export class AnalyzerLLMClient {                                                
     max_retries?: number
     cost_tracker?: CostTracker | null
     workflow_tracker?: WorkflowTracker | null
+    llm_config?: any
   } = {}) {
     // Parse model spec if it contains provider (format: "provider:model")     // Python line 49
     let provider = params.provider
@@ -101,6 +106,7 @@ export class AnalyzerLLMClient {                                                
     this.max_retries = params.max_retries ?? 3                                   // Python line 62
     this.cost_tracker = params.cost_tracker ?? null                              // Python line 63
     this.workflow_tracker = params.workflow_tracker ?? null                      // Python line 64
+    this.llm_config = params.llm_config ?? null                                   // Phase 1.5 config
 
     // Initialize appropriate client                                             // Python line 66
     this.client = this._createClient()                                           // Python line 67
@@ -121,33 +127,49 @@ export class AnalyzerLLMClient {                                                
    * @returns Initialized LLM client
    * @throws Error if provider is unknown
    */
-  private _createClient(): ClaudeClient | OpenAIClient | OllamaClient {          // Python line 74
-    // Clients load config from environment                                      // Python line 84
+  private _createClient(): ClaudeClient | OpenAIClient | OllamaClient | GroqClient | DeepInfraClient {  // Python line 74
+    // Clients load config from llm_config (Phase 1.5) or environment           // Python line 84
 
     if (this.provider === 'claude') {                                            // Python line 86
       // Use ClaudeClient from src/browser/llm/                                 // Python line 87
       const config = {
-        anthropic_api_key: import.meta.env?.VITE_ANTHROPIC_API_KEY,
+        anthropic_api_key: this.llm_config?.api_key || import.meta.env?.VITE_ANTHROPIC_API_KEY,
         anthropic_model: this.model,
       }
       return new ClaudeClient(config)
     } else if (this.provider === 'openai') {                                     // Python line 88
       // Use OpenAIClient from src/browser/llm/                                 // Python line 89
       const config = {
-        openai_api_key: import.meta.env?.VITE_OPENAI_API_KEY,
+        openai_api_key: this.llm_config?.api_key || import.meta.env?.VITE_OPENAI_API_KEY,
         openai_model: this.model,
       }
       return new OpenAIClient(config)
     } else if (this.provider === 'ollama') {                                     // Python line 90
       // Use OllamaClient from src/browser/llm/                                 // Python line 91
       const config = {
-        ollama_host: import.meta.env?.VITE_OLLAMA_HOST || 'http://localhost:11434',
+        ollama_host: this.llm_config?.base_url || import.meta.env?.VITE_OLLAMA_HOST || 'http://localhost:11434',
         ollama_model: this.model,
       }
       return new OllamaClient(config)
+    } else if (this.provider === 'groq') {
+      // Use GroqClient from src/browser/llm/
+      // Zero Data Retention toggle available in Groq Console
+      const config = {
+        groq_api_key: this.llm_config?.api_key || import.meta.env?.NEXT_PUBLIC_GROQ_API_KEY,
+        groq_model: this.model,
+      }
+      return new GroqClient(config)
+    } else if (this.provider === 'deepinfra') {
+      // Use DeepInfraClient from src/browser/llm/
+      // Zero Data Retention by DEFAULT (no opt-in required)
+      const config = {
+        deepinfra_api_key: this.llm_config?.api_key || import.meta.env?.NEXT_PUBLIC_DEEPINFRA_API_KEY,
+        deepinfra_model: this.model,
+      }
+      return new DeepInfraClient(config)
     } else {                                                                     // Python line 92
       throw new Error(                                                           // Python line 93
-        `Unknown provider: ${this.provider}. Must be 'claude', 'openai', or 'ollama'`
+        `Unknown provider: ${this.provider}. Must be 'claude', 'openai', 'ollama', 'groq', or 'deepinfra'`
       )
     }
   }
@@ -214,6 +236,18 @@ export class AnalyzerLLMClient {                                                
           result.classifications = []                                            // Python line 148
         }
         console.debug('[DEBUG] Classifications count:', result.classifications?.length || 0)
+
+        // ADDITIONAL LOGGING: Show why classifications might be empty
+        if (!result.classifications || result.classifications.length === 0) {
+          console.warn('[CLASSIFICATION DEBUG] ⚠️  LLM returned ZERO classifications!')
+          console.warn('[CLASSIFICATION DEBUG] Prompt length:', prompt.length, 'characters')
+          console.warn('[CLASSIFICATION DEBUG] Response length:', response.content.length, 'characters')
+          console.warn('[CLASSIFICATION DEBUG] First 1000 chars of prompt:', prompt.substring(0, 1000))
+          console.warn('[CLASSIFICATION DEBUG] Full LLM response:', response.content)
+        } else {
+          console.log(`[CLASSIFICATION DEBUG] ✅ ${result.classifications.length} classifications returned`)
+          console.log('[CLASSIFICATION DEBUG] First classification:', result.classifications[0])
+        }
 
         // Track costs if tracker provided                                       // Python line 150
         if (this.cost_tracker && response.usage) {                               // Python line 151
@@ -474,7 +508,7 @@ export class AnalyzerLLMClient {                                                
   }): number | null {
     const { prompt_tokens, response_tokens } = params                            // Python line 369
 
-    // Approximate pricing (as of 2024)                                          // Python line 378
+    // Approximate pricing (as of Nov 2025)                                      // Python line 378
     const pricing: Record<string, { prompt: number; response: number }> = {      // Python line 379
       claude: {                                                                  // Python line 380
         prompt: 3.0 / 1_000_000,  // $3 per 1M input tokens                     // Python line 381
@@ -487,6 +521,14 @@ export class AnalyzerLLMClient {                                                
       ollama: {                                                                  // Python line 388
         prompt: 0.0,  // Free (local)                                           // Python line 389
         response: 0.0,                                                           // Python line 390
+      },
+      groq: {
+        prompt: 0.59 / 1_000_000,  // $0.59 per 1M tokens (llama-3.3-70b)
+        response: 0.79 / 1_000_000,  // $0.79 per 1M tokens
+      },
+      deepinfra: {
+        prompt: 0.35 / 1_000_000,  // $0.35 per 1M tokens (Llama-3.3-70B)
+        response: 0.40 / 1_000_000,  // $0.40 per 1M tokens
       },
     }
 

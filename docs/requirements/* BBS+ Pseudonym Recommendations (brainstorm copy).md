@@ -198,9 +198,11 @@ When a conversion happens:
 - This prevents fraudulent conversion claims
 - It also prevents the advertiser from linking this conversion to the user's activities on other publishers/campaigns
 
-### 4. Privacy-Preserving Offline Conversion Tracking
+### 4. Privacy-Preserving Offline Conversion Tracking (Future Phase)
 
-For offline conversions (e.g., store visits):
+> **Note:** Offline conversion tracking is planned for a future phase and is NOT included in the MVP. The MVP focuses on online attribution only.
+
+For offline conversions (e.g., store visits) - **POST-MVP**:
 
 - User can present the tracking_ID in-store
 - The ZKP proves the user's legitimate ownership of the tracking_ID
@@ -322,29 +324,36 @@ This approach maintains security while providing near-instant campaign recogniti
 3. On subsequent encounters, this fast hash lookup can identify returning users instantly
 4. The full ZKP verification can happen in the background for security
 
-### 3. Bloom Filter Pre-screening
+### 3. Bloom Filter Pre-screening (MVP - Primary Fast Path)
 
 ```
 Bloom Filter Approach:
 - Advertisers maintain Bloom filters of tracking_IDs per campaign
 - Bloom filters allow for extremely fast (constant time) membership testing
-- False positives are possible but rare and can be checked with full verification
+- False positives are possible but rare (0.01%) and can be checked with full verification
+- Memory efficient: ~2MB for 1M users per campaign
 ```
 
 This provides sub-millisecond campaign recognition with very high probability, with full verification only needed in rare cases of Bloom filter false positives.
 
-### 4. Partial ZKP with Campaign Hint
+**Implementation (aligned with Section 7.2.4 of Architecture):**
 
+```typescript
+interface BloomFilterVerification {
+  // Initialize Bloom filter for a campaign
+  // Size for 0.01% false positive rate: 14.4 bits per element
+  initializeCampaignFilter(campaignId: string, expectedUsers: number): void;
+
+  // Add verified tracking_ID to Bloom filter (after Complete Path verification)
+  addToFilter(campaignId: string, trackingId: string): void;
+
+  // Ultra-fast membership test (< 0.1ms)
+  // Returns: true = "maybe in campaign", false = "definitely NOT in campaign"
+  mightBeInCampaign(campaignId: string, trackingId: string): boolean;
+}
 ```
-Partial ZKP Approach:
-- User provides a "campaign hint" - a deterministic but privacy-preserving hint about the campaign
-- This hint can be verified extremely quickly (e.g., a simple hash)
-- Full ZKP verification follows asynchronously
-```
 
-The hint could be a keyed-hash of the campaign_ID using a deterministic key derived from the user's nym_secret, allowing quick campaign lookup.
-
-### 5. Witness Caching for Recurring Users
+### 4. Witness Caching for Recurring Users
 
 ```
 ZKP Witness Caching:
@@ -355,27 +364,68 @@ ZKP Witness Caching:
 
 This is particularly effective for retargeting since, by definition, we're dealing with returning users.
 
-## Recommended Approach: Hybrid Solution
+## Recommended Approach: Bloom Filter + Hash Cache Pipeline (MVP)
 
-For retargeting specifically, I recommend combining approaches #1 and #2:
+For retargeting specifically, we recommend a multi-tier verification pipeline combining Bloom filters and hash caching (aligned with Section 7.2.4 of the Architecture):
 
-1. **Initial Interaction**:
-    
-    - User provides {campaign_ID, tracking_ID, ZKP}
-    - Advertiser performs full ZKP verification
-    - Advertiser stores a fast lookup record {hash(campaign_ID + tracking_ID) → campaign data}
-2. **Subsequent Retargeting Interactions**:
-    
-    - User provides {campaign_ID, tracking_ID, ZKP}
-    - Advertiser immediately looks up hash(campaign_ID + tracking_ID) for fast campaign recognition
-    - Retargeting decision proceeds immediately based on this lookup
-    - Full ZKP verification happens asynchronously
+### MVP Verification Pipeline
+
+```typescript
+async function optimizedVerificationPipeline(
+  trackingId: G1Point,
+  campaignId: string,
+  zkProof: BBS_Proof,
+  context: 'retargeting' | 'impression' | 'conversion'
+): Promise<VerificationResult> {
+
+  // 1. Bloom filter pre-screen (always - < 0.1ms)
+  if (!bloomFilter.mightBeInCampaign(campaignId, trackingId.toHex())) {
+    return { verified: false, path: 'bloom_negative', latency: 0.1 };
+  }
+
+  // 2. Hash cache for known users (< 1ms)
+  if (hashCache.has(campaignId, trackingId)) {
+    if (context === 'retargeting' || context === 'impression') {
+      return { verified: true, path: 'hash_cache', latency: 0.5 };
+    }
+    // Conversions always need fresh verification (but can use witness cache)
+  }
+
+  // 3. Witness cache for recurring users (5-20ms)
+  if (witnessCache.has(campaignId, trackingId)) {
+    const result = await witnessCache.verifyWithCachedWitness(trackingId, campaignId, zkProof);
+    return { verified: result, path: 'witness_cache', latency: 15 };
+  }
+
+  // 4. Complete path for new users (50-200ms)
+  const result = await completePathVerify(trackingId, campaignId, zkProof);
+
+  // Cache for future verifications
+  if (result) {
+    hashCache.add(campaignId, trackingId);
+    bloomFilter.addToFilter(campaignId, trackingId.toHex());
+    witnessCache.cacheWitness(trackingId.toHex(), campaignId, extractWitness(zkProof));
+  }
+
+  return { verified: result, path: 'complete', latency: 100 };
+}
+```
+
+### Performance Summary (MVP)
+
+| Path | Time | Memory per Campaign | Use Case |
+|------|------|---------------------|----------|
+| Bloom Filter | < 0.1ms | ~2MB for 1M users | Pre-screening, negative confirmation |
+| Hash Cache | < 1ms | ~100MB for 1M users | Positive confirmation |
+| Witness Cache | 5-20ms | ~500B per user | Recurring user verification |
+| Complete Path | 50-200ms | N/A | First-time verification, conversions |
 
 This approach:
 
-- Provides near-instant campaign recognition (microseconds)
+- Provides near-instant campaign recognition (microseconds via Bloom filter)
+- Hash cache enables sub-millisecond positive confirmation
 - Maintains the privacy guarantees of the ZKP system
 - Works within existing ad tech infrastructure
 - Allows for retargeting decisions within typical RTB timeframes
 
-The key insight is separating the immediate campaign recognition (which can be near-instant) from the cryptographic verification (which can happen asynchronously for retargeting purposes).
+The key insight is separating the immediate campaign recognition (which can be near-instant via Bloom filter + hash cache) from the cryptographic verification (which can happen asynchronously for retargeting purposes).

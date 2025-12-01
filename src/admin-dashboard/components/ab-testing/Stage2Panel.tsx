@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { PreprocessedEmail, StageStatus, Stage2Export, AVAILABLE_MODELS } from '@/lib/ab-testing/types'
+import { useState, useRef, useMemo } from 'react'
+import { PreprocessedEmail, ModelConfig, StageStatus, Stage2Export, AVAILABLE_MODELS } from '@/lib/ab-testing/types'
 import { exportStage2, importStage2 } from '@/lib/ab-testing/export-import'
 
 interface Stage2PanelProps {
@@ -17,14 +17,9 @@ interface Stage2PanelProps {
   onImport: (data: Stage2Export) => void
   onExport: () => void
   disabled?: boolean
+  availableModels?: ModelConfig[]  // Dynamic models from API
+  modelsLoading?: boolean
 }
-
-// Get unique providers from available models
-const providers = [...new Set(AVAILABLE_MODELS.map(m => m.provider))]
-
-// Get models for a specific provider
-const getModelsForProvider = (provider: string) =>
-  AVAILABLE_MODELS.filter(m => m.provider === provider)
 
 export function Stage2Panel({
   status,
@@ -36,10 +31,22 @@ export function Stage2Panel({
   onImport,
   onExport,
   disabled = false,
+  availableModels = AVAILABLE_MODELS,
+  modelsLoading = false,
 }: Stage2PanelProps) {
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Get unique providers from available models (dynamic)
+  const providers = useMemo(
+    () => [...new Set(availableModels.map(m => m.provider))],
+    [availableModels]
+  )
+
+  // Get models for a specific provider (dynamic)
+  const getModelsForProvider = (provider: string) =>
+    availableModels.filter(m => m.provider === provider)
 
   const handlePreprocess = async () => {
     setError(null)
@@ -84,7 +91,8 @@ export function Stage2Panel({
     })
   }
 
-  const availableModels = getModelsForProvider(config.summarizerProvider)
+  // Models for the currently selected provider
+  const modelsForCurrentProvider = getModelsForProvider(config.summarizerProvider)
 
   return (
     <div className={`bg-white rounded-lg shadow p-6 ${disabled ? 'opacity-50' : ''}`}>
@@ -125,12 +133,16 @@ export function Stage2Panel({
               <select
                 value={config.summarizerModel}
                 onChange={(e) => onConfigChange({ ...config, summarizerModel: e.target.value })}
-                disabled={status === 'running'}
+                disabled={status === 'running' || modelsLoading}
                 className="w-full border rounded px-3 py-2 disabled:bg-gray-100"
               >
-                {availableModels.map(m => (
-                  <option key={m.model} value={m.model}>{m.displayName}</option>
-                ))}
+                {modelsLoading ? (
+                  <option>Loading models...</option>
+                ) : (
+                  modelsForCurrentProvider.map(m => (
+                    <option key={m.model} value={m.model}>{m.displayName}</option>
+                  ))
+                )}
               </select>
             </div>
           </div>

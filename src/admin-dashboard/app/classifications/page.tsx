@@ -7,6 +7,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useClassifications } from '@/lib/use-profile'
 
 const SECTIONS = [
@@ -19,7 +20,10 @@ const SECTIONS = [
 ]
 
 export default function ClassificationsPage() {
-  const [userId, setUserId] = useState('default_user')
+  const searchParams = useSearchParams()
+
+  // Initialize from URL parameter
+  const [userId, setUserId] = useState(searchParams.get('user_id') || 'default_user')
   const [selectedSection, setSelectedSection] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
 

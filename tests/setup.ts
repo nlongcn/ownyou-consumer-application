@@ -8,5 +8,8 @@
 
 import 'fake-indexeddb/auto'
 
+process.env.LANGCHAIN_TRACING_V2 = 'false'
+process.env.LANGCHAIN_API_KEY = 'test'
+
 // Global test setup
 console.log('✅ Test environment configured with fake-indexeddb')

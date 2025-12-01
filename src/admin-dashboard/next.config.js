@@ -1,3 +1,31 @@
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  disable: false,  // Enable PWA in development for testing
+  register: true,
+  skipWaiting: true,
+  // CRITICAL FIX: Exclude /api routes from Service Worker caching
+  // API routes must always hit the server, never return stale cached responses
+  runtimeCaching: [
+    {
+      // Match all requests EXCEPT /api/* routes
+      urlPattern: /^(?!.*\/api\/).*$/,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'pages-cache',
+        expiration: {
+          maxEntries: 200,
+          maxAgeSeconds: 24 * 60 * 60, // 24 hours
+        },
+      },
+    },
+    {
+      // API routes: NEVER cache, always fetch from network
+      urlPattern: /\/api\/.*/,
+      handler: 'NetworkOnly',
+    },
+  ],
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable App Router
@@ -46,4 +74,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withPWA(nextConfig);

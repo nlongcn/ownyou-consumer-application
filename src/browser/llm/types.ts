@@ -24,4 +24,6 @@ export enum LLMProvider {
   OPENAI = 'openai',
   GOOGLE = 'google',
   OLLAMA = 'ollama',
+  GROQ = 'groq',
+  DEEPINFRA = 'deepinfra',
 }

@@ -1,0 +1,13 @@
+<canvas id="c" width="192" height="192"></canvas>
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+ctx.fillStyle = '#000000';
+ctx.fillRect(0, 0, 192, 192);
+ctx.fillStyle = '#FFFFFF';
+ctx.font = 'bold 120px Arial';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText('O', 96, 96);
+console.log(c.toDataURL());
+</script>

@@ -1,9 +1,17 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { InstallPrompt } from '@/components/InstallPrompt'
 
 export const metadata: Metadata = {
   title: 'OwnYou Admin Dashboard',
   description: 'Development tool for IAB classifier and mission agents',
+  manifest: '/manifest.json',
+  themeColor: '#000000',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'OwnYou',
+  },
 }
 
 export default function RootLayout({
@@ -50,6 +58,7 @@ export default function RootLayout({
             </div>
           </footer>
         </div>
+        <InstallPrompt />
       </body>
     </html>
   )

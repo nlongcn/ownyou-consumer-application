@@ -401,9 +401,42 @@ export function lookupTaxonomyEntry(
 }
 
 /**
+ * Normalize taxonomy value for flexible comparison
+ *
+ * Enhanced normalization to handle common LLM formatting variations:
+ * - Comma removal: $50,000 → $50000
+ * - Hyphen spacing: " - " → "-"
+ * - Whitespace normalization
+ * - Case insensitivity
+ * - Tier path extraction: "Business | Finance" → "Finance"
+ *
+ * Fix for: /bugfix/2025-01-12-taxonomy-validation-formatting-bug.md
+ *
+ * @param value Raw value from LLM or taxonomy
+ * @returns Normalized value for comparison
+ */
+function normalizeValue(value: string): string {
+  let normalized = value.trim().toLowerCase()
+
+  // Extract final tier if full path provided (handles "Business | Finance" → "Finance")
+  if (normalized.includes('|')) {
+    const parts = normalized.split('|')
+    normalized = parts[parts.length - 1].trim()
+  }
+
+  // Format normalization
+  return normalized
+    .replace(/,/g, '')               // Remove commas: $50,000 → $50000
+    .replace(/\s*-\s*/g, '-')        // Normalize hyphens: " - " → "-", "- " → "-"
+    .replace(/\s+/g, ' ')            // Normalize spaces: "  " → " "
+    .trim()                          // Final trim
+}
+
+/**
  * Validate taxonomy classification
  *
  * Python source: analyzers.py:103-162 (validate_taxonomy_classification)
+ * Enhanced with normalizeValue() to handle common LLM formatting variations
  *
  * Prevents data corruption from LLM errors where wrong taxonomy IDs
  * are paired with incorrect values.
@@ -447,15 +480,17 @@ export function validateTaxonomyClassification(
     return true
   }
 
-  // Python lines 149-160: Non-asterisk entries must match exactly
-  const llmNormalized = llmValue.trim().toLowerCase()
-  const expectedNormalized = expectedValue.trim().toLowerCase()
+  // Python lines 149-160: Non-asterisk entries must match (enhanced with normalization)
+  // FIX 2025-01-13: Use enhanced normalization to handle formatting variations
+  const llmNormalized = normalizeValue(llmValue)
+  const expectedNormalized = normalizeValue(expectedValue)
 
   // Python lines 154-160
   if (llmNormalized !== expectedNormalized) {
     console.warn(
       `VALIDATION FAILED: Taxonomy ID ${taxonomyId} mismatch - ` +
-        `LLM returned value '${llmValue}' but taxonomy defines '${expectedValue}'. ` +
+        `LLM returned value '${llmValue}' (normalized: '${llmNormalized}') ` +
+        `but taxonomy defines '${expectedValue}' (normalized: '${expectedNormalized}'). ` +
         `Skipping this classification to prevent data corruption.`
     )
     return false

@@ -36,6 +36,8 @@ This guide walks you through setting up Gmail and Outlook OAuth for the admin da
 1. Go to [Gmail API Library](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
 2. Click **"Enable"**
 
+![1764322838062](image/OAUTH_SETUP/1764322838062.png)
+
 ## Outlook OAuth Setup
 
 ### Step 1: Register Application
@@ -78,11 +80,11 @@ This guide walks you through setting up Gmail and Outlook OAuth for the admin da
 ## Configure Environment Variables
 
 1. Copy `.env.example` to `.env.local`:
+
    ```bash
    cd src/admin-dashboard
    cp .env.example .env.local
    ```
-
 2. Edit `.env.local` and replace the placeholder values:
 
    ```env
@@ -99,8 +101,8 @@ This guide walks you through setting up Gmail and Outlook OAuth for the admin da
    # OAuth Session Secret (generate with: openssl rand -base64 32)
    OAUTH_SESSION_SECRET=your-generated-secret-here
    ```
-
 3. Generate session secret:
+
    ```bash
    openssl rand -base64 32
    ```
@@ -145,6 +147,7 @@ Server should start on `http://localhost:3001`
 **Problem**: The redirect URI in your OAuth app doesn't match the one configured in `.env.local`
 
 **Solution**:
+
 - Check that redirect URI in Google Cloud Console / Azure Portal exactly matches: `http://localhost:3001/api/auth/gmail/callback` (or `/outlook/callback`)
 - No trailing slashes
 - Exact port number (3001)
@@ -154,6 +157,7 @@ Server should start on `http://localhost:3001`
 **Problem**: Environment variables not set correctly
 
 **Solution**:
+
 - Verify `.env.local` exists in `src/admin-dashboard/`
 - Restart Next.js dev server after editing `.env.local`
 - Check that all required variables are set (no "your-..." placeholders)
@@ -163,6 +167,7 @@ Server should start on `http://localhost:3001`
 **Problem**: Client ID or Client Secret is incorrect
 
 **Solution**:
+
 - Double-check Client ID and Client Secret in `.env.local`
 - For Outlook: Make sure you copied the **Value** of the client secret, not the **Secret ID**
 - Regenerate client secret if needed
@@ -172,12 +177,14 @@ Server should start on `http://localhost:3001`
 **Gmail Problem**: App not published / not in test users
 
 **Solution**:
+
 - Add your Gmail address to test users in OAuth consent screen
 - Or publish the app (not required for testing)
 
 **Outlook Problem**: Permissions not granted
 
 **Solution**:
+
 - Go to Azure Portal → Your app → API permissions
 - Verify `Mail.Read` and `offline_access` are listed
 - Click "Grant admin consent" if available
@@ -187,6 +194,7 @@ Server should start on `http://localhost:3001`
 **Problem**: Cookies not being set correctly
 
 **Solution**:
+
 - Check browser console for cookie errors
 - Verify `sameSite: 'lax'` is compatible with your setup
 - Check that cookies are enabled in browser

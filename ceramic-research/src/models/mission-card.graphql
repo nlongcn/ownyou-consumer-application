@@ -1,0 +1,29 @@
+# MissionCard Model for OwnYou
+#
+# Source: context7 - developers.ceramic.network/docs/composedb/guides/data-modeling/schemas
+# Uses @createModel directive with LIST accountRelation for multiple mission cards per user
+# Uses @createIndex for efficient querying by status
+
+type MissionCard
+  @createModel(accountRelation: LIST, description: "OwnYou mission card for user goals")
+  @createIndex(fields: [{ path: "status" }])
+  @createIndex(fields: [{ path: "createdAt" }]) {
+  missionId: String! @string(minLength: 1, maxLength: 200)
+  title: String! @string(minLength: 1, maxLength: 200)
+  status: MissionStatus!
+  createdAt: DateTime!
+  completedAt: DateTime
+  steps: [MissionStep!]! @list(maxLength: 50)
+}
+
+enum MissionStatus {
+  ACTIVE
+  COMPLETED
+  DISMISSED
+}
+
+type MissionStep {
+  id: Int!
+  title: String! @string(minLength: 1, maxLength: 200)
+  completed: Boolean!
+}

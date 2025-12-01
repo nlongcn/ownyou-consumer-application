@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   getBrowserProfileReader,
   type TieredProfile,
@@ -10,21 +10,31 @@ import {
   type TieredInterest,
   type TieredPurchaseIntent,
 } from '@/lib/profile-reader'
+import { clearUserProfile, getProfileStats } from '../../../browser/store/profileUtils'
+import { IndexedDBStore } from '../../../browser/store/IndexedDBStore'
 
 export default function ProfileViewPage() {
   const [profile, setProfile] = useState<TieredProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [resetting, setResetting] = useState(false)
+  const [resetSuccess, setResetSuccess] = useState<string | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Get user_id from URL parameter, default to 'default_user'
+  const userId = searchParams.get('user_id') || 'default_user'
 
   useEffect(() => {
     async function loadProfile() {
       try {
         setLoading(true)
+        setError(null)
+        setResetSuccess(null)
 
         // Load tiered profile from IndexedDB (browser storage)
         const reader = getBrowserProfileReader()
-        const data = await reader.getTieredProfile('default_user')
+        const data = await reader.getTieredProfile(userId)
         setProfile(data)
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load tiered profile'
@@ -35,7 +45,34 @@ export default function ProfileViewPage() {
     }
 
     loadProfile()
-  }, [])
+  }, [userId])
+
+  // Handle profile reset
+  const handleResetProfile = async () => {
+    if (!confirm(`Are you sure you want to reset profile for "${userId}"? This will delete all IAB taxonomy classifications.`)) {
+      return
+    }
+
+    try {
+      setResetting(true)
+      setError(null)
+
+      const store = new IndexedDBStore('ownyou_store')
+      const deletedCount = await clearUserProfile(store, userId)
+
+      setResetSuccess(`Successfully reset profile "${userId}" - deleted ${deletedCount} items`)
+
+      // Reload profile (should be empty now)
+      setTimeout(() => {
+        window.location.reload()
+      }, 2000)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to reset profile'
+      setError(errorMessage)
+    } finally {
+      setResetting(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -116,6 +153,13 @@ export default function ProfileViewPage() {
 
   return (
     <div className="container mx-auto p-6 space-y-8">
+      {/* Success Message */}
+      {resetSuccess && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+          <p className="text-green-800">{resetSuccess}</p>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -125,13 +169,25 @@ export default function ProfileViewPage() {
           <p className="text-gray-600 mt-1">
             Schema v{profile?.schema_version || '2.0'} - Tiered Classification View
           </p>
+          <p className="text-sm text-gray-500 mt-1">
+            User ID: <span className="font-mono font-semibold">{userId}</span>
+          </p>
         </div>
-        <button
-          onClick={() => router.push('/emails')}
-          className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors text-gray-700"
-        >
-          Back to Emails
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleResetProfile}
+            disabled={resetting}
+            className="px-4 py-2 rounded-lg border border-red-300 hover:bg-red-50 transition-colors text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {resetting ? 'Resetting...' : 'Reset Profile'}
+          </button>
+          <button
+            onClick={() => router.push('/emails')}
+            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors text-gray-700"
+          >
+            Back to Emails
+          </button>
+        </div>
       </div>
 
       {/* Summary Cards */}

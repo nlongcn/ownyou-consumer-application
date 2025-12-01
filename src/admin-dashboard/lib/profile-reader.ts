@@ -72,7 +72,7 @@ export class BrowserProfileReader {
 
     // Read semantic memories (IAB classifications)
     const semanticPrefix = [userId, 'iab_taxonomy_profile']
-    const semanticItems = await this.store.search(semanticPrefix)
+    const semanticItems = await this.store.search(semanticPrefix, { limit: 1000 })
 
     console.log(`   Found ${semanticItems.length} classifications in IndexedDB`)
 
@@ -84,13 +84,12 @@ export class BrowserProfileReader {
     for (const item of semanticItems) {
       const value = item.value
 
-      // Parse key to extract section
-      const key = item.key
-      const keyParts = key.split('_')
-      let section = 'unknown'
-      if (keyParts.length >= 2) {
-        section = keyParts[1]
-      }
+      // BUGFIX: Use section from value object instead of parsing from key
+      // The reconcile node stores section in value.section
+      let section = value.section || 'unknown'
+
+      // DEBUG: Log section detection
+      console.log(`[DEBUG] Key: ${item.key}, Section: ${section}`)
 
       // Normalize purchase section
       if (section === 'purchase') {
@@ -173,6 +172,40 @@ export class BrowserProfileReader {
     Object.values(household).forEach(group => {
       group.alternatives.sort((a, b) => b.confidence - a.confidence)
     })
+
+    // REQ-1.4: Handle "Unknown [Field]" classifications
+    // If the highest confidence is "Unknown X", promote the best non-Unknown alternative to primary
+    // Only filter the tier group if ALL classifications are Unknown
+    for (const [fieldName, group] of Object.entries(demographics)) {
+      if (group.primary.value.startsWith('Unknown ')) {
+        // Find best non-Unknown alternative
+        const validAlt = group.alternatives.find(alt => !alt.value.startsWith('Unknown '))
+        if (validAlt) {
+          console.log(`[REQ-1.4] Promoting "${validAlt.value}" over "${group.primary.value}" for demographics.${fieldName}`)
+          // Demote Unknown to alternatives, promote valid classification
+          group.alternatives = group.alternatives.filter(alt => alt !== validAlt)
+          group.alternatives.push(group.primary) // Unknown becomes alternative
+          group.primary = validAlt
+        } else {
+          console.warn(`[REQ-1.4] Filtering demographics.${fieldName} - only Unknown classifications available`)
+          delete demographics[fieldName]
+        }
+      }
+    }
+    for (const [fieldName, group] of Object.entries(household)) {
+      if (group.primary.value.startsWith('Unknown ')) {
+        const validAlt = group.alternatives.find(alt => !alt.value.startsWith('Unknown '))
+        if (validAlt) {
+          console.log(`[REQ-1.4] Promoting "${validAlt.value}" over "${group.primary.value}" for household.${fieldName}`)
+          group.alternatives = group.alternatives.filter(alt => alt !== validAlt)
+          group.alternatives.push(group.primary)
+          group.primary = validAlt
+        } else {
+          console.warn(`[REQ-1.4] Filtering household.${fieldName} - only Unknown classifications available`)
+          delete household[fieldName]
+        }
+      }
+    }
 
     console.log(`✅ Tiered profile built:`)
     console.log(`   Demographics: ${Object.keys(demographics).length}`)
