@@ -1,0 +1,63 @@
+{
+  "name": "@ownyou/shared-types",
+  "version": "0.1.0",
+  "description": "OwnYou shared type definitions - v13 architecture aligned",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./memory": {
+      "import": "./dist/memory.js",
+      "types": "./dist/memory.d.ts"
+    },
+    "./entities": {
+      "import": "./dist/entities.js",
+      "types": "./dist/entities.d.ts"
+    },
+    "./identity": {
+      "import": "./dist/identity.js",
+      "types": "./dist/identity.d.ts"
+    },
+    "./ikigai": {
+      "import": "./dist/ikigai.js",
+      "types": "./dist/ikigai.d.ts"
+    },
+    "./agent": {
+      "import": "./dist/agent.js",
+      "types": "./dist/agent.d.ts"
+    },
+    "./namespaces": {
+      "import": "./dist/namespaces.js",
+      "types": "./dist/namespaces.d.ts"
+    },
+    "./sync": {
+      "import": "./dist/sync.js",
+      "types": "./dist/sync.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^1.2.0"
+  },
+  "peerDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}
