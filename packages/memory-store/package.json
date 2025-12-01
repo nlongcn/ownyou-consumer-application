@@ -1,0 +1,55 @@
+{
+  "name": "@ownyou/memory-store",
+  "version": "0.1.0",
+  "description": "OwnYou LangGraph Store-compatible memory storage with hybrid search",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./backends": {
+      "import": "./dist/backends/index.js",
+      "types": "./dist/backends/index.d.ts"
+    },
+    "./search": {
+      "import": "./dist/search/index.js",
+      "types": "./dist/search/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@ownyou/shared-types": "workspace:*",
+    "idb": "^8.0.0"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "^6.0.0",
+    "typescript": "^5.7.2",
+    "vitest": "^1.2.0"
+  },
+  "peerDependencies": {
+    "@xenova/transformers": "^2.17.0"
+  },
+  "peerDependenciesMeta": {
+    "@xenova/transformers": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}
