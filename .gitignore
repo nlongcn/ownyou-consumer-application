@@ -234,3 +234,13 @@ research_spike/package-lock.json
 
 # Test artifacts (large databases)
 _archive/
+
+# Next.js build output
+.next/
+
+# DS_Store
+.DS_Store
+**/.DS_Store
+
+# TypeScript build info
+*.tsbuildinfo

@@ -1,0 +1,261 @@
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+
+  color: #0f0f0f;
+  background-color: #f6f6f6;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+.container {
+  margin: 0;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 2.5em;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.8em;
+  margin-bottom: 1.5rem;
+  color: #34495e;
+  text-align: center;
+}
+
+h3 {
+  font-size: 1.3em;
+  margin-bottom: 1rem;
+  color: #4a5568;
+}
+
+/* Status Box */
+.status-box {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-authenticated {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.status-unauthenticated {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+/* Auth Section */
+.auth-section {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.helper-text {
+  color: #7f8c8d;
+  font-size: 0.9em;
+  margin-top: 0.5rem;
+}
+
+/* Buttons */
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s;
+  margin: 0.25rem;
+}
+
+.primary-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1em;
+}
+
+.primary-btn:hover {
+  background-color: #2980b9;
+}
+
+.secondary-btn {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.secondary-btn:hover {
+  background-color: #7f8c8d;
+}
+
+.danger-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.danger-btn:hover {
+  background-color: #c0392b;
+}
+
+.small-btn {
+  font-size: 0.9em;
+  padding: 0.4em 0.8em;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+}
+
+.small-btn:hover {
+  background-color: #bdc3c7;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+/* Token Display */
+.token-display {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.token-field {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.token-field:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.token-field label {
+  display: block;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.token-value {
+  display: block;
+  background: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85em;
+  color: #2c3e50;
+  word-break: break-all;
+  border: 1px solid #dee2e6;
+}
+
+/* Debug Section */
+.debug-section {
+  background: #2c3e50;
+  border-radius: 8px;
+  padding: 1.5rem;
+  color: white;
+  margin-top: 2rem;
+}
+
+.debug-section h3 {
+  color: white;
+  margin-top: 0;
+}
+
+.debug-log {
+  background: #1a252f;
+  border-radius: 4px;
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85em;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.log-entry {
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0;
+  color: #ecf0f1;
+}
+
+.log-entry.error {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+/* Scrollbar for debug log */
+.debug-log::-webkit-scrollbar {
+  width: 8px;
+}
+
+.debug-log::-webkit-scrollbar-track {
+  background: #34495e;
+  border-radius: 4px;
+}
+
+.debug-log::-webkit-scrollbar-thumb {
+  background: #95a5a6;
+  border-radius: 4px;
+}
+
+.debug-log::-webkit-scrollbar-thumb:hover {
+  background: #7f8c8d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f6f6f6;
+    background-color: #2f2f2f;
+  }
+
+  h1, h2, h3 {
+    color: #f6f6f6;
+  }
+
+  .status-box, .auth-section {
+    background-color: #1a252f;
+  }
+
+  .token-display {
+    background-color: #2c3e50;
+  }
+
+  .token-value {
+    background-color: #34495e;
+    color: #ecf0f1;
+    border-color: #4a5568;
+  }
+}

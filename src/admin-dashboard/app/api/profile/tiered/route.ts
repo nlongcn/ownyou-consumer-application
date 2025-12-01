@@ -2,38 +2,23 @@
  * API Route for Tiered IAB Profile Data
  *
  * Returns IAB classifications organized in a tiered structure with:
- * - Demographics: primary + alternatives
- * - Household: primary + alternatives
- * - Interests: ranked by granularity
- * - Purchase Intent: ranked by granularity
+ * - Demographics: primary + alternatives (using proper tier selection)
+ * - Household: primary + alternatives (using proper tier selection)
+ * - Interests: ranked by granularity (non-exclusive)
+ * - Purchase Intent: ranked by granularity (non-exclusive)
+ *
+ * Updated: 2025-01-12 - Now uses tierSelector.ts for proper classification logic
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getStore } from '@/lib/shared-store'
-
-interface TierEntry {
-  value: string
-  tier_path: string
-  confidence: number
-  evidence_count: number
-  tier_depth: number
-}
-
-interface TieredGroup {
-  primary: TierEntry
-  alternatives: TierEntry[]
-}
-
-interface TieredInterest {
-  primary: TierEntry
-  granularity_score: number
-}
-
-interface TieredPurchaseIntent {
-  primary: TierEntry
-  granularity_score: number
-  purchase_intent_flag?: string
-}
+import {
+  formatTieredDemographics,
+  formatTieredHousehold,
+  formatTieredInterests,
+  formatTieredPurchaseIntent,
+  type TaxonomySelection,
+} from '@browser/agents/iab-classifier/profileTierFormatter'
 
 export async function GET(request: NextRequest) {
   try {
@@ -47,13 +32,14 @@ export async function GET(request: NextRequest) {
     const semanticPrefix = [user_id, 'iab_taxonomy_profile']
     const semanticItems = await store.search(semanticPrefix)
 
-    const demographics: Record<string, TieredGroup> = {}
-    const household: Record<string, TieredGroup> = {}
-    const interests: TieredInterest[] = []
-    const purchase_intent: TieredPurchaseIntent[] = []
+    // Parse memories by section
+    const demographicsMemories: TaxonomySelection[] = []
+    const householdMemories: TaxonomySelection[] = []
+    const interestsMemories: TaxonomySelection[] = []
+    const purchaseMemories: TaxonomySelection[] = []
 
     for (const item of semanticItems) {
-      const value = item.value
+      const value = item.value as any
 
       // Parse key to extract section
       const key = item.key
@@ -68,91 +54,54 @@ export async function GET(request: NextRequest) {
         section = 'purchase_intent'
       }
 
-      // Calculate tier depth (count number of tiers in path)
-      const tierPath = value.category_path || value.tier_path || value.value || 'Unknown'
-      const tierDepth = tierPath.split('>').length
-
-      // Create tier entry
-      const tierEntry: TierEntry = {
-        value: value.value || value.tier_3 || 'Unknown',
-        tier_path: tierPath,
+      // Create TaxonomySelection object
+      const selection: TaxonomySelection = {
+        taxonomy_id: value.taxonomy_id || 0,
+        section: section,
+        value: value.value || '',
         confidence: value.confidence || 0,
+        tier_1: value.tier_1 || '',
+        tier_2: value.tier_2 || '',
+        tier_3: value.tier_3 || '',
+        tier_4: value.tier_4 || '',
+        tier_5: value.tier_5 || '',
+        tier_path: value.tier_path || value.category_path || '',
+        category_path: value.category_path || value.tier_path || '',
+        grouping_tier_key: value.grouping_tier_key || '',
+        grouping_value: value.grouping_value || '',
+        reasoning: value.reasoning || '',
         evidence_count: value.evidence_count || value.supporting_evidence?.length || 0,
-        tier_depth: tierDepth,
+        last_validated: value.last_validated || '',
+        days_since_validation: value.days_since_validation || 0,
+        supporting_evidence: value.supporting_evidence || [],
+        purchase_intent_flag: value.purchase_intent_flag,
       }
 
       // Organize by section
       if (section === 'demographics') {
-        // Group by field name (extract from tier_path)
-        const fieldName = value.grouping_value || 'demographic'
-        if (!demographics[fieldName]) {
-          demographics[fieldName] = {
-            primary: tierEntry,
-            alternatives: [],
-          }
-        } else {
-          // Add as alternative if lower confidence
-          if (tierEntry.confidence > demographics[fieldName].primary.confidence) {
-            demographics[fieldName].alternatives.push(demographics[fieldName].primary)
-            demographics[fieldName].primary = tierEntry
-          } else {
-            demographics[fieldName].alternatives.push(tierEntry)
-          }
-        }
+        demographicsMemories.push(selection)
       } else if (section === 'household') {
-        // Group by field name
-        const fieldName = value.grouping_value || 'household'
-        if (!household[fieldName]) {
-          household[fieldName] = {
-            primary: tierEntry,
-            alternatives: [],
-          }
-        } else {
-          if (tierEntry.confidence > household[fieldName].primary.confidence) {
-            household[fieldName].alternatives.push(household[fieldName].primary)
-            household[fieldName].primary = tierEntry
-          } else {
-            household[fieldName].alternatives.push(tierEntry)
-          }
-        }
+        householdMemories.push(selection)
       } else if (section === 'interests') {
-        // Calculate granularity score (higher tier depth = more granular)
-        const granularity_score = tierDepth / 5.0 // Normalize to 0-1 range (max 5 tiers)
-        interests.push({
-          primary: tierEntry,
-          granularity_score,
-        })
+        interestsMemories.push(selection)
       } else if (section === 'purchase_intent') {
-        // Calculate granularity score
-        const granularity_score = tierDepth / 5.0
-        purchase_intent.push({
-          primary: tierEntry,
-          granularity_score,
-          purchase_intent_flag: value.purchase_intent_flag,
-        })
+        purchaseMemories.push(selection)
       }
     }
 
-    // Sort interests and purchase_intent by granularity (descending)
-    interests.sort((a, b) => b.granularity_score - a.granularity_score)
-    purchase_intent.sort((a, b) => b.granularity_score - a.granularity_score)
-
-    // Sort alternatives by confidence
-    Object.values(demographics).forEach(group => {
-      group.alternatives.sort((a, b) => b.confidence - a.confidence)
-    })
-    Object.values(household).forEach(group => {
-      group.alternatives.sort((a, b) => b.confidence - a.confidence)
-    })
+    // Apply proper tier selection using formatters
+    const tieredDemographics = formatTieredDemographics(demographicsMemories)
+    const tieredHousehold = formatTieredHousehold(householdMemories)
+    const tieredInterests = formatTieredInterests(interestsMemories)
+    const tieredPurchase = formatTieredPurchaseIntent(purchaseMemories)
 
     return NextResponse.json({
       schema_version: '2.0',
-      demographics,
-      household,
-      interests,
-      purchase_intent,
+      demographics: tieredDemographics,
+      household: tieredHousehold,
+      interests: tieredInterests,
+      purchase_intent: tieredPurchase,
     })
-
   } catch (error: any) {
     console.error('Tiered profile error:', error)
     return NextResponse.json(

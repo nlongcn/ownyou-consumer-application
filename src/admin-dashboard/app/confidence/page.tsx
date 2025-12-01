@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { getBrowserProfileReader } from '@/lib/profile-reader'
 
 interface Classification {
   value: string
@@ -22,31 +23,75 @@ export default function ConfidencePage() {
       try {
         setLoading(true)
 
-        // Get all classifications from all sections
-        const sections = ['demographics', 'household', 'interests', 'purchase_intent', 'actual_purchases']
+        // Use client-side profile reader (IndexedDB directly)
+        const profileReader = getBrowserProfileReader()
+        const profile = await profileReader.getTieredProfile('default_user')
+
         const allClassifications: Classification[] = []
 
-        for (const section of sections) {
-          try {
-            const response = await fetch(`/api/profile?section=${section}`)
-            if (response.ok) {
-              const data = await response.json()
-              if (data.classifications) {
-                for (const item of data.classifications) {
-                  allClassifications.push({
-                    value: item.value,
-                    tier_path: item.tier_path || item.category_path || item.value,
-                    confidence: item.confidence,
-                    section,
-                    evidence_count: item.evidence_count || 0
-                  })
-                }
-              }
-            }
-          } catch (err) {
-            console.warn(`Failed to load ${section}:`, err)
-          }
-        }
+        // Extract demographics
+        Object.entries(profile.demographics).forEach(([fieldName, group]) => {
+          allClassifications.push({
+            value: group.primary.value,
+            tier_path: group.primary.tier_path,
+            confidence: group.primary.confidence,
+            section: 'demographics',
+            evidence_count: group.primary.evidence_count
+          })
+          // Include alternatives
+          group.alternatives.forEach(alt => {
+            allClassifications.push({
+              value: alt.value,
+              tier_path: alt.tier_path,
+              confidence: alt.confidence,
+              section: 'demographics',
+              evidence_count: alt.evidence_count
+            })
+          })
+        })
+
+        // Extract household
+        Object.entries(profile.household).forEach(([fieldName, group]) => {
+          allClassifications.push({
+            value: group.primary.value,
+            tier_path: group.primary.tier_path,
+            confidence: group.primary.confidence,
+            section: 'household',
+            evidence_count: group.primary.evidence_count
+          })
+          // Include alternatives
+          group.alternatives.forEach(alt => {
+            allClassifications.push({
+              value: alt.value,
+              tier_path: alt.tier_path,
+              confidence: alt.confidence,
+              section: 'household',
+              evidence_count: alt.evidence_count
+            })
+          })
+        })
+
+        // Extract interests
+        profile.interests.forEach(interest => {
+          allClassifications.push({
+            value: interest.primary.value,
+            tier_path: interest.primary.tier_path,
+            confidence: interest.primary.confidence,
+            section: 'interests',
+            evidence_count: interest.primary.evidence_count
+          })
+        })
+
+        // Extract purchase intent
+        profile.purchase_intent.forEach(purchase => {
+          allClassifications.push({
+            value: purchase.primary.value,
+            tier_path: purchase.primary.tier_path,
+            confidence: purchase.primary.confidence,
+            section: purchase.purchase_intent_flag === 'ACTUAL_PURCHASE' ? 'actual_purchases' : 'purchase_intent',
+            evidence_count: purchase.primary.evidence_count
+          })
+        })
 
         // Sort by confidence descending
         allClassifications.sort((a, b) => b.confidence - a.confidence)

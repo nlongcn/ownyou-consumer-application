@@ -1,0 +1,59 @@
+{
+  "manifest_version": 3,
+  "name": "OwnYou Personal AI Extension",
+  "version": "1.0.0",
+  "description": "Privacy-first OAuth token management and browsing classification for OwnYou",
+
+  "permissions": [
+    "storage",
+    "identity",
+    "alarms",
+    "history",
+    "tabs"
+  ],
+
+  "host_permissions": [
+    "https://login.microsoftonline.com/*",
+    "https://accounts.google.com/*",
+    "https://graph.microsoft.com/*",
+    "https://api.openai.com/*",
+    "https://api.anthropic.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "http://127.0.0.1:11434/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "content_scripts": [{
+    "matches": [
+      "https://ownyou.app/*",
+      "http://localhost:3000/*",
+      "http://localhost:3001/*"
+    ],
+    "js": ["content.js"],
+    "run_at": "document_start"
+  }],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "web_accessible_resources": [{
+    "resources": ["bridge.js"],
+    "matches": ["https://ownyou.app/*", "http://localhost:3000/*", "http://localhost:3001/*"]
+  }]
+}

@@ -484,6 +484,205 @@ _Document React components that can be adapted for consumer UI_
 
 ---
 
-**Last Updated:** 2025-01-10
+**Last Updated:** 2025-01-12
 **Status:** 🔄 Document being populated during Phase 1.5 implementation
 **Next Review:** After Phase 1.5 completion (Week 4)
+
+---
+
+## 15. Week 2 Learnings (2025-01-12): End-to-End Browser PWA Testing
+
+**Context:** Completed first complete end-to-end testing of browser PWA with real LLM API calls, data persistence, and UI validation.
+
+### 15.1 Critical Architecture Validation ✅
+
+**Self-Sovereign API Key Management:**
+- [x] **LEARNING (2025-01-12):** Browser environment variables MUST NOT use `NEXT_PUBLIC_` prefix for API keys
+- [x] **WHY:** `NEXT_PUBLIC_*` variables are bundled into client JavaScript and visible in browser DevTools
+- [x] **CORRECT APPROACH (Phase 1.5 Dev):** Server-side `/api/llm-config` route reads `.env.local` and provides config to browser
+- [x] **CORRECT APPROACH (Phase 5 Production):** Users provide their own API keys via Settings UI, stored encrypted in localStorage
+- [x] **CODE:** `/app/api/llm-config/route.ts` + `/app/analyze/page.tsx:257-297`
+- [x] **SECURITY:** API keys remain server-side in Phase 1.5, will be user-provided in Phase 5
+- **Recommendation for Phase 5:** Implement Settings UI where users enter their own OpenAI/Anthropic/Google API keys, encrypt with wallet-derived key, store in localStorage
+
+**Database Name Consistency (CRITICAL BUG):**
+- [x] **ISSUE (2025-01-12):** Different components using different IndexedDB database names
+- [x] **SYMPTOM:** Classifications page showed "0 of 0 classifications" despite Profile page showing 1 classification
+- [x] **ROOT CAUSE:**
+  - BrowserClassifier: `'ownyou_store'`
+  - StoreClient: `'ownyou_admin_${userId}'` → `'ownyou_admin_default_user'`
+  - Different databases = data isolation
+- [x] **FIX:** Updated `store-client.ts:44` to use `'ownyou_store'` consistently across ALL components
+- [x] **LESSON:** Database name MUST be standardized across all components that read/write to Store
+- **Recommendation for Phase 5:** Define database name constant in shared config file, import everywhere
+
+**Workflow State Schema Validation:**
+- [x] **LEARNING (2025-01-12):** Added `llm_config` field to workflow state for API key propagation
+- [x] **PATTERN:** State fields flow through 6 workflow nodes (load → retrieve → analyze → reconcile → update → advance)
+- [x] **CODE:** `/src/browser/agents/iab-classifier/state.ts:167-178, 700-703`
+- [x] **ALL 4 ANALYZERS UPDATED:** Demographics, Household, Interests, Purchase analyzers now receive and use llm_config
+- [x] **CODE:** `/src/browser/agents/iab-classifier/analyzers/index.ts` (all 4 nodes updated)
+- **Recommendation for Phase 5:** Keep workflow state clean - only add fields that ALL nodes may use
+
+### 15.2 Real-World Performance Benchmarks
+
+**Manual Text Classification (First Real Test):**
+- [x] **INPUT:** Cryptocurrency investment text (~200 words)
+- [x] **OUTPUT:** Finance and Insurance (78.3% confidence after reconciliation)
+- [x] **PROCESSING TIME:** ~25 seconds total
+- [x] **LLM CALLS:** 4 analyzer agents + 1 evidence judge = 5 total calls
+- [x] **BREAKDOWN:**
+  - Demographics: 1 LLM call (~5s)
+  - Household: 1 LLM call (~5s)
+  - Interests: 1 LLM call (~5s)
+  - Purchase: 1 LLM call (~5s)
+  - Reconciliation: Semantic memory update (~5s)
+- [x] **USER EXPERIENCE:** Acceptable for manual testing, too slow for bulk processing
+- **Recommendation for Phase 5:** Batch optimization critical (Phase 2 Week 4-5) - Python achieves 8-10s for 1 email via batching
+
+**IndexedDB Persistence Validation:**
+- [x] **WRITE:** 4 items stored after classification
+  - 1 semantic memory (Finance and Insurance classification)
+  - 3 episodic memories (evidence from text)
+- [x] **NAMESPACE:** `['default_user', 'iab_taxonomy_profile']`
+- [x] **KEY PATTERN:** `semantic_purchase_intent_342_finance-and-insurance` (section_taxonomyId_slug)
+- [x] **STORAGE SIZE:** ~7KB for 1 classification + 3 episodic memories
+- [x] **READ SPEED:** <10ms to retrieve all 4 items
+- [x] **BROWSER RESTART:** Data survived browser close/reopen - persistence validated ✅
+- **Recommendation for Phase 5:** IndexedDB persistence is production-ready for consumer UI
+
+**Memory Reconciliation Validation:**
+- [x] **FIRST CLASSIFICATION:** 0.722 confidence (created new semantic memory)
+- [x] **SECOND CLASSIFICATION:** 0.783 confidence (confirming evidence boosted confidence)
+- [x] **BOOST:** +0.061 confidence increase (+8.4% relative)
+- [x] **MECHANISM:** Reconciliation layer detects existing classification, validates new evidence, increases confidence
+- [x] **CODE:** Memory reconciliation in update node
+- **Recommendation for Phase 5:** Memory reconciliation provides "learning over time" user experience - highlight this in consumer UI
+
+### 15.3 UI Component Validation
+
+**Analysis Runner Page (`/analyze`):**
+- [x] **TESTED:** Manual text classification flow
+- [x] **STEPS:** Enter text → Select LLM provider/model → Click "Run IAB Classification" → View results
+- [x] **RESULT:** Successfully classified Finance and Insurance (78.3% confidence)
+- [x] **UX FEEDBACK:**
+  - Loading state: Spinning indicator during 25-second processing
+  - Result display: Clear category, confidence, reasoning
+  - Error handling: Failed gracefully when API keys missing (first test)
+- **Recommendation for Phase 5:** Simplify for non-technical users - hide LLM provider selection, use smart defaults
+
+**Profile Page (`/profile`):**
+- [x] **TESTED:** Tiered classification display after classification
+- [x] **RESULT:** Showed 1 Purchase Intent classification correctly
+- [x] **DISPLAY:** Category name, confidence percentage, evidence count, tier path
+- [x] **PERFORMANCE:** Instant load (<10ms IndexedDB read)
+- **Recommendation for Phase 5:** Profile page pattern works well - adapt for consumer UI with more visual hierarchy
+
+**Classifications Page (`/classifications`):**
+- [x] **TESTED:** Browse all classifications view
+- [x] **INITIAL ISSUE:** Showed "0 of 0 classifications" (database name bug)
+- [x] **AFTER FIX:** Showed 1 classification correctly with all metadata
+- [x] **DISPLAY:** Cards view with section, category, confidence, timestamps
+- **Recommendation for Phase 5:** Card-based layout preferred over table for consumer UI - more mobile-friendly
+
+### 15.4 Testing Process Learnings
+
+**End-to-End Testing Checklist (ALL PASSED ✅):**
+1. ✅ Manual text classification
+2. ✅ IndexedDB persistence (data written)
+3. ✅ Profile page display (data read)
+4. ✅ Classifications page display (data read)
+5. ✅ Browser restart persistence (data survives)
+
+**Debugging Process:**
+- [x] **PLAYWRIGHT MCP TOOLS:** Used extensively for browser automation
+  - `browser_navigate`, `browser_snapshot`, `browser_click`, `browser_type`, `browser_wait_for`
+  - Enabled rapid testing without manual clicking
+- [x] **CONSOLE LOGS:** Critical for debugging classification flow
+  - LLM client initialization logs
+  - Evidence judge validation logs
+  - Memory reconciliation logs
+  - Store write/read logs
+- [x] **DATABASE NAME BUG:** Found via added debug logging in `store-client.ts:122-131`
+  - Logged namespace, item count, item keys
+  - Revealed data in different database than expected
+- **Recommendation for Phase 5:** Keep comprehensive logging in development build, disable in production via environment flag
+
+### 15.5 Development Workflow Insights
+
+**Server Restart Required for:**
+- [x] New API routes (e.g., `/api/llm-config/route.ts`)
+- [x] `.env.local` changes (though not in this case since we avoided `NEXT_PUBLIC_*`)
+- [x] Next.js hot reload doesn't catch new routes immediately
+
+**No Restart Required for:**
+- [x] React component changes (hot reload works)
+- [x] Client-side TypeScript changes (hot reload works)
+- [x] IndexedDB schema changes (runtime changes)
+
+**Git Workflow:**
+- [x] **PATTERN USED:** Made changes, tested, committed after validation
+- [x] **COMMIT MESSAGE:** Conventional commit format (`feat: description`)
+- **Recommendation for Phase 5:** Continue using feature branches, commit after each logical checkpoint (as per git-workflow-discipline skill)
+
+### 15.6 Phase 5 Consumer UI Recommendations
+
+**Based on Week 2 Testing:**
+
+**1. API Key Management UI (HIGH PRIORITY):**
+- Implement Settings page where users enter their own API keys
+- Support OpenAI, Anthropic, Google, Ollama (local)
+- Encrypt keys with wallet-derived encryption key (deterministic)
+- Store encrypted keys in localStorage (NOT IndexedDB - separate security domain)
+- Show key status indicator (green = configured, red = missing)
+- Pattern: `localStorage.setItem('ownyou_llm_keys_encrypted', encryptedBlob)`
+
+**2. Classification Progress UI:**
+- Current admin dashboard: Spinning indicator (generic)
+- Consumer UI: Show classification progress with 4 steps:
+  - "Analyzing demographics..." ✓
+  - "Analyzing household..." ✓
+  - "Analyzing interests..." ⏳
+  - "Analyzing purchase intent..." ⏳
+- Estimated time remaining based on benchmarks (5-7s per analyzer)
+- Cancel button to abort long-running classifications
+
+**3. Profile Visualization:**
+- Current admin dashboard: List view with cards
+- Consumer UI: Visual hierarchy with confidence-based sizing
+  - Larger cards = higher confidence
+  - Color coding by section (demographics=blue, interests=green, etc.)
+  - Drill-down to see supporting evidence
+- Mobile-first design (current dashboard is desktop-focused)
+
+**4. Data Management:**
+- Clear profile button (with confirmation dialog)
+- Export profile as JSON (for backup/portability)
+- Import profile from JSON (restore from backup)
+- Storage usage indicator (e.g., "Using 2.3 MB of 50 MB limit")
+
+**5. Performance Optimization:**
+- **CRITICAL:** Implement batch optimizer (Phase 2 Week 4-5)
+- Current: 25s for 1 email (sequential LLM calls)
+- Target: 8-10s for 1 email (Python baseline with batching)
+- Approach: Batch 20-30 emails, single LLM call per analyzer
+- User experience: Progress bar showing "Processing 15 of 100 emails..."
+
+### 15.7 Outstanding Questions for Phase 5
+
+**Authentication:**
+- [ ] How to derive encryption key from wallet signature? (deterministic derivation)
+- [ ] Which wallet protocols to support? (MetaMask, WalletConnect, others?)
+- [ ] Fallback for users without wallet? (Phase 5 decision)
+
+**OAuth Integration:**
+- [ ] Can browser extension OAuth tokens be shared with PWA? (security implications)
+- [ ] Fallback for Safari (no chrome.identity API)? (PKCE flow in-page?)
+- [ ] Token refresh strategy? (background refresh or on-demand?)
+
+**Batch Processing:**
+- [ ] What's acceptable latency for 100 emails? (2-3 minutes? 5 minutes?)
+- [ ] How to show progress without blocking UI? (Web Workers?)
+- [ ] Should we process incrementally or wait for full batch? (UX trade-off)
+
+---

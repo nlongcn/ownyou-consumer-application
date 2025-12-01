@@ -164,8 +164,8 @@ export interface ABTestingState {
   comparisonMetrics: ComparisonMetrics | null
 }
 
-// Available models for selection
-export const AVAILABLE_MODELS: ModelConfig[] = [
+// Fallback models for selection (used when API is not available)
+export const FALLBACK_MODELS: ModelConfig[] = [
   // OpenAI
   { provider: 'openai', model: 'gpt-4o-mini', displayName: 'GPT-4o-mini' },
   { provider: 'openai', model: 'gpt-4o', displayName: 'GPT-4o' },
@@ -180,3 +180,151 @@ export const AVAILABLE_MODELS: ModelConfig[] = [
   // DeepInfra
   { provider: 'deepinfra', model: 'meta-llama/Llama-3.3-70B-Instruct', displayName: 'Llama 3.3 70B (DeepInfra)' },
 ]
+
+// DEPRECATED: Use FALLBACK_MODELS instead. This alias exists for backwards compatibility.
+export const AVAILABLE_MODELS = FALLBACK_MODELS
+
+// API response type for /api/analyze/models
+export interface ModelsAPIResponse {
+  openai: string[]
+  anthropic: string[]
+  google: string[]
+  ollama?: string[]
+  groq?: string[]
+  deepinfra?: string[]
+  last_email_model?: string
+  last_taxonomy_model?: string
+}
+
+// Map API provider names to internal provider names
+const providerNameMap: Record<string, LLMProvider> = {
+  openai: 'openai',
+  anthropic: 'claude',
+  google: 'gemini',
+  ollama: 'openai', // Use OpenAI-compatible format
+  groq: 'groq',
+  deepinfra: 'deepinfra',
+}
+
+// Map provider to display name prefix
+const providerDisplayPrefix: Record<string, string> = {
+  openai: '',
+  anthropic: '',
+  google: '',
+  groq: '(Groq) ',
+  deepinfra: '(DeepInfra) ',
+}
+
+/**
+ * Fetch available models from the API
+ * Returns models grouped by provider, suitable for 4x dropdowns
+ */
+export async function fetchAvailableModels(forceRefresh = false): Promise<ModelConfig[]> {
+  try {
+    console.log('[A/B Testing] Fetching models from /api/analyze/models...')
+    const url = `/api/analyze/models${forceRefresh ? '?refresh=true' : ''}`
+    const response = await fetch(url)
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch models: ${response.status}`)
+    }
+
+    const data: ModelsAPIResponse = await response.json()
+    const models: ModelConfig[] = []
+
+    // OpenAI models
+    if (data.openai?.length > 0) {
+      data.openai.forEach(model => {
+        models.push({
+          provider: 'openai',
+          model,
+          displayName: model,
+        })
+      })
+      console.log(`[A/B Testing] Loaded ${data.openai.length} OpenAI models`)
+    }
+
+    // Anthropic/Claude models
+    if (data.anthropic?.length > 0) {
+      data.anthropic.forEach(model => {
+        // Format: claude-3-5-sonnet-20241022 -> Claude 3.5 Sonnet
+        const displayName = model
+          .replace('claude-', 'Claude ')
+          .replace(/-(\d{8})$/, '')
+          .replace(/-/g, ' ')
+          .replace(/(\d+) (\d+)/, '$1.$2')
+        models.push({
+          provider: 'claude',
+          model,
+          displayName: displayName || model,
+        })
+      })
+      console.log(`[A/B Testing] Loaded ${data.anthropic.length} Claude models`)
+    }
+
+    // Google/Gemini models
+    if (data.google?.length > 0) {
+      data.google.forEach(model => {
+        // Format: gemini-2.0-flash -> Gemini 2.0 Flash
+        const displayName = model
+          .replace('gemini-', 'Gemini ')
+          .replace(/-/g, ' ')
+          .replace(/(\d+)\.(\d+)/, '$1.$2')
+        models.push({
+          provider: 'gemini',
+          model,
+          displayName: displayName || model,
+        })
+      })
+      console.log(`[A/B Testing] Loaded ${data.google.length} Google models`)
+    }
+
+    // Groq models
+    if (data.groq?.length > 0) {
+      data.groq.forEach(model => {
+        models.push({
+          provider: 'groq',
+          model,
+          displayName: `${model} (Groq)`,
+        })
+      })
+      console.log(`[A/B Testing] Loaded ${data.groq.length} Groq models`)
+    }
+
+    // DeepInfra models
+    if (data.deepinfra?.length > 0) {
+      data.deepinfra.forEach(model => {
+        // Format: meta-llama/Llama-3.3-70B-Instruct -> Llama 3.3 70B
+        const shortName = model.split('/').pop() || model
+        const displayName = shortName
+          .replace(/-Instruct$/, '')
+          .replace(/-/g, ' ')
+        models.push({
+          provider: 'deepinfra',
+          model,
+          displayName: `${displayName} (DeepInfra)`,
+        })
+      })
+      console.log(`[A/B Testing] Loaded ${data.deepinfra.length} DeepInfra models`)
+    }
+
+    // Ollama models (if any local models)
+    if (data.ollama?.length > 0) {
+      data.ollama.forEach(model => {
+        models.push({
+          provider: 'openai', // Ollama uses OpenAI-compatible format
+          model,
+          displayName: `${model} (Ollama)`,
+        })
+      })
+      console.log(`[A/B Testing] Loaded ${data.ollama.length} Ollama models`)
+    }
+
+    console.log(`[A/B Testing] Total models loaded: ${models.length}`)
+    return models.length > 0 ? models : FALLBACK_MODELS
+
+  } catch (error) {
+    console.error('[A/B Testing] Failed to fetch models, using fallback:', error)
+    return FALLBACK_MODELS
+  }
+}

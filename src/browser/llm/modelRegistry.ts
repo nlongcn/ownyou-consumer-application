@@ -103,15 +103,11 @@ export function getContextWindowOpenai(
   //     # When they do, access it here and cache it
   // except Exception as e:
   //     logger.debug(f"OpenAI models API call failed: {e}")
-  try {
-    const modelInfo = client.models.retrieve(modelName)
-    // OpenAI doesn't expose context_length yet
-    // When they do, access it here and cache it
-  } catch (error) {
-    if (logger) {
-      logger.debug(`OpenAI models API call failed: ${error}`)
-    }
-  }
+
+  // REMOVED: client.models.retrieve() call was hanging without await
+  // OpenAI doesn't expose context_length in models API yet
+  // When they do, this should be: await client.models.retrieve(modelName)
+  // For now, skip the API call and use documented limits directly
 
   // Python lines 48-70: Fallback to documented values
   // Source: https://platform.openai.com/docs/models (verified 2025-01-09)
@@ -697,6 +693,206 @@ export function getModelContextWindow(
 }
 
 // ============================================================================
+// GROQ AND DEEPINFRA FUNCTIONS (Added Nov 2025)
+// ============================================================================
+
+/**
+ * Get context window for Groq model
+ *
+ * Groq provides fast inference on open-source models.
+ * Source: https://console.groq.com/docs/models
+ *
+ * @param client - Groq client instance (unused, for API consistency)
+ * @param modelName - Model identifier (e.g., "llama-3.3-70b-versatile")
+ * @param logger - Logger instance (optional)
+ * @returns Context window size in tokens
+ */
+export function getContextWindowGroq(
+  client: any,
+  modelName: string,
+  logger?: Logger
+): number | null {
+  const DOCUMENTED_LIMITS: ModelLimits = {
+    'llama-3.3-70b-versatile': 128000,
+    'llama-3.1-70b-versatile': 128000,
+    'llama-3.1-8b-instant': 128000,
+    'llama3-70b-8192': 8192,
+    'llama3-8b-8192': 8192,
+    'mixtral-8x7b-32768': 32768,
+    'gemma2-9b-it': 8192,
+    'llama-guard-3-8b': 8192,
+  }
+
+  let contextWindow: number | null = null
+
+  if (modelName in DOCUMENTED_LIMITS) {
+    contextWindow = DOCUMENTED_LIMITS[modelName]
+  } else {
+    for (const [knownModel, limit] of Object.entries(DOCUMENTED_LIMITS)) {
+      if (modelName.startsWith(knownModel)) {
+        contextWindow = limit
+        break
+      }
+    }
+
+    if (contextWindow === null) {
+      if (logger) {
+        logger.warning(
+          `Unknown Groq model '${modelName}' - using fallback 32K context window.`
+        )
+      }
+      contextWindow = 32768
+    }
+  }
+
+  if (logger) {
+    logger.debug(
+      `Groq context window for ${modelName}: ${contextWindow.toLocaleString()} tokens`
+    )
+  }
+
+  return contextWindow
+}
+
+/**
+ * Get max completion tokens for Groq model
+ *
+ * @param client - Groq client instance (unused, for API consistency)
+ * @param modelName - Model identifier
+ * @param logger - Logger instance (optional)
+ * @returns Max completion tokens for this model
+ */
+export function getMaxCompletionTokensGroq(
+  client: any,
+  modelName: string,
+  logger?: Logger
+): number {
+  const DOCUMENTED_LIMITS: ModelLimits = {
+    'llama-3.3-70b-versatile': 8192,
+    'llama-3.1-70b-versatile': 8192,
+    'llama-3.1-8b-instant': 8192,
+    'llama3-70b-8192': 8192,
+    'llama3-8b-8192': 8192,
+    'mixtral-8x7b-32768': 4096,
+    'gemma2-9b-it': 4096,
+    'llama-guard-3-8b': 4096,
+  }
+
+  let maxTokens = DOCUMENTED_LIMITS[modelName] || 4096
+
+  if (logger) {
+    logger.debug(
+      `Max completion tokens for ${modelName}: ${maxTokens.toLocaleString()} tokens`
+    )
+  }
+
+  return maxTokens
+}
+
+/**
+ * Get context window for DeepInfra model
+ *
+ * DeepInfra provides cost-effective inference with zero data retention.
+ * Source: https://deepinfra.com/models
+ *
+ * @param client - DeepInfra client instance (unused, for API consistency)
+ * @param modelName - Model identifier (e.g., "meta-llama/Llama-3.3-70B-Instruct")
+ * @param logger - Logger instance (optional)
+ * @returns Context window size in tokens
+ */
+export function getContextWindowDeepInfra(
+  client: any,
+  modelName: string,
+  logger?: Logger
+): number | null {
+  const DOCUMENTED_LIMITS: ModelLimits = {
+    'meta-llama/Llama-3.3-70B-Instruct': 128000,
+    'meta-llama/Llama-3.1-70B-Instruct': 128000,
+    'meta-llama/Llama-3.1-8B-Instruct': 128000,
+    'meta-llama/Meta-Llama-3-70B-Instruct': 8192,
+    'meta-llama/Meta-Llama-3-8B-Instruct': 8192,
+    'Qwen/Qwen2.5-72B-Instruct': 128000,
+    'Qwen/Qwen2.5-7B-Instruct': 128000,
+    'mistralai/Mixtral-8x22B-Instruct-v0.1': 65536,
+    'mistralai/Mixtral-8x7B-Instruct-v0.1': 32768,
+    'mistralai/Mistral-7B-Instruct-v0.3': 32768,
+    'microsoft/WizardLM-2-8x22B': 65536,
+    'google/gemma-2-27b-it': 8192,
+    'google/gemma-2-9b-it': 8192,
+  }
+
+  let contextWindow: number | null = null
+
+  if (modelName in DOCUMENTED_LIMITS) {
+    contextWindow = DOCUMENTED_LIMITS[modelName]
+  } else {
+    for (const [knownModel, limit] of Object.entries(DOCUMENTED_LIMITS)) {
+      if (modelName.includes(knownModel) || knownModel.includes(modelName)) {
+        contextWindow = limit
+        break
+      }
+    }
+
+    if (contextWindow === null) {
+      if (logger) {
+        logger.warning(
+          `Unknown DeepInfra model '${modelName}' - using fallback 32K context window.`
+        )
+      }
+      contextWindow = 32768
+    }
+  }
+
+  if (logger) {
+    logger.debug(
+      `DeepInfra context window for ${modelName}: ${contextWindow.toLocaleString()} tokens`
+    )
+  }
+
+  return contextWindow
+}
+
+/**
+ * Get max completion tokens for DeepInfra model
+ *
+ * @param client - DeepInfra client instance (unused, for API consistency)
+ * @param modelName - Model identifier
+ * @param logger - Logger instance (optional)
+ * @returns Max completion tokens for this model
+ */
+export function getMaxCompletionTokensDeepInfra(
+  client: any,
+  modelName: string,
+  logger?: Logger
+): number {
+  const DOCUMENTED_LIMITS: ModelLimits = {
+    'meta-llama/Llama-3.3-70B-Instruct': 8192,
+    'meta-llama/Llama-3.1-70B-Instruct': 8192,
+    'meta-llama/Llama-3.1-8B-Instruct': 8192,
+    'meta-llama/Meta-Llama-3-70B-Instruct': 4096,
+    'meta-llama/Meta-Llama-3-8B-Instruct': 4096,
+    'Qwen/Qwen2.5-72B-Instruct': 8192,
+    'Qwen/Qwen2.5-7B-Instruct': 8192,
+    'mistralai/Mixtral-8x22B-Instruct-v0.1': 4096,
+    'mistralai/Mixtral-8x7B-Instruct-v0.1': 4096,
+    'mistralai/Mistral-7B-Instruct-v0.3': 4096,
+    'microsoft/WizardLM-2-8x22B': 4096,
+    'google/gemma-2-27b-it': 4096,
+    'google/gemma-2-9b-it': 4096,
+  }
+
+  let maxTokens = DOCUMENTED_LIMITS[modelName] || 4096
+
+  if (logger) {
+    logger.debug(
+      `Max completion tokens for ${modelName}: ${maxTokens.toLocaleString()} tokens`
+    )
+  }
+
+  return maxTokens
+}
+
+// ============================================================================
 // EXPORTS (Python lines 422-430: __all__ list)
 // ============================================================================
 
@@ -706,8 +902,12 @@ export function getModelContextWindow(
 //     'get_context_window_openai',
 //     'get_context_window_claude',
 //     'get_context_window_google',
+//     'get_context_window_groq',
+//     'get_context_window_deepinfra',
 //     'get_max_completion_tokens_openai',
 //     'get_max_completion_tokens_claude',
 //     'get_max_completion_tokens_google',
+//     'get_max_completion_tokens_groq',
+//     'get_max_completion_tokens_deepinfra',
 //     'get_model_context_window',
 // ]

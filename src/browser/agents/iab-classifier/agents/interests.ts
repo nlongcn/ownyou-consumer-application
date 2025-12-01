@@ -242,12 +242,21 @@ IMPORTANT:
 
           if (email_numbers.length > 0 && email_numbers.every((n: number) => n in email_number_to_id)) { // Python line 245
             classification.email_ids = email_numbers.map((n: number) => email_number_to_id[n]) // Python line 246
+
+            // FIX: Explode classifications with multiple email_ids into separate classifications (one per email)
+            // This ensures each email gets its own classification with a single email_id field
+            for (const email_id of classification.email_ids) {
+              validated_classifications.push({
+                ...classification,
+                email_id,  // Singular email_id for this specific email
+                email_ids: [email_id],  // Keep array for backward compatibility
+              })
+            }
           } else {                                                             // Python line 247
             console.warn(`Classification missing email_numbers or invalid: ${JSON.stringify(classification)}`) // Python line 248
-            classification.email_ids = []                                      // Python line 249
+            // For classifications without valid email tracking, skip them (don't add to validated list)
+            // This prevents the "assign to all emails" bug in the API route
           }
-
-          validated_classifications.push(classification)                       // Python line 251
         }
       }
 

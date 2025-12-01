@@ -1,1 +1,0 @@
-self.__REACT_LOADABLE_MANIFEST="{\"../../node_modules/@langchain/core/dist/prompts/base.js -> ./few_shot.js\":{\"id\":\"../../node_modules/@langchain/core/dist/prompts/base.js -> ./few_shot.js\",\"files\":[]},\"../../node_modules/@langchain/core/dist/prompts/base.js -> ./prompt.js\":{\"id\":\"../../node_modules/@langchain/core/dist/prompts/base.js -> ./prompt.js\",\"files\":[]}}"

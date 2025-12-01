@@ -124,22 +124,27 @@ export class OpenAIClient extends BaseLLMClient {
   constructor(config: Record<string, any>) {
     // Python line 38: super().__init__(config)
     super(config)
+    console.log('REAL OpenAIClient instantiated')
 
     // Python lines 41-42: Get config from dict or fallback to environment variables
-    // NOTE: Universal adaptation - support both browser (import.meta.env) and Node.js (process.env)
+    // NOTE: Self-sovereign architecture - API keys MUST be provided via config, NOT bundled in client
+    // In browser PWA: User provides their own API key via localStorage or settings UI
+    // In Node.js: Use process.env (server-side only)
+    // NEVER use NEXT_PUBLIC_* for API keys (exposes in client bundle - security violation!)
+
     // self.api_key = config.get('openai_api_key') or os.getenv('OPENAI_API_KEY')
     this.apiKey =
-      config.openai_api_key ||
-      (typeof import.meta !== 'undefined' && import.meta.env?.VITE_OPENAI_API_KEY) ||
-      (typeof process !== 'undefined' && process.env?.OPENAI_API_KEY) ||
+      config.openai_api_key ||  // User-provided via config (self-sovereign)
+      (typeof import.meta !== 'undefined' && import.meta.env?.VITE_OPENAI_API_KEY) ||  // Vite (development)
+      (typeof process !== 'undefined' && process.env?.OPENAI_API_KEY) ||  // Node.js server-side
       ''
 
     // self.default_model = config.get('openai_model') or os.getenv('OPENAI_MODEL')
     this.defaultModel =
-      config.openai_model ||
-      (typeof import.meta !== 'undefined' && import.meta.env?.VITE_OPENAI_MODEL) ||
-      (typeof process !== 'undefined' && process.env?.OPENAI_MODEL) ||
-      ''
+      config.openai_model ||  // User-provided via config
+      (typeof import.meta !== 'undefined' && import.meta.env?.VITE_OPENAI_MODEL) ||  // Vite
+      (typeof process !== 'undefined' && process.env?.OPENAI_MODEL) ||  // Node.js
+      'gpt-4o-mini'  // Default fallback (user still needs to provide API key)
 
     // Python lines 44-45: Validate model
     // if not self.default_model:
@@ -170,26 +175,21 @@ export class OpenAIClient extends BaseLLMClient {
       ? parseFloat(temperatureStr)
       : 0.7
 
-    // Python line 55: self.performance_logger = get_performance_logger(f"{__name__}.OpenAIClient")
-    // TypeScript: Not used in this implementation
-    // this.performanceLogger = this.logger
-
-    // Python lines 57-58: API key validation
-    // if not self.api_key:
-    //     raise ValueError("OpenAI API key is required")
-    if (!this.apiKey) {
-      throw new Error('OpenAI API key is required')
-    }
-
     // Python line 61: Initialize OpenAI client
     // self.client = openai.OpenAI(api_key=self.api_key)
-    this.client = new OpenAI({ apiKey: this.apiKey, dangerouslyAllowBrowser: true })
+    this.client = new OpenAI({
+      apiKey: this.apiKey,
+      dangerouslyAllowBrowser: true,
+      timeout: 120000,  // 120 seconds (2 minutes) - increased for gpt-5-nano and slower models
+      maxRetries: 2     // Retry failed requests twice
+    })
 
     // Python line 64: Verify connection
     // self._verify_connection()
     // NOTE: In browser context, this needs to be async, so we call it separately
     // Constructor cannot be async, so this must be called after instantiation
   }
+
 
   // ============================================================================
   // PUBLIC PROPERTIES
@@ -537,7 +537,11 @@ export class OpenAIClient extends BaseLLMClient {
 
       // Python line 215: API call
       // response = self.client.chat.completions.create(**kwargs)
-      let response = await this.client.chat.completions.create(kwargs)
+      // Pass timeout explicitly in options parameter for browser compatibility
+      let response = await this.client.chat.completions.create(kwargs, {
+        timeout: 120000,  // 120 seconds - required for slower models like gpt-5-nano
+        maxRetries: 2
+      })
 
       // Python line 217: Calculate processing time
       // processing_time = time.time() - start_time

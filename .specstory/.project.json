@@ -2,7 +2,7 @@
   "workspace_id": "21de-121a-b4e1-628d",
   "workspace_id_at": "2025-11-05T11:50:49.318Z",
   "project_name": "email-parser-refactored",
-  "cloud_sync": false,
+  "cloud_sync": true,
   "git_id": "d847-fa6e-4d90-0d9a",
   "git_id_at": "2025-11-05T11:50:49.319Z"
 }

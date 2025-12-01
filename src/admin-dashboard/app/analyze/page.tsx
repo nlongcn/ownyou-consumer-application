@@ -11,6 +11,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { getBrowserClassifier, type ClassificationResult } from '@/lib/browser-classifier'
 import { GmailClient, type GmailMessage } from '@/lib/gmail-client'
 import { OutlookClient, type OutlookMessage } from '@/lib/outlook-client'
@@ -18,7 +19,7 @@ import { getProgressTracker, type ProgressUpdate } from '@/lib/progress-tracker'
 
 type Mode = 'manual' | 'email'
 type Provider = 'gmail' | 'outlook' | 'both'
-type LLMProvider = 'openai' | 'claude' | 'gemini' | 'ollama'
+type LLMProvider = 'openai' | 'claude' | 'gemini' | 'ollama' | 'groq' | 'deepinfra'
 
 interface EmailMessage {
   id: string
@@ -38,11 +39,13 @@ function getCookie(name: string): string | undefined {
 }
 
 export default function AnalyzePage() {
+  const searchParams = useSearchParams()
+
   // Mode selection
   const [mode, setMode] = useState<Mode>('email')
 
-  // User settings
-  const [userId, setUserId] = useState('default_user')
+  // User settings - initialize from URL parameter
+  const [userId, setUserId] = useState(searchParams.get('user_id') || 'default_user')
 
   // Manual text mode
   const [text, setText] = useState('')
@@ -264,7 +267,16 @@ export default function AnalyzePage() {
     setResult(null)
 
     try {
-      // Use browser classifier instead of server API
+      // Get LLM config from localStorage (client-side, self-sovereign)
+      const { getLLMConfig, hasAnyAPIKey } = await import('@/lib/llm-config')
+      const llmConfig = getLLMConfig()
+
+      // Check if user has configured API keys
+      if (!hasAnyAPIKey(llmConfig)) {
+        throw new Error('No LLM API keys configured. Please add your API keys to .env.local (NEXT_PUBLIC_OPENAI_API_KEY, etc.) or configure them in Settings (coming soon).')
+      }
+
+      // Use browser classifier with client-side config
       const classifier = getBrowserClassifier(userId)
       const classificationResult = await classifier.classifyText({
         user_id: userId,
@@ -273,6 +285,7 @@ export default function AnalyzePage() {
         source_item_id: `manual_${Date.now()}`,
         llm_provider: llmProvider,
         llm_model: llmModel,
+        llm_config: llmConfig[llmProvider], // Pass provider-specific config
       })
 
       setResult(classificationResult)
@@ -442,6 +455,8 @@ export default function AnalyzePage() {
                 <option value="claude">Anthropic (Claude)</option>
                 <option value="gemini">Google (Gemini)</option>
                 <option value="ollama">Ollama (Local)</option>
+                <option value="groq">Groq (Fastest)</option>
+                <option value="deepinfra">DeepInfra (ZDR Default)</option>
               </select>
             </div>
 

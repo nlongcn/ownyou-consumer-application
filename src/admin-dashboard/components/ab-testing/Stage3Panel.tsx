@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { ModelConfig, ModelResults, StageStatus, AVAILABLE_MODELS } from '@/lib/ab-testing/types'
 
 interface Stage3PanelProps {
@@ -13,14 +13,9 @@ interface Stage3PanelProps {
   onExport: () => void
   disabled?: boolean
   progress?: Map<string, 'started' | 'completed' | 'error'>
+  availableModels?: ModelConfig[]  // Dynamic models from API
+  modelsLoading?: boolean
 }
-
-// Group models by provider
-const modelsByProvider = AVAILABLE_MODELS.reduce((acc, model) => {
-  if (!acc[model.provider]) acc[model.provider] = []
-  acc[model.provider].push(model)
-  return acc
-}, {} as Record<string, ModelConfig[]>)
 
 export function Stage3Panel({
   status,
@@ -32,9 +27,20 @@ export function Stage3Panel({
   onExport,
   disabled = false,
   progress,
+  availableModels = AVAILABLE_MODELS,
+  modelsLoading = false,
 }: Stage3PanelProps) {
   const [isClassifying, setIsClassifying] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Group models by provider (dynamic)
+  const modelsByProvider = useMemo(() => {
+    return availableModels.reduce((acc, model) => {
+      if (!acc[model.provider]) acc[model.provider] = []
+      acc[model.provider].push(model)
+      return acc
+    }, {} as Record<string, ModelConfig[]>)
+  }, [availableModels])
 
   const handleClassify = async () => {
     if (selectedModels.length === 0) {

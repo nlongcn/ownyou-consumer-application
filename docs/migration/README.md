@@ -51,6 +51,39 @@ This directory contains documentation from all Python→TypeScript migration eff
 
 ---
 
+## Recent Updates
+
+### 2025-11-12: Gap Closure Research Complete
+**Document**: [2025-11-12-gap-closure-research-FINAL.md](2025-11-12-gap-closure-research-FINAL.md) ⭐
+
+Comprehensive code-first analysis of TypeScript implementation gaps. Key findings:
+
+**Migration Status**: 95% complete for core functionality
+- ✅ **4/6 "gaps" were NOT gaps**: Ollama fully implemented, Bayesian formulas identical, frontend batching intentional, InMemoryStore appropriate
+- ⚠️ **2/6 are architectural choices**: Frontend vs internal looping, deployment-specific storage
+- ❌ **1 real gap**: Browser PWA shell (Phase 2 work, not migration failure)
+
+**Critical Lesson**: **Always inspect code before declaring gaps**. Initial specification-based assessment was incorrect because:
+- Ollama claimed missing → Actually fully implemented in `llm/ollamaClient.ts`
+- Bayesian formulas "simplified" → Actually IDENTICAL to Python (`confidence.ts:56-69`)
+- Different implementations ≠ bugs → Often intentional architectural choices for web deployment
+
+**Methodology Error**: Compared specification documents instead of actual code. Corrected approach: Code-first inspection with file paths, line numbers, and "Why is this different?" analysis.
+
+### 2025-11-12: Concurrent Email Summarization Bug Fix
+**Document**: [2025-11-12-concurrent-summarization-bugfix.md](2025-11-12-concurrent-summarization-bugfix.md)
+
+Fixed critical data flow regression where LLM summaries from Stage 2 (Concurrent Summarization) were not being passed to Stage 3 (Batch Classification). The fix was a one-line change adding `summary: email.summary` to the classification request payload.
+
+**Evidence**: Varying summary lengths (255, 180, 187, 109, 112 chars) after fix vs uniform 500 chars before fix confirms LLM summaries now flow correctly through the 3-stage pipeline.
+
+**Files Archived** (2025-11-12):
+- `CLAUDE_CLIENT_EXTRACTION.md` → `archive/2025-01-07-planning-artifacts/`
+- `OPENAI_CLIENT_EXTRACTION.md` → `archive/2025-01-07-planning-artifacts/`
+- Incorrect gap analysis documents (wrong methodology, wrong dates)
+
+---
+
 ## Active Migration Documents
 
 ### Verification Documents (Proof of Correct Porting)
@@ -68,9 +101,7 @@ This directory contains documentation from all Python→TypeScript migration eff
 - `STATE_VERIFICATION.md`
 - `HELPERS_VERIFICATION.md`
 
-**Missing Verification Pairs:**
-- `CLAUDE_CLIENT_EXTRACTION.md` (no verification created)
-- `OPENAI_CLIENT_EXTRACTION.md` (no verification created)
+**All verification pairs complete** ✅
 
 ---
 
@@ -150,4 +181,4 @@ This directory contains documentation from all Python→TypeScript migration eff
 
 **Project Documentation**: `/CLAUDE.md` (lines 287-378)
 **Migration Skill**: `/.claude/skills/python-typescript-migration/SKILL.md`
-**Last Updated**: 2025-01-07
+**Last Updated**: 2025-11-12

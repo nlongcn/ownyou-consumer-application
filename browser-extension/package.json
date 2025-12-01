@@ -1,0 +1,14 @@
+{
+  "name": "ownyou-browser-extension",
+  "version": "1.0.0",
+  "description": "OwnYou browser extension for OAuth token management and browsing classification",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'No build step required for now'",
+    "package": "zip -r ownyou-extension.zip . -x '*.git*' -x 'node_modules/*' -x 'package*.json'"
+  },
+  "dependencies": {
+    "@azure/msal-node": "^2.18.0"
+  },
+  "devDependencies": {}
+}

@@ -393,22 +393,26 @@ export async function reconcileEvidenceNode(
   memoryManager: MemoryManager
 ): Promise<Partial<typeof WorkflowState.State>> {
   try {
-    // Python lines 45-49: Get current email
-    const email = getCurrentEmail(state)
+    // BATCH PROCESSING FIX: Process ALL emails in the batch, not just current_email_index
+    // The TypeScript workflow uses batch processing (all emails in one LLM call),
+    // but Python workflow processes one email at a time in a loop.
+    //
+    // Since analyzers already processed ALL emails and added email_id to each classification,
+    // we need to reconcile classifications FOR EACH EMAIL separately.
 
-    if (email === null) {
-      console.warn('No email for reconciliation')
+    const emails = state.emails || []
+
+    console.log('[RECONCILE] Starting batch reconciliation')
+    console.log(`[RECONCILE] Processing ${emails.length} emails`)
+
+    if (emails.length === 0) {
+      console.warn('No emails for reconciliation')
       return {}
     }
 
-    // Python lines 51-52
-    const email_id = email.id || 'unknown'
-    console.info(`Reconciling evidence for email: ${email_id}`)
-
-    // Python lines 54-65: Collect all taxonomy selections from analyzers
+    // Collect all taxonomy selections from analyzers (already contains classifications for ALL emails)
     const all_selections: TaxonomySelection[] = []
 
-    // Type assertions: State stores these as Record<string, any> but they're actually TaxonomySelection objects
     const demographics = (state.demographics_results || []) as TaxonomySelection[]
     const household = (state.household_results || []) as TaxonomySelection[]
     const interests = (state.interests_results || []) as TaxonomySelection[]
@@ -419,10 +423,8 @@ export async function reconcileEvidenceNode(
     all_selections.push(...interests)
     all_selections.push(...purchase)
 
-    // Python line 67
-    console.info(`Reconciling ${all_selections.length} taxonomy selections`)
+    console.info(`[RECONCILE] Total ${all_selections.length} taxonomy selections to reconcile`)
 
-    // Python lines 69-72: No selections to reconcile
     if (all_selections.length === 0) {
       console.warn('No taxonomy selections to reconcile')
       return {
@@ -430,28 +432,57 @@ export async function reconcileEvidenceNode(
       }
     }
 
-    // Python lines 74-79: Use Phase 2 reconciliation logic
-    const reconciled_memories = await reconcileBatchEvidence(
-      memoryManager,
-      all_selections,
-      email_id
-    )
+    // GROUP classifications by email_id and reconcile each email's classifications separately
+    // This is critical because each email should update memories independently
+    const classificationsByEmail = new Map<string, TaxonomySelection[]>()
 
-    // Python line 81
-    console.info(`Reconciliation complete: ${reconciled_memories.length} memories updated`)
+    for (const selection of all_selections) {
+      // Each classification has email_ids array from the analyzer
+      // For batch processing, each classification should have exactly ONE email_id
+      const email_ids = (selection as any).email_ids || []
 
-    // Python lines 83-89: Log confidence changes
-    for (const memory of reconciled_memories) {
+      if (!email_ids || email_ids.length === 0) {
+        console.warn(`Classification missing email_ids: ${JSON.stringify(selection).substring(0, 200)}`)
+        continue
+      }
+
+      // Process each email_id (usually just one per classification in batch mode)
+      for (const email_id of email_ids) {
+        if (!classificationsByEmail.has(email_id)) {
+          classificationsByEmail.set(email_id, [])
+        }
+        classificationsByEmail.get(email_id)!.push(selection)
+      }
+    }
+
+    console.info(`[RECONCILE] Grouped classifications for ${classificationsByEmail.size} emails`)
+
+    // Reconcile each email's classifications separately
+    const all_reconciled_memories: SemanticMemory[] = []
+
+    for (const [email_id, email_selections] of classificationsByEmail) {
+      console.info(`[RECONCILE] Reconciling ${email_selections.length} selections for email ${email_id}`)
+
+      const reconciled_memories = await reconcileBatchEvidence(
+        memoryManager,
+        email_selections,
+        email_id
+      )
+
+      all_reconciled_memories.push(...reconciled_memories)
+    }
+
+    console.info(`[RECONCILE] Batch reconciliation complete: ${all_reconciled_memories.length} total memories updated`)
+
+    // Log summary by email
+    for (const [email_id, email_selections] of classificationsByEmail) {
       console.debug(
-        `  ${memory.value}: ` +
-        `confidence=${memory.confidence.toFixed(3)}, ` +
-        `evidence_count=${memory.evidence_count}`
+        `  Email ${email_id}: ${email_selections.length} classifications reconciled`
       )
     }
 
-    // Python lines 91-94: Update state
     return {
-      reconciliation_data: reconciled_memories,
+      reconciliation_data: all_reconciled_memories,
     }
 
   } catch (error) {

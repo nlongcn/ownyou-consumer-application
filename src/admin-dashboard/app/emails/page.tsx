@@ -40,6 +40,8 @@ interface ModelsResponse {
   anthropic: string[]
   google: string[]
   ollama?: string[]
+  groq?: string[]
+  deepinfra?: string[]
   last_email_model: string
   last_taxonomy_model: string
   last_max_emails?: number
@@ -274,6 +276,8 @@ export default function EmailDownloadPage() {
         anthropic: ['claude-3-7-sonnet-20250219', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],
         google: ['gemini-2.0-flash-exp', 'gemini-1.5-flash', 'gemini-1.5-pro'],
         ollama: [],
+        groq: ['llama-3.3-70b-versatile', 'llama-3.1-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768'],
+        deepinfra: ['meta-llama/Llama-3.3-70B-Instruct', 'meta-llama/Llama-3.1-70B-Instruct', 'meta-llama/Llama-3.1-8B-Instruct', 'Qwen/Qwen2.5-72B-Instruct'],
         last_email_model: 'openai:gpt-4o-mini',
         last_taxonomy_model: 'openai:gpt-4o-mini'
       }
@@ -462,7 +466,36 @@ export default function EmailDownloadPage() {
         const oauthClient = getOutlookOAuthClient()
         const client = await oauthClient.getClient() // Auto-refreshes token if needed
 
-        const response = await client.listMessages(undefined, maxEmails)
+        // Debug: Check which user is authenticated
+        console.log('[Email Download] Checking authenticated Outlook user...')
+        try {
+          const user = await client.getCurrentUser()
+          console.log('[Email Download] Authenticated as:', user.mail || user.userPrincipalName)
+        } catch (err) {
+          console.warn('[Email Download] Could not get user info:', err)
+        }
+
+        // Debug: List mail folders to see message counts
+        console.log('[Email Download] Checking Outlook mailbox folders...')
+        try {
+          const folders = await client.listMailFolders()
+          console.log('[Email Download] Outlook folders:', folders.map(f => ({
+            name: f.displayName,
+            total: f.totalItemCount,
+            unread: f.unreadItemCount
+          })))
+        } catch (err) {
+          console.warn('[Email Download] Could not list folders:', err)
+        }
+
+        // Try inbox first, then fall back to all messages
+        let response = await client.listMessages(undefined, maxEmails)
+
+        // If inbox returns 0, try /me/messages (all folders) as fallback
+        if (!response.value || response.value.length === 0) {
+          console.log('[Email Download] Inbox returned 0 emails, trying /me/messages fallback...')
+          response = await client.listAllMessages(maxEmails)
+        }
 
         if (!response.value || response.value.length === 0) {
           setLoading(false)
@@ -756,10 +789,31 @@ ${email.body}`
             const llmConfig = getLLMConfig()
 
             // Prepare LLM config for workflow (workflow expects this structure)
+            // Get API key based on provider
+            let apiKey = ''
+            let temperature = 1.0
+            switch (llmProvider) {
+              case 'openai':
+                apiKey = llmConfig.openai.api_key
+                temperature = llmConfig.openai.temperature
+                break
+              case 'google':
+                apiKey = llmConfig.google.api_key
+                break
+              case 'groq':
+                apiKey = llmConfig.groq.api_key
+                break
+              case 'deepinfra':
+                apiKey = llmConfig.deepinfra.api_key
+                break
+              case 'anthropic':
+                apiKey = llmConfig.anthropic.api_key
+                break
+            }
             const workflowLLMConfig = {
-              api_key: llmProvider === 'openai' ? llmConfig.openai.api_key : llmConfig.google.api_key,
+              api_key: apiKey,
               model: llmModel,
-              temperature: llmProvider === 'openai' ? llmConfig.openai.temperature : 1.0,
+              temperature: temperature,
             }
 
             // Prepare workflow input (Python format)
@@ -1175,6 +1229,24 @@ ${email.body}`
                       ))}
                     </optgroup>
                   )}
+                  {models.groq && models.groq.length > 0 && (
+                    <optgroup label="Groq (Fastest)">
+                      {models.groq.map(model => (
+                        <option key={model} value={`groq:${model}`}>
+                          {model}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {models.deepinfra && models.deepinfra.length > 0 && (
+                    <optgroup label="DeepInfra (ZDR Default)">
+                      {models.deepinfra.map(model => (
+                        <option key={model} value={`deepinfra:${model}`}>
+                          {model}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
                 </>
               )}
             </select>
@@ -1222,6 +1294,24 @@ ${email.body}`
                     <optgroup label="Ollama (Local)">
                       {models.ollama.map(model => (
                         <option key={model} value={`ollama:${model}`}>
+                          {model}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {models.groq && models.groq.length > 0 && (
+                    <optgroup label="Groq (Fastest)">
+                      {models.groq.map(model => (
+                        <option key={model} value={`groq:${model}`}>
+                          {model}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {models.deepinfra && models.deepinfra.length > 0 && (
+                    <optgroup label="DeepInfra (ZDR Default)">
+                      {models.deepinfra.map(model => (
+                        <option key={model} value={`deepinfra:${model}`}>
                           {model}
                         </option>
                       ))}

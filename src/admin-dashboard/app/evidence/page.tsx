@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { IndexedDBStore } from '@browser/store/IndexedDBStore'
 
 interface Evidence {
   taxonomy_id: number
@@ -35,22 +36,79 @@ export default function EvidencePage() {
       setLoading(true)
       setError(null)
 
-      // Build query params
-      const params = new URLSearchParams()
-      if (selectedSection !== 'all') {
-        params.append('section', selectedSection)
+      // Use IndexedDB directly (client-side only)
+      const store = new IndexedDBStore('ownyou_store')
+      const userId = 'default_user'
+
+      // Read semantic memories (IAB classifications)
+      const semanticPrefix = [userId, 'iab_taxonomy_profile']
+      const semanticItems = await store.search(semanticPrefix)
+
+      const evidenceList: Evidence[] = []
+
+      for (const item of semanticItems) {
+        const value = item.value
+
+        // Parse key to extract section and taxonomy_id
+        const key = item.key
+        const keyParts = key.split('_')
+
+        // Extract section
+        let itemSection = 'unknown'
+        if (keyParts.length >= 2) {
+          itemSection = keyParts[1]
+        }
+
+        // Normalize purchase section names
+        if (itemSection === 'purchase' || itemSection === 'purchase_intent') {
+          itemSection = 'purchase_intent'
+        }
+
+        // Filter by section if specified
+        if (selectedSection !== 'all' && itemSection !== selectedSection) {
+          continue
+        }
+
+        // Extract taxonomy_id
+        let taxonomyId: number = 0
+        if (keyParts.length >= 3) {
+          const parsedId = parseInt(keyParts[2], 10)
+          if (!isNaN(parsedId)) {
+            taxonomyId = parsedId
+          }
+        }
+
+        evidenceList.push({
+          taxonomy_id: taxonomyId,
+          category_path: value.category_path || value.tier_path || value.value || 'Unknown',
+          value: value.value || value.tier_3 || 'Unknown',
+          confidence: value.confidence || 0,
+          evidence_count: value.evidence_count || value.supporting_evidence?.length || 0,
+          reasoning: value.reasoning || 'No reasoning provided',
+          supporting_evidence: value.supporting_evidence || [],
+          contradicting_evidence: value.contradicting_evidence || [],
+          first_observed: value.first_observed || item.createdAt || new Date().toISOString(),
+          last_updated: value.last_updated || item.updatedAt || new Date().toISOString(),
+          section: itemSection,
+          purchase_intent_flag: value.purchase_intent_flag,
+        })
       }
-      params.append('sort', sortBy)
-      params.append('limit', '100')
 
-      const response = await fetch(`/api/evidence?${params.toString()}`)
-
-      if (!response.ok) {
-        throw new Error(`Failed to load evidence: ${response.statusText}`)
+      // Sort evidence
+      if (sortBy === 'confidence_desc') {
+        evidenceList.sort((a, b) => b.confidence - a.confidence)
+      } else if (sortBy === 'confidence_asc') {
+        evidenceList.sort((a, b) => a.confidence - b.confidence)
+      } else if (sortBy === 'recent') {
+        evidenceList.sort((a, b) => new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime())
+      } else if (sortBy === 'oldest') {
+        evidenceList.sort((a, b) => new Date(a.first_observed).getTime() - new Date(b.first_observed).getTime())
       }
 
-      const data = await response.json()
-      setEvidence(data.evidence || [])
+      // Apply limit (100 items)
+      const limitedEvidence = evidenceList.slice(0, 100)
+
+      setEvidence(limitedEvidence)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load evidence'
       setError(errorMessage)
