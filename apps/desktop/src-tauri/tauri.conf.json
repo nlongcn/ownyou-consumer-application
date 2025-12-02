@@ -22,7 +22,7 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://oauth2.googleapis.com https://login.microsoftonline.com https://graph.microsoft.com https://www.googleapis.com; font-src 'self' data:"
     }
   },
   "bundle": {

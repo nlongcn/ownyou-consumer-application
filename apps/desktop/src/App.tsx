@@ -1,9 +1,33 @@
 import { useEffect, useState } from 'react';
 import { onOpenUrl, getCurrent } from '@tauri-apps/plugin-deep-link';
+import { InMemoryBackend } from '@ownyou/memory-store';
+import { NAMESPACES } from '@ownyou/shared-types';
+
+// Create backend instance for demo (demonstrates @ownyou/memory-store integration)
+const backend = new InMemoryBackend();
+
+// Demo data type
+interface DemoData {
+  count: number;
+  lastWrite: string;
+}
+
+interface StoreDemo {
+  testValue: string | null;
+  writeCount: number;
+  lastWrite: string | null;
+  error: string | null;
+}
 
 function App() {
   const [deepLinkUrls, setDeepLinkUrls] = useState<string[]>([]);
   const [status, setStatus] = useState<string>('Initializing...');
+  const [storeDemo, setStoreDemo] = useState<StoreDemo>({
+    testValue: null,
+    writeCount: 0,
+    lastWrite: null,
+    error: null,
+  });
 
   useEffect(() => {
     // Check if app was launched via deep link
@@ -37,7 +61,85 @@ function App() {
 
     checkInitialDeepLink();
     setupDeepLinkListener();
+
+    // Initialize store demo - read existing value
+    const initStoreDemo = async () => {
+      try {
+        const existing = await backend.get<DemoData>(
+          NAMESPACES.SEMANTIC_MEMORY,
+          'demo-user',
+          'demo-counter'
+        );
+        if (existing) {
+          setStoreDemo((prev) => ({
+            ...prev,
+            testValue: `Count: ${existing.count}`,
+            writeCount: existing.count,
+            lastWrite: existing.lastWrite,
+          }));
+        }
+      } catch (err) {
+        console.error('Failed to read from store:', err);
+      }
+    };
+    initStoreDemo();
   }, []);
+
+  // Demo: Write to store
+  const handleStoreWrite = async () => {
+    try {
+      const newCount = storeDemo.writeCount + 1;
+      const now = new Date().toISOString();
+      const demoData: DemoData = { count: newCount, lastWrite: now };
+      await backend.put(
+        NAMESPACES.SEMANTIC_MEMORY,
+        'demo-user',
+        'demo-counter',
+        demoData
+      );
+      setStoreDemo({
+        testValue: `Count: ${newCount}`,
+        writeCount: newCount,
+        lastWrite: now,
+        error: null,
+      });
+    } catch (err) {
+      setStoreDemo((prev) => ({
+        ...prev,
+        error: err instanceof Error ? err.message : 'Unknown error',
+      }));
+    }
+  };
+
+  // Demo: Read from store
+  const handleStoreRead = async () => {
+    try {
+      const value = await backend.get<DemoData>(
+        NAMESPACES.SEMANTIC_MEMORY,
+        'demo-user',
+        'demo-counter'
+      );
+      if (value) {
+        setStoreDemo({
+          testValue: `Count: ${value.count}`,
+          writeCount: value.count,
+          lastWrite: value.lastWrite,
+          error: null,
+        });
+      } else {
+        setStoreDemo((prev) => ({
+          ...prev,
+          testValue: 'No data found',
+          error: null,
+        }));
+      }
+    } catch (err) {
+      setStoreDemo((prev) => ({
+        ...prev,
+        error: err instanceof Error ? err.message : 'Unknown error',
+      }));
+    }
+  };
 
   return (
     <div className="container">
@@ -70,11 +172,27 @@ function App() {
       </div>
 
       <div className="packages-card">
-        <h2>Connected Packages</h2>
-        <ul>
-          <li>@ownyou/memory-store</li>
-          <li>@ownyou/shared-types</li>
-        </ul>
+        <h2>Memory Store Demo</h2>
+        <p>Test @ownyou/memory-store read/write operations:</p>
+        <div className="store-demo">
+          <div className="store-value">
+            <strong>Stored Value:</strong> {storeDemo.testValue ?? 'Not yet read'}
+          </div>
+          {storeDemo.lastWrite && (
+            <div className="store-timestamp">
+              <strong>Last Write:</strong> {storeDemo.lastWrite}
+            </div>
+          )}
+          {storeDemo.error && (
+            <div className="store-error">
+              <strong>Error:</strong> {storeDemo.error}
+            </div>
+          )}
+          <div className="store-buttons">
+            <button onClick={handleStoreWrite}>Write to Store</button>
+            <button onClick={handleStoreRead}>Read from Store</button>
+          </div>
+        </div>
       </div>
     </div>
   );

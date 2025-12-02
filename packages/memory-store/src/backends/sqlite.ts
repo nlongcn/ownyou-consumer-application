@@ -281,10 +281,13 @@ export class SQLiteBackend implements StorageBackend {
     const now = Date.now();
     const valueJson = JSON.stringify(value);
 
-    // Use INSERT OR REPLACE for upsert behavior
+    // Use INSERT with ON CONFLICT to preserve created_at on upsert
     const stmt = db.prepare(`
-      INSERT OR REPLACE INTO memories (composite_key, namespace, user_id, key, value, created_at, updated_at)
+      INSERT INTO memories (composite_key, namespace, user_id, key, value, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(composite_key) DO UPDATE SET
+        value = excluded.value,
+        updated_at = excluded.updated_at
     `);
 
     stmt.run([compositeKey, namespace, userId, key, valueJson, now, now]);
