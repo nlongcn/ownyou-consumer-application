@@ -22,9 +22,13 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   // Read Gmail OAuth configuration from server-side environment variables
+  // SECURITY NOTE: Google OAuth requires client_secret even with PKCE for web applications.
+  // This is a Google-specific requirement. The secret is fetched server-side and used
+  // for token exchange. In production, consider moving token exchange to a server endpoint.
+  // See: https://developers.google.com/identity/protocols/oauth2/web-server#exchange-authorization-code
   const config = {
     client_id: process.env.GOOGLE_CLIENT_ID || '',
-    client_secret: process.env.GOOGLE_CLIENT_SECRET || '',
+    client_secret: process.env.GOOGLE_CLIENT_SECRET || '', // Required by Google even with PKCE
     redirect_uri: process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3001/oauth/gmail/callback',
     scopes: [
       'https://www.googleapis.com/auth/gmail.readonly', // Read-only access to Gmail

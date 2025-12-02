@@ -85,8 +85,12 @@ impl MsalClient {
             .secret()
             .to_string();
 
-        // Microsoft tokens are typically 90 days for refresh tokens
-        let expires_at = Utc::now() + Duration::days(90);
+        // Use actual expires_in from token response, fallback to 1 hour if not provided
+        let expires_in_secs = token_result
+            .expires_in()
+            .map(|d| d.as_secs() as i64)
+            .unwrap_or(3600); // Default to 1 hour if not specified
+        let expires_at = Utc::now() + Duration::seconds(expires_in_secs);
 
         let scope = token_result
             .scopes()
@@ -121,7 +125,12 @@ impl MsalClient {
             .map(|t| t.secret().to_string())
             .unwrap_or(refresh_token_clone);
 
-        let expires_at = Utc::now() + Duration::days(90);
+        // Use actual expires_in from token response, fallback to 1 hour if not provided
+        let expires_in_secs = token_result
+            .expires_in()
+            .map(|d| d.as_secs() as i64)
+            .unwrap_or(3600);
+        let expires_at = Utc::now() + Duration::seconds(expires_in_secs);
 
         let scope = token_result
             .scopes()
