@@ -7,9 +7,21 @@
  * Provides methods for storing, retrieving, updating, and querying memories.
  *
  * Reference: docs/IAB_TAXONOMY_PROFILE_REQUIREMENTS.md - Memory System
+ *
+ * v13 Architecture Compliance:
+ * - Namespace order: [namespace, userId] per Section 8.12
+ * - Uses NAMESPACES constants from @ownyou/shared-types
  */
 
 import type { BaseStore } from '@langchain/langgraph'
+
+// v13 Namespace constants (Section 8.12)
+// These match @ownyou/shared-types/namespaces.ts
+const V13_NAMESPACES = {
+  IAB_CLASSIFICATIONS: 'ownyou.iab',
+  EPISODIC_MEMORY: 'ownyou.episodic',
+  SEMANTIC_MEMORY: 'ownyou.semantic',
+} as const
 
 // ============================================================================
 // TYPES
@@ -68,19 +80,61 @@ interface MemoryIndex {
 }
 
 // ============================================================================
-// NAMESPACE UTILITIES
+// NAMESPACE UTILITIES (v13 compliant - Section 8.12)
 // ============================================================================
 
-// Python line 20: def get_user_namespace(user_id: str, collection: str = "iab_taxonomy_profile") -> tuple:
-export function getUserNamespace(userId: string, collection: string = 'iab_taxonomy_profile'): string[] {
-  // Python line 54: return (user_id, collection)
-  return [userId, collection]
+/**
+ * Get v13-compliant namespace tuple for IAB classifications
+ *
+ * v13 Pattern: [namespace, userId] - namespace FIRST, then userId
+ *
+ * @param userId User identifier
+ * @returns Namespace tuple in v13 format
+ */
+export function getIABNamespace(userId: string): string[] {
+  return [V13_NAMESPACES.IAB_CLASSIFICATIONS, userId]
 }
 
-// Python line 57: def get_processed_emails_namespace(user_id: str) -> tuple:
+/**
+ * Get v13-compliant namespace tuple for semantic memory
+ *
+ * @param userId User identifier
+ * @returns Namespace tuple in v13 format
+ */
+export function getSemanticNamespace(userId: string): string[] {
+  return [V13_NAMESPACES.SEMANTIC_MEMORY, userId]
+}
+
+/**
+ * Get v13-compliant namespace tuple for episodic memory
+ *
+ * @param userId User identifier
+ * @returns Namespace tuple in v13 format
+ */
+export function getEpisodicNamespace(userId: string): string[] {
+  return [V13_NAMESPACES.EPISODIC_MEMORY, userId]
+}
+
+// Legacy functions for backward compatibility (deprecated)
+// TODO: Remove after full migration to v13 namespaces
+
+/** @deprecated Use getIABNamespace instead */
+export function getUserNamespace(userId: string, collection: string = 'iab_taxonomy_profile'): string[] {
+  // v13 compliant: namespace first, then userId
+  if (collection === 'iab_taxonomy_profile') {
+    return getIABNamespace(userId)
+  } else if (collection === 'processed_emails') {
+    return [V13_NAMESPACES.EPISODIC_MEMORY, userId] // Processed emails are episodic
+  } else if (collection === 'memory_index') {
+    return [V13_NAMESPACES.IAB_CLASSIFICATIONS, userId] // Index lives with IAB data
+  }
+  // Fallback: still v13 compliant order
+  return [`ownyou.${collection}`, userId]
+}
+
+/** @deprecated Use getEpisodicNamespace instead */
 export function getProcessedEmailsNamespace(userId: string): string[] {
-  // Python line 69: return get_user_namespace(user_id, "processed_emails")
-  return getUserNamespace(userId, 'processed_emails')
+  return getEpisodicNamespace(userId)
 }
 
 // ============================================================================

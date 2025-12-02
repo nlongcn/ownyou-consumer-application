@@ -9,7 +9,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { buildWorkflowGraph, WorkflowState } from '@browser/agents/iab-classifier'
+import { buildWorkflowGraph, WorkflowState } from '@ownyou/iab-classifier'
 import { getStore } from '@/lib/shared-store'
 
 /**
