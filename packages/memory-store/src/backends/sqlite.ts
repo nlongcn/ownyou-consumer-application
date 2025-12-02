@@ -4,6 +4,10 @@
  * Cross-platform SQLite storage backend using sql.js (WebAssembly).
  * Works in browser, Node.js, and Tauri without native compilation.
  *
+ * Persistence:
+ * - Node.js/Tauri: Saves to filesystem at dbPath
+ * - Browser: Saves to IndexedDB (using idb library)
+ *
  * @see docs/architecture/extracts/storage-backends-8.13.md
  */
 
@@ -55,17 +59,157 @@ async function initSqlJs(): Promise<SqlJsStatic> {
 }
 
 /**
+ * Check if running in Node.js environment
+ */
+function isNodeEnvironment(): boolean {
+  return typeof process !== 'undefined' && process.versions?.node !== undefined;
+}
+
+/**
+ * Persistence layer for SQLite database binary
+ * Uses filesystem in Node.js, IndexedDB in browser
+ */
+class SQLitePersistence {
+  private dbPath: string;
+  private idbStore: IDBDatabase | null = null;
+
+  constructor(dbPath: string) {
+    this.dbPath = dbPath;
+  }
+
+  /**
+   * Load existing database from storage
+   */
+  async load(): Promise<Uint8Array | null> {
+    if (this.dbPath === ':memory:') {
+      return null;
+    }
+
+    if (isNodeEnvironment()) {
+      return this.loadFromFile();
+    } else {
+      return this.loadFromIndexedDB();
+    }
+  }
+
+  /**
+   * Save database to storage
+   */
+  async save(data: Uint8Array): Promise<void> {
+    if (this.dbPath === ':memory:') {
+      return;
+    }
+
+    if (isNodeEnvironment()) {
+      await this.saveToFile(data);
+    } else {
+      await this.saveToIndexedDB(data);
+    }
+  }
+
+  /**
+   * Load from filesystem (Node.js/Tauri)
+   */
+  private async loadFromFile(): Promise<Uint8Array | null> {
+    try {
+      const fs = await import('fs/promises');
+      const buffer = await fs.readFile(this.dbPath);
+      return new Uint8Array(buffer);
+    } catch (err: any) {
+      if (err.code === 'ENOENT') {
+        return null; // File doesn't exist yet
+      }
+      throw err;
+    }
+  }
+
+  /**
+   * Save to filesystem (Node.js/Tauri)
+   */
+  private async saveToFile(data: Uint8Array): Promise<void> {
+    const fs = await import('fs/promises');
+    const path = await import('path');
+
+    // Ensure directory exists
+    const dir = path.dirname(this.dbPath);
+    await fs.mkdir(dir, { recursive: true });
+
+    // Write database file
+    await fs.writeFile(this.dbPath, data);
+  }
+
+  /**
+   * Load from IndexedDB (Browser)
+   */
+  private async loadFromIndexedDB(): Promise<Uint8Array | null> {
+    const db = await this.getIDBStore();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('sqlite_databases', 'readonly');
+      const store = tx.objectStore('sqlite_databases');
+      const request = store.get(this.dbPath);
+
+      request.onsuccess = () => {
+        resolve(request.result?.data || null);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Save to IndexedDB (Browser)
+   */
+  private async saveToIndexedDB(data: Uint8Array): Promise<void> {
+    const db = await this.getIDBStore();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('sqlite_databases', 'readwrite');
+      const store = tx.objectStore('sqlite_databases');
+      const request = store.put({ path: this.dbPath, data, updatedAt: Date.now() });
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get or create IndexedDB store for SQLite databases
+   */
+  private async getIDBStore(): Promise<IDBDatabase> {
+    if (this.idbStore) {
+      return this.idbStore;
+    }
+
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('ownyou_sqlite_persistence', 1);
+
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        if (!db.objectStoreNames.contains('sqlite_databases')) {
+          db.createObjectStore('sqlite_databases', { keyPath: 'path' });
+        }
+      };
+
+      request.onsuccess = () => {
+        this.idbStore = request.result;
+        resolve(request.result);
+      };
+
+      request.onerror = () => reject(request.error);
+    });
+  }
+}
+
+/**
  * SQLiteBackend - Cross-platform storage using sql.js (WebAssembly)
  */
 export class SQLiteBackend implements StorageBackend {
   private db: SqlJsDatabase | null = null;
   private dbPath: string;
+  private persistence: SQLitePersistence;
   private initPromise: Promise<SqlJsDatabase> | null = null;
 
   constructor(config?: BackendConfig) {
-    // For sql.js, dbPath is used as an identifier but actual persistence
-    // would need additional implementation (e.g., saving to IndexedDB or filesystem)
     this.dbPath = config?.dbPath ?? ':memory:';
+    this.persistence = new SQLitePersistence(this.dbPath);
   }
 
   /**
@@ -84,12 +228,18 @@ export class SQLiteBackend implements StorageBackend {
   private async initDatabase(): Promise<SqlJsDatabase> {
     const SQL = await initSqlJs();
 
-    // Create new in-memory database
-    // TODO: For persistence, load existing data from storage
-    this.db = new SQL.Database();
+    // Load existing database from persistence if available
+    const existingData = await this.persistence.load();
 
-    // Initialize schema
-    this.initSchema();
+    if (existingData) {
+      // Restore from persisted data
+      this.db = new SQL.Database(existingData);
+    } else {
+      // Create new database
+      this.db = new SQL.Database();
+      // Initialize schema for new database
+      this.initSchema();
+    }
 
     return this.db;
   }
@@ -272,6 +422,8 @@ export class SQLiteBackend implements StorageBackend {
 
   async close(): Promise<void> {
     if (this.db) {
+      // Save to persistence before closing
+      await this.persistence.save(this.db.export());
       this.db.close();
       this.db = null;
       this.initPromise = null;
@@ -284,5 +436,15 @@ export class SQLiteBackend implements StorageBackend {
   async export(): Promise<Uint8Array> {
     const db = await this.getDB();
     return db.export();
+  }
+
+  /**
+   * Explicitly save database to persistence
+   * Use this for manual save points (auto-saves on close)
+   */
+  async save(): Promise<void> {
+    if (this.db) {
+      await this.persistence.save(this.db.export());
+    }
   }
 }

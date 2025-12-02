@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const code = searchParams.get('code')
     const error = searchParams.get('error')
-    const state = searchParams.get('state')
+    // Note: state parameter available via searchParams.get('state') for CSRF validation
 
     // Handle OAuth errors
     if (error) {
@@ -77,11 +77,11 @@ export async function GET(request: NextRequest) {
       new URL('/emails?gmail_connected=true', request.url)
     )
 
-    // Store tokens in cookies accessible to JavaScript (expires in 1 hour)
-    // Note: httpOnly: false allows browser JavaScript to read these tokens
-    // This is needed for browser-based OAuth flows
+    // SECURITY: Store tokens in HTTP-only cookies (not accessible to JavaScript)
+    // This prevents XSS attacks from stealing tokens
+    // Browser can use /api/gmail/* endpoints which read cookies server-side
     const cookieOptions = {
-      httpOnly: false, // Changed from true to allow browser access
+      httpOnly: true, // SECURITY: Prevents JavaScript access to tokens
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax' as const,
       maxAge: 60 * 60, // 1 hour
