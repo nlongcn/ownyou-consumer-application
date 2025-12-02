@@ -3,21 +3,44 @@
   "version": "0.1.0",
   "description": "OwnYou shared type definitions - v13 architecture aligned",
   "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./memory": "./src/memory.ts",
-    "./entities": "./src/entities.ts",
-    "./identity": "./src/identity.ts",
-    "./ikigai": "./src/ikigai.ts",
-    "./agent": "./src/agent.ts",
-    "./namespaces": "./src/namespaces.ts",
-    "./sync": "./src/sync.ts"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./memory": {
+      "import": "./dist/memory.js",
+      "types": "./dist/memory.d.ts"
+    },
+    "./entities": {
+      "import": "./dist/entities.js",
+      "types": "./dist/entities.d.ts"
+    },
+    "./identity": {
+      "import": "./dist/identity.js",
+      "types": "./dist/identity.d.ts"
+    },
+    "./ikigai": {
+      "import": "./dist/ikigai.js",
+      "types": "./dist/ikigai.d.ts"
+    },
+    "./agent": {
+      "import": "./dist/agent.js",
+      "types": "./dist/agent.d.ts"
+    },
+    "./namespaces": {
+      "import": "./dist/namespaces.js",
+      "types": "./dist/namespaces.d.ts"
+    },
+    "./sync": {
+      "import": "./dist/sync.js",
+      "types": "./dist/sync.d.ts"
+    }
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
     "build": "tsc",
