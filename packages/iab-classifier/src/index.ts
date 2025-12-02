@@ -45,6 +45,20 @@ import type { BaseStore as IndexedDBStore } from '@langchain/langgraph/web'     
 // Re-export WorkflowState for external use
 export { WorkflowState } from './state'
 
+// Re-export profile tier formatter functions and types
+export {
+  formatTieredDemographics,
+  formatTieredHousehold,
+  formatTieredInterests,
+  formatTieredPurchaseIntent,
+  addTieredStructureToProfile,
+  type TaxonomySelection,
+  type TieredClassification,
+  type TieredGroup,
+  type TieredInterest,
+  type TieredPurchaseIntent,
+} from './profileTierFormatter'
+
 /**
  * Build compiled StateGraph for IAB Taxonomy Profile workflow.
  *
