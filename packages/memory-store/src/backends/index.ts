@@ -7,3 +7,4 @@
 export type { StorageBackend, StoreStats, BackendConfig } from './types';
 export { InMemoryBackend } from './memory';
 export { IndexedDBBackend } from './indexeddb';
+export { SQLiteBackend } from './sqlite';
