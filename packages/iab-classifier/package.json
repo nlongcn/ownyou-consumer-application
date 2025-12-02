@@ -1,0 +1,44 @@
+{
+  "name": "@ownyou/iab-classifier",
+  "version": "0.1.0",
+  "description": "IAB Taxonomy classifier for email and content classification - Sprint 1b",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./taxonomy": {
+      "import": "./dist/taxonomy/index.js",
+      "types": "./dist/taxonomy/index.d.ts"
+    },
+    "./llm": {
+      "import": "./dist/llm/client.js",
+      "types": "./dist/llm/client.d.ts"
+    },
+    "./analyzers": {
+      "import": "./dist/analyzers/index.js",
+      "types": "./dist/analyzers/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@langchain/langgraph": "^0.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite": "^5.0.0",
+    "vitest": "^1.6.0"
+  }
+}
