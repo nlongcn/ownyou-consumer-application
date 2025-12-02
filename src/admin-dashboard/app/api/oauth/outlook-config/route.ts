@@ -24,9 +24,11 @@ export async function GET() {
   // Read Outlook OAuth configuration from server-side environment variables
   const tenant = process.env.MICROSOFT_TENANT_ID || 'common'
 
+  // Note: For SPA/PKCE flows, client_secret is NOT needed and should NOT be exposed
+  // The Outlook OAuth client correctly uses PKCE without client_secret
   const config = {
     client_id: process.env.MICROSOFT_CLIENT_ID || '',
-    client_secret: process.env.MICROSOFT_CLIENT_SECRET || '',
+    // client_secret intentionally omitted - PKCE flow doesn't need it
     redirect_uri: process.env.MICROSOFT_REDIRECT_URI || 'http://localhost:3001/oauth/outlook/callback',
     scopes: [
       'https://graph.microsoft.com/Mail.Read', // Read-only access to Outlook
