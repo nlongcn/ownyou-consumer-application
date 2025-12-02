@@ -1,11 +1,12 @@
 /**
  * Storage Backend Tests - v13 Section 8.13
  *
- * Tests for InMemoryBackend and IndexedDBBackend
+ * Tests for InMemoryBackend, IndexedDBBackend, and SQLiteBackend
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import { InMemoryBackend } from '../backends/memory';
 import { IndexedDBBackend } from '../backends/indexeddb';
+import { SQLiteBackend } from '../backends/sqlite';
 import type { StorageBackend, StoreStats } from '../backends/types';
 
 // Test suite that runs against any backend implementation
@@ -171,3 +172,6 @@ testBackend('InMemory', () => new InMemoryBackend());
 
 // Run tests for IndexedDBBackend
 testBackend('IndexedDB', () => new IndexedDBBackend({ dbName: `test_db_${Date.now()}` }));
+
+// Run tests for SQLiteBackend (in-memory mode for testing)
+testBackend('SQLite', () => new SQLiteBackend({ dbPath: ':memory:' }));
