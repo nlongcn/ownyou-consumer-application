@@ -18,7 +18,7 @@ import {
   formatTieredInterests,
   formatTieredPurchaseIntent,
   type TaxonomySelection,
-} from '@browser/agents/iab-classifier/profileTierFormatter'
+} from '@ownyou/iab-classifier'
 
 export async function GET(request: NextRequest) {
   try {

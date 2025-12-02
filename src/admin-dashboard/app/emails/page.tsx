@@ -1,15 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { getGmailOAuthClient } from '@/lib/gmail-oauth-client'
 import { getOutlookOAuthClient } from '@/lib/outlook-oauth-client'
-import { OutlookClient } from '@/lib/outlook-client'
 import { getLLMConfig } from '@/lib/llm-config'
 import { IndexedDBStore } from '@/lib/IndexedDBStore'
-import { buildWorkflowGraph } from '@browser/agents/iab-classifier'
-import { OpenAIClient } from '@browser/llm/openaiClient'
-import { GoogleClient } from '@browser/llm/googleClient'
+import { buildWorkflowGraph } from '@ownyou/iab-classifier'
+// LLM clients are internal to iab-classifier package (Sprint 2 will consolidate with @ownyou/llm-client)
+import { OpenAIClient } from '@ownyou/iab-classifier/llm/openaiClient'
+import { GoogleClient } from '@ownyou/iab-classifier/llm/googleClient'
 
 interface Email {
   id: string
@@ -47,7 +47,26 @@ interface ModelsResponse {
   last_max_emails?: number
 }
 
+function EmailsLoading() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Loading...</p>
+      </div>
+    </div>
+  )
+}
+
 export default function EmailDownloadPage() {
+  return (
+    <Suspense fallback={<EmailsLoading />}>
+      <EmailDownloadContent />
+    </Suspense>
+  )
+}
+
+function EmailDownloadContent() {
   const searchParams = useSearchParams()
 
   // Get user_id from URL parameter, default to 'default_user'
@@ -121,29 +140,28 @@ export default function EmailDownloadPage() {
           console.log(`[Persistence] Found ${episodicMemories.length} episodic memories in IndexedDB`)
 
           // Convert episodic memories to Email format
-          const persistedEmails: EmailWithClassification[] = episodicMemories
-            .map((item: any) => {
-              const episodic = item.value
-              if (!episodic || !episodic.email_id) {
-                console.warn('[Persistence] Skipping invalid episodic memory:', item)
-                return null
-              }
+          const persistedEmails: EmailWithClassification[] = []
+          for (const item of episodicMemories) {
+            const episodic = (item as any).value
+            if (!episodic || !episodic.email_id) {
+              console.warn('[Persistence] Skipping invalid episodic memory:', item)
+              continue
+            }
 
-              console.log(`[Persistence] Loading email: ${episodic.email_id} (${episodic.email_subject})`)
+            console.log(`[Persistence] Loading email: ${episodic.email_id} (${episodic.email_subject})`)
 
-              return {
-                id: episodic.email_id,
-                subject: episodic.email_subject || 'No subject',
-                from: 'Unknown', // Not stored in episodic memory
-                body: episodic.email_summary || '',
-                date: episodic.email_date || 'Unknown date',
-                provider: 'gmail',
-                summary: episodic.email_summary,
-                classification: null, // TODO: Load classifications from semantic memories
-                classifying: false,
-              }
+            persistedEmails.push({
+              id: episodic.email_id,
+              subject: episodic.email_subject || 'No subject',
+              from: 'Unknown', // Not stored in episodic memory
+              body: episodic.email_summary || '',
+              date: episodic.email_date || 'Unknown date',
+              provider: 'gmail',
+              summary: episodic.email_summary,
+              classification: null, // TODO: Load classifications from semantic memories
+              classifying: false,
             })
-            .filter((email): email is EmailWithClassification => email !== null)
+          }
 
           setEmails(persistedEmails)
           console.log(`[Persistence] ✅ Loaded ${persistedEmails.length} emails from IndexedDB`)

@@ -105,8 +105,8 @@ src/admin-dashboard/
 The admin dashboard integrates directly with the TypeScript IAB classifier (no REST API overhead):
 
 ```typescript
-import { buildWorkflowGraph } from '@browser/agents/iab-classifier'
-import { IndexedDBStore } from '@browser/store'
+import { buildWorkflowGraph } from '@ownyou/iab-classifier'
+import { IndexedDBStore } from '@/lib/IndexedDBStore'
 
 const store = new IndexedDBStore('admin-dashboard')
 const graph = buildWorkflowGraph(store, null)
