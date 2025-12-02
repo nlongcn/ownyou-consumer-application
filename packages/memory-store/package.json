@@ -3,22 +3,12 @@
   "version": "0.1.0",
   "description": "OwnYou LangGraph Store-compatible memory storage with hybrid search",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./backends": {
-      "import": "./dist/backends/index.js",
-      "types": "./dist/backends/index.d.ts"
-    },
-    "./search": {
-      "import": "./dist/search/index.js",
-      "types": "./dist/search/index.d.ts"
-    }
+    ".": "./src/index.ts",
+    "./backends": "./src/backends/index.ts",
+    "./search": "./src/search/index.ts"
   },
   "files": [
     "dist",
