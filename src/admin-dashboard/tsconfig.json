@@ -26,6 +26,8 @@
       "@/app/*": ["./app/*"],
       "@ownyou/iab-classifier": ["../../packages/iab-classifier/src/index.ts"],
       "@ownyou/iab-classifier/*": ["../../packages/iab-classifier/src/*"],
+      "@ownyou/llm-client": ["../../packages/llm-client/src/index.ts"],
+      "@ownyou/llm-client/*": ["../../packages/llm-client/src/*"],
       "@ownyou/oauth": ["../../packages/oauth/src/index.ts"],
       "@ownyou/oauth/*": ["../../packages/oauth/src/*"],
       "@ownyou/email": ["../../packages/email/src/index.ts"],

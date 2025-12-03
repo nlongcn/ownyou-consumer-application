@@ -276,6 +276,17 @@ export default function AnalyzePage() {
         throw new Error('No LLM API keys configured. Please add your API keys to .env.local (NEXT_PUBLIC_OPENAI_API_KEY, etc.) or configure them in Settings (coming soon).')
       }
 
+      // Map LLMProvider names to LLMConfig keys (claude -> anthropic, gemini -> google)
+      const configKeyMap: Record<LLMProvider, keyof typeof llmConfig> = {
+        openai: 'openai',
+        claude: 'anthropic',
+        gemini: 'google',
+        ollama: 'ollama',
+        groq: 'groq',
+        deepinfra: 'deepinfra',
+      }
+      const configKey = configKeyMap[llmProvider]
+
       // Use browser classifier with client-side config
       const classifier = getBrowserClassifier(userId)
       const classificationResult = await classifier.classifyText({
@@ -285,7 +296,7 @@ export default function AnalyzePage() {
         source_item_id: `manual_${Date.now()}`,
         llm_provider: llmProvider,
         llm_model: llmModel,
-        llm_config: llmConfig[llmProvider], // Pass provider-specific config
+        llm_config: llmConfig[configKey], // Pass provider-specific config
       })
 
       setResult(classificationResult)

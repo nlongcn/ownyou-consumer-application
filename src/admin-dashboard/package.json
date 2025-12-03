@@ -18,6 +18,7 @@
     "@langchain/core": "^0.3.24",
     "@langchain/langgraph": "^0.2.26",
     "@ownyou/iab-classifier": "workspace:*",
+    "@ownyou/llm-client": "workspace:*",
     "@ownyou/oauth": "workspace:*",
     "@ownyou/email": "workspace:*",
     "next": "^14.0.0",

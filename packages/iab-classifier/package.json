@@ -34,7 +34,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@langchain/langgraph": "^0.2.0"
+    "@langchain/langgraph": "^0.2.0",
+    "@ownyou/llm-client": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.3.3",

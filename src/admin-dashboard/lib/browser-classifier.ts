@@ -26,7 +26,7 @@ export interface ClassificationInput {
   text: string
   source?: string
   source_item_id?: string
-  llm_provider?: 'openai' | 'claude' | 'gemini' | 'ollama'
+  llm_provider?: 'openai' | 'claude' | 'gemini' | 'ollama' | 'groq' | 'deepinfra' | 'anthropic'
   llm_model?: string
   llm_config?: {
     api_key?: string
@@ -162,7 +162,7 @@ export class BrowserClassifier {
    */
   async classifyBatch(
     items: Array<{ text: string; source?: string; source_item_id?: string }>,
-    llmProvider?: 'openai' | 'claude' | 'gemini' | 'ollama',
+    llmProvider?: 'openai' | 'claude' | 'gemini' | 'ollama' | 'groq' | 'deepinfra' | 'anthropic',
     llmModel?: string,
     onProgress?: (processed: number, total: number, classificationsAdded: number) => void
   ): Promise<{ total: number; processed: number; classificationsAdded: number; errors: number }> {
