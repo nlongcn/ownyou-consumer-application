@@ -280,7 +280,7 @@ export async function fetchAvailableModels(forceRefresh = false): Promise<ModelC
     }
 
     // Groq models
-    if (data.groq?.length > 0) {
+    if (data.groq && data.groq.length > 0) {
       data.groq.forEach(model => {
         models.push({
           provider: 'groq',
@@ -292,7 +292,7 @@ export async function fetchAvailableModels(forceRefresh = false): Promise<ModelC
     }
 
     // DeepInfra models
-    if (data.deepinfra?.length > 0) {
+    if (data.deepinfra && data.deepinfra.length > 0) {
       data.deepinfra.forEach(model => {
         // Format: meta-llama/Llama-3.3-70B-Instruct -> Llama 3.3 70B
         const shortName = model.split('/').pop() || model
@@ -309,7 +309,7 @@ export async function fetchAvailableModels(forceRefresh = false): Promise<ModelC
     }
 
     // Ollama models (if any local models)
-    if (data.ollama?.length > 0) {
+    if (data.ollama && data.ollama.length > 0) {
       data.ollama.forEach(model => {
         models.push({
           provider: 'openai', // Ollama uses OpenAI-compatible format

@@ -3,6 +3,9 @@ import OpenAI from 'openai'
 import Anthropic from '@anthropic-ai/sdk'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
+// Force dynamic rendering - this route fetches from external APIs
+export const dynamic = 'force-dynamic'
+
 interface ModelsResponse {
   openai: string[]
   anthropic: string[]

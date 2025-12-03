@@ -14,11 +14,36 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getGmailOAuthClient } from '@/lib/gmail-oauth-client'
 
+// Loading component for Suspense fallback
+function GmailCallbackLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Loading...
+          </h2>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Main page wrapper with Suspense
 export default function GmailCallbackPage() {
+  return (
+    <Suspense fallback={<GmailCallbackLoading />}>
+      <GmailCallbackPageContent />
+    </Suspense>
+  )
+}
+
+function GmailCallbackPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing')

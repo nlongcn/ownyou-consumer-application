@@ -16,12 +16,11 @@ export type {
   OperationType,
 } from './types';
 
-export {
-  MODEL_PRICING,
-  MODEL_TIERS,
-  OPERATION_LIMITS,
-  calculateCost,
-} from './types';
+export { OPERATION_LIMITS } from './types';
+
+// Re-export from registry (consolidated in Sprint 2)
+// NOTE: MODEL_PRICING removed - use MODEL_REGISTRY or getModelPricing() instead
+export { MODEL_TIERS, calculateCost } from './registry';
 
 // Base class and utilities
 export {

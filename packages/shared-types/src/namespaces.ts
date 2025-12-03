@@ -47,6 +47,9 @@ export const NAMESPACES = {
   LLM_USAGE: 'ownyou.llm_usage',
   SYNC_LOGS: 'ownyou.sync_logs',
 
+  // LLM Budget (v13 Section 6.10 - Budget Enforcement)
+  LLM_BUDGET: 'ownyou.llm_budget',
+
   // LLM Cache (v13 Section 6.11.3 - Fallback Chain Step 5)
   LLM_CACHE: 'ownyou.llm_cache',
 } as const;
@@ -111,6 +114,9 @@ export const NS = {
   llmUsage: (userId: string, period: 'daily' | 'monthly') =>
     [NAMESPACES.LLM_USAGE, userId, period] as const,
 
+  /** LLM budget namespace: [namespace, userId] - for budget tracking (v13 6.10) */
+  llmBudget: (userId: string) => [NAMESPACES.LLM_BUDGET, userId] as const,
+
   /** LLM cache namespace: [namespace, userId] - for response caching (v13 6.11.3) */
   llmCache: (userId: string) => [NAMESPACES.LLM_CACHE, userId] as const,
 } as const;
@@ -139,6 +145,7 @@ export const NAMESPACE_PRIVACY: Record<Namespace, 'public' | 'sensitive' | 'priv
   [NAMESPACES.AGENT_TRACES]: 'private',
   [NAMESPACES.LLM_USAGE]: 'private',
   [NAMESPACES.SYNC_LOGS]: 'private',
+  [NAMESPACES.LLM_BUDGET]: 'private', // User's LLM budget tracking
   [NAMESPACES.LLM_CACHE]: 'private', // Cached LLM responses - device-local
 };
 
@@ -169,5 +176,6 @@ export const NAMESPACE_SYNC_SCOPE: Record<Namespace, 'full' | 'selective' | 'non
   [NAMESPACES.AGENT_TRACES]: 'none', // Device-local
   [NAMESPACES.LLM_USAGE]: 'none', // Device-local
   [NAMESPACES.SYNC_LOGS]: 'none', // Device-local
+  [NAMESPACES.LLM_BUDGET]: 'full', // Budget syncs across devices (per-user limit)
   [NAMESPACES.LLM_CACHE]: 'none', // Device-local cache, never syncs
 };

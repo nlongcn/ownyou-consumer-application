@@ -4,6 +4,12 @@
  * Provider implementation for Anthropic Claude models.
  * Extracted from @ownyou/iab-classifier for Sprint 2 consolidation.
  *
+ * BROWSER SUPPORT:
+ * - Uses `dangerouslyAllowBrowser: true` for browser/PWA/Tauri usage
+ * - Anthropic added CORS support via header in Aug 2024
+ * - Safe for OwnYou because users bring their own API keys (BYOKey pattern)
+ * - API keys are stored locally on user's device, never exposed externally
+ *
  * KEY DIFFERENCES FROM OPENAI:
  * - System messages extracted to separate 'system' parameter
  * - Response content is array of blocks with .text property
@@ -11,6 +17,7 @@
  * - Token estimation: 3.5 chars/token (vs 4 for OpenAI)
  *
  * @see docs/architecture/extracts/llm-cost-6.10.md
+ * @see https://simonwillison.net/2024/Aug/23/anthropic-dangerous-direct-browser-access/
  */
 
 import Anthropic from '@anthropic-ai/sdk';
@@ -51,6 +58,12 @@ export class AnthropicProvider extends BaseLLMProvider {
 
     this.client = new Anthropic({
       apiKey: config.apiKey,
+      // Required for browser-based usage (PWA, Tauri app)
+      // Safe in this context because:
+      // 1. API keys are stored locally on user's device
+      // 2. OwnYou is a self-sovereign app where users bring their own keys
+      // 3. No keys are exposed to external servers
+      dangerouslyAllowBrowser: true,
     });
   }
 

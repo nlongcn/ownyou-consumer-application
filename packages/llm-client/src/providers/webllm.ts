@@ -57,11 +57,116 @@ const WEBLLM_MODELS: Record<string, { contextWindow: number; description: string
 };
 
 /**
- * WebLLM engine instance (lazy loaded)
+ * WebLLM Engine Singleton - manages shared engine state
+ *
+ * Using singleton pattern to:
+ * - Share engine across multiple WebLLMProvider instances
+ * - Prevent multiple concurrent model loads
+ * - Properly manage memory when switching models
  */
-let webllmEngine: any = null;
-let currentModel: string | null = null;
-let isLoading = false;
+class WebLLMEngineSingleton {
+  private static instance: WebLLMEngineSingleton;
+  private engine: any = null;
+  private currentModel: string | null = null;
+  private isLoading = false;
+  private loadPromise: Promise<void> | null = null;
+
+  private constructor() {}
+
+  static getInstance(): WebLLMEngineSingleton {
+    if (!WebLLMEngineSingleton.instance) {
+      WebLLMEngineSingleton.instance = new WebLLMEngineSingleton();
+    }
+    return WebLLMEngineSingleton.instance;
+  }
+
+  getEngine(): any {
+    return this.engine;
+  }
+
+  getCurrentModel(): string | null {
+    return this.currentModel;
+  }
+
+  isModelLoaded(): boolean {
+    return this.engine !== null && this.currentModel !== null;
+  }
+
+  async loadModel(
+    model: string,
+    onProgress?: (progress: number, status: string) => void,
+    logger?: { info: (msg: string) => void; debug: (msg: string, data?: any) => void }
+  ): Promise<void> {
+    // Already loaded with same model
+    if (this.engine && this.currentModel === model) {
+      return;
+    }
+
+    // If already loading, wait for that to complete
+    if (this.isLoading && this.loadPromise) {
+      await this.loadPromise;
+      // Check if the loaded model is what we need
+      if (this.currentModel === model) {
+        return;
+      }
+    }
+
+    // Start loading
+    this.isLoading = true;
+    this.loadPromise = this._doLoadModel(model, onProgress, logger);
+
+    try {
+      await this.loadPromise;
+    } finally {
+      this.isLoading = false;
+      this.loadPromise = null;
+    }
+  }
+
+  private async _doLoadModel(
+    model: string,
+    onProgress?: (progress: number, status: string) => void,
+    logger?: { info: (msg: string) => void; debug: (msg: string, data?: any) => void }
+  ): Promise<void> {
+    logger?.info(`Loading WebLLM model: ${model}`);
+
+    // Unload existing model if different
+    if (this.engine && this.currentModel !== model) {
+      await this.unload(logger);
+    }
+
+    // Dynamic import to avoid SSR issues
+    const { CreateMLCEngine } = await import('@mlc-ai/web-llm');
+
+    // Progress callback
+    const progressCallback = (progress: any) => {
+      const percent = Math.round(progress.progress * 100);
+      const status = progress.text ?? 'Loading...';
+      logger?.debug(`WebLLM loading: ${percent}% - ${status}`);
+      onProgress?.(percent, status);
+    };
+
+    this.engine = await CreateMLCEngine(model, {
+      initProgressCallback: progressCallback,
+    });
+
+    this.currentModel = model;
+    logger?.info(`WebLLM model loaded: ${model}`);
+  }
+
+  async unload(logger?: { info: (msg: string) => void; debug: (msg: string, data?: any) => void }): Promise<void> {
+    if (this.engine) {
+      try {
+        await this.engine.unload();
+      } catch (error) {
+        logger?.debug(`Error unloading WebLLM: ${error}`);
+      }
+      this.engine = null;
+      this.currentModel = null;
+      logger?.info('WebLLM model unloaded');
+    }
+  }
+}
 
 /**
  * WebLLM Provider - Browser-local inference
@@ -71,6 +176,7 @@ export class WebLLMProvider extends BaseLLMProvider {
   private defaultMaxTokens: number;
   private defaultTemperature: number;
   private onProgress?: (progress: number, status: string) => void;
+  private engineSingleton: WebLLMEngineSingleton;
 
   constructor(config: WebLLMProviderConfig) {
     super(config);
@@ -79,6 +185,7 @@ export class WebLLMProvider extends BaseLLMProvider {
     this.defaultMaxTokens = config.maxTokens ?? 2048;
     this.defaultTemperature = config.temperature ?? 0.7;
     this.onProgress = config.onProgress;
+    this.engineSingleton = WebLLMEngineSingleton.getInstance();
   }
 
   getProviderType(): LLMProviderType {
@@ -115,55 +222,21 @@ export class WebLLMProvider extends BaseLLMProvider {
    */
   async loadModel(modelId?: string): Promise<void> {
     const model = modelId ?? this.defaultModel;
-
-    // Already loaded with same model
-    if (webllmEngine && currentModel === model) {
-      return;
-    }
-
-    // Prevent concurrent loading
-    if (isLoading) {
-      throw new Error('Model is already loading');
-    }
-
-    isLoading = true;
-    this.logger.info(`Loading WebLLM model: ${model}`);
-
-    try {
-      // Dynamic import to avoid SSR issues
-      const { CreateMLCEngine } = await import('@mlc-ai/web-llm');
-
-      // Progress callback
-      const progressCallback = (progress: any) => {
-        const percent = Math.round(progress.progress * 100);
-        const status = progress.text ?? 'Loading...';
-        this.logger.debug(`WebLLM loading: ${percent}% - ${status}`);
-        this.onProgress?.(percent, status);
-      };
-
-      webllmEngine = await CreateMLCEngine(model, {
-        initProgressCallback: progressCallback,
-      });
-
-      currentModel = model;
-      this.logger.info(`WebLLM model loaded: ${model}`);
-    } finally {
-      isLoading = false;
-    }
+    await this.engineSingleton.loadModel(model, this.onProgress, this.logger);
   }
 
   /**
    * Check if model is loaded
    */
   isModelLoaded(): boolean {
-    return webllmEngine !== null && currentModel !== null;
+    return this.engineSingleton.isModelLoaded();
   }
 
   /**
    * Get current loaded model
    */
   getCurrentModel(): string | null {
-    return currentModel;
+    return this.engineSingleton.getCurrentModel();
   }
 
   async complete(request: LLMRequest): Promise<LLMResponse> {
@@ -205,7 +278,8 @@ export class WebLLMProvider extends BaseLLMProvider {
     const startTime = Date.now();
 
     try {
-      const response = await webllmEngine.chat.completions.create({
+      const engine = this.engineSingleton.getEngine();
+      const response = await engine.chat.completions.create({
         messages,
         max_tokens: maxTokens,
         temperature,
@@ -249,15 +323,6 @@ export class WebLLMProvider extends BaseLLMProvider {
    * Unload the model to free memory
    */
   async unload(): Promise<void> {
-    if (webllmEngine) {
-      try {
-        await webllmEngine.unload();
-      } catch (error) {
-        this.logger.debug(`Error unloading WebLLM: ${error}`);
-      }
-      webllmEngine = null;
-      currentModel = null;
-      this.logger.info('WebLLM model unloaded');
-    }
+    await this.engineSingleton.unload(this.logger);
   }
 }

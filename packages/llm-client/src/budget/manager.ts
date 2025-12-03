@@ -2,10 +2,19 @@
  * Budget Manager - v13 Section 6.10
  *
  * Manages LLM usage tracking and budget enforcement.
+ *
+ * PERSISTENCE:
+ * - When a StorageBackend is provided, budget data persists across page refreshes
+ * - Uses NAMESPACES.LLM_BUDGET namespace for storage
+ * - Budget syncs across devices (sync_scope: 'full')
+ * - Falls back to in-memory storage if no backend provided
+ *
+ * @see docs/architecture/extracts/llm-cost-6.10.md
  */
 
+import { NAMESPACES } from '@ownyou/shared-types';
 import type { ModelTier } from '../providers/types';
-import { MODEL_TIERS } from '../providers/types';
+import { MODEL_TIERS } from '../providers/registry';
 import type {
   BudgetConfig,
   UsageRecord,
@@ -16,26 +25,44 @@ import type {
 import { DEFAULT_BUDGET_CONFIG } from './types';
 
 /**
+ * Storage backend interface (matches @ownyou/memory-store)
+ * Using minimal interface to avoid circular dependency
+ */
+interface BudgetStorageBackend {
+  put<T>(namespace: string, userId: string, key: string, value: T): Promise<void>;
+  get<T>(namespace: string, userId: string, key: string): Promise<T | null>;
+}
+
+/**
+ * Budget manager configuration
+ */
+export interface BudgetManagerConfig extends Partial<BudgetConfig> {
+  /** Optional storage backend for persistence */
+  store?: BudgetStorageBackend;
+}
+
+const BUDGET_KEY = 'current_period';
+
+/**
  * BudgetManager - Tracks and enforces LLM budget
  */
 export class BudgetManager {
   private config: BudgetConfig;
+  private store?: BudgetStorageBackend;
   private usage: Map<string, UsageSummary> = new Map();
+  private loadPromises: Map<string, Promise<UsageSummary>> = new Map();
 
-  constructor(config?: Partial<BudgetConfig>) {
-    this.config = { ...DEFAULT_BUDGET_CONFIG, ...config };
+  constructor(config?: BudgetManagerConfig) {
+    const { store, ...budgetConfig } = config ?? {};
+    this.config = { ...DEFAULT_BUDGET_CONFIG, ...budgetConfig };
+    this.store = store;
   }
 
   /**
    * Track usage for a user
    */
   async trackUsage(userId: string, record: UsageRecord): Promise<void> {
-    let summary = this.usage.get(userId);
-
-    if (!summary) {
-      summary = this.createEmptySummary();
-      this.usage.set(userId, summary);
-    }
+    let summary = await this.loadUsage(userId);
 
     // Update totals
     summary.totalCostUsd += record.costUsd;
@@ -52,13 +79,80 @@ export class BudgetManager {
     }
     summary.tokensByModel[record.model].input += record.inputTokens;
     summary.tokensByModel[record.model].output += record.outputTokens;
+
+    // Update in-memory cache
+    this.usage.set(userId, summary);
+
+    // Persist if store available
+    await this.saveUsage(userId, summary);
+  }
+
+  /**
+   * Load usage from store (with caching)
+   */
+  private async loadUsage(userId: string): Promise<UsageSummary> {
+    // Check in-memory cache first
+    const cached = this.usage.get(userId);
+    if (cached) {
+      // Check if period has expired
+      if (cached.periodEnd > Date.now()) {
+        return cached;
+      }
+      // Period expired, create new one
+    }
+
+    // Prevent concurrent loads for same user
+    const existingPromise = this.loadPromises.get(userId);
+    if (existingPromise) {
+      return existingPromise;
+    }
+
+    const loadPromise = this.doLoadUsage(userId);
+    this.loadPromises.set(userId, loadPromise);
+
+    try {
+      const summary = await loadPromise;
+      this.usage.set(userId, summary);
+      return summary;
+    } finally {
+      this.loadPromises.delete(userId);
+    }
+  }
+
+  /**
+   * Actual load from store
+   */
+  private async doLoadUsage(userId: string): Promise<UsageSummary> {
+    if (this.store) {
+      const stored = await this.store.get<UsageSummary>(
+        NAMESPACES.LLM_BUDGET,
+        userId,
+        BUDGET_KEY
+      );
+
+      if (stored && stored.periodEnd > Date.now()) {
+        return stored;
+      }
+    }
+
+    // No stored data or expired, create new
+    return this.createEmptySummary();
+  }
+
+  /**
+   * Save usage to store
+   */
+  private async saveUsage(userId: string, summary: UsageSummary): Promise<void> {
+    if (this.store) {
+      await this.store.put(NAMESPACES.LLM_BUDGET, userId, BUDGET_KEY, summary);
+    }
   }
 
   /**
    * Get current usage summary
    */
   async getCurrentUsage(userId: string): Promise<UsageSummary> {
-    return this.usage.get(userId) ?? this.createEmptySummary();
+    return this.loadUsage(userId);
   }
 
   /**
@@ -139,7 +233,9 @@ export class BudgetManager {
    * Reset monthly usage
    */
   async resetMonthlyUsage(userId: string): Promise<void> {
-    this.usage.set(userId, this.createEmptySummary());
+    const summary = this.createEmptySummary();
+    this.usage.set(userId, summary);
+    await this.saveUsage(userId, summary);
   }
 
   /**

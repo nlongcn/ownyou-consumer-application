@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@langchain/langgraph-cli": "^1.0.3",
+    "@playwright/test": "^1.40.0",
     "@types/node": "^22.10.5",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",

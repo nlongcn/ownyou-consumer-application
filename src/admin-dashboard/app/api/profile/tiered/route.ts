@@ -11,6 +11,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+
+// Force dynamic rendering - this route depends on query parameters
+export const dynamic = 'force-dynamic'
 import { getStore } from '@/lib/shared-store'
 import {
   formatTieredDemographics,

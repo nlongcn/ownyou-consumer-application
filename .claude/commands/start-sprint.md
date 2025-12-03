@@ -2,7 +2,6 @@
 description: Load sprint context and begin Sprint 0 development workflow
 allowed-tools: Read, Glob, Grep, TodoWrite, Skill
 ---
-
 # Start Sprint Command
 
 Load sprint context and begin development workflow.
@@ -12,21 +11,22 @@ Load sprint context and begin development workflow.
 When this command is invoked:
 
 1. **Read the current sprint specification:**
-   - File: `docs/sprints/ownyou-sprint0-spec.md`
-   - Extract: Sprint goals, packages, acceptance criteria
 
+   - File: `docs/sprints/`
+   - Extract: Sprint goals, packages, acceptance criteria
 2. **Identify available packages:**
+
    - List all packages from the sprint spec
    - Show their dependency order
    - Indicate which are complete/pending
-
 3. **Load relevant architecture extracts:**
+
    - Based on sprint scope, load from `docs/architecture/extracts/`
-
 4. **Activate sprint-mode skill:**
-   - Use the `sprint-mode` skill for workflow enforcement
 
+   - Use the `sprint-mode` skill for workflow enforcement
 5. **Ask user which package to implement:**
+
    - Present the package list
    - Recommend starting with first incomplete package that has all dependencies met
 
@@ -70,6 +70,7 @@ Which package would you like to implement?
 ```
 
 Or with specific package:
+
 ```
 /start-sprint memory-store
 ```

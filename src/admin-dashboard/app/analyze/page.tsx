@@ -10,7 +10,7 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { getBrowserClassifier, type ClassificationResult } from '@/lib/browser-classifier'
 import { GmailClient, type GmailMessage } from '@/lib/gmail-client'
@@ -38,7 +38,28 @@ function getCookie(name: string): string | undefined {
   return undefined
 }
 
+// Loading component for Suspense fallback
+function AnalyzePageLoading() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Loading...</p>
+      </div>
+    </div>
+  )
+}
+
+// Main page wrapper with Suspense
 export default function AnalyzePage() {
+  return (
+    <Suspense fallback={<AnalyzePageLoading />}>
+      <AnalyzePageContent />
+    </Suspense>
+  )
+}
+
+function AnalyzePageContent() {
   const searchParams = useSearchParams()
 
   // Mode selection

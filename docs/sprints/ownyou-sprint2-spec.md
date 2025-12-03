@@ -75,12 +75,29 @@ OwnYou has two parallel LLM implementations:
 
 ### Fallback Chain (Section 6.11.3)
 
+**v13 Spec Order:**
 1. Original request
 2. Retry same model
 3. Downgrade to cheaper model
 4. Try alternative provider (OpenAI → Anthropic)
-5. **Check cache** (NEW)
+5. Check cache
 6. Use local LLM (WebLLM)
+
+**IMPLEMENTATION NOTE (Intentional Deviation):**
+The actual implementation checks cache FIRST (before any provider calls). This is an intentional
+optimization because:
+- Cache hits avoid all API calls, reducing latency and cost
+- Cache-first is standard practice in LLM applications
+- The v13 spec placed cache at step 5 for conceptual completeness, not performance optimization
+
+**Actual Implementation Order:**
+1. **Check cache FIRST** (if hit, return immediately)
+2. Check budget constraints
+3. Primary provider request
+4. Retry same model (on transient errors)
+5. Downgrade to cheaper model (e.g., gpt-4o → gpt-4o-mini)
+6. Try alternative provider (OpenAI → Anthropic)
+7. Use local LLM (WebLLM) if all paid options exhausted or budget exceeded
 
 ---
 
@@ -212,6 +229,7 @@ export interface LLMProvider {
   complete(request: LLMRequest): Promise<LLMResponse>;
   getSupportedModels(): string[];
   isAvailable(): Promise<boolean>;
+  getProviderType(): LLMProviderType;  // Returns provider identifier (e.g., 'openai', 'anthropic')
 }
 ```
 
@@ -402,14 +420,15 @@ export class AnalyzerLLMClient {
 ```typescript
 // packages/llm-client/src/providers/webllm.ts
 
-import * as webllm from '@anthropic-ai/webllm';
+// Dynamic import to avoid SSR issues
+const { CreateMLCEngine } = await import('@mlc-ai/web-llm');
 
 export class WebLLMProvider implements LLMProvider {
-  private engine: webllm.MLCEngine | null = null;
-  private modelId = 'Llama-3.2-1B-Instruct-q4f32_1-MLC';
+  private engine: MLCEngine | null = null;
+  private modelId = 'Llama-3.2-3B-Instruct-q4f16_1-MLC';
 
   async initialize(): Promise<void> {
-    this.engine = await webllm.CreateMLCEngine(this.modelId, {
+    this.engine = await CreateMLCEngine(this.modelId, {
       initProgressCallback: (progress) => {
         console.log(`WebLLM loading: ${(progress.progress * 100).toFixed(0)}%`);
       },
@@ -610,6 +629,31 @@ describe('BudgetManager', () => {
 - **v13 Section 6.11:** LLM Fallback Chain
 - **v13 Section 8.12:** Namespace Schema
 - **v13 Section 8.13:** Storage Backends
+
+---
+
+## Implementation Notes (Added Post-Review)
+
+### Circuit Breaker Pattern
+
+The fallback chain includes a circuit breaker pattern to prevent cascading failures:
+
+- **File:** `packages/llm-client/src/__tests__/circuit-breaker.test.ts` (15 tests)
+- **Purpose:** Prevents repeated calls to failing providers
+- **States:** CLOSED (normal), OPEN (failing, fast-fail), HALF_OPEN (testing recovery)
+- **Thresholds:** Opens after 3 consecutive failures, closes after 2 successful pings
+
+### Model Registry (Source of Truth)
+
+Model pricing and metadata is maintained in `packages/llm-client/src/providers/registry.ts`.
+
+See `MODEL_REGISTRY` constant for comprehensive model metadata including:
+- Context windows and max completion tokens
+- Pricing per 1K tokens (input/output)
+- Model tiers (fast, standard, quality, local)
+- Zero Data Retention (ZDR) flags
+
+**30+ models** are supported across all providers with accurate pricing as of 2025-01.
 
 ---
 

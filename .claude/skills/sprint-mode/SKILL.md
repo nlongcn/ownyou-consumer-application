@@ -2,7 +2,6 @@
 name: sprint-mode
 description: Enforce sprint-focused development workflow for OwnYou. Use when starting ANY sprint task, implementing packages, or when asked to work on sprint deliverables. Ensures work stays aligned with sprint spec and v13 architecture.
 ---
-
 # Sprint Mode
 
 **MANDATORY workflow for ALL sprint-based development in OwnYou.**
@@ -21,10 +20,11 @@ description: Enforce sprint-focused development workflow for OwnYou. Use when st
 **FIRST, read the current sprint specification:**
 
 ```
-Read: docs/sprints/ownyou-sprint0-spec.md
+Read: docs/sprints/ownyou-sprint*-spec.md
 ```
 
 **Extract and understand:**
+
 1. Sprint goals and deliverables
 2. Package breakdown (what to implement)
 3. Acceptance criteria for each package
@@ -34,12 +34,12 @@ Read: docs/sprints/ownyou-sprint0-spec.md
 
 **Based on the package you're implementing, load relevant extracts:**
 
-| Package Type | Load These Extracts |
-|--------------|---------------------|
-| Memory/Store | `extracts/memory-types-8.4.md`, `extracts/namespaces-8.12.md` |
-| Storage Backend | `extracts/storage-backends-8.13.md` |
-| LLM Integration | `extracts/llm-cost-6.10.md` |
-| Sync Features | `extracts/sync-8.14.md` |
+| Package Type    | Load These Extracts                                               |
+| --------------- | ----------------------------------------------------------------- |
+| Memory/Store    | `extracts/memory-types-8.4.md`, `extracts/namespaces-8.12.md` |
+| Storage Backend | `extracts/storage-backends-8.13.md`                             |
+| LLM Integration | `extracts/llm-cost-6.10.md`                                     |
+| Sync Features   | `extracts/sync-8.14.md`                                         |
 
 ```
 Read: docs/architecture/extracts/{relevant-extract}.md
@@ -105,6 +105,7 @@ Sprint 0 Example:
 ```
 
 **Decision Tree:**
+
 ```
 Ready to implement Package N?
 ├─ Are all dependencies complete?
@@ -128,6 +129,7 @@ Ready to implement Package N?
 ## Common Mistakes
 
 **❌ Don't:**
+
 - Start implementing without reading sprint spec
 - Skip architecture extracts loading
 - Implement packages out of dependency order
@@ -135,6 +137,7 @@ Ready to implement Package N?
 - Mix work from different packages in one commit
 
 **✅ Do:**
+
 - Always load sprint context first
 - Load relevant architecture extracts
 - Implement packages in dependency order
@@ -173,6 +176,7 @@ sprint_status = {
 7. **Begin implementation** with implement-package skill
 
 **Example Response:**
+
 ```
 I'm using sprint-mode to work on Sprint 0.
 

@@ -6,7 +6,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useClassifications } from '@/lib/use-profile'
 
@@ -19,7 +19,28 @@ const SECTIONS = [
   { value: 'actual_purchases', label: 'Actual Purchases' },
 ]
 
+// Loading component for Suspense fallback
+function ClassificationsPageLoading() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Loading classifications...</p>
+      </div>
+    </div>
+  )
+}
+
+// Main page wrapper with Suspense
 export default function ClassificationsPage() {
+  return (
+    <Suspense fallback={<ClassificationsPageLoading />}>
+      <ClassificationsPageContent />
+    </Suspense>
+  )
+}
+
+function ClassificationsPageContent() {
   const searchParams = useSearchParams()
 
   // Initialize from URL parameter
