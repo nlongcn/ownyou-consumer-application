@@ -37,10 +37,18 @@
     "vitest": "^1.6.0"
   },
   "peerDependencies": {
-    "openai": "^4.0.0"
+    "openai": "^4.0.0",
+    "@anthropic-ai/sdk": "^0.32.0",
+    "@mlc-ai/web-llm": "^0.2.0"
   },
   "peerDependenciesMeta": {
     "openai": {
+      "optional": true
+    },
+    "@anthropic-ai/sdk": {
+      "optional": true
+    },
+    "@mlc-ai/web-llm": {
       "optional": true
     }
   }

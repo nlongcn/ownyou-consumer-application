@@ -46,12 +46,20 @@ export const NAMESPACES = {
   AGENT_TRACES: 'ownyou.traces',
   LLM_USAGE: 'ownyou.llm_usage',
   SYNC_LOGS: 'ownyou.sync_logs',
+
+  // LLM Cache (v13 Section 6.11.3 - Fallback Chain Step 5)
+  LLM_CACHE: 'ownyou.llm_cache',
 } as const;
 
 /**
  * Namespace type - union of all namespace values
  */
 export type Namespace = (typeof NAMESPACES)[keyof typeof NAMESPACES];
+
+/**
+ * Namespace tuple type - used for LangGraph Store operations
+ */
+export type NamespaceTuple = readonly [string, ...string[]];
 
 /**
  * NS - Namespace tuple factory functions
@@ -102,6 +110,9 @@ export const NS = {
   /** LLM usage namespace: [namespace, userId, period] */
   llmUsage: (userId: string, period: 'daily' | 'monthly') =>
     [NAMESPACES.LLM_USAGE, userId, period] as const,
+
+  /** LLM cache namespace: [namespace, userId] - for response caching (v13 6.11.3) */
+  llmCache: (userId: string) => [NAMESPACES.LLM_CACHE, userId] as const,
 } as const;
 
 /**
@@ -128,6 +139,7 @@ export const NAMESPACE_PRIVACY: Record<Namespace, 'public' | 'sensitive' | 'priv
   [NAMESPACES.AGENT_TRACES]: 'private',
   [NAMESPACES.LLM_USAGE]: 'private',
   [NAMESPACES.SYNC_LOGS]: 'private',
+  [NAMESPACES.LLM_CACHE]: 'private', // Cached LLM responses - device-local
 };
 
 /**
@@ -157,4 +169,5 @@ export const NAMESPACE_SYNC_SCOPE: Record<Namespace, 'full' | 'selective' | 'non
   [NAMESPACES.AGENT_TRACES]: 'none', // Device-local
   [NAMESPACES.LLM_USAGE]: 'none', // Device-local
   [NAMESPACES.SYNC_LOGS]: 'none', // Device-local
+  [NAMESPACES.LLM_CACHE]: 'none', // Device-local cache, never syncs
 };

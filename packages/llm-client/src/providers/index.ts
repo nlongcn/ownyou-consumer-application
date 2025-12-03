@@ -2,8 +2,10 @@
  * LLM Providers - v13 Section 6.10-6.11
  *
  * Exports LLM provider implementations.
+ * Sprint 2: Consolidated from @ownyou/iab-classifier
  */
 
+// Types
 export type {
   LLMProvider,
   LLMRequest,
@@ -21,5 +23,54 @@ export {
   calculateCost,
 } from './types';
 
+// Base class and utilities
+export {
+  LLMProviderType,
+  BaseLLMProvider,
+  createLogger,
+  createSimpleRequest,
+  createConversationRequest,
+} from './base';
+export type { ProviderConfig, Logger, LLMResponseWithError } from './base';
+
+// Model registry
+export {
+  MODEL_REGISTRY,
+  getModelMetadata,
+  getContextWindow,
+  getMaxCompletionTokens,
+  calculateCost as calculateModelCost,
+  getModelPricing,
+  getModelsForProvider,
+  getModelsForTier,
+  getZDRModels,
+  isZDRModel,
+  getRecommendedModel,
+} from './registry';
+export type { ModelMetadata, ModelPricing as RegistryModelPricing } from './registry';
+
+// Provider implementations
 export { MockLLMProvider } from './mock';
-export { LLMClient } from './client';
+export { OpenAIProvider } from './openai';
+export type { OpenAIProviderConfig } from './openai';
+export { AnthropicProvider } from './anthropic';
+export type { AnthropicProviderConfig } from './anthropic';
+export { GoogleProvider } from './google';
+export type { GoogleProviderConfig } from './google';
+export { GroqProvider } from './groq';
+export type { GroqProviderConfig } from './groq';
+export { DeepInfraProvider } from './deepinfra';
+export type { DeepInfraProviderConfig } from './deepinfra';
+export { OllamaProvider } from './ollama';
+export type { OllamaProviderConfig } from './ollama';
+export { WebLLMProvider } from './webllm';
+export type { WebLLMProviderConfig } from './webllm';
+
+// High-level client with budget management and fallback chain
+export {
+  LLMClient,
+  BudgetExceededError,
+  RequestDeferredError,
+  AllFallbacksExhaustedError,
+} from './client';
+export type { ClientRequest, FallbackResponse, LLMClientConfig } from './client';
