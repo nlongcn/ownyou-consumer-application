@@ -7,9 +7,14 @@ import { getOutlookOAuthClient } from '@/lib/outlook-oauth-client'
 import { getLLMConfig } from '@/lib/llm-config'
 import { IndexedDBStore } from '@/lib/IndexedDBStore'
 import { buildWorkflowGraph } from '@ownyou/iab-classifier'
-// LLM clients are internal to iab-classifier package (Sprint 2 will consolidate with @ownyou/llm-client)
-import { OpenAIClient } from '@ownyou/iab-classifier/llm/openaiClient'
-import { GoogleClient } from '@ownyou/iab-classifier/llm/googleClient'
+// Sprint 2: Use consolidated @ownyou/llm-client providers
+import {
+  OpenAIProvider,
+  GoogleProvider,
+  GroqProvider,
+  DeepInfraProvider,
+  AnthropicProvider,
+} from '@ownyou/llm-client/providers'
 
 interface Email {
   id: string
@@ -598,29 +603,43 @@ function EmailDownloadContent() {
                 }
               }
 
-              // Create LLM client with user's API key (browser-direct, no server)
-              let client
+              // Sprint 2: Create LLM provider with user's API key (browser-direct, no server)
+              let provider
               if (emailProvider === 'openai') {
-                client = new OpenAIClient({
-                  openai_api_key: config.openai.api_key,
+                provider = new OpenAIProvider({
+                  apiKey: config.openai.api_key,
+                  model: emailModel,
                 })
               } else if (emailProvider === 'google') {
-                client = new GoogleClient({
-                  google_api_key: config.google.api_key,
+                provider = new GoogleProvider({
+                  apiKey: config.google.api_key,
+                  model: emailModel,
+                })
+              } else if (emailProvider === 'groq') {
+                provider = new GroqProvider({
+                  apiKey: config.groq?.api_key || '',
+                  model: emailModel,
+                })
+              } else if (emailProvider === 'deepinfra') {
+                provider = new DeepInfraProvider({
+                  apiKey: config.deepinfra?.api_key || '',
+                  model: emailModel,
+                })
+              } else if (emailProvider === 'anthropic') {
+                provider = new AnthropicProvider({
+                  apiKey: config.anthropic?.api_key || '',
+                  model: emailModel,
                 })
               } else {
                 throw new Error(`Unsupported provider: ${emailProvider}`)
               }
 
-              // Call LLM directly (no /api/summarize route)
-              // NOTE: Do NOT hardcode max_tokens or temperature here!
-              // OpenAIClient handles model-specific parameters correctly:
-              // - gpt-5/o1 models: uses max_completion_tokens, no temperature
-              // - gpt-4/3.5 models: uses max_tokens + temperature
+              // Call LLM directly using @ownyou/llm-client provider
+              // Provider handles model-specific parameters correctly
               //
               // EMAIL SUBJECT DETECTION: Extend summarization to detect WHO the email is about
               // This enables systematic handling of third-party emails (child, spouse, etc.)
-              const response = await client.generate({
+              const response = await provider.complete({
                 messages: [{
                   role: 'user',
                   content: `Analyze this email and return ONLY valid JSON (no markdown, no code blocks):
@@ -654,44 +673,45 @@ ${email.body}`
                 // Let OpenAIClient set correct parameters based on model
               })
 
-              if (response.success) {
-                // Parse JSON response for subject detection
-                try {
-                  // Handle potential markdown code blocks
-                  let jsonContent = response.content.trim()
-                  if (jsonContent.startsWith('```json')) {
-                    jsonContent = jsonContent.slice(7)
-                  } else if (jsonContent.startsWith('```')) {
-                    jsonContent = jsonContent.slice(3)
-                  }
-                  if (jsonContent.endsWith('```')) {
-                    jsonContent = jsonContent.slice(0, -3)
-                  }
-                  jsonContent = jsonContent.trim()
-
-                  const parsed = JSON.parse(jsonContent)
-                  console.log(`[Subject Detection] Email ${email.id}: subject_of_email=${parsed.subject_of_email}, reason="${parsed.subject_reasoning}"`)
-                  return {
-                    ...email,
-                    summary: parsed.summary || response.content,
-                    subject_of_email: parsed.subject_of_email || 'self',
-                    subject_reasoning: parsed.subject_reasoning || '',
-                  }
-                } catch (parseErr) {
-                  // Fallback: if JSON parsing fails, use raw response as summary
-                  console.warn(`[Subject Detection] Failed to parse JSON for email ${email.id}, using raw response`)
-                  return {
-                    ...email,
-                    summary: response.content,
-                    subject_of_email: 'self',  // Default to self if parsing fails
-                    subject_reasoning: '',
-                  }
-                }
-              } else {
+              // Sprint 2: @ownyou/llm-client provider returns LLMResponse (check for error field)
+              if (response.error) {
                 console.error(`[Concurrent Summarization] Failed for email ${email.id}:`, response.error)
                 return {
                   ...email,
                   summary: email.body.substring(0, 500), // Fallback to substring
+                }
+              }
+
+              // Parse JSON response for subject detection
+              try {
+                // Handle potential markdown code blocks
+                let jsonContent = response.content.trim()
+                if (jsonContent.startsWith('```json')) {
+                  jsonContent = jsonContent.slice(7)
+                } else if (jsonContent.startsWith('```')) {
+                  jsonContent = jsonContent.slice(3)
+                }
+                if (jsonContent.endsWith('```')) {
+                  jsonContent = jsonContent.slice(0, -3)
+                }
+                jsonContent = jsonContent.trim()
+
+                const parsed = JSON.parse(jsonContent)
+                console.log(`[Subject Detection] Email ${email.id}: subject_of_email=${parsed.subject_of_email}, reason="${parsed.subject_reasoning}"`)
+                return {
+                  ...email,
+                  summary: parsed.summary || response.content,
+                  subject_of_email: parsed.subject_of_email || 'self',
+                  subject_reasoning: parsed.subject_reasoning || '',
+                }
+              } catch (parseErr) {
+                // Fallback: if JSON parsing fails, use raw response as summary
+                console.warn(`[Subject Detection] Failed to parse JSON for email ${email.id}, using raw response`)
+                return {
+                  ...email,
+                  summary: response.content,
+                  subject_of_email: 'self',  // Default to self if parsing fails
+                  subject_reasoning: '',
                 }
               }
             } catch (error: any) {

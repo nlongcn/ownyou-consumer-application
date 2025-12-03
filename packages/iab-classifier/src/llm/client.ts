@@ -1,555 +1,533 @@
 /**
  * LLM Wrapper for Analyzer Nodes
  *
- * Provides unified interface for calling LLM clients in workflow.
+ * Provides unified interface for calling LLM clients in IAB classification workflow.
  * Handles retries, error handling, and response parsing.
  *
- * 1:1 Port of: src/email_parser/workflow/llm_wrapper.py (403 lines)
+ * Sprint 2: Simplified to use @ownyou/llm-client providers
+ *
+ * @see docs/sprints/ownyou-sprint2-spec.md
  */
 
-import { OpenAIClient } from './openaiClient'
-import { ClaudeClient } from './claudeClient'
-import { OllamaClient } from './ollamaClient'
-import { GroqClient } from './groqClient'
-import { DeepInfraClient } from './deepinfraClient'
-
-// Import LLM types from base (shared across all clients)
-import type {
-  LLMRequest,
-  LLMResponse,
-} from './base'
+import {
+  LLMProviderType,
+  OpenAIProvider,
+  AnthropicProvider,
+  GoogleProvider,
+  GroqProvider,
+  DeepInfraProvider,
+  OllamaProvider,
+  type LLMProvider,
+  type LLMRequest as ProviderRequest,
+  type LLMResponse as ProviderResponse,
+  calculateModelCost,
+} from '@ownyou/llm-client/providers';
 
 // Cost tracker interface (stub for now - will be implemented with full cost tracking)
 export interface CostTracker {
   track_call(params: {
-    provider: string
-    model: string
-    prompt_tokens: number
-    completion_tokens: number
-  }): number
+    provider: string;
+    model: string;
+    prompt_tokens: number;
+    completion_tokens: number;
+  }): number;
 }
 
 // Workflow tracker interface (stub for dashboard analytics)
 export interface WorkflowTracker {
   record_cost(params: {
-    provider: string
-    cost: number
-    model_name: string
-    input_tokens: number
-    output_tokens: number
-  }): void
+    provider: string;
+    cost: number;
+    model_name: string;
+    input_tokens: number;
+    output_tokens: number;
+  }): void;
 }
 
-// Base LLM Client interface
-export interface BaseLLMClient {
-  default_model: string
-  generate(request: LLMRequest): Promise<LLMResponse>
+// LLM Request interface for iab-classifier (extends base with json_mode)
+export interface LLMRequest {
+  messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>;
+  model: string;
+  max_tokens?: number;
+  temperature?: number;
+  json_mode?: boolean;
 }
+
+// LLM Response interface for iab-classifier
+export interface LLMResponse {
+  success: boolean;
+  content: string;
+  error?: string;
+  usage?: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+}
+
+/**
+ * Map provider name to LLMProviderType
+ */
+const PROVIDER_MAP: Record<string, LLMProviderType> = {
+  openai: LLMProviderType.OPENAI,
+  claude: LLMProviderType.ANTHROPIC,
+  anthropic: LLMProviderType.ANTHROPIC,
+  google: LLMProviderType.GOOGLE,
+  gemini: LLMProviderType.GOOGLE,
+  groq: LLMProviderType.GROQ,
+  deepinfra: LLMProviderType.DEEPINFRA,
+  ollama: LLMProviderType.OLLAMA,
+};
+
+/**
+ * Default models per provider
+ */
+const DEFAULT_MODELS: Record<string, string> = {
+  openai: 'gpt-4o-mini',
+  claude: 'claude-3-haiku-20240307',
+  anthropic: 'claude-3-haiku-20240307',
+  google: 'gemini-2.0-flash',
+  gemini: 'gemini-2.0-flash',
+  groq: 'llama-3.1-8b-instant',
+  deepinfra: 'meta-llama/Llama-3.3-70B-Instruct',
+  ollama: 'llama3.2',
+};
 
 /**
  * Unified LLM client for analyzer nodes with retry logic.
  *
- * Python lines 22-401
+ * Sprint 2: Now uses @ownyou/llm-client providers internally.
  */
-export class AnalyzerLLMClient {                                                 // Python line 22
-  provider: string                                                               // Python line 61
-  max_retries: number                                                            // Python line 62
-  cost_tracker: CostTracker | null                                               // Python line 63
-  workflow_tracker: WorkflowTracker | null                                       // Python line 64
-  client: ClaudeClient | OpenAIClient | OllamaClient | GroqClient | DeepInfraClient  // Python line 67
-  model: string                                                                  // Python line 70
-  llm_config: any                                                                // Phase 1.5 development config
+export class AnalyzerLLMClient {
+  provider: string;
+  max_retries: number;
+  cost_tracker: CostTracker | null;
+  workflow_tracker: WorkflowTracker | null;
+  model: string;
+  llm_config: any;
+
+  private _provider: LLMProvider;
 
   /**
    * Initialize LLM client for analyzer use.
    *
-   * Python lines 25-72
-   *
-   * @param provider - "openai", "claude", "ollama", "groq", or "deepinfra" (defaults to env LLM_PROVIDER)
+   * @param provider - "openai", "claude", "ollama", "groq", "deepinfra", or "google"
    * @param model - Specific model name (optional, uses default from client)
    * @param max_retries - Number of retry attempts on failure (default: 3)
    * @param cost_tracker - Optional CostTracker instance to track API costs
    * @param workflow_tracker - Optional WorkflowTracker instance for dashboard analytics
-   * @param llm_config - Optional LLM configuration (API keys, etc.) for Phase 1.5 development
-   *
-   * @example
-   * const client = new AnalyzerLLMClient({ provider: "openai" })
-   * const response = await client.analyze_email(prompt)
+   * @param llm_config - Optional LLM configuration (API keys, etc.)
    */
-  constructor(params: {                                                          // Python line 25
-    provider?: string | null
-    model?: string | null
-    max_retries?: number
-    cost_tracker?: CostTracker | null
-    workflow_tracker?: WorkflowTracker | null
-    llm_config?: any
-  } = {}) {
-    // Parse model spec if it contains provider (format: "provider:model")     // Python line 49
-    let provider = params.provider
-    let model = params.model
+  constructor(
+    params: {
+      provider?: string | null;
+      model?: string | null;
+      max_retries?: number;
+      cost_tracker?: CostTracker | null;
+      workflow_tracker?: WorkflowTracker | null;
+      llm_config?: any;
+    } = {}
+  ) {
+    // Parse model spec if it contains provider (format: "provider:model")
+    let provider = params.provider;
+    let model = params.model;
 
-    if (model && model.includes(':')) {                                          // Python line 50
-      const [provider_from_model, model_name] = model.split(':', 2)             // Python line 51
-      if (provider === null || provider === undefined) {                         // Python line 52
-        provider = provider_from_model                                           // Python line 53
+    if (model && model.includes(':')) {
+      const [provider_from_model, model_name] = model.split(':', 2);
+      if (provider === null || provider === undefined) {
+        provider = provider_from_model;
       }
-      model = model_name                                                         // Python line 54
-      console.debug(`Parsed model spec: provider=${provider}, model=${model}`)  // Python line 55
+      model = model_name;
+      console.debug(`Parsed model spec: provider=${provider}, model=${model}`);
     }
 
-    // Default to LLM_PROVIDER from environment, or "openai" as fallback        // Python line 57
-    if (provider === null || provider === undefined) {                           // Python line 58
-      provider = (globalThis as any).process?.env?.LLM_PROVIDER || 'openai'     // Python line 59
+    // Default to LLM_PROVIDER from environment, or "openai" as fallback
+    if (provider === null || provider === undefined) {
+      provider = (globalThis as any).process?.env?.LLM_PROVIDER || 'openai';
     }
 
-    this.provider = provider!.toLowerCase()                                       // Python line 61
-    this.max_retries = params.max_retries ?? 3                                   // Python line 62
-    this.cost_tracker = params.cost_tracker ?? null                              // Python line 63
-    this.workflow_tracker = params.workflow_tracker ?? null                      // Python line 64
-    this.llm_config = params.llm_config ?? null                                   // Phase 1.5 config
+    this.provider = provider!.toLowerCase();
+    this.max_retries = params.max_retries ?? 3;
+    this.cost_tracker = params.cost_tracker ?? null;
+    this.workflow_tracker = params.workflow_tracker ?? null;
+    this.llm_config = params.llm_config ?? null;
 
-    // Initialize appropriate client                                             // Python line 66
-    this.client = this._createClient()                                           // Python line 67
+    // Use provided model or fallback to default for provider
+    this.model = model || DEFAULT_MODELS[this.provider] || 'gpt-4o-mini';
 
-    // Use provided model or fallback to client's default model                  // Python line 69
-    this.model = model || this.client.default_model                              // Python line 70
+    // Initialize provider from @ownyou/llm-client
+    this._provider = this._createProvider();
 
-    console.info(                                                                // Python line 72
-      `Initialized ${this.provider} LLM client for analyzers (model: ${this.model})`
-    )
+    console.info(`Initialized ${this.provider} LLM client for analyzers (model: ${this.model})`);
   }
 
   /**
-   * Create the appropriate LLM client instance.
-   *
-   * Python lines 74-96
-   *
-   * @returns Initialized LLM client
-   * @throws Error if provider is unknown
+   * Create the appropriate LLM provider instance.
    */
-  private _createClient(): ClaudeClient | OpenAIClient | OllamaClient | GroqClient | DeepInfraClient {  // Python line 74
-    // Clients load config from llm_config (Phase 1.5) or environment           // Python line 84
+  private _createProvider(): LLMProvider {
+    const providerType = PROVIDER_MAP[this.provider];
 
-    if (this.provider === 'claude') {                                            // Python line 86
-      // Use ClaudeClient from src/browser/llm/                                 // Python line 87
-      const config = {
-        anthropic_api_key: this.llm_config?.api_key || import.meta.env?.VITE_ANTHROPIC_API_KEY,
-        anthropic_model: this.model,
-      }
-      return new ClaudeClient(config)
-    } else if (this.provider === 'openai') {                                     // Python line 88
-      // Use OpenAIClient from src/browser/llm/                                 // Python line 89
-      const config = {
-        openai_api_key: this.llm_config?.api_key || import.meta.env?.VITE_OPENAI_API_KEY,
-        openai_model: this.model,
-      }
-      return new OpenAIClient(config)
-    } else if (this.provider === 'ollama') {                                     // Python line 90
-      // Use OllamaClient from src/browser/llm/                                 // Python line 91
-      const config = {
-        ollama_host: this.llm_config?.base_url || import.meta.env?.VITE_OLLAMA_HOST || 'http://localhost:11434',
-        ollama_model: this.model,
-      }
-      return new OllamaClient(config)
-    } else if (this.provider === 'groq') {
-      // Use GroqClient from src/browser/llm/
-      // Zero Data Retention toggle available in Groq Console
-      const config = {
-        groq_api_key: this.llm_config?.api_key || import.meta.env?.NEXT_PUBLIC_GROQ_API_KEY,
-        groq_model: this.model,
-      }
-      return new GroqClient(config)
-    } else if (this.provider === 'deepinfra') {
-      // Use DeepInfraClient from src/browser/llm/
-      // Zero Data Retention by DEFAULT (no opt-in required)
-      const config = {
-        deepinfra_api_key: this.llm_config?.api_key || import.meta.env?.NEXT_PUBLIC_DEEPINFRA_API_KEY,
-        deepinfra_model: this.model,
-      }
-      return new DeepInfraClient(config)
-    } else {                                                                     // Python line 92
-      throw new Error(                                                           // Python line 93
-        `Unknown provider: ${this.provider}. Must be 'claude', 'openai', 'ollama', 'groq', or 'deepinfra'`
-      )
+    if (!providerType) {
+      throw new Error(
+        `Unknown provider: ${this.provider}. Must be 'claude', 'openai', 'ollama', 'groq', 'deepinfra', or 'google'`
+      );
+    }
+
+    const config = {
+      apiKey:
+        this.llm_config?.api_key ||
+        (globalThis as any).import?.meta?.env?.[`VITE_${this.provider.toUpperCase()}_API_KEY`] ||
+        '',
+      model: this.model,
+    };
+
+    switch (providerType) {
+      case LLMProviderType.OPENAI:
+        return new OpenAIProvider({
+          apiKey:
+            this.llm_config?.api_key ||
+            (globalThis as any).import?.meta?.env?.VITE_OPENAI_API_KEY ||
+            '',
+          model: this.model,
+        });
+
+      case LLMProviderType.ANTHROPIC:
+        return new AnthropicProvider({
+          apiKey:
+            this.llm_config?.api_key ||
+            (globalThis as any).import?.meta?.env?.VITE_ANTHROPIC_API_KEY ||
+            '',
+          model: this.model,
+        });
+
+      case LLMProviderType.GOOGLE:
+        return new GoogleProvider({
+          apiKey:
+            this.llm_config?.api_key ||
+            (globalThis as any).import?.meta?.env?.VITE_GOOGLE_API_KEY ||
+            '',
+          model: this.model,
+        });
+
+      case LLMProviderType.GROQ:
+        return new GroqProvider({
+          apiKey:
+            this.llm_config?.api_key ||
+            (globalThis as any).import?.meta?.env?.NEXT_PUBLIC_GROQ_API_KEY ||
+            '',
+          model: this.model,
+        });
+
+      case LLMProviderType.DEEPINFRA:
+        return new DeepInfraProvider({
+          apiKey:
+            this.llm_config?.api_key ||
+            (globalThis as any).import?.meta?.env?.NEXT_PUBLIC_DEEPINFRA_API_KEY ||
+            '',
+          model: this.model,
+        });
+
+      case LLMProviderType.OLLAMA:
+        return new OllamaProvider({
+          baseUrl:
+            this.llm_config?.base_url ||
+            (globalThis as any).import?.meta?.env?.VITE_OLLAMA_HOST ||
+            'http://localhost:11434',
+          model: this.model,
+        });
+
+      default:
+        throw new Error(`Provider ${this.provider} not implemented`);
     }
   }
 
   /**
    * Analyze email using LLM with retry logic.
    *
-   * Python lines 98-214
-   *
    * @param prompt - Complete prompt with email content and instructions
    * @param max_tokens - Maximum response tokens (default: 1000)
    * @param temperature - Sampling temperature, lower = more deterministic (default: 0.1)
    * @returns Parsed JSON response with classifications array
-   *
-   * @example
-   * const response = await client.analyze_email(prompt)
-   * const classifications = response.classifications
    */
-  async analyze_email(params: {                                                  // Python line 98
-    prompt: string
-    max_tokens?: number | null
-    temperature?: number
+  async analyze_email(params: {
+    prompt: string;
+    max_tokens?: number | null;
+    temperature?: number;
   }): Promise<Record<string, any>> {
-    const { prompt, max_tokens = null, temperature = 0.1 } = params             // Python line 102
+    const { prompt, max_tokens = null, temperature = 0.1 } = params;
 
-    console.info(                                                                // Python line 119
-      `analyze_email: max_tokens=${max_tokens} (will be auto-adjusted by client)`
-    )
+    console.info(`analyze_email: max_tokens=${max_tokens} (will be auto-adjusted by client)`);
+    console.debug('[DEBUG] Prompt length:', prompt.length, 'characters');
 
-    console.debug('[DEBUG] Prompt length:', prompt.length, 'characters')
-    console.debug('[DEBUG] First 1000 chars of prompt:', prompt.substring(0, 1000))
+    const request: ProviderRequest = {
+      messages: [{ role: 'user', content: prompt }],
+      model: this.model,
+      maxTokens: max_tokens ?? undefined,
+      temperature,
+    };
 
-    const request: LLMRequest = {                                                // Python line 121
-      messages: [{ role: 'user', content: prompt }],                             // Python line 122
-      model: this.model,                                                         // Python line 123
-      max_tokens: max_tokens ?? undefined,                                       // Python line 124 (convert null to undefined)
-      temperature,                                                               // Python line 125
-      json_mode: true,  // Request JSON response                                // Python line 126
-    }
+    for (let attempt = 1; attempt <= this.max_retries; attempt++) {
+      try {
+        console.debug(`LLM call attempt ${attempt}/${this.max_retries}`);
 
-    for (let attempt = 1; attempt <= this.max_retries; attempt++) {              // Python line 129
-      try {                                                                      // Python line 130
-        console.debug(`LLM call attempt ${attempt}/${this.max_retries}`)        // Python line 131
+        // Call LLM via @ownyou/llm-client provider
+        const response = await this._provider.complete(request);
 
-        // Call LLM                                                              // Python line 133
-        const response = await this.client.generate(request)                     // Python line 134
-
-        if (!response.success) {                                                 // Python line 136
-          throw new Error(`LLM call failed: ${response.error}`)                  // Python line 137
+        if (response.error) {
+          throw new Error(`LLM call failed: ${response.error}`);
         }
 
-        // Parse JSON response                                                   // Python line 139
-        console.debug('[DEBUG] Raw LLM response content:', response.content.substring(0, 500))
-        const result = this._parseJsonResponse(response.content)                 // Python line 140
-        console.debug('[DEBUG] Parsed result:', JSON.stringify(result).substring(0, 500))
+        // Parse JSON response
+        console.debug('[DEBUG] Raw LLM response content:', response.content.substring(0, 500));
+        const result = this._parseJsonResponse(response.content);
+        console.debug('[DEBUG] Parsed result:', JSON.stringify(result).substring(0, 500));
 
-        // Validate structure                                                    // Python line 142
-        if (typeof result !== 'object' || result === null || Array.isArray(result)) { // Python line 143
-          throw new Error('Response is not a JSON object')                       // Python line 144
+        // Validate structure
+        if (typeof result !== 'object' || result === null || Array.isArray(result)) {
+          throw new Error('Response is not a JSON object');
         }
 
-        if (!('classifications' in result)) {                                    // Python line 146
-          console.warn('Response missing "classifications" key, adding empty array') // Python line 147
-          result.classifications = []                                            // Python line 148
-        }
-        console.debug('[DEBUG] Classifications count:', result.classifications?.length || 0)
-
-        // ADDITIONAL LOGGING: Show why classifications might be empty
-        if (!result.classifications || result.classifications.length === 0) {
-          console.warn('[CLASSIFICATION DEBUG] ⚠️  LLM returned ZERO classifications!')
-          console.warn('[CLASSIFICATION DEBUG] Prompt length:', prompt.length, 'characters')
-          console.warn('[CLASSIFICATION DEBUG] Response length:', response.content.length, 'characters')
-          console.warn('[CLASSIFICATION DEBUG] First 1000 chars of prompt:', prompt.substring(0, 1000))
-          console.warn('[CLASSIFICATION DEBUG] Full LLM response:', response.content)
-        } else {
-          console.log(`[CLASSIFICATION DEBUG] ✅ ${result.classifications.length} classifications returned`)
-          console.log('[CLASSIFICATION DEBUG] First classification:', result.classifications[0])
+        if (!('classifications' in result)) {
+          console.warn('Response missing "classifications" key, adding empty array');
+          result.classifications = [];
         }
 
-        // Track costs if tracker provided                                       // Python line 150
-        if (this.cost_tracker && response.usage) {                               // Python line 151
-          const prompt_tokens = response.usage.prompt_tokens || 0                // Python line 152
-          const completion_tokens = response.usage.completion_tokens || 0        // Python line 153
+        // Track costs if tracker provided
+        if (this.cost_tracker && response.usage) {
+          const prompt_tokens = response.usage.inputTokens || 0;
+          const completion_tokens = response.usage.outputTokens || 0;
 
-          if (prompt_tokens > 0 || completion_tokens > 0) {                      // Python line 155
-            const cost = this.cost_tracker.track_call({                          // Python line 156
-              provider: this.provider,                                           // Python line 157
-              model: this.model,                                                 // Python line 158
-              prompt_tokens,                                                     // Python line 159
-              completion_tokens,                                                 // Python line 160
-            })
-            console.debug(`Tracked LLM cost: $${cost.toFixed(6)} USD`)          // Python line 162
+          if (prompt_tokens > 0 || completion_tokens > 0) {
+            const cost = this.cost_tracker.track_call({
+              provider: this.provider,
+              model: this.model,
+              prompt_tokens,
+              completion_tokens,
+            });
+            console.debug(`Tracked LLM cost: $${cost.toFixed(6)} USD`);
 
-            // Also track to WorkflowTracker if available in state               // Python line 164
-            if (this.workflow_tracker) {                                         // Python line 165
-              this.workflow_tracker.record_cost({                                // Python line 166
-                provider: this.provider,                                         // Python line 167
-                cost,                                                            // Python line 168
-                model_name: this.model,                                          // Python line 169
-                input_tokens: prompt_tokens,                                     // Python line 170
-                output_tokens: completion_tokens,                                // Python line 171
-              })
+            if (this.workflow_tracker) {
+              this.workflow_tracker.record_cost({
+                provider: this.provider,
+                cost,
+                model_name: this.model,
+                input_tokens: prompt_tokens,
+                output_tokens: completion_tokens,
+              });
             }
           }
         }
 
-        // Log success                                                           // Python line 174
-        console.info('LLM call successful', {                                    // Python line 175
-          provider: this.provider,                                               // Python line 178
-          attempt,                                                               // Python line 179
-          tokens: response.usage.total_tokens || 0,                              // Python line 180
-          classifications: (result.classifications || []).length,                // Python line 181
-        })
+        console.info('LLM call successful', {
+          provider: this.provider,
+          attempt,
+          tokens: response.usage.totalTokens || 0,
+          classifications: (result.classifications || []).length,
+        });
 
-        return result                                                            // Python line 185
+        return result;
+      } catch (error) {
+        if (error instanceof SyntaxError || (error as any).name === 'SyntaxError') {
+          console.warn(`JSON parse error (attempt ${attempt}/${this.max_retries}): ${error}`);
 
-      } catch (error) {                                                          // Python line 187
-        if (error instanceof SyntaxError || (error as any).name === 'SyntaxError') {      // Python line 187
-          console.warn(                                                          // Python line 188
-            `JSON parse error (attempt ${attempt}/${this.max_retries}): ${error}`,
-            { response_preview: 'response' in (error as any) ? (error as any).response?.content?.slice(0, 200) : null }
-          )
-
-          if (attempt < this.max_retries) {                                      // Python line 193
-            await this._sleep(2 ** (attempt - 1) * 1000)  // Exponential backoff: 1s, 2s, 4s // Python line 194
-            continue                                                             // Python line 195
-          } else {                                                               // Python line 196
-            console.error('All retry attempts failed due to JSON parsing errors') // Python line 197
-            return { classifications: [] }                                       // Python line 198
+          if (attempt < this.max_retries) {
+            await this._sleep(2 ** (attempt - 1) * 1000);
+            continue;
+          } else {
+            console.error('All retry attempts failed due to JSON parsing errors');
+            return { classifications: [] };
           }
         }
 
-        console.error(                                                           // Python line 200
-          `LLM call error (attempt ${attempt}/${this.max_retries}): ${error}`,
-          error
-        )
+        console.error(`LLM call error (attempt ${attempt}/${this.max_retries}): ${error}`, error);
 
-        if (attempt < this.max_retries) {                                        // Python line 206
-          await this._sleep(2 ** (attempt - 1) * 1000)                           // Python line 207
-          continue                                                               // Python line 208
-        } else {                                                                 // Python line 209
-          console.error('All retry attempts exhausted')                          // Python line 210
-          throw error                                                            // Python line 211
+        if (attempt < this.max_retries) {
+          await this._sleep(2 ** (attempt - 1) * 1000);
+          continue;
+        } else {
+          console.error('All retry attempts exhausted');
+          throw error;
         }
       }
     }
 
-    // Should not reach here, but safety fallback                               // Python line 213
-    return { classifications: [] }                                               // Python line 214
+    return { classifications: [] };
   }
 
   /**
    * Call LLM and parse JSON response without enforcing specific structure.
    *
    * This is useful for LLM-as-Judge and other tasks that don't return
-   * classifications. Unlike analyze_email(), this doesn't normalize
-   * the response to have a "classifications" key.
-   *
-   * Python lines 216-321
+   * classifications.
    *
    * @param prompt - Complete prompt
-   * @param max_tokens - Maximum response tokens (default: null, uses model's max_completion_tokens)
+   * @param max_tokens - Maximum response tokens
    * @param temperature - Sampling temperature (default: 0.1)
    * @returns Parsed JSON response as-is
-   *
-   * @example
-   * const response = await client.call_json({ prompt: judge_prompt })
-   * const quality_score = response.quality_score
    */
-  async call_json(params: {                                                      // Python line 216
-    prompt: string
-    max_tokens?: number | null
-    temperature?: number
+  async call_json(params: {
+    prompt: string;
+    max_tokens?: number | null;
+    temperature?: number;
   }): Promise<Record<string, any>> {
-    const { prompt, temperature = 0.1 } = params                                 // Python line 221
-    let { max_tokens = null } = params                                           // Python line 219
+    const { prompt, temperature = 0.1 } = params;
+    let { max_tokens = null } = params;
 
-    // If max_tokens not provided, use a high value so _adjust_tokens_for_context // Python line 241
-    // can calculate the optimal value based on context window and input size   // Python line 242
-    if (max_tokens === null || max_tokens === undefined) {                       // Python line 243
-      max_tokens = 100000  // High ceiling, will be adjusted by client          // Python line 244
-      console.info(                                                              // Python line 245
+    if (max_tokens === null || max_tokens === undefined) {
+      max_tokens = 100000;
+      console.info(
         `call_json: max_tokens=null, using ceiling of ${max_tokens} (will be auto-adjusted by client)`
-      )
-    } else {                                                                     // Python line 247
-      console.info(`call_json: max_tokens=${max_tokens} (explicitly requested)`) // Python line 248
+      );
     }
 
-    const request: LLMRequest = {                                                // Python line 249
-      messages: [{ role: 'user', content: prompt }],                             // Python line 250
-      model: this.model,                                                         // Python line 251
-      max_tokens,                                                                // Python line 252
-      temperature,                                                               // Python line 253
-      json_mode: true,                                                           // Python line 254
-    }
+    const request: ProviderRequest = {
+      messages: [{ role: 'user', content: prompt }],
+      model: this.model,
+      maxTokens: max_tokens,
+      temperature,
+    };
 
-    for (let attempt = 1; attempt <= this.max_retries; attempt++) {              // Python line 257
-      try {                                                                      // Python line 258
-        console.debug(`LLM call_json attempt ${attempt}/${this.max_retries}`)   // Python line 259
+    for (let attempt = 1; attempt <= this.max_retries; attempt++) {
+      try {
+        console.debug(`LLM call_json attempt ${attempt}/${this.max_retries}`);
 
-        // Call LLM                                                              // Python line 261
-        const response = await this.client.generate(request)                     // Python line 262
+        const response = await this._provider.complete(request);
 
-        if (!response.success) {                                                 // Python line 264
-          throw new Error(`LLM call failed: ${response.error}`)                  // Python line 265
+        if (response.error) {
+          throw new Error(`LLM call failed: ${response.error}`);
         }
 
-        // Parse JSON response                                                   // Python line 267
-        const result = this._parseJsonResponse(response.content)                 // Python line 268
+        const result = this._parseJsonResponse(response.content);
 
-        // Validate structure (just check it's a dict)                           // Python line 270
-        if (typeof result !== 'object' || result === null || Array.isArray(result)) { // Python line 271
-          throw new Error('Response is not a JSON object')                       // Python line 272
+        if (typeof result !== 'object' || result === null || Array.isArray(result)) {
+          throw new Error('Response is not a JSON object');
         }
 
-        // Track costs if tracker provided                                       // Python line 274
-        if (this.cost_tracker && response.usage) {                               // Python line 275
-          const prompt_tokens = response.usage.prompt_tokens || 0                // Python line 276
-          const completion_tokens = response.usage.completion_tokens || 0        // Python line 277
+        // Track costs
+        if (this.cost_tracker && response.usage) {
+          const prompt_tokens = response.usage.inputTokens || 0;
+          const completion_tokens = response.usage.outputTokens || 0;
 
-          if (prompt_tokens > 0 || completion_tokens > 0) {                      // Python line 279
-            const cost = this.cost_tracker.track_call({                          // Python line 280
-              provider: this.provider,                                           // Python line 281
-              model: this.model,                                                 // Python line 282
-              prompt_tokens,                                                     // Python line 283
-              completion_tokens,                                                 // Python line 284
-            })
-            console.debug(`Tracked LLM cost: $${cost.toFixed(6)} USD`)          // Python line 286
+          if (prompt_tokens > 0 || completion_tokens > 0) {
+            const cost = this.cost_tracker.track_call({
+              provider: this.provider,
+              model: this.model,
+              prompt_tokens,
+              completion_tokens,
+            });
+            console.debug(`Tracked LLM cost: $${cost.toFixed(6)} USD`);
 
-            if (this.workflow_tracker) {                                         // Python line 288
-              this.workflow_tracker.record_cost({                                // Python line 289
-                provider: this.provider,                                         // Python line 290
-                cost,                                                            // Python line 291
-                model_name: this.model,                                          // Python line 292
-                input_tokens: prompt_tokens,                                     // Python line 293
-                output_tokens: completion_tokens,                                // Python line 294
-              })
+            if (this.workflow_tracker) {
+              this.workflow_tracker.record_cost({
+                provider: this.provider,
+                cost,
+                model_name: this.model,
+                input_tokens: prompt_tokens,
+                output_tokens: completion_tokens,
+              });
             }
           }
         }
 
-        console.debug(`call_json successful (keys: ${Object.keys(result).join(', ')})`) // Python line 297
-        return result                                                            // Python line 298
+        console.debug(`call_json successful (keys: ${Object.keys(result).join(', ')})`);
+        return result;
+      } catch (error) {
+        if (error instanceof SyntaxError || (error as any).name === 'SyntaxError') {
+          console.warn(`JSON parse error (attempt ${attempt}/${this.max_retries}): ${error}`);
 
-      } catch (error) {                                                          // Python line 300
-        if (error instanceof SyntaxError || (error as any).name === 'SyntaxError') {      // Python line 300
-          console.warn(`JSON parse error (attempt ${attempt}/${this.max_retries}): ${error}`) // Python line 301
-
-          if (attempt < this.max_retries) {                                      // Python line 303
-            await this._sleep(2 ** (attempt - 1) * 1000)                         // Python line 304
-            continue                                                             // Python line 305
-          } else {                                                               // Python line 306
-            console.error('All retry attempts failed due to JSON parsing errors') // Python line 307
-            throw error                                                          // Python line 308
+          if (attempt < this.max_retries) {
+            await this._sleep(2 ** (attempt - 1) * 1000);
+            continue;
+          } else {
+            console.error('All retry attempts failed due to JSON parsing errors');
+            throw error;
           }
         }
 
-        console.error(                                                           // Python line 310
-          `call_json error (attempt ${attempt}/${this.max_retries}): ${error}`,
-          error
-        )
+        console.error(`call_json error (attempt ${attempt}/${this.max_retries}): ${error}`, error);
 
-        if (attempt < this.max_retries) {                                        // Python line 313
-          await this._sleep(2 ** (attempt - 1) * 1000)                           // Python line 314
-          continue                                                               // Python line 315
-        } else {                                                                 // Python line 316
-          console.error('All retry attempts exhausted')                          // Python line 317
-          throw error                                                            // Python line 318
+        if (attempt < this.max_retries) {
+          await this._sleep(2 ** (attempt - 1) * 1000);
+          continue;
+        } else {
+          console.error('All retry attempts exhausted');
+          throw error;
         }
       }
     }
 
-    // Should not reach here                                                     // Python line 320
-    throw new Error('call_json: max retries exceeded')                           // Python line 321
+    throw new Error('call_json: max retries exceeded');
   }
 
   /**
    * Parse JSON from LLM response, handling common formatting issues.
-   *
-   * Python lines 323-361
-   *
-   * @param content - Raw LLM response content
-   * @returns Parsed JSON object
-   * @throws SyntaxError if parsing fails after cleanup attempts
    */
-  private _parseJsonResponse(content: string): Record<string, any> {             // Python line 323
-    // Remove markdown code blocks if present                                    // Python line 336
-    content = content.trim()                                                     // Python line 337
+  private _parseJsonResponse(content: string): Record<string, any> {
+    content = content.trim();
 
-    if (content.startsWith('```json')) {                                         // Python line 339
-      content = content.slice(7)  // Remove ```json                             // Python line 340
+    // Remove markdown code blocks if present
+    if (content.startsWith('```json')) {
+      content = content.slice(7);
     }
-    if (content.startsWith('```')) {                                             // Python line 341
-      content = content.slice(3)  // Remove ```                                 // Python line 342
+    if (content.startsWith('```')) {
+      content = content.slice(3);
     }
-    if (content.endsWith('```')) {                                               // Python line 343
-      content = content.slice(0, -3)  // Remove trailing ```                    // Python line 344
+    if (content.endsWith('```')) {
+      content = content.slice(0, -3);
     }
 
-    content = content.trim()                                                     // Python line 346
+    content = content.trim();
 
-    // Parse JSON                                                                // Python line 348
-    try {                                                                        // Python line 349
-      return JSON.parse(content)                                                 // Python line 350
-    } catch (error) {                                                            // Python line 351
-      // Try to extract JSON from text                                           // Python line 352
-      // Look for first { and last }                                             // Python line 353
-      const start = content.indexOf('{')                                         // Python line 354
-      const end = content.lastIndexOf('}')                                       // Python line 355
+    try {
+      return JSON.parse(content);
+    } catch (error) {
+      // Try to extract JSON from text
+      const start = content.indexOf('{');
+      const end = content.lastIndexOf('}');
 
-      if (start !== -1 && end !== -1) {                                          // Python line 357
-        content = content.slice(start, end + 1)                                  // Python line 358
-        return JSON.parse(content)                                               // Python line 359
-      } else {                                                                   // Python line 360
-        throw error                                                              // Python line 361
+      if (start !== -1 && end !== -1) {
+        content = content.slice(start, end + 1);
+        return JSON.parse(content);
+      } else {
+        throw error;
       }
     }
   }
 
   /**
-   * Estimate cost of LLM call (if applicable).
-   *
-   * Python lines 363-400
-   *
-   * @param prompt_tokens - Number of tokens in prompt
-   * @param response_tokens - Number of tokens in response
-   * @returns Estimated cost in USD, or null if not applicable
-   *
-   * @example
-   * const cost = client.estimate_cost(1000, 500)
-   * console.log(`Estimated cost: $${cost.toFixed(4)}`)
+   * Estimate cost of LLM call using @ownyou/llm-client pricing.
    */
-  estimate_cost(params: {                                                        // Python line 363
-    prompt_tokens: number
-    response_tokens: number
-  }): number | null {
-    const { prompt_tokens, response_tokens } = params                            // Python line 369
+  estimate_cost(params: { prompt_tokens: number; response_tokens: number }): number | null {
+    const { prompt_tokens, response_tokens } = params;
 
-    // Approximate pricing (as of Nov 2025)                                      // Python line 378
-    const pricing: Record<string, { prompt: number; response: number }> = {      // Python line 379
-      claude: {                                                                  // Python line 380
-        prompt: 3.0 / 1_000_000,  // $3 per 1M input tokens                     // Python line 381
-        response: 15.0 / 1_000_000,  // $15 per 1M output tokens                // Python line 382
-      },
-      openai: {                                                                  // Python line 384
-        prompt: 5.0 / 1_000_000,  // $5 per 1M tokens (GPT-4)                   // Python line 385
-        response: 15.0 / 1_000_000,  // $15 per 1M tokens                       // Python line 386
-      },
-      ollama: {                                                                  // Python line 388
-        prompt: 0.0,  // Free (local)                                           // Python line 389
-        response: 0.0,                                                           // Python line 390
-      },
-      groq: {
-        prompt: 0.59 / 1_000_000,  // $0.59 per 1M tokens (llama-3.3-70b)
-        response: 0.79 / 1_000_000,  // $0.79 per 1M tokens
-      },
-      deepinfra: {
-        prompt: 0.35 / 1_000_000,  // $0.35 per 1M tokens (Llama-3.3-70B)
-        response: 0.40 / 1_000_000,  // $0.40 per 1M tokens
-      },
+    try {
+      return calculateModelCost(this.model, prompt_tokens, response_tokens);
+    } catch {
+      // Fallback pricing for unknown models
+      const fallbackPricing: Record<string, { prompt: number; response: number }> = {
+        claude: { prompt: 3.0 / 1_000_000, response: 15.0 / 1_000_000 },
+        openai: { prompt: 0.15 / 1_000_000, response: 0.6 / 1_000_000 },
+        ollama: { prompt: 0.0, response: 0.0 },
+        groq: { prompt: 0.59 / 1_000_000, response: 0.79 / 1_000_000 },
+        deepinfra: { prompt: 0.35 / 1_000_000, response: 0.4 / 1_000_000 },
+        google: { prompt: 0.075 / 1_000_000, response: 0.3 / 1_000_000 },
+      };
+
+      if (!(this.provider in fallbackPricing)) {
+        return null;
+      }
+
+      const rates = fallbackPricing[this.provider];
+      return prompt_tokens * rates.prompt + response_tokens * rates.response;
     }
-
-    if (!(this.provider in pricing)) {                                           // Python line 394
-      return null                                                                // Python line 395
-    }
-
-    const rates = pricing[this.provider]                                         // Python line 397
-    const cost = prompt_tokens * rates.prompt + response_tokens * rates.response // Python line 398
-
-    return cost                                                                  // Python line 400
   }
 
   /**
    * Sleep for specified milliseconds (utility for exponential backoff).
-   *
-   * @param ms - Milliseconds to sleep
    */
   private _sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms))
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 
-export default AnalyzerLLMClient
+export default AnalyzerLLMClient;
