@@ -56,7 +56,7 @@ export type {
 export { AGENT_LIMITS } from './agent';
 
 // Namespace constants (v13 Section 8.12)
-export type { Namespace } from './namespaces';
+export type { Namespace, NamespaceTuple } from './namespaces';
 export { NAMESPACES, NS, NAMESPACE_PRIVACY, NAMESPACE_SYNC_SCOPE } from './namespaces';
 
 // Sync types (v13 Section 8.14)

@@ -60,6 +60,7 @@ export interface LLMResponse {
   usage: TokenUsage;
   throttled?: boolean;
   finishReason?: 'stop' | 'length' | 'content_filter';
+  error?: string;
 }
 
 /**

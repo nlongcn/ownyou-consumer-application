@@ -51,3 +51,16 @@ export {
   type CircuitBreakerStats,
   DEFAULT_CIRCUIT_BREAKER_CONFIG,
 } from './budget';
+
+// Cache (v13 Section 6.11.3 - Fallback Chain Step 5)
+export {
+  LLMCache,
+  InMemoryCacheStore,
+  generateCacheKey,
+  TTL_BY_OPERATION,
+  DEFAULT_CACHE_CONFIG,
+  type CacheConfig,
+  type CacheEntry,
+  type CacheStats,
+  type CacheStore,
+} from './cache';
