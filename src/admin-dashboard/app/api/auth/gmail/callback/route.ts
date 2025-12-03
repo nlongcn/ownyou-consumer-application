@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Force dynamic rendering - OAuth callbacks use dynamic URL parameters
+export const dynamic = 'force-dynamic'
+
 /**
  * Gmail OAuth Callback Endpoint
  *

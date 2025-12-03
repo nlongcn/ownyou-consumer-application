@@ -30,10 +30,13 @@ export {
   type TokenUsage,
   type ModelTier,
   type OperationType,
-  MODEL_PRICING,
   MODEL_TIERS,
   OPERATION_LIMITS,
   calculateCost,
+  // Model registry (replaces MODEL_PRICING - more comprehensive)
+  MODEL_REGISTRY,
+  getModelPricing,
+  getModelMetadata,
 } from './providers';
 
 // Budget

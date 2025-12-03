@@ -84,47 +84,6 @@ export interface LLMProvider {
 }
 
 /**
- * Model pricing (per 1K tokens)
- */
-export interface ModelPricing {
-  inputPer1k: number;
-  outputPer1k: number;
-}
-
-/**
- * Model registry with pricing
- */
-export const MODEL_PRICING: Record<string, ModelPricing> = {
-  'gpt-4o-mini': { inputPer1k: 0.00015, outputPer1k: 0.0006 },
-  'gpt-4o': { inputPer1k: 0.0025, outputPer1k: 0.01 },
-  'claude-3-haiku-20240307': { inputPer1k: 0.00025, outputPer1k: 0.00125 },
-  'claude-3-5-sonnet-20241022': { inputPer1k: 0.003, outputPer1k: 0.015 },
-  local: { inputPer1k: 0, outputPer1k: 0 },
-};
-
-/**
- * Model tiers (v13 Section 6.10)
- */
-export const MODEL_TIERS: Record<ModelTier, { models: string[]; avgCostPer1k: number }> = {
-  fast: {
-    models: ['gpt-4o-mini'],
-    avgCostPer1k: 0.000375,
-  },
-  standard: {
-    models: ['gpt-4o-mini', 'claude-3-haiku-20240307'],
-    avgCostPer1k: 0.00075,
-  },
-  quality: {
-    models: ['gpt-4o', 'claude-3-5-sonnet-20241022'],
-    avgCostPer1k: 0.00625,
-  },
-  local: {
-    models: ['local'],
-    avgCostPer1k: 0,
-  },
-};
-
-/**
  * Operation limits (v13 Section 6.10)
  */
 export const OPERATION_LIMITS: Record<
@@ -166,11 +125,3 @@ export const OPERATION_LIMITS: Record<
     modelTier: 'fast',
   },
 };
-
-/**
- * Calculate cost from token usage
- */
-export function calculateCost(model: string, inputTokens: number, outputTokens: number): number {
-  const pricing = MODEL_PRICING[model] ?? MODEL_PRICING['gpt-4o-mini'];
-  return (inputTokens * pricing.inputPer1k + outputTokens * pricing.outputPer1k) / 1000;
-}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   getBrowserProfileReader,
@@ -13,7 +13,25 @@ import {
 import { clearUserProfile, getProfileStats } from '../../../browser/store/profileUtils'
 import { IndexedDBStore } from '../../../browser/store/IndexedDBStore'
 
+// Loading component for Suspense fallback
+function ProfilePageLoading() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <p className="text-gray-600">Loading tiered profile...</p>
+    </div>
+  )
+}
+
+// Main page wrapper with Suspense
 export default function ProfileViewPage() {
+  return (
+    <Suspense fallback={<ProfilePageLoading />}>
+      <ProfileViewPageContent />
+    </Suspense>
+  )
+}
+
+function ProfileViewPageContent() {
   const [profile, setProfile] = useState<TieredProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

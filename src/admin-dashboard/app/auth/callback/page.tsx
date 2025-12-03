@@ -1,9 +1,23 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { handleOAuthCallback, prepareTokensForStorage } from '@/lib/oauth-pkce';
 import { storeTokens } from '@/lib/token-storage';
+
+// Loading component for Suspense fallback
+function AuthCallbackLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="max-w-md w-full space-y-8 p-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Loading...</h2>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /**
  * OAuth Callback Page
@@ -12,6 +26,14 @@ import { storeTokens } from '@/lib/token-storage';
  * Exchanges authorization code for tokens and stores them securely.
  */
 export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={<AuthCallbackLoading />}>
+      <AuthCallbackPageContent />
+    </Suspense>
+  );
+}
+
+function AuthCallbackPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');

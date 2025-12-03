@@ -5,7 +5,7 @@
  */
 
 import type { LLMProvider, LLMRequest, LLMResponse } from './types';
-import { calculateCost } from './types';
+import { calculateCost } from './registry';
 
 /**
  * MockLLMProvider - Deterministic responses for testing

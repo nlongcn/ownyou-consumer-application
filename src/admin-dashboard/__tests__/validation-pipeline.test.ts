@@ -158,13 +158,13 @@ test.describe('Validation Pipeline', () => {
     console.log('Status: ✅ ALL VALIDATIONS PASSED')
   })
 
-  test('should block classifications with invalid taxonomy IDs', async ({ page }) => {
+  test('should block classifications with invalid taxonomy IDs', async () => {
     // This test would require mocking the LLM to return invalid taxonomy IDs
     // Skipping for now as it requires test infrastructure setup
     test.skip()
   })
 
-  test('should block classifications with quality score < 0.3', async ({ page }) => {
+  test('should block classifications with quality score < 0.3', async () => {
     // This test would require mocking the evidence judge to return low quality scores
     // Skipping for now as it requires test infrastructure setup
     test.skip()
