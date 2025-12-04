@@ -43,7 +43,16 @@ async function loadModel(): Promise<void> {
 
       // Configure for browser/node environment
       env.allowLocalModels = true;
-      env.useBrowserCache = true;
+
+      // Detect environment and configure cache appropriately
+      const isBrowser = typeof window !== 'undefined' && typeof window.caches !== 'undefined';
+      if (isBrowser) {
+        env.useBrowserCache = true;
+      } else {
+        // Node.js environment - use local file cache
+        env.useBrowserCache = false;
+        env.cacheDir = './.cache/transformers';
+      }
 
       // Feature extraction pipeline with mean pooling
       embedder = await pipeline('feature-extraction', EMBEDDING_CONFIG.model, {
