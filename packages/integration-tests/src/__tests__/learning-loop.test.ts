@@ -55,45 +55,57 @@ class InMemoryStore implements AgentStore {
     this.data.get(nsKey)?.delete(key);
   }
 
-  async search(
-    namespace: readonly string[],
-    _query: string,
-    options?: { limit?: number }
-  ): Promise<Array<{ key: string; value: unknown; score?: number }>> {
-    const nsKey = this.getNamespaceKey(namespace);
+  async search<T = unknown>(
+    query: { namespace: readonly string[]; query: string; modes?: string[]; limit?: number }
+  ): Promise<Array<{ item: T; scores: { final: number; bm25?: number } }>> {
+    const nsKey = this.getNamespaceKey(query.namespace);
     const nsData = this.data.get(nsKey);
     if (!nsData) return [];
 
-    const results: Array<{ key: string; value: unknown; score?: number }> = [];
-    for (const [key, value] of nsData.entries()) {
-      results.push({ key, value, score: 1 });
-      if (options?.limit && results.length >= options.limit) break;
+    const results: Array<{ item: T; scores: { final: number; bm25?: number } }> = [];
+    for (const [_key, value] of nsData.entries()) {
+      // Simple text matching for BM25 simulation
+      const content = (value as { content?: string }).content || '';
+      if (content.toLowerCase().includes(query.query.toLowerCase())) {
+        results.push({ item: value as T, scores: { final: 1.0, bm25: 1.0 } });
+      }
+      if (query.limit && results.length >= query.limit) break;
     }
     return results;
   }
 
   async list<T = unknown>(
     namespace: readonly string[],
-    options?: { prefix?: string; limit?: number; offset?: number }
-  ): Promise<{ items: T[]; cursor?: string }> {
+    options?: { prefix?: string; limit?: number; offset?: number; filter?: Record<string, unknown> }
+  ): Promise<{ items: T[]; hasMore: boolean }> {
     const nsKey = this.getNamespaceKey(namespace);
     const nsData = this.data.get(nsKey);
-    if (!nsData) return { items: [] };
+    if (!nsData) return { items: [], hasMore: false };
 
     let items: T[] = [];
     for (const [key, value] of nsData.entries()) {
       if (options?.prefix && !key.startsWith(options.prefix)) continue;
+      // Apply filter if provided
+      if (options?.filter) {
+        const matches = Object.entries(options.filter).every(([k, v]) => {
+          return (value as Record<string, unknown>)[k] === v;
+        });
+        if (!matches) continue;
+      }
       items.push(value as T);
     }
 
     if (options?.offset) {
       items = items.slice(options.offset);
     }
+
+    let hasMore = false;
     if (options?.limit) {
+      hasMore = items.length > options.limit;
       items = items.slice(0, options.limit);
     }
 
-    return { items };
+    return { items, hasMore };
   }
 
   // Helper to get all data (for testing)
