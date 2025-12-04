@@ -25,10 +25,10 @@ Phase 5: UI Layer ████████████████████�
 
 ### New Approach (Vertical Slices)
 ```
-Sprint 0-3: Shopping Slice  ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ (foundation→agent→UI)
-Sprint 4-5: Memory + Content ████░░░░░░░░░░░░░░░░░░░░░░░░░░░░ (learning→2nd agent)
-Sprint 6-7: Ikigai + Travel  ██████░░░░░░░░░░░░░░░░░░░░░░░░░░ (well-being→L3 agent)
-Sprint 8-9: Data Sources     ████████░░░░░░░░░░░░░░░░░░░░░░░░ (financial→calendar)
+Sprint 0-4: Foundation+Memory ████░░░░░░░░░░░░░░░░░░░░░░░░░░░░ (COMPLETE - learning loop working)
+Sprint 5:   Resilience        █████░░░░░░░░░░░░░░░░░░░░░░░░░░░ (triggers + error handling)
+Sprint 6-7: Ikigai + Travel   ██████░░░░░░░░░░░░░░░░░░░░░░░░░░ (well-being→L3 agent)
+Sprint 8-9: Data Sources      ████████░░░░░░░░░░░░░░░░░░░░░░░░ (financial→calendar)
 ...continues...
 ```
 
@@ -72,7 +72,7 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 | 3.4 Mission Card Structure | Sprint 3 | ✅ Complete |
 | 3.5 Agent Coordinator | Sprint 5 | 🔲 Planned |
 | 3.6.1 Shopping Agent (L1-2) | Sprint 3 | ✅ Complete |
-| 3.6.1 Content Agent (L1) | Sprint 4 | 🔲 Planned |
+| 3.6.1 Content Agent (L1) | Sprint 4 | ✅ Complete |
 | 3.6.1 Restaurant Agent (L2) | Sprint 7 | 🔲 Planned |
 | 3.6.1 Events Agent (L2) | Sprint 7 | 🔲 Planned |
 | 3.6.1 Travel Agent (L3) | Sprint 7 | 🔲 Planned |
@@ -80,7 +80,7 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 | 3.6.2 Namespace Access Control | Sprint 3 | ✅ Complete |
 | 3.6.3 Agent Complexity Levels (L1/L2/L3) | Sprint 3 | ✅ Complete |
 | 3.6.4 Tool Call Limits | Sprint 3 | ✅ Complete |
-| 3.6.5 Privacy-Tier Enforcement | Sprint 4 | 🔲 Planned |
+| 3.6.5 Privacy-Tier Enforcement | Sprint 4 | ✅ Complete |
 
 ### Section 4: Consumer UI
 
@@ -141,20 +141,20 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 
 | V13 Requirement | Sprint | Status |
 |-----------------|--------|--------|
-| 8.1-8.2 Memory Types (Semantic, Episodic, Procedural, Relational) | Sprint 0 (partial), Sprint 4 | 🟡 Partial |
-| 8.3 Agent-Driven Memory | Sprint 4 | 🔲 Planned |
-| 8.4 Memory Schema | Sprint 4 | 🔲 Planned |
-| 8.5 Vector Embeddings (Local) | Sprint 4 | 🔲 Planned |
-| 8.6 Bi-Temporal Modeling | Sprint 4 | 🔲 Planned |
-| 8.7 Memory Retrieval (Hybrid: Semantic + BM25 + RRF) | Sprint 4 | 🔲 Planned |
-| 8.8 Memory Tools for Agents | Sprint 4 | 🔲 Planned |
-| 8.9 Memory Lifecycle (Consolidation, Decay, Pruning) | Sprint 4 | 🔲 Planned |
-| 8.10 Reflection Node | Sprint 4 | 🔲 Planned |
-| 8.11 Privacy Tiers | Sprint 4 | 🔲 Planned |
+| 8.1-8.2 Memory Types (Semantic, Episodic, Procedural, Relational) | Sprint 4 | ✅ Complete |
+| 8.3 Agent-Driven Memory | Sprint 4 | ✅ Complete |
+| 8.4 Memory Schema | Sprint 4 | ✅ Complete |
+| 8.5 Vector Embeddings (Local) | Sprint 4 | ✅ Complete |
+| 8.6 Bi-Temporal Modeling | Sprint 4 | ✅ Complete |
+| 8.7 Memory Retrieval (Hybrid: Semantic + BM25 + RRF) | Sprint 4 | ✅ Complete |
+| 8.8 Memory Tools for Agents | Sprint 4 | ✅ Complete |
+| 8.9 Memory Lifecycle (Consolidation, Decay, Pruning) | Sprint 4 | ✅ Complete |
+| 8.10 Reflection Node | Sprint 4 | ✅ Complete |
+| 8.11 Privacy Tiers | Sprint 4 | ✅ Complete |
 | 8.12 Namespace Schema | Sprint 0 | ✅ Complete |
 | 8.13 Storage Backends | Sprint 0 | ✅ Complete |
 | 8.14 Memory-Sync Integration | Sprint 10 | 🔲 Planned |
-| 8.15 Memory Size Limits | Sprint 4 | 🔲 Planned |
+| 8.15 Memory Size Limits | Sprint 4 | ✅ Complete |
 
 ### Section 10: Observability & Debugging
 
@@ -169,7 +169,7 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 
 ---
 
-## Completed Sprints (Phase 0-3)
+## Completed Sprints (Phase 0-4)
 
 ### Sprint 0: Foundation ✅
 **Duration:** 2 weeks | **Tests:** 241 passing
@@ -221,34 +221,31 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 | Integration tests (10 tests) | Full agent loop validation | - |
 | Admin Dashboard (12 tests) | Missions page with feedback | 4 |
 
----
-
-## Remaining Sprints (Phase 4+)
-
-### Sprint 4: Memory Intelligence + Content Agent 🔲
-**Duration:** 3 weeks | **v13 Coverage:** Section 8 (Memory), Section 3.6.1 (Content Agent)
+### Sprint 4: Memory Intelligence + Content Agent ✅
+**Duration:** 3 weeks | **Completed:** 2025-12-04 | **Tests:** 245+
 
 **Goal:** Make the system learn from feedback and prove agent framework scales
 
-| Week | Focus | Deliverables |
-|------|-------|--------------|
-| Week 1 | Memory Infrastructure | Memory tools (save_observation, save_episode, search_memories), Vector embeddings (nomic-embed-text-v1.5), Memory consolidation |
-| Week 2 | Reflection Node | Procedural synthesis, Memory decay (5%/week), Pruning (threshold 0.1), Reflection triggers |
-| Week 3 | Content Agent + Integration | Content Agent (L1), Procedural injection into agents, End-to-end learning test |
-
-**New Packages:**
-- `@ownyou/reflection` — Background reflection node
-- `@ownyou/agents-content` — L1 content recommendation agent
+| Package | Purpose | Tests |
+|---------|---------|-------|
+| `@ownyou/memory` | Memory tools, embeddings, hybrid retrieval, lifecycle | 65 |
+| `@ownyou/reflection` | Background reflection, procedural synthesis, context injection | 22 |
+| `@ownyou/agents-base` | BaseAgent, LimitsEnforcer, PrivacyGuard (enhanced) | 86 |
+| `@ownyou/agents-shopping` | Hybrid LLM + rule-based shopping agent | 29 |
+| `@ownyou/agents-content` | L1 content recommendation agent | 11 |
+| `@ownyou/integration-tests` | Learning loop validation | 32 |
 
 **Success Criteria:**
-- [ ] Memory tools callable by agents
-- [ ] Reflection Node runs on triggers (5 episodes, daily, negative feedback)
-- [ ] Procedural rules synthesized from episode patterns
-- [ ] Shopping Agent demonstrates learning from feedback
-- [ ] Content Agent generates recommendation cards
-- [ ] All tests passing
+- [x] Memory tools callable by agents
+- [x] Reflection Node runs on triggers (5 episodes, daily, negative feedback)
+- [x] Procedural rules synthesized from episode patterns
+- [x] Shopping Agent demonstrates learning from feedback
+- [x] Content Agent generates recommendation cards
+- [x] All tests passing (245+)
 
 ---
+
+## Remaining Sprints (Phase 5+)
 
 ### Sprint 5: Resilience + Trigger System 🔲
 **Duration:** 2 weeks | **v13 Coverage:** Section 6.11 (Error Handling), Section 3.1-3.2 (Triggers), Section 3.5 (Coordinator)
@@ -481,7 +478,7 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 | Sprint | Duration | Focus | v13 Sections |
 |--------|----------|-------|--------------|
 | **0-3** | **10 weeks** | **COMPLETE** | Foundation, Shopping Agent, UI basics |
-| 4 | 3 weeks | Memory + Content Agent | 8 |
+| **4** | **3 weeks** | **COMPLETE** | Memory Intelligence, Content Agent |
 | 5 | 2 weeks | Resilience + Triggers | 6.11, 3.1-3.5 |
 | 6 | 3 weeks | Ikigai Intelligence | 2 |
 | 7 | 4 weeks | Restaurant, Events, Travel Agents | 3.6.1 |
@@ -499,19 +496,17 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 ## Sprint Dependency Graph
 
 ```
-Sprint 0-3 (COMPLETE)
+Sprint 0-4 (COMPLETE ✅)
     │
-    ├─────────────────────────────────┐
-    │                                 │
-    ▼                                 ▼
-Sprint 4                          Sprint 5
-(Memory + Content)                (Resilience + Triggers)
-    │                                 │
-    └──────────┬──────────────────────┘
-               │
-               ▼
-           Sprint 6
-       (Ikigai Intelligence)
+    │ All foundation, memory, agents-base, content agent working
+    │
+    ▼
+Sprint 5 ← NEXT
+(Resilience + Triggers)
+    │
+    ▼
+Sprint 6
+(Ikigai Intelligence)
                │
     ┌──────────┴──────────┐
     │                     │
@@ -598,9 +593,11 @@ Sprint 9                          Sprint 10
 |---------|------|---------|
 | v1 | 2025-01-04 | Original horizontal layer approach |
 | v2 | 2025-12-03 | Vertical slice approach, v13 coverage matrix |
+| v2.1 | 2025-12-04 | Sprint 4 completed - Memory Intelligence + Content Agent |
 
 ---
 
-**Document Status:** Strategic Roadmap v2 - DRAFT
-**Date:** 2025-12-03
+**Document Status:** Strategic Roadmap v2.1 - ACTIVE
+**Date:** 2025-12-04
 **Validates Against:** OwnYou_architecture_v13.md
+**Next Sprint:** Sprint 5 (Resilience + Trigger System)
