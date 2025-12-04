@@ -4,6 +4,8 @@ module.exports = {
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    // Include ui-components package for Tailwind class detection
+    '../../packages/ui-components/src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {

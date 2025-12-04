@@ -26,6 +26,7 @@ export type {
   OAuthConfig,
   MicrosoftOAuthConfig,
   GoogleOAuthConfig,
+  AuthorizationUrlResult,
   OAuthProviderClient,
   TokenManagerEvents,
   OAuthClient,

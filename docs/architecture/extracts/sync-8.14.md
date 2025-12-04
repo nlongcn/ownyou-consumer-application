@@ -8,15 +8,15 @@ Memory must synchronize across devices while respecting privacy and handling off
 
 | Namespace | Sync? | Rationale |
 |-----------|-------|-----------|
-| `semantic_memory` | ✅ Yes | User preferences should be consistent across devices |
-| `episodic_memory` | ⚠️ Selective | Recent episodes sync; old episodes archived locally |
-| `procedural_memory` | ✅ Yes | Agent rules must be consistent (critical for UX) |
+| `semanticMemory` | ✅ Yes | User preferences should be consistent across devices |
+| `episodicMemory` | ⚠️ Selective | Recent episodes sync; old episodes archived locally |
+| `proceduralMemory` | ✅ Yes | Agent rules must be consistent (critical for UX) |
 | `entities` | ✅ Yes | Entity knowledge should be shared |
 | `relationships` | ✅ Yes | Relationship context should be shared |
 | `community_summaries` | ✅ Yes | Summaries are derived; sync for efficiency |
 | `iab_classifications` | ✅ Yes | Advertising profile must be consistent |
 | `ikigai_profile` | ✅ Yes | Core user understanding shared |
-| `mission_cards` | ✅ Yes | Active missions visible everywhere |
+| `missionCards` | ✅ Yes | Active missions visible everywhere |
 | `mission_feedback` | ✅ Yes | Feedback informs all devices |
 | `earnings` | ✅ Yes | Financial data must be accurate everywhere |
 | **Device-local only:** | | |
@@ -108,12 +108,12 @@ const encryptForSync = async (
 
 | Namespace | Conflict Strategy | Rationale |
 |-----------|-------------------|-----------|
-| **semantic_memory** | Latest-write-wins | Preferences evolve; newest is most accurate |
-| **episodic_memory** | Merge (append) | Episodes are immutable records; both valid |
-| **procedural_memory** | Latest-write-wins + reconcile | Rules must be consistent; trigger Reflection |
+| **semanticMemory** | Latest-write-wins | Preferences evolve; newest is most accurate |
+| **episodicMemory** | Merge (append) | Episodes are immutable records; both valid |
+| **proceduralMemory** | Latest-write-wins + reconcile | Rules must be consistent; trigger Reflection |
 | **entities** | Merge properties | Combine entity properties from both versions |
 | **relationships** | Latest-write-wins | Relationship state should be newest |
-| **mission_cards** | Custom merge | Active missions merge; completed use newest |
+| **missionCards** | Custom merge | Active missions merge; completed use newest |
 | **earnings** | Sum (financial reconcile) | Never lose earnings; reconcile with ledger |
 
 ## Episodic Memory Sync Rules

@@ -6,16 +6,18 @@ All memory is organized into typed namespaces following the LangGraph Store patt
 
 ```typescript
 // Namespace factory functions for type-safe access
-const STORE_NAMESPACES = {
+// Import: import { NS } from '@ownyou/shared-types';
+
+const NS = {
   // === SEMANTIC MEMORY (Facts & Knowledge) ===
-  semantic_memory: (userId: string) => ["ownyou.semantic", userId],
-  community_summaries: (userId: string) => ["ownyou.summaries", userId],
+  semanticMemory: (userId: string) => ["ownyou.semantic", userId],
+  communitySummaries: (userId: string) => ["ownyou.summaries", userId],
 
   // === EPISODIC MEMORY (Interaction History) ===
-  episodic_memory: (userId: string) => ["ownyou.episodes", userId],
+  episodicMemory: (userId: string) => ["ownyou.episodic", userId],
 
   // === PROCEDURAL MEMORY (Agent Rules) ===
-  procedural_memory: (userId: string, agentType: string) =>
+  proceduralMemory: (userId: string, agentType: string) =>
     ["ownyou.procedural", userId, agentType],
 
   // === RELATIONAL MEMORY (Entity Graph) ===
@@ -23,46 +25,55 @@ const STORE_NAMESPACES = {
   relationships: (userId: string) => ["ownyou.relationships", userId],
 
   // === IAB CLASSIFICATION (Advertising Profile) ===
-  iab_classifications: (userId: string) => ["ownyou.iab", userId],
-  iab_evidence: (userId: string) => ["ownyou.iab_evidence", userId],
+  iabClassifications: (userId: string) => ["ownyou.iab", userId],
+  iabEvidence: (userId: string) => ["ownyou.iab_evidence", userId],
 
   // === IKIGAI (Well-Being Profile) ===
-  ikigai_profile: (userId: string) => ["ownyou.ikigai", userId],
-  ikigai_dimensions: (userId: string) => ["ownyou.ikigai_dims", userId],
+  ikigaiProfile: (userId: string) => ["ownyou.ikigai", userId],
+  ikigaiDimensions: (userId: string) => ["ownyou.ikigai_dims", userId],
 
   // === MISSION STATE ===
-  mission_cards: (userId: string) => ["ownyou.missions", userId],
-  mission_feedback: (userId: string, missionId: string) =>
+  missionCards: (userId: string) => ["ownyou.missions", userId],
+  missionFeedback: (userId: string, missionId: string) =>
     ["ownyou.feedback", userId, missionId],
 
   // === BBS+ IDENTITY ===
   pseudonyms: (userId: string) => ["ownyou.pseudonyms", userId],
-  disclosure_history: (userId: string) => ["ownyou.disclosures", userId],
+  disclosureHistory: (userId: string) => ["ownyou.disclosures", userId],
   earnings: (userId: string) => ["ownyou.earnings", userId],
-  tracking_consents: (userId: string) => ["ownyou.consents", userId],
+  trackingConsents: (userId: string) => ["ownyou.consents", userId],
 
   // === SYNC & ARCHIVAL ===
   archived: (namespace: string) => ["ownyou.archived", namespace],
-  yearly_summaries: (userId: string, context: string) =>
+  yearlySummaries: (userId: string, context: string) =>
     ["ownyou.yearly_summaries", userId, context],
-  sync_metadata: (deviceId: string) => ["ownyou.sync", deviceId],
+  syncMetadata: (deviceId: string) => ["ownyou.sync", deviceId],
+
+  // === LLM CACHE ===
+  llmCache: (userId: string) => ["ownyou.llm_cache", userId],
+
+  // === LLM BUDGET ===
+  llmBudget: (userId: string) => ["ownyou.llm_budget", userId],
+
+  // === AGENT TRACES ===
+  agentTraces: (userId: string) => ["ownyou.traces", userId],
 } as const;
 
 // Usage example:
-// await store.put(STORE_NAMESPACES.semantic_memory(userId), memoryId, memory);
-// await store.search({ namespace: STORE_NAMESPACES.episodic_memory(userId), query });
+// await store.put(NS.semanticMemory(userId), memoryId, memory);
+// await store.search({ namespace: NS.episodicMemory(userId), query });
 ```
 
 ## Namespace Categories
 
 | Category | Namespaces | Purpose |
 |----------|------------|---------|
-| **Semantic** | `semantic_memory`, `community_summaries` | Facts & knowledge about user |
-| **Episodic** | `episodic_memory` | Interaction history for learning |
-| **Procedural** | `procedural_memory` | Agent-specific rules |
+| **Semantic** | `semanticMemory`, `communitySummaries` | Facts & knowledge about user |
+| **Episodic** | `episodicMemory` | Interaction history for learning |
+| **Procedural** | `proceduralMemory` | Agent-specific rules |
 | **Relational** | `entities`, `relationships` | Entity graph (MVP: Store-based) |
-| **IAB** | `iab_classifications`, `iab_evidence` | Advertising profile |
-| **Ikigai** | `ikigai_profile`, `ikigai_dimensions` | Well-being profile |
-| **Mission** | `mission_cards`, `mission_feedback` | Active missions |
-| **Identity** | `pseudonyms`, `disclosure_history`, `earnings`, `tracking_consents` | BBS+ identity |
-| **System** | `archived`, `yearly_summaries`, `sync_metadata` | Housekeeping |
+| **IAB** | `iabClassifications`, `iabEvidence` | Advertising profile |
+| **Ikigai** | `ikigaiProfile`, `ikigaiDimensions` | Well-being profile |
+| **Mission** | `missionCards`, `missionFeedback` | Active missions |
+| **Identity** | `pseudonyms`, `disclosureHistory`, `earnings`, `trackingConsents` | BBS+ identity |
+| **System** | `archived`, `yearlySummaries`, `syncMetadata` | Housekeeping |

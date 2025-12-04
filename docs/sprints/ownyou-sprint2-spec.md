@@ -238,7 +238,7 @@ export interface LLMProvider {
 ```typescript
 // packages/llm-client/src/providers/client.ts
 
-import { STORE_NAMESPACES } from '@ownyou/shared-types';
+import { NS } from '@ownyou/shared-types';
 
 export class LLMClient {
   private providers: Map<string, LLMProvider>;
@@ -289,11 +289,11 @@ export class LLMClient {
 
 ```typescript
 // Add to packages/shared-types/src/namespaces.ts
-const STORE_NAMESPACES = {
+const NS = {
   // ... existing namespaces ...
 
   // === LLM CACHE (v13 6.11.3 - Fallback Chain Step 5) ===
-  llm_cache: (userId: string) => ["ownyou.llm_cache", userId],
+  llmCache: (userId: string) => ["ownyou.llm_cache", userId],
 } as const;
 ```
 
@@ -334,14 +334,14 @@ function generateCacheKey(request: LLMRequest): string {
 ```typescript
 // packages/llm-client/src/cache.ts
 
-import { STORE_NAMESPACES } from '@ownyou/shared-types';
+import { NS } from '@ownyou/shared-types';
 
 export class LLMCache {
   constructor(private store: BaseStore, private config: CacheConfig) {}
 
   async get(userId: string, request: LLMRequest): Promise<LLMResponse | null> {
     const key = await generateCacheKey(request);
-    const namespace = STORE_NAMESPACES.llm_cache(userId);
+    const namespace = NS.llmCache(userId);
     const entry = await this.store.get(namespace, key);
 
     if (!entry) return null;
@@ -361,7 +361,7 @@ export class LLMCache {
 
     const key = await generateCacheKey(request);
     const ttl = TTL_BY_OPERATION[request.operation];
-    const namespace = STORE_NAMESPACES.llm_cache(userId);
+    const namespace = NS.llmCache(userId);
 
     await this.enforceSize(userId);
 
@@ -615,7 +615,7 @@ describe('BudgetManager', () => {
 ## V13 Compliance Checklist
 
 - [x] **Store API**: Uses `put()`/`get()` via LangGraph Store
-- [x] **Namespace**: Uses `STORE_NAMESPACES.llm_cache(userId)` factory
+- [x] **Namespace**: Uses `NS.llmCache(userId)` factory
 - [x] **Memory Types**: Cache entries are operational data (appropriate structure)
 - [x] **Privacy Tier**: Stores derived LLM responses, not raw PII
 - [x] **Self-Sovereign**: All data stays local

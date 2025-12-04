@@ -51,10 +51,36 @@ export class GoogleOAuthProvider implements OAuthProviderClient {
   /**
    * Exchange authorization code for tokens
    *
+   * For browser platform, uses server-side proxy to keep client_secret secure.
+   * For desktop platform, can use direct token exchange.
+   *
    * @param code - Authorization code from callback
    * @returns Stored tokens with access, refresh, and expiry
    */
   async exchangeCode(code: string): Promise<StoredTokens> {
+    // Browser platform: use server-side proxy (client_secret stays server-side)
+    if (this.config.platform === 'browser') {
+      const response = await fetch('/api/oauth/google/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code,
+          redirectUri: this.config.redirectUri,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`Google token exchange failed: ${error}`);
+      }
+
+      const data = await response.json();
+      return this.parseTokenResponse(data);
+    }
+
+    // Desktop platform: direct token exchange (has access to client_secret via Tauri)
     const body = new URLSearchParams({
       client_id: this.config.clientId,
       grant_type: 'authorization_code',

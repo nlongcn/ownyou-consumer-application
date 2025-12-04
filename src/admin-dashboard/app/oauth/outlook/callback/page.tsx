@@ -1,22 +1,25 @@
 /**
- * Outlook OAuth Callback Page
+ * Outlook OAuth Callback Page - Sprint 1b
  *
  * Handles the OAuth 2.0 callback from Microsoft after user authorizes the app.
- * Extracts authorization code from URL and exchanges it for access token.
+ * Uses @ownyou/oauth package for token exchange and storage.
  *
  * Flow:
  * 1. User clicks "Connect Outlook" → redirected to Microsoft OAuth
  * 2. User authorizes → Microsoft redirects to this page with ?code=...
- * 3. This page exchanges code for access token
- * 4. Tokens stored in IndexedDB
+ * 3. This page uses @ownyou/oauth to exchange code for tokens
+ * 4. Tokens stored in localStorage (BrowserTokenStorage)
  * 5. Redirect to /emails page
+ *
+ * @see packages/oauth/src/index.ts
+ * @see docs/sprints/ownyou-sprint1b-spec.md
  */
 
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { getOutlookOAuthClient } from '@/lib/outlook-oauth-client'
+import { handleMicrosoftCallback } from '@/lib/oauth-integration'
 
 // Loading component for Suspense fallback
 function OutlookCallbackLoading() {
@@ -48,12 +51,21 @@ function OutlookCallbackPageContent() {
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing')
   const [error, setError] = useState<string>('')
+  const processedRef = useRef(false)
 
   useEffect(() => {
-    const handleCallback = async () => {
+    const processCallback = async () => {
+      // Prevent double execution in React StrictMode
+      if (processedRef.current) {
+        console.log('[Outlook OAuth] Callback already processed, skipping...')
+        return
+      }
+      processedRef.current = true
+
       try {
-        // Get authorization code from URL
+        // Get authorization code and state from URL
         const code = searchParams.get('code')
+        const state = searchParams.get('state')
         const errorParam = searchParams.get('error')
         const errorDescription = searchParams.get('error_description')
 
@@ -65,14 +77,17 @@ function OutlookCallbackPageContent() {
           throw new Error('No authorization code received')
         }
 
-        console.log('[Outlook OAuth] Received authorization code, exchanging for token...')
+        if (!state) {
+          throw new Error('No state parameter received')
+        }
 
-        // Exchange code for token
-        const client = getOutlookOAuthClient()
-        const tokens = await client.handleCallback(code)
+        console.log('[Outlook OAuth] Received authorization code, exchanging for token using @ownyou/oauth...')
 
-        console.log('[Outlook OAuth] Token exchange successful')
-        console.log('[Outlook OAuth] Access token expires at:', new Date(tokens.expires_at).toISOString())
+        // Exchange code for token using Sprint 1b @ownyou/oauth package
+        const tokens = await handleMicrosoftCallback(code, state)
+
+        console.log('[Outlook OAuth] Token exchange successful via @ownyou/oauth')
+        console.log('[Outlook OAuth] Access token expires at:', new Date(tokens.expiresAt).toISOString())
 
         setStatus('success')
 
@@ -87,7 +102,7 @@ function OutlookCallbackPageContent() {
       }
     }
 
-    handleCallback()
+    processCallback()
   }, [searchParams, router])
 
   return (

@@ -1,22 +1,25 @@
 /**
- * Gmail OAuth Callback Page
+ * Gmail OAuth Callback Page - Sprint 1b
  *
  * Handles the OAuth 2.0 callback from Google after user authorizes the app.
- * Extracts authorization code from URL and exchanges it for access token.
+ * Uses @ownyou/oauth package for token exchange and storage.
  *
  * Flow:
  * 1. User clicks "Connect Gmail" → redirected to Google OAuth
  * 2. User authorizes → Google redirects to this page with ?code=...
- * 3. This page exchanges code for access token
- * 4. Tokens stored in IndexedDB
+ * 3. This page uses @ownyou/oauth to exchange code for tokens
+ * 4. Tokens stored in localStorage (BrowserTokenStorage)
  * 5. Redirect to /emails page
+ *
+ * @see packages/oauth/src/index.ts
+ * @see docs/sprints/ownyou-sprint1b-spec.md
  */
 
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { getGmailOAuthClient } from '@/lib/gmail-oauth-client'
+import { handleGoogleCallback } from '@/lib/oauth-integration'
 
 // Loading component for Suspense fallback
 function GmailCallbackLoading() {
@@ -48,30 +51,43 @@ function GmailCallbackPageContent() {
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing')
   const [error, setError] = useState<string>('')
+  const processedRef = useRef(false)
 
   useEffect(() => {
-    const handleCallback = async () => {
+    const processCallback = async () => {
+      // Prevent double execution in React StrictMode
+      if (processedRef.current) {
+        console.log('[Gmail OAuth] Callback already processed, skipping...')
+        return
+      }
+      processedRef.current = true
+
       try {
-        // Get authorization code from URL
+        // Get authorization code and state from URL
         const code = searchParams.get('code')
+        const state = searchParams.get('state')
         const errorParam = searchParams.get('error')
+        const errorDescription = searchParams.get('error_description')
 
         if (errorParam) {
-          throw new Error(`OAuth error: ${errorParam}`)
+          throw new Error(`OAuth error: ${errorParam}${errorDescription ? ` - ${errorDescription}` : ''}`)
         }
 
         if (!code) {
           throw new Error('No authorization code received')
         }
 
-        console.log('[Gmail OAuth] Received authorization code, exchanging for token...')
+        if (!state) {
+          throw new Error('No state parameter received')
+        }
 
-        // Exchange code for token
-        const client = getGmailOAuthClient()
-        const tokens = await client.handleCallback(code)
+        console.log('[Gmail OAuth] Received authorization code, exchanging for token using @ownyou/oauth...')
 
-        console.log('[Gmail OAuth] Token exchange successful')
-        console.log('[Gmail OAuth] Access token expires at:', new Date(tokens.expires_at).toISOString())
+        // Exchange code for token using Sprint 1b @ownyou/oauth package
+        const tokens = await handleGoogleCallback(code, state)
+
+        console.log('[Gmail OAuth] Token exchange successful via @ownyou/oauth')
+        console.log('[Gmail OAuth] Access token expires at:', new Date(tokens.expiresAt).toISOString())
 
         setStatus('success')
 
@@ -86,7 +102,7 @@ function GmailCallbackPageContent() {
       }
     }
 
-    handleCallback()
+    processCallback()
   }, [searchParams, router])
 
   return (

@@ -26,6 +26,7 @@ export type OperationType =
   | 'iab_classification'
   | 'reflection_node'
   | 'embedding_generation'
+  | 'shopping_intent_detection'
   | 'test';
 
 /**
@@ -117,6 +118,11 @@ export const OPERATION_LIMITS: Record<
   embedding_generation: {
     maxInputTokens: 8000,
     maxOutputTokens: 0,
+    modelTier: 'fast',
+  },
+  shopping_intent_detection: {
+    maxInputTokens: 2000,
+    maxOutputTokens: 500,
     modelTier: 'fast',
   },
   test: {
