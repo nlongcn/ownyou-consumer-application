@@ -154,3 +154,111 @@ code {
 .store-buttons button:active {
   background: #6d28d9;
 }
+
+/* OAuth Card Styles - Sprint 1b */
+.oauth-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #3b82f6;
+}
+
+.provider-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.provider-row:last-child {
+  border-bottom: none;
+}
+
+.provider-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.provider-name {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.status-connected {
+  color: #10b981;
+  font-size: 0.875rem;
+}
+
+.status-disconnected {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.status-error {
+  color: #ef4444;
+  font-size: 0.875rem;
+}
+
+.status-warning {
+  color: #f59e0b;
+  font-size: 0.875rem;
+}
+
+.provider-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-connect {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn-connect:hover {
+  background: #2563eb;
+}
+
+.btn-connect:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+.btn-disconnect {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ef4444;
+  border-radius: 4px;
+  background: transparent;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-disconnect:hover {
+  background: #ef4444;
+  color: white;
+}
+
+@media (prefers-color-scheme: dark) {
+  .oauth-card {
+    background: #2a2a2a;
+  }
+
+  .provider-name {
+    color: #f6f6f6;
+  }
+
+  .provider-row {
+    border-bottom-color: #444;
+  }
+}

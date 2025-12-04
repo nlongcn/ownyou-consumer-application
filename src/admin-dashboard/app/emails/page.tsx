@@ -254,18 +254,25 @@ function EmailDownloadContent() {
       const savedEmailModel = localStorage.getItem('selectedEmailModel')
       const savedTaxonomyModel = localStorage.getItem('selectedTaxonomyModel')
 
-      // Restore email model if saved (no validation - trust user's choice)
-      // NO fallbacks - model selection is ONLY from user's localStorage
+      // Default model to use when no saved preference exists
+      const defaultModel = 'openai:gpt-4o-mini'
+
+      // Restore email model if saved, otherwise use default
       if (savedEmailModel) {
         console.log(`[Model Restore] Restoring email model: ${savedEmailModel}`)
         setSelectedEmailModel(savedEmailModel)
+      } else {
+        console.log(`[Model Restore] No saved email model, using default: ${defaultModel}`)
+        setSelectedEmailModel(defaultModel)
       }
 
-      // Restore taxonomy model if saved (no validation - trust user's choice)
-      // NO fallbacks - model selection is ONLY from user's localStorage
+      // Restore taxonomy model if saved, otherwise use default
       if (savedTaxonomyModel) {
         console.log(`[Model Restore] Restoring taxonomy model: ${savedTaxonomyModel}`)
         setSelectedTaxonomyModel(savedTaxonomyModel)
+      } else {
+        console.log(`[Model Restore] No saved taxonomy model, using default: ${defaultModel}`)
+        setSelectedTaxonomyModel(defaultModel)
       }
     }
 

@@ -78,6 +78,14 @@ export interface GoogleOAuthConfig extends OAuthConfig {
 }
 
 /**
+ * Authorization URL result (may include PKCE code verifier)
+ */
+export interface AuthorizationUrlResult {
+  url: string;
+  codeVerifier?: string;
+}
+
+/**
  * OAuth provider interface
  */
 export interface OAuthProviderClient {
@@ -88,13 +96,16 @@ export interface OAuthProviderClient {
 
   /**
    * Generate authorization URL
+   * Returns string for simple OAuth, or { url, codeVerifier } for PKCE flows
    */
-  getAuthorizationUrl(state: string): string;
+  getAuthorizationUrl(state: string): string | Promise<AuthorizationUrlResult>;
 
   /**
    * Exchange authorization code for tokens
+   * @param code - Authorization code from callback
+   * @param codeVerifier - Optional PKCE code verifier (required for Microsoft SPA)
    */
-  exchangeCode(code: string): Promise<StoredTokens>;
+  exchangeCode(code: string, codeVerifier?: string): Promise<StoredTokens>;
 
   /**
    * Refresh expired tokens

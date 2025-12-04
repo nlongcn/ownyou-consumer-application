@@ -223,7 +223,7 @@ export { classifyEmail, classifyBatch } from './classify';
 
 ```typescript
 // packages/email/src/pipeline.ts
-import { STORE_NAMESPACES, type Memory } from '@ownyou/shared-types';
+import { NS, type Memory } from '@ownyou/shared-types';
 
 export class EmailPipeline {
   constructor(
@@ -244,14 +244,14 @@ export class EmailPipeline {
     // 3. Store classifications in memory-store using v13 namespaces
     for (const classification of classifications) {
       await this.store.put(
-        STORE_NAMESPACES.iab_classifications(this.userId),
+        NS.iabClassifications(this.userId),
         classification.id,
         classification
       );
 
       // Store evidence separately
       await this.store.put(
-        STORE_NAMESPACES.iab_evidence(this.userId),
+        NS.iabEvidence(this.userId),
         `evidence_${classification.id}`,
         classification.evidence
       );
@@ -261,7 +261,7 @@ export class EmailPipeline {
     const memories = await this.extractMemories(classifications);
     for (const memory of memories) {
       await this.store.put(
-        STORE_NAMESPACES.semantic_memory(this.userId),
+        NS.semanticMemory(this.userId),
         memory.id,
         memory
       );

@@ -498,12 +498,12 @@ This subsection explicitly maps how Ikigai inference outputs flow into the Memor
 
 | Ikigai Dimension | Inference Outputs | Storage Namespace | Example |
 |------------------|-------------------|-------------------|---------|
-| **Passion** | interests, hobbies, creative_outlets | `semantic_memory` | "photography", "jazz music" |
-| **Mission** | causes, values, impact_areas | `semantic_memory` | "climate action", "mentoring" |
-| **Vocation** | skills, expertise, certifications | `semantic_memory` + `entities` | "data science", "PMP certified" |
-| **Profession** | job_title, industry, income_bracket | `semantic_memory` + `iab_classifications` | "Sr. Engineer", "Tech/Software" |
+| **Passion** | interests, hobbies, creative_outlets | `semanticMemory` | "photography", "jazz music" |
+| **Mission** | causes, values, impact_areas | `semanticMemory` | "climate action", "mentoring" |
+| **Vocation** | skills, expertise, certifications | `semanticMemory` + `entities` | "data science", "PMP certified" |
+| **Profession** | job_title, industry, income_bracket | `semanticMemory` + `iab_classifications` | "Sr. Engineer", "Tech/Software" |
 | **Relationships** | key_people, relationship_types | `entities` | {name: "Sarah", type: "spouse"} |
-| **Well-being** | health_goals, stress_indicators | `semantic_memory` (privacy-protected) | "improve sleep", "reduce anxiety" |
+| **Well-being** | health_goals, stress_indicators | `semanticMemory` (privacy-protected) | "improve sleep", "reduce anxiety" |
 
 #### Storage Flow
 
@@ -512,9 +512,9 @@ This subsection explicitly maps how Ikigai inference outputs flow into the Memor
 async function storeIkigaiInference(userId: string, inference: IkigaiInference): Promise<void> {
   const store = getStore();
 
-  // 1. Core dimensions → semantic_memory
+  // 1. Core dimensions → semanticMemory
   await store.put(
-    NAMESPACES.semantic_memory(userId),
+    NS.semanticMemory(userId),
     "ikigai_profile",
     {
       passion: inference.passion,
@@ -565,7 +565,7 @@ Mission agents query Ikigai data through unified memory search:
 ```typescript
 // Mission agent retrieves relevant Ikigai context
 const ikigaiContext = await store.search(
-  NAMESPACES.semantic_memory(userId),
+  NS.semanticMemory(userId),
   { query: missionContext, filter: { type: "ikigai" } }
 );
 
@@ -760,8 +760,8 @@ const AGENT_PERMISSIONS: Record<string, AgentPermissions> = {
     agent_type: "shopping",
     memory_access: {
       read: [
-        "semantic_memory",
-        "episodic_memory",
+        "semanticMemory",
+        "episodicMemory",
         "entities",
         "iab_classifications",
         "shopping_preferences",
@@ -769,10 +769,10 @@ const AGENT_PERMISSIONS: Record<string, AgentPermissions> = {
       write: [
         "shopping_searches",
         "shopping_recommendations",
-        "episodic_memory",
-        "procedural_memory:shopping",
+        "episodicMemory",
+        "proceduralMemory:shopping",
       ],
-      search: ["semantic_memory", "episodic_memory", "entities"],
+      search: ["semanticMemory", "episodicMemory", "entities"],
     },
     external_apis: [
       { name: "SerpAPI", rate_limit: "100/hour", requires_user_consent: false },
@@ -790,8 +790,8 @@ const AGENT_PERMISSIONS: Record<string, AgentPermissions> = {
     agent_type: "travel",
     memory_access: {
       read: [
-        "semantic_memory",
-        "episodic_memory",
+        "semanticMemory",
+        "episodicMemory",
         "entities",
         "relationships",        // For travel companions
         "calendar",             // For availability
@@ -801,10 +801,10 @@ const AGENT_PERMISSIONS: Record<string, AgentPermissions> = {
       write: [
         "travel_itineraries",
         "travel_bookings",
-        "episodic_memory",
-        "procedural_memory:travel",
+        "episodicMemory",
+        "proceduralMemory:travel",
       ],
-      search: ["semantic_memory", "episodic_memory", "entities", "relationships"],
+      search: ["semanticMemory", "episodicMemory", "entities", "relationships"],
     },
     external_apis: [
       { name: "Google Flights", rate_limit: "60/hour", requires_user_consent: false },
@@ -823,8 +823,8 @@ const AGENT_PERMISSIONS: Record<string, AgentPermissions> = {
     agent_type: "restaurant",
     memory_access: {
       read: [
-        "semantic_memory",
-        "episodic_memory",
+        "semanticMemory",
+        "episodicMemory",
         "entities",
         "relationships",
         "dining_preferences",
@@ -832,10 +832,10 @@ const AGENT_PERMISSIONS: Record<string, AgentPermissions> = {
       write: [
         "dining_reservations",
         "restaurant_favorites",
-        "episodic_memory",
-        "procedural_memory:restaurant",
+        "episodicMemory",
+        "proceduralMemory:restaurant",
       ],
-      search: ["semantic_memory", "episodic_memory", "entities"],
+      search: ["semanticMemory", "episodicMemory", "entities"],
     },
     external_apis: [
       { name: "Yelp", rate_limit: "100/hour", requires_user_consent: false },
@@ -854,8 +854,8 @@ const AGENT_PERMISSIONS: Record<string, AgentPermissions> = {
     agent_type: "events",
     memory_access: {
       read: [
-        "semantic_memory",
-        "episodic_memory",
+        "semanticMemory",
+        "episodicMemory",
         "entities",
         "relationships",
         "calendar",
@@ -864,10 +864,10 @@ const AGENT_PERMISSIONS: Record<string, AgentPermissions> = {
       write: [
         "event_interests",
         "event_bookings",
-        "episodic_memory",
-        "procedural_memory:events",
+        "episodicMemory",
+        "proceduralMemory:events",
       ],
-      search: ["semantic_memory", "episodic_memory", "interests"],
+      search: ["semanticMemory", "episodicMemory", "interests"],
     },
     external_apis: [
       { name: "Ticketmaster", rate_limit: "60/hour", requires_user_consent: false },
@@ -886,18 +886,18 @@ const AGENT_PERMISSIONS: Record<string, AgentPermissions> = {
     agent_type: "content",
     memory_access: {
       read: [
-        "semantic_memory",
-        "episodic_memory",
+        "semanticMemory",
+        "episodicMemory",
         "interests",
         "content_history",
       ],
       write: [
         "content_recommendations",
         "saved_content",
-        "episodic_memory",
-        "procedural_memory:content",
+        "episodicMemory",
+        "proceduralMemory:content",
       ],
-      search: ["semantic_memory", "interests"],
+      search: ["semanticMemory", "interests"],
     },
     external_apis: [
       { name: "RSS Feeds", rate_limit: "unlimited", requires_user_consent: false },
@@ -985,6 +985,12 @@ const enforceAgentLimits = (agentType: string, level: AgentLevel) => {
     },
   };
 };
+
+// Implementation Note (Sprint 3):
+// BaseAgent uses lazy initialization for LimitsEnforcer to handle
+// TypeScript abstract class initialization order. The enforcer is
+// created via a getter when first accessed, ensuring the subclass's
+// `level` property is available.
 ```
 
 #### 3.6.5 Privacy-Tier Enforcement for Agents
@@ -4925,14 +4931,14 @@ Only extract clearly mentioned entities. Return [] if none found.`,
 // Called during Reflection Node
 const processEntitiesFromRecentMemories = async (userId: string) => {
   const recentMemories = await store.search({
-    namespace: ["semantic_memory", userId],
+    namespace: NS.semanticMemory(userId),
     filter: { entities_extracted: { $ne: true } },
     limit: 50
   });
 
   for (const memory of recentMemories) {
     await extractAndStoreEntities(memory, userId);
-    await store.update(["semantic_memory", userId], memory.id, {
+    await store.update(NS.semanticMemory(userId), memory.id, {
       entities_extracted: true
     });
   }
@@ -4993,7 +4999,7 @@ const storeMemoryWithEmbedding = async (
     embedded_at: now()
   };
 
-  await store.put(["semantic_memory", userId], fullMemory.id, fullMemory);
+  await store.put(NS.semanticMemory(userId), fullMemory.id, fullMemory);
   return fullMemory;
 };
 
@@ -5037,7 +5043,7 @@ Every fact carries two timelines — when it was true in reality vs when the sys
 // Temporal query example
 const getPreferencesAtTime = async (userId: string, queryDate: Date) => {
   return store.search({
-    namespace: ["semantic_memory", userId],
+    namespace: NS.semanticMemory(userId),
     filter: {
       valid_at: { $lte: queryDate },
       $or: [
@@ -5073,7 +5079,7 @@ const retrieveMemories = async (
 
   // 1. Semantic search (cosine similarity on embeddings)
   const semanticResults = await vectorSearch(query, {
-    namespace: ["semantic_memory", userId],
+    namespace: NS.semanticMemory(userId),
     limit: limit * 2
   });
 
@@ -5081,7 +5087,7 @@ const retrieveMemories = async (
   // BM25 catches exact matches that semantic search might miss
   // e.g., "Delta SkyMiles" as exact phrase
   const keywordResults = await fullTextSearch(query, {
-    namespace: ["semantic_memory", userId],
+    namespace: NS.semanticMemory(userId),
     limit: limit * 2
   });
 
@@ -5094,7 +5100,7 @@ const retrieveMemories = async (
     if (entity) {
       // Find memories that mention this entity
       const relatedMemories = await store.search({
-        namespace: ["semantic_memory", userId],
+        namespace: NS.semanticMemory(userId),
         filter: { content: { $contains: name } },
         limit: 5
       });
@@ -5306,7 +5312,7 @@ const memoryTools = {
       }
 
       // Create new memory
-      return store.put(["semantic_memory", userId], uuid(), {
+      return store.put(NS.semanticMemory(userId), uuid(), {
         content,
         context,
         confidence,
@@ -5328,7 +5334,7 @@ const memoryTools = {
       user_feedback: "string? - explicit or inferred satisfaction"
     },
     handler: async (episode, { userId, agentType, missionId }) => {
-      return store.put(["episodic_memory", userId], uuid(), {
+      return store.put(NS.episodicMemory(userId), uuid(), {
         ...episode,
         agent_type: agentType,
         mission_id: missionId,
@@ -5345,7 +5351,7 @@ const memoryTools = {
       reason: "string - why this is no longer true"
     },
     handler: async ({ memory_id, reason }, { userId }) => {
-      return store.update(["semantic_memory", userId], memory_id, {
+      return store.update(NS.semanticMemory(userId), memory_id, {
         invalid_at: now(),
         invalidation_reason: reason
       });
@@ -5374,7 +5380,7 @@ const memoryTools = {
     },
     handler: async ({ situation, outcome_filter = "all" }, { userId, agentType }) => {
       const episodes = await store.search({
-        namespace: ["episodic_memory", userId],
+        namespace: NS.episodicMemory(userId),
         query: situation,
         filter: {
           agent_type: agentType,
@@ -5403,7 +5409,7 @@ const startMission = async (agent: Agent, trigger: Trigger, userId: string) => {
 
   // 2. Get similar past episodes for few-shot learning
   const similarEpisodes = await store.search({
-    namespace: ["episodic_memory", userId],
+    namespace: NS.episodicMemory(userId),
     query: trigger.description,
     filter: { agent_type: agent.type },
     limit: 3
@@ -5411,7 +5417,7 @@ const startMission = async (agent: Agent, trigger: Trigger, userId: string) => {
 
   // 3. Load procedural rules for this agent
   const proceduralRules = await store.get(
-    ["procedural_memory", userId, agent.type],
+    NS.proceduralMemory(userId, agent.type),
     "rules"
   );
 
@@ -5467,7 +5473,7 @@ const consolidateMemory = async (
 
   // Namespace is derived from userId, not stored on Memory
   return store.update(
-    STORE_NAMESPACES.semantic_memory(userId),
+    NS.semanticMemory(userId),
     existing.id,
     {
       content: mergedContent,
@@ -5500,14 +5506,14 @@ Periodic cleanup removes memories below threshold:
 
 ```typescript
 const pruneMemories = async (userId: string) => {
-  const allMemories = await store.list(["semantic_memory", userId]);
+  const allMemories = await store.list(NS.semanticMemory(userId));
 
   for (const memory of allMemories) {
     const effectiveStrength = calculateEffectiveStrength(memory);
 
     if (effectiveStrength < PRUNE_THRESHOLD) {
       // Don't delete - mark as archived for potential recovery
-      await store.update(["semantic_memory", userId], memory.id, {
+      await store.update(NS.semanticMemory(userId), memory.id, {
         archived: true,
         archived_at: now(),
         archived_reason: "low_strength_decay"
@@ -5524,7 +5530,7 @@ Clusters of related memories generate high-level summaries:
 ```typescript
 const generateCommunitySummary = async (userId: string, context: string) => {
   const memories = await store.search({
-    namespace: ["semantic_memory", userId],
+    namespace: NS.semanticMemory(userId),
     filter: { context, archived: { $ne: true } },
     limit: 50
   });
@@ -5599,7 +5605,7 @@ const synthesizeProceduralRules = async (userId: string) => {
   for (const agentType of agentTypes) {
     // Get recent episodes for this agent
     const episodes = await store.search({
-      namespace: ["episodic_memory", userId],
+      namespace: NS.episodicMemory(userId),
       filter: { agent_type: agentType },
       sort: { timestamp: "desc" },
       limit: 20
@@ -5626,7 +5632,7 @@ const synthesizeProceduralRules = async (userId: string) => {
     `);
 
     // Store synthesized rules
-    await store.put(["procedural_memory", userId, agentType], "rules", {
+    await store.put(NS.proceduralMemory(userId, agentType), "rules", {
       rules: patterns.rules,
       derived_from: episodes.map(e => e.id),
       synthesized_at: now()
@@ -5682,16 +5688,17 @@ All memory is organized into typed namespaces following the LangGraph Store patt
 
 ```typescript
 // Namespace factory functions for type-safe access
-const STORE_NAMESPACES = {
+// Import: import { NS } from '@ownyou/shared-types';
+const NS = {
   // === SEMANTIC MEMORY (Facts & Knowledge) ===
-  semantic_memory: (userId: string) => ["ownyou.semantic", userId],
-  community_summaries: (userId: string) => ["ownyou.summaries", userId],
+  semanticMemory: (userId: string) => ["ownyou.semantic", userId],
+  communitySummaries: (userId: string) => ["ownyou.summaries", userId],
 
   // === EPISODIC MEMORY (Interaction History) ===
-  episodic_memory: (userId: string) => ["ownyou.episodes", userId],
+  episodicMemory: (userId: string) => ["ownyou.episodes", userId],
 
   // === PROCEDURAL MEMORY (Agent Rules) ===
-  procedural_memory: (userId: string, agentType: string) =>
+  proceduralMemory: (userId: string, agentType: string) =>
     ["ownyou.procedural", userId, agentType],
 
   // === RELATIONAL MEMORY (Entity Graph) ===
@@ -5699,34 +5706,34 @@ const STORE_NAMESPACES = {
   relationships: (userId: string) => ["ownyou.relationships", userId],
 
   // === IAB CLASSIFICATION (Advertising Profile) ===
-  iab_classifications: (userId: string) => ["ownyou.iab", userId],
-  iab_evidence: (userId: string) => ["ownyou.iab_evidence", userId],
+  iabClassifications: (userId: string) => ["ownyou.iab", userId],
+  iabEvidence: (userId: string) => ["ownyou.iab_evidence", userId],
 
   // === IKIGAI (Well-Being Profile) ===
-  ikigai_profile: (userId: string) => ["ownyou.ikigai", userId],
-  ikigai_dimensions: (userId: string) => ["ownyou.ikigai_dims", userId],
+  ikigaiProfile: (userId: string) => ["ownyou.ikigai", userId],
+  ikigaiDimensions: (userId: string) => ["ownyou.ikigai_dims", userId],
 
   // === MISSION STATE ===
-  mission_cards: (userId: string) => ["ownyou.missions", userId],
-  mission_feedback: (userId: string, missionId: string) =>
+  missionCards: (userId: string) => ["ownyou.missions", userId],
+  missionFeedback: (userId: string, missionId: string) =>
     ["ownyou.feedback", userId, missionId],
 
   // === BBS+ IDENTITY ===
   pseudonyms: (userId: string) => ["ownyou.pseudonyms", userId],
-  disclosure_history: (userId: string) => ["ownyou.disclosures", userId],
+  disclosureHistory: (userId: string) => ["ownyou.disclosures", userId],
   earnings: (userId: string) => ["ownyou.earnings", userId],
-  tracking_consents: (userId: string) => ["ownyou.consents", userId],
+  trackingConsents: (userId: string) => ["ownyou.consents", userId],
 
   // === SYNC & ARCHIVAL ===
   archived: (namespace: string) => ["ownyou.archived", namespace],
-  yearly_summaries: (userId: string, context: string) =>
+  yearlySummaries: (userId: string, context: string) =>
     ["ownyou.yearly_summaries", userId, context],
-  sync_metadata: (deviceId: string) => ["ownyou.sync", deviceId],
+  syncMetadata: (deviceId: string) => ["ownyou.sync", deviceId],
 } as const;
 
 // Usage example:
-// await store.put(STORE_NAMESPACES.semantic_memory(userId), memoryId, memory);
-// await store.search({ namespace: STORE_NAMESPACES.episodic_memory(userId), query });
+// await store.put(NS.semanticMemory(userId), memoryId, memory);
+// await store.search({ namespace: NS.episodicMemory(userId), query });
 ```
 
 ### 8.13 Storage Backends
@@ -5769,15 +5776,15 @@ Not all memory syncs — some is device-specific, some is shared:
 
 | Namespace | Sync? | Rationale |
 |-----------|-------|-----------|
-| `semantic_memory` | ✅ Yes | User preferences should be consistent across devices |
-| `episodic_memory` | ⚠️ Selective | Recent episodes sync; old episodes archived locally |
-| `procedural_memory` | ✅ Yes | Agent rules must be consistent (critical for UX) |
+| `semanticMemory` | ✅ Yes | User preferences should be consistent across devices |
+| `episodicMemory` | ⚠️ Selective | Recent episodes sync; old episodes archived locally |
+| `proceduralMemory` | ✅ Yes | Agent rules must be consistent (critical for UX) |
 | `entities` | ✅ Yes | Entity knowledge should be shared |
 | `relationships` | ✅ Yes | Relationship context should be shared |
 | `community_summaries` | ✅ Yes | Summaries are derived; sync for efficiency |
 | `iab_classifications` | ✅ Yes | Advertising profile must be consistent |
 | `ikigai_profile` | ✅ Yes | Core user understanding shared |
-| `mission_cards` | ✅ Yes | Active missions visible everywhere |
+| `missionCards` | ✅ Yes | Active missions visible everywhere |
 | `mission_feedback` | ✅ Yes | Feedback informs all devices |
 | `earnings` | ✅ Yes | Financial data must be accurate everywhere |
 | **Device-local only:** | | |
@@ -5876,12 +5883,12 @@ Different memory types have different conflict semantics:
 
 | Namespace | Conflict Strategy | Rationale |
 |-----------|-------------------|-----------|
-| **semantic_memory** | Latest-write-wins | Preferences evolve; newest is most accurate |
-| **episodic_memory** | Merge (append) | Episodes are immutable records; both valid |
-| **procedural_memory** | Latest-write-wins + reconcile | Rules must be consistent; trigger Reflection to reconcile |
+| **semanticMemory** | Latest-write-wins | Preferences evolve; newest is most accurate |
+| **episodicMemory** | Merge (append) | Episodes are immutable records; both valid |
+| **proceduralMemory** | Latest-write-wins + reconcile | Rules must be consistent; trigger Reflection to reconcile |
 | **entities** | Merge properties | Combine entity properties from both versions |
 | **relationships** | Latest-write-wins | Relationship state should be newest |
-| **mission_cards** | Custom merge | Active missions merge; completed use newest |
+| **missionCards** | Custom merge | Active missions merge; completed use newest |
 | **earnings** | Sum (financial reconcile) | Never lose earnings; reconcile with ledger |
 
 ```typescript
@@ -5985,19 +5992,19 @@ Device storage is finite. This section defines limits, quotas, and archival stra
 
 ```typescript
 const NAMESPACE_LIMITS = {
-  semantic_memory: {
+  semanticMemory: {
     max_records: 10_000,           // ~10K facts per user
     max_size_mb: 20,               // Content + embeddings
     archival_threshold: 0.8,       // Archive when 80% full
   },
 
-  episodic_memory: {
+  episodicMemory: {
     max_records: 5_000,            // ~5K episodes per user
     max_size_mb: 15,
     archival_threshold: 0.7,       // More aggressive archival
   },
 
-  procedural_memory: {
+  proceduralMemory: {
     max_records: 500,              // ~50 rules per agent × 10 agents
     max_size_mb: 2,
     archival_threshold: 0.9,       // Keep most rules active
@@ -6118,9 +6125,9 @@ const LONG_TERM_STRATEGY = {
 
   // Retention policies by type
   retention: {
-    semantic_memory: "indefinite",     // Facts may always be relevant
-    episodic_memory: "3_years",        // Old episodes compressed to summaries
-    procedural_memory: "indefinite",   // Rules must persist
+    semanticMemory: "indefinite",     // Facts may always be relevant
+    episodicMemory: "3_years",        // Old episodes compressed to summaries
+    proceduralMemory: "indefinite",   // Rules must persist
     entities: "indefinite",            // Entity knowledge persists
     relationships: "5_years",          // Old relationships fade
   },
@@ -6132,7 +6139,7 @@ const performYearlyMaintenance = async (userId: string) => {
   // For each context, compress old memories into yearly summary
   for (const context of ["travel", "shopping", "dining", "events"]) {
     const oldMemories = await store.search({
-      namespace: ["semantic_memory", userId],
+      namespace: NS.semanticMemory(userId),
       filter: {
         context,
         created_at: { $lt: oneYearAgo },
@@ -6169,7 +6176,7 @@ const performYearlyMaintenance = async (userId: string) => {
     // Mark originals as processed (or archive them)
     for (const m of oldMemories) {
       await store.update(
-        ["semantic_memory", userId],
+        NS.semanticMemory(userId),
         m.id,
         { yearly_summary_processed: true, archived: true }
       );
