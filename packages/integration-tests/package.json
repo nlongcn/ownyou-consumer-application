@@ -2,7 +2,7 @@
   "name": "@ownyou/integration-tests",
   "version": "0.1.0",
   "private": true,
-  "description": "Integration tests for OwnYou Sprint 0 packages",
+  "description": "Integration tests for OwnYou packages",
   "type": "module",
   "scripts": {
     "test": "vitest run",
@@ -12,7 +12,12 @@
     "@ownyou/shared-types": "workspace:*",
     "@ownyou/memory-store": "workspace:*",
     "@ownyou/llm-client": "workspace:*",
-    "@ownyou/observability": "workspace:*"
+    "@ownyou/observability": "workspace:*",
+    "@ownyou/agents-base": "workspace:*",
+    "@ownyou/agents-shopping": "workspace:*",
+    "@ownyou/agents-content": "workspace:*",
+    "@ownyou/reflection": "workspace:*",
+    "@ownyou/memory": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.3.3",

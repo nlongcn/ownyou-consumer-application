@@ -123,13 +123,14 @@ export class MemoryStore {
    * @param key Item key
    * @param value Item value
    */
-  async put<T extends Memory>(namespace: NamespaceTuple, key: string, value: T): Promise<void> {
+  async put<T>(namespace: NamespaceTuple, key: string, value: T): Promise<void> {
     const startTime = Date.now();
 
     // Auto-generate embedding if embeddingService is available and value has content
     let storedValue = value;
-    if (this.embeddingService && value.content && !value.embedding) {
-      const embedding = await this.embeddingService.embed(value.content);
+    const valueWithContent = value as { content?: string; embedding?: number[] };
+    if (this.embeddingService && valueWithContent.content && !valueWithContent.embedding) {
+      const embedding = await this.embeddingService.embed(valueWithContent.content);
       storedValue = { ...value, embedding };
     }
 
@@ -151,20 +152,29 @@ export class MemoryStore {
    * @param key Item key
    * @returns Item or null if not found
    */
-  async get<T extends Memory>(namespace: NamespaceTuple, key: string): Promise<T | null> {
+  async get<T>(namespace: NamespaceTuple, key: string): Promise<T | null> {
     const startTime = Date.now();
     const [ns, userId] = namespace;
 
     const value = await this.backend.get<T>(ns, userId, key);
 
     if (value) {
-      // Update access tracking
-      const updated = {
-        ...value,
-        lastAccessed: Date.now(),
-        accessCount: (value.accessCount ?? 0) + 1,
-      };
-      await this.backend.put(ns, userId, key, updated);
+      // Update access tracking (only for items with accessCount - typically Memory types)
+      let result: T = value;
+      const valueAsRecord = value as Record<string, unknown>;
+      if (
+        typeof valueAsRecord === 'object' &&
+        valueAsRecord !== null &&
+        'accessCount' in valueAsRecord
+      ) {
+        const updated = {
+          ...valueAsRecord,
+          lastAccessed: Date.now(),
+          accessCount: ((valueAsRecord.accessCount as number) ?? 0) + 1,
+        };
+        await this.backend.put(ns, userId, key, updated);
+        result = updated as unknown as T;
+      }
 
       this.emitEvent({
         type: 'get',
@@ -174,7 +184,7 @@ export class MemoryStore {
         durationMs: Date.now() - startTime,
       });
 
-      return updated;
+      return result;
     }
 
     this.emitEvent({
