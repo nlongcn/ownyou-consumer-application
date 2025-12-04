@@ -1,0 +1,41 @@
+{
+  "name": "@ownyou/reflection",
+  "version": "0.1.0",
+  "description": "Reflection Node - Background process for memory synthesis and maintenance",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ownyou/shared-types": "workspace:*",
+    "@ownyou/memory-store": "workspace:*",
+    "@ownyou/memory": "workspace:*",
+    "@ownyou/llm-client": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nicholaslongcroft/ownyou_consumer_application.git",
+    "directory": "packages/reflection"
+  },
+  "license": "UNLICENSED"
+}
