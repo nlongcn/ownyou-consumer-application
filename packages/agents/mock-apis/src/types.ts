@@ -298,6 +298,8 @@ export interface RoomType {
 
 export interface HotelSearchParams {
   destination: string;
+  /** Country - inferred from destination if not provided */
+  country?: string;
   checkIn: string; // YYYY-MM-DD
   checkOut: string;
   guests: number;

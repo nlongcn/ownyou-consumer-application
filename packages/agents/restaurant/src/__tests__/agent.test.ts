@@ -45,7 +45,8 @@ describe('RestaurantAgent', () => {
   let mockStore: AgentStore;
 
   beforeEach(() => {
-    agent = new RestaurantAgent();
+    // Provide defaultLocation for tests since trigger data may not include location
+    agent = new RestaurantAgent({ defaultLocation: 'San Francisco' });
     mockStore = createMockStore();
   });
 
@@ -271,7 +272,8 @@ describe('RestaurantAgent Tools', () => {
   let mockStore: AgentStore;
 
   beforeEach(() => {
-    agent = new RestaurantAgent();
+    // Provide defaultLocation for tests since trigger data may not include location
+    agent = new RestaurantAgent({ defaultLocation: 'San Francisco' });
     mockStore = createMockStore();
   });
 

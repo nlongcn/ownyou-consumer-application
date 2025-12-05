@@ -11,7 +11,6 @@ import type {
   Flight,
   FlightSearchParams,
   FlightSearchResult,
-  FlightSegment,
   BaggageInfo,
   Hotel,
   HotelSearchParams,
@@ -159,6 +158,31 @@ function generateFlight(
   };
 }
 
+/**
+ * Infer country from city name (for mock purposes)
+ * Extracted per Sprint 7 spec lesson I2 to avoid hardcoded values
+ */
+function inferCountryFromCity(city: string): string {
+  const cityToCountry: Record<string, string> = {
+    'paris': 'France',
+    'london': 'United Kingdom',
+    'tokyo': 'Japan',
+    'new york': 'United States',
+    'los angeles': 'United States',
+    'san francisco': 'United States',
+    'rome': 'Italy',
+    'barcelona': 'Spain',
+    'berlin': 'Germany',
+    'amsterdam': 'Netherlands',
+    'sydney': 'Australia',
+    'singapore': 'Singapore',
+    'dubai': 'United Arab Emirates',
+    'bangkok': 'Thailand',
+    'hong kong': 'China',
+  };
+  return cityToCountry[city.toLowerCase()] || 'Unknown';
+}
+
 function generateHotel(
   id: string,
   city: string,
@@ -167,6 +191,8 @@ function generateHotel(
     minStarRating?: number;
     maxPrice?: number;
     amenities?: string[];
+    /** Country to use - inferred from city if not provided */
+    country?: string;
   }
 ): Hotel {
   let starRating = Math.floor(random() * 3) + 3; // 3-5 stars
@@ -201,7 +227,7 @@ function generateHotel(
     reviewCount: Math.floor(random() * 2000) + 100,
     address: `${Math.floor(random() * 999) + 1} Hotel Boulevard`,
     city,
-    country: 'France', // Default for demo
+    country: options?.country || inferCountryFromCity(city),
     coordinates: {
       latitude: 48.8566 + (random() - 0.5) * 0.1,
       longitude: 2.3522 + (random() - 0.5) * 0.1,
@@ -310,6 +336,7 @@ export class TripAdvisorMock {
           minStarRating: params.minStarRating,
           maxPrice: params.maxPrice,
           amenities: params.amenities,
+          country: params.country,
         }
       );
       hotels.push(hotel);
@@ -401,6 +428,7 @@ export class BookingMock {
           minStarRating: params.minStarRating,
           maxPrice: params.maxPrice,
           amenities: params.amenities,
+          country: params.country,
         }
       );
       hotels.push(hotel);
@@ -413,21 +441,25 @@ export class BookingMock {
     };
   }
 
-  async getHotelDetails(hotelId: string): Promise<Hotel> {
+  async getHotelDetails(hotelId: string, destination?: string): Promise<Hotel> {
     await this.simulateLatency();
 
-    return generateHotel(hotelId, 'Paris', this.random);
+    // Use provided destination or extract city from hotelId pattern, fallback to generic
+    const city = destination || 'Unknown City';
+    return generateHotel(hotelId, city, this.random);
   }
 
   async checkRoomAvailability(
     hotelId: string,
-    checkIn: string,
-    checkOut: string,
-    guests: number
+    _checkIn: string,
+    _checkOut: string,
+    guests: number,
+    destination?: string
   ): Promise<{ hotelId: string; available: boolean; rooms: RoomType[] }> {
     await this.simulateLatency();
 
-    const hotel = generateHotel(hotelId, 'Paris', this.random);
+    const city = destination || 'Unknown City';
+    const hotel = generateHotel(hotelId, city, this.random);
     const availableRooms = hotel.roomTypes.filter((r) => r.available && r.maxGuests >= guests);
 
     return {

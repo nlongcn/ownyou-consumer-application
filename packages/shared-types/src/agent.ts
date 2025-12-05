@@ -137,7 +137,7 @@ export interface MissionAction {
   label: string;
 
   /** Action type */
-  type: 'navigate' | 'confirm' | 'input' | 'external';
+  type: 'navigate' | 'confirm' | 'input' | 'external' | 'action';
 
   /** Action-specific payload */
   payload: unknown;
