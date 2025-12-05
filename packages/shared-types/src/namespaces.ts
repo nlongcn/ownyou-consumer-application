@@ -52,6 +52,18 @@ export const NAMESPACES = {
 
   // LLM Cache (v13 Section 6.11.3 - Fallback Chain Step 5)
   LLM_CACHE: 'ownyou.llm_cache',
+
+  // Restaurant Agent (Sprint 7)
+  DINING_RESERVATIONS: 'ownyou.dining_reservations',
+  RESTAURANT_FAVORITES: 'ownyou.restaurant_favorites',
+
+  // Events Agent (Sprint 7)
+  EVENT_TICKETS: 'ownyou.event_tickets',
+  EVENT_FAVORITES: 'ownyou.event_favorites',
+
+  // Travel Agent (Sprint 7)
+  TRAVEL_ITINERARIES: 'ownyou.travel_itineraries',
+  TRAVEL_PREFERENCES: 'ownyou.travel_preferences',
 } as const;
 
 /**
@@ -123,6 +135,33 @@ export const NS = {
 
   /** LLM cache namespace: [namespace, userId] - for response caching (v13 6.11.3) */
   llmCache: (userId: string) => [NAMESPACES.LLM_CACHE, userId] as const,
+
+  // Sprint 7: Restaurant Agent namespaces
+  /** Dining reservations namespace: [namespace, userId] */
+  diningReservations: (userId: string) =>
+    [NAMESPACES.DINING_RESERVATIONS, userId] as const,
+
+  /** Restaurant favorites namespace: [namespace, userId] */
+  restaurantFavorites: (userId: string) =>
+    [NAMESPACES.RESTAURANT_FAVORITES, userId] as const,
+
+  // Sprint 7: Events Agent namespaces
+  /** Event tickets namespace: [namespace, userId] */
+  eventTickets: (userId: string) =>
+    [NAMESPACES.EVENT_TICKETS, userId] as const,
+
+  /** Event favorites namespace: [namespace, userId] */
+  eventFavorites: (userId: string) =>
+    [NAMESPACES.EVENT_FAVORITES, userId] as const,
+
+  // Sprint 7: Travel Agent namespaces
+  /** Travel itineraries namespace: [namespace, userId] */
+  travelItineraries: (userId: string) =>
+    [NAMESPACES.TRAVEL_ITINERARIES, userId] as const,
+
+  /** Travel preferences namespace: [namespace, userId] */
+  travelPreferences: (userId: string) =>
+    [NAMESPACES.TRAVEL_PREFERENCES, userId] as const,
 } as const;
 
 /**
@@ -151,6 +190,18 @@ export const NAMESPACE_PRIVACY: Record<Namespace, 'public' | 'sensitive' | 'priv
   [NAMESPACES.SYNC_LOGS]: 'private',
   [NAMESPACES.LLM_BUDGET]: 'private', // User's LLM budget tracking
   [NAMESPACES.LLM_CACHE]: 'private', // Cached LLM responses - device-local
+
+  // Sprint 7: Restaurant Agent namespaces
+  [NAMESPACES.DINING_RESERVATIONS]: 'sensitive', // Reservation details
+  [NAMESPACES.RESTAURANT_FAVORITES]: 'public', // Public preferences
+
+  // Sprint 7: Events Agent namespaces
+  [NAMESPACES.EVENT_TICKETS]: 'sensitive', // Ticket purchase info
+  [NAMESPACES.EVENT_FAVORITES]: 'public', // Public preferences
+
+  // Sprint 7: Travel Agent namespaces
+  [NAMESPACES.TRAVEL_ITINERARIES]: 'sensitive', // Travel plans
+  [NAMESPACES.TRAVEL_PREFERENCES]: 'public', // Public preferences
 };
 
 /**
@@ -182,4 +233,16 @@ export const NAMESPACE_SYNC_SCOPE: Record<Namespace, 'full' | 'selective' | 'non
   [NAMESPACES.SYNC_LOGS]: 'none', // Device-local
   [NAMESPACES.LLM_BUDGET]: 'full', // Budget syncs across devices (per-user limit)
   [NAMESPACES.LLM_CACHE]: 'none', // Device-local cache, never syncs
+
+  // Sprint 7: Restaurant Agent namespaces
+  [NAMESPACES.DINING_RESERVATIONS]: 'full', // Reservations sync
+  [NAMESPACES.RESTAURANT_FAVORITES]: 'full', // Favorites sync
+
+  // Sprint 7: Events Agent namespaces
+  [NAMESPACES.EVENT_TICKETS]: 'full', // Tickets sync
+  [NAMESPACES.EVENT_FAVORITES]: 'full', // Favorites sync
+
+  // Sprint 7: Travel Agent namespaces
+  [NAMESPACES.TRAVEL_ITINERARIES]: 'full', // Itineraries sync
+  [NAMESPACES.TRAVEL_PREFERENCES]: 'full', // Preferences sync
 };
