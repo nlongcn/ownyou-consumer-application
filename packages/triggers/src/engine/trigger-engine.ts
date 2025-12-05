@@ -8,9 +8,10 @@
  * - User-driven (Natural language requests)
  */
 
-import type { AgentContext } from '@ownyou/agents-base';
+import type { AgentContext, AgentStore } from '@ownyou/agents-base';
 import type { LLMClient } from '@ownyou/llm-client';
 import type { MemoryStore } from '@ownyou/memory-store';
+import type { AgentType } from '@ownyou/shared-types';
 import type { Trigger, TriggerResult, EventTrigger } from '../types';
 import { StoreWatcher, type StoreWatcherConfig } from '../data-driven/store-watcher';
 import { CronScheduler } from '../scheduled/cron-scheduler';
@@ -139,8 +140,8 @@ export class TriggerEngine {
   /**
    * Enable/disable an agent
    */
-  setAgentEnabled(type: string, enabled: boolean): boolean {
-    return this.coordinator.setAgentEnabled(type as any, enabled);
+  setAgentEnabled(type: AgentType, enabled: boolean): boolean {
+    return this.coordinator.setAgentEnabled(type, enabled);
   }
 
   /**
@@ -279,7 +280,7 @@ export class TriggerEngine {
   private getAgentContext(): Omit<AgentContext, 'triggerData'> {
     return {
       userId: this.config.userId,
-      store: this.config.store as any,
+      store: this.config.store as unknown as AgentStore,
       llm: this.config.llm,
       tools: [],
     };
