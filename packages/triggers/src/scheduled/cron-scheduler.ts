@@ -38,7 +38,7 @@ function generateTriggerId(): string {
 function parseNextCronRun(expression: string, from: Date = new Date()): number {
   const parts = expression.trim().split(/\s+/);
   if (parts.length < 5) {
-    // Default to next minute if invalid
+    console.warn(`[CronScheduler] Invalid cron expression: "${expression}", defaulting to next minute`);
     return from.getTime() + 60000;
   }
 
@@ -312,7 +312,7 @@ export class CronScheduler {
   private parseIntervalNextRun(expression: string, from: Date): number {
     const match = expression.match(/every\s+(\d+)([hms])/i);
     if (!match) {
-      // Default to 1 hour
+      console.warn(`[CronScheduler] Invalid interval expression: "${expression}", defaulting to 1 hour`);
       return from.getTime() + 60 * 60 * 1000;
     }
 
@@ -343,7 +343,7 @@ export class CronScheduler {
   private parseDailyNextRun(expression: string, from: Date): number {
     const match = expression.match(/daily\s+(\d+):(\d+)/i);
     if (!match) {
-      // Default to 9 AM
+      console.warn(`[CronScheduler] Invalid daily expression: "${expression}", defaulting to 9:00 AM`);
       const next = new Date(from);
       next.setHours(9, 0, 0, 0);
       if (next <= from) {
