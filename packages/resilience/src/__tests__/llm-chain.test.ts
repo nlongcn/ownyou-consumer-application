@@ -368,4 +368,120 @@ describe('LLM Fallback Chain', () => {
       }
     });
   });
+
+  describe('configurable retry delay', () => {
+    it('should use default 1000ms base delay when not specified', async () => {
+      const startTime = Date.now();
+      let attempts = 0;
+      const provider: LLMProvider = {
+        complete: vi.fn().mockImplementation(async () => {
+          attempts++;
+          if (attempts < 2) {
+            throw new Error('Transient error');
+          }
+          return {
+            content: 'Success after retry',
+            model: 'test-model',
+            usage: { inputTokens: 10, outputTokens: 20, totalTokens: 30, costUsd: 0.001 },
+          };
+        }),
+        getSupportedModels: () => ['test-model'],
+        isAvailable: async () => true,
+      };
+
+      const config: FallbackChainConfig = {
+        provider,
+        maxRetries: 3,
+        timeoutMs: 30000,
+      };
+
+      const result = await llmInferenceWithFallback(baseRequest, config);
+      const elapsed = Date.now() - startTime;
+
+      expect(result.level).toBe('retry');
+      // First retry delay should be ~1000ms (baseDelay * 2^0)
+      expect(elapsed).toBeGreaterThanOrEqual(900);
+    });
+
+    it('should use custom base delay when provided', async () => {
+      const startTime = Date.now();
+      let attempts = 0;
+      const provider: LLMProvider = {
+        complete: vi.fn().mockImplementation(async () => {
+          attempts++;
+          if (attempts < 2) {
+            throw new Error('Transient error');
+          }
+          return {
+            content: 'Success after retry',
+            model: 'test-model',
+            usage: { inputTokens: 10, outputTokens: 20, totalTokens: 30, costUsd: 0.001 },
+          };
+        }),
+        getSupportedModels: () => ['test-model'],
+        isAvailable: async () => true,
+      };
+
+      const config: FallbackChainConfig = {
+        provider,
+        maxRetries: 3,
+        timeoutMs: 30000,
+        baseRetryDelayMs: 500, // Custom shorter delay
+      };
+
+      const result = await llmInferenceWithFallback(baseRequest, config);
+      const elapsed = Date.now() - startTime;
+
+      expect(result.level).toBe('retry');
+      // First retry delay should be ~500ms (baseDelay * 2^0)
+      expect(elapsed).toBeGreaterThanOrEqual(400);
+      expect(elapsed).toBeLessThan(900); // Shorter than default 1000ms
+    });
+
+    it('should apply exponential backoff correctly with custom delay', async () => {
+      const delays: number[] = [];
+      let attempts = 0;
+      let lastTime = Date.now();
+
+      const provider: LLMProvider = {
+        complete: vi.fn().mockImplementation(async () => {
+          if (attempts > 0) {
+            const now = Date.now();
+            delays.push(now - lastTime);
+            lastTime = now;
+          } else {
+            lastTime = Date.now();
+          }
+          attempts++;
+          if (attempts < 4) {
+            throw new Error('Transient error');
+          }
+          return {
+            content: 'Success after retry',
+            model: 'test-model',
+            usage: { inputTokens: 10, outputTokens: 20, totalTokens: 30, costUsd: 0.001 },
+          };
+        }),
+        getSupportedModels: () => ['test-model'],
+        isAvailable: async () => true,
+      };
+
+      const config: FallbackChainConfig = {
+        provider,
+        maxRetries: 4,
+        timeoutMs: 30000,
+        baseRetryDelayMs: 200,
+      };
+
+      const result = await llmInferenceWithFallback(baseRequest, config);
+
+      expect(result.level).toBe('retry');
+      expect(delays.length).toBe(3); // 3 retries after initial failure
+
+      // Exponential backoff: 200 * 2^0 = 200, 200 * 2^1 = 400, 200 * 2^2 = 800
+      expect(delays[0]).toBeGreaterThanOrEqual(180); // ~200ms
+      expect(delays[1]).toBeGreaterThanOrEqual(380); // ~400ms
+      expect(delays[2]).toBeGreaterThanOrEqual(780); // ~800ms
+    });
+  });
 });
