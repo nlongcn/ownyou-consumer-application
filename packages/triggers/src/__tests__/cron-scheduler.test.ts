@@ -215,4 +215,48 @@ describe('CronScheduler', () => {
       expect(callback).not.toHaveBeenCalled();
     });
   });
+
+  describe('invalid expression warnings', () => {
+    let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      consoleWarnSpy.mockRestore();
+    });
+
+    it('should warn on invalid cron expression', () => {
+      scheduler.register('invalid-cron', '* *');
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        '[CronScheduler] Invalid cron expression: "* *", defaulting to next minute'
+      );
+    });
+
+    it('should warn on invalid interval expression', () => {
+      scheduler.register('invalid-interval', 'every hour');
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        '[CronScheduler] Invalid interval expression: "every hour", defaulting to 1 hour'
+      );
+    });
+
+    it('should warn on invalid daily expression', () => {
+      scheduler.register('invalid-daily', 'daily morning');
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        '[CronScheduler] Invalid daily expression: "daily morning", defaulting to 9:00 AM'
+      );
+    });
+
+    it('should not warn on valid expressions', () => {
+      scheduler.register('valid-cron', '0 9 * * *');
+      scheduler.register('valid-interval', 'every 4h');
+      scheduler.register('valid-daily', 'daily 9:00');
+
+      expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+  });
 });
