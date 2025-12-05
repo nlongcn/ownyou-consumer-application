@@ -8,6 +8,7 @@
  * @see docs/architecture/OwnYou_architecture_v13.md Section 2.9
  */
 
+import { NS } from '@ownyou/shared-types';
 import type { Person } from '../types';
 import type { MemoryStore } from './profile-store';
 
@@ -25,7 +26,7 @@ export async function syncPeopleToEntities(
     const entityKey = `person:${normalizeEntityKey(person.name)}`;
 
     await store.put(
-      ['ownyou.entities', userId],
+      NS.entities(userId),
       entityKey,
       {
         entityType: 'person',
@@ -51,7 +52,7 @@ export async function getKnownPeople(
 ): Promise<Person[]> {
   try {
     const entities = await store.list(
-      ['ownyou.entities', userId],
+      NS.entities(userId),
       { prefix: 'person:' }
     );
 
@@ -83,7 +84,7 @@ export async function getPersonByName(
 ): Promise<Person | undefined> {
   try {
     const entityKey = `person:${normalizeEntityKey(name)}`;
-    const result = await store.get(['ownyou.entities', userId], entityKey);
+    const result = await store.get(NS.entities(userId), entityKey);
 
     if (!result) return undefined;
 

@@ -97,6 +97,10 @@ export const NS = {
   ikigaiProfile: (userId: string) =>
     [NAMESPACES.IKIGAI_PROFILE, userId] as const,
 
+  /** Ikigai evidence namespace: [namespace, userId] */
+  ikigaiEvidence: (userId: string) =>
+    [NAMESPACES.IKIGAI_EVIDENCE, userId] as const,
+
   /** Mission cards namespace: [namespace, userId] */
   missionCards: (userId: string) =>
     [NAMESPACES.MISSION_CARDS, userId] as const,

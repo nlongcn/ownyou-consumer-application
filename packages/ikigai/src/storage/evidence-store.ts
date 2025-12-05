@@ -7,6 +7,7 @@
  * @see docs/architecture/OwnYou_architecture_v13.md Section 2.3
  */
 
+import { NS } from '@ownyou/shared-types';
 import type { IkigaiEvidence } from '../types';
 import type { MemoryStore } from './profile-store';
 
@@ -27,7 +28,7 @@ export async function storeEvidence(
     const key = `${EVIDENCE_PREFIX}${item.dimension}:${Date.now()}:${Math.random().toString(36).substring(7)}`;
 
     await store.put(
-      ['ownyou.ikigai_evidence', userId],
+      NS.ikigaiEvidence(userId),
       key,
       {
         ...item,
@@ -38,7 +39,7 @@ export async function storeEvidence(
 
   // Also store a summary of the latest evidence batch
   await store.put(
-    ['ownyou.ikigai_evidence', userId],
+    NS.ikigaiEvidence(userId),
     'latest_batch',
     {
       count: evidence.length,
@@ -59,7 +60,7 @@ export async function getEvidenceByDimension(
 ): Promise<IkigaiEvidence[]> {
   try {
     const allEvidence = await store.list(
-      ['ownyou.ikigai_evidence', userId],
+      NS.ikigaiEvidence(userId),
       { prefix: `${EVIDENCE_PREFIX}${dimension}:` }
     );
 
@@ -81,7 +82,7 @@ export async function getRecentEvidence(
 ): Promise<IkigaiEvidence[]> {
   try {
     const allEvidence = await store.list(
-      ['ownyou.ikigai_evidence', userId],
+      NS.ikigaiEvidence(userId),
       { prefix: EVIDENCE_PREFIX }
     );
 
@@ -108,12 +109,12 @@ export async function getEvidenceSummary(
 }> {
   try {
     const latestBatch = await store.get(
-      ['ownyou.ikigai_evidence', userId],
+      NS.ikigaiEvidence(userId),
       'latest_batch'
     );
 
     const allEvidence = await store.list(
-      ['ownyou.ikigai_evidence', userId],
+      NS.ikigaiEvidence(userId),
       { prefix: EVIDENCE_PREFIX }
     );
 

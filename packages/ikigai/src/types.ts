@@ -236,6 +236,34 @@ export interface IkigaiEvidence {
 // ============================================================================
 
 /**
+ * Model tier type - matches llm-client ModelTier
+ * NOTE: These are CONFIGURABLE defaults. v13 tiers are placeholders.
+ * Users MUST be able to override with specific model names.
+ */
+export type ModelTier = 'fast' | 'standard' | 'quality' | 'local';
+
+/**
+ * Model configuration - allows overriding default tier models
+ *
+ * v13 Section 6.10: Model selection MUST be configurable.
+ * Tiers in v13 are PLACEHOLDERS - actual models should come from:
+ * 1. User configuration (highest priority)
+ * 2. llm-client registry via getRecommendedModel()
+ * 3. Never hardcoded model names in business logic
+ */
+export interface ModelConfig {
+  /** The tier to use for this operation */
+  tier: ModelTier;
+  /**
+   * Optional model override - if provided, uses this model
+   * instead of looking up from tier
+   */
+  model?: string;
+  /** Whether to prefer zero-data-retention models */
+  preferZDR?: boolean;
+}
+
+/**
  * Inference Configuration
  */
 export interface IkigaiInferenceConfig {
@@ -243,7 +271,23 @@ export interface IkigaiInferenceConfig {
   minItemsThreshold: number;
   parallelInference: boolean;
   dataWindowDays: number;
-  modelTier: 'fast' | 'standard' | 'quality';
+  /**
+   * Model tier for inference operations.
+   * NOTE: This is a CONFIGURABLE default. To override with specific models,
+   * provide modelOverrides instead.
+   */
+  modelTier: ModelTier;
+  /**
+   * Optional model overrides by tier.
+   * These take precedence over default tier lookups.
+   * Example: { standard: 'gpt-4o', fast: 'gpt-4o-mini' }
+   */
+  modelOverrides?: Partial<Record<ModelTier, string>>;
+  /**
+   * Whether to prefer zero-data-retention models when using tier defaults.
+   * Recommended for privacy-sensitive operations.
+   */
+  preferZDR?: boolean;
 }
 
 export const DEFAULT_INFERENCE_CONFIG: IkigaiInferenceConfig = {
@@ -252,6 +296,97 @@ export const DEFAULT_INFERENCE_CONFIG: IkigaiInferenceConfig = {
   parallelInference: true,
   dataWindowDays: 90,
   modelTier: 'standard',
+  // No modelOverrides by default - uses llm-client registry
+  preferZDR: true, // Default to preferring ZDR models for privacy
+};
+
+// ============================================================================
+// Scoring Configuration (v13 Section 2.6-2.7)
+// ============================================================================
+
+/**
+ * Well-Being Scoring Configuration - v13 Section 2.6
+ *
+ * All boost values and thresholds are configurable.
+ * Defaults are based on v13 recommendations but can be tuned.
+ */
+export interface WellBeingConfig {
+  /** Maximum total score cap */
+  maxTotalScore: number;
+  /** Boost multipliers by category */
+  boosts: {
+    /** Full boost for matching experience preferences */
+    experienceFull: number;
+    /** Partial boost for experience-type missions */
+    experiencePartial: number;
+    /** Full boost for key person involvement */
+    relationshipFull: number;
+    /** Boost for gift-related missions */
+    relationshipGift: number;
+    /** Interest alignment by depth */
+    interestDeep: number;
+    interestModerate: number;
+    interestCasual: number;
+    /** Base interest multiplier */
+    interestBase: number;
+    /** Charitable giving boost */
+    givingCharity: number;
+    /** Gift giving boost */
+    givingGift: number;
+  };
+}
+
+export const DEFAULT_WELLBEING_CONFIG: WellBeingConfig = {
+  maxTotalScore: 2.0,
+  boosts: {
+    experienceFull: 0.5,
+    experiencePartial: 0.25,
+    relationshipFull: 0.5,
+    relationshipGift: 0.3,
+    interestDeep: 1.0,
+    interestModerate: 0.7,
+    interestCasual: 0.4,
+    interestBase: 0.3,
+    givingCharity: 0.3,
+    givingGift: 0.2,
+  },
+};
+
+/**
+ * Rewards Configuration - v13 Section 2.7
+ */
+export interface RewardsConfig {
+  /** Base points for completing a mission */
+  basePoints: number;
+  /** Multipliers by category */
+  multipliers: {
+    experience: number;
+    relationship: number;
+    giving: number;
+  };
+  /** Tier thresholds for gamification */
+  tierThresholds: TierThreshold[];
+}
+
+export interface TierThreshold {
+  name: string;
+  threshold: number;
+}
+
+export const DEFAULT_REWARDS_CONFIG: RewardsConfig = {
+  basePoints: 100,
+  multipliers: {
+    experience: 2.0,
+    relationship: 1.5,
+    giving: 2.5,
+  },
+  tierThresholds: [
+    { name: 'Bronze', threshold: 0 },
+    { name: 'Silver', threshold: 1000 },
+    { name: 'Gold', threshold: 5000 },
+    { name: 'Platinum', threshold: 15000 },
+    { name: 'Diamond', threshold: 50000 },
+  ],
 };
 
 // ============================================================================

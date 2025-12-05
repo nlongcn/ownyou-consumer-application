@@ -47,6 +47,7 @@ Return structured JSON:
       "sharedInterests": ["..."],
       "sharedActivities": ["..."],
       "relationshipStrength": 0.0-1.0,
+      "lastInteraction": <unix_timestamp_ms_of_most_recent_interaction>,
       "evidence": "<source_reference>"
     }
   ],

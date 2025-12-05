@@ -37,6 +37,7 @@ export {
   MODEL_REGISTRY,
   getModelPricing,
   getModelMetadata,
+  getRecommendedModel,
 } from './providers';
 
 // Budget
