@@ -32,6 +32,8 @@ export interface FallbackChainConfig {
   maxRetries: number;
   /** Request timeout in milliseconds */
   timeoutMs: number;
+  /** Base delay in milliseconds for exponential backoff (defaults to 1000) */
+  baseRetryDelayMs?: number;
 }
 
 /**
@@ -40,6 +42,7 @@ export interface FallbackChainConfig {
 export const DEFAULT_FALLBACK_CONFIG: Partial<FallbackChainConfig> = {
   maxRetries: 3,
   timeoutMs: 30000,
+  baseRetryDelayMs: 1000,
 };
 
 /**
@@ -126,7 +129,7 @@ export async function llmInferenceWithFallback(
   request: LLMRequest,
   config: FallbackChainConfig
 ): Promise<FallbackResult> {
-  const { provider, cache, userId, alternativeProvider, localProvider, maxRetries, timeoutMs } = {
+  const { provider, cache, userId, alternativeProvider, localProvider, maxRetries, timeoutMs, baseRetryDelayMs } = {
     ...DEFAULT_FALLBACK_CONFIG,
     ...config,
   };
@@ -148,7 +151,8 @@ export async function llmInferenceWithFallback(
   for (let i = 0; i < maxRetries - 1; i++) {
     attempts++;
     try {
-      await delay(1000 * Math.pow(2, i)); // Exponential backoff
+      const baseDelay = baseRetryDelayMs ?? 1000;
+      await delay(baseDelay * Math.pow(2, i)); // Exponential backoff
       const response = await withTimeout(provider.complete(request), timeoutMs);
       if (!response.error) {
         return { response, level: 'retry', attempts };
