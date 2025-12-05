@@ -1,0 +1,33 @@
+{
+  "name": "@ownyou/ikigai",
+  "version": "0.1.0",
+  "description": "OwnYou Ikigai Intelligence Layer - well-being inference and mission prioritization",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ownyou/llm-client": "workspace:*",
+    "@ownyou/memory-store": "workspace:*",
+    "@ownyou/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "vitest": "^2.0.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  }
+}
