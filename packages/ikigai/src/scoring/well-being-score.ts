@@ -8,13 +8,27 @@
  * @see docs/architecture/OwnYou_architecture_v13.md Section 2.6
  */
 
-import type { MissionWellBeingScore, IkigaiProfile, Person } from '../types';
+import type {
+  MissionWellBeingScore,
+  IkigaiProfile,
+  Person,
+  WellBeingConfig,
+} from '../types';
+import { DEFAULT_WELLBEING_CONFIG } from '../types';
 import { getExistingProfile, type MemoryStore } from '../storage/profile-store';
 import { getKnownPeople } from '../storage/entity-sync';
 
 /**
- * Mission card interface - minimal for scoring
- * Avoids circular dependency with shared-types
+ * Mission card interface - minimal subset for scoring
+ *
+ * NOTE: This is a deliberate subset of the full MissionCard from @ownyou/shared-types.
+ * Using a minimal interface here avoids importing the full agent types (which include
+ * MissionStatus, MissionAction, AgentType, etc.) just for scoring purposes.
+ *
+ * The full MissionCard includes ikigaiDimensions, ikigaiAlignmentBoost, etc.
+ * which are computed BY the scoring functions and not required as inputs.
+ *
+ * @see @ownyou/shared-types/agent.ts for full MissionCard definition
  */
 export interface MissionCard {
   id: string;
@@ -22,6 +36,32 @@ export interface MissionCard {
   title: string;
   summary: string;
   utilityScore?: number;
+}
+
+// Module-level config, can be updated via setWellBeingConfig()
+let wellBeingConfig: WellBeingConfig = DEFAULT_WELLBEING_CONFIG;
+
+/**
+ * Set well-being configuration - v13 Section 2.6
+ *
+ * Allows runtime configuration of scoring parameters.
+ */
+export function setWellBeingConfig(config: Partial<WellBeingConfig>): void {
+  wellBeingConfig = {
+    ...DEFAULT_WELLBEING_CONFIG,
+    ...config,
+    boosts: {
+      ...DEFAULT_WELLBEING_CONFIG.boosts,
+      ...config.boosts,
+    },
+  };
+}
+
+/**
+ * Get current well-being configuration
+ */
+export function getWellBeingConfig(): WellBeingConfig {
+  return wellBeingConfig;
 }
 
 /**
@@ -50,9 +90,9 @@ export async function calculateWellBeingScore(
   const interestAlignment = calculateInterestAlignment(mission, profile);
   const givingBoost = calculateGivingBoost(mission, profile);
 
-  // Calculate total (capped at 2.0)
+  // Calculate total (capped at configurable max)
   const totalScore = Math.min(
-    2.0,
+    wellBeingConfig.maxTotalScore,
     utilityScore +
       experienceBoost +
       relationshipBoost +
@@ -102,11 +142,11 @@ function calculateExperienceBoost(
 
   if (hasMatch) {
     // Full boost for matching preferences
-    return 0.5 * profile.dimensionWeights.experiences;
+    return wellBeingConfig.boosts.experienceFull * profile.dimensionWeights.experiences;
   }
 
   // Partial boost for experience-type missions
-  return 0.25 * profile.dimensionWeights.experiences;
+  return wellBeingConfig.boosts.experiencePartial * profile.dimensionWeights.experiences;
 }
 
 /**
@@ -128,7 +168,7 @@ function calculateRelationshipBoost(
     if (missionText.includes(person.name.toLowerCase())) {
       // Full boost for key person involvement
       return (
-        0.5 *
+        wellBeingConfig.boosts.relationshipFull *
         profile.dimensionWeights.relationships *
         person.relationshipStrength
       );
@@ -140,7 +180,7 @@ function calculateRelationshipBoost(
     const giftKeywords = ['gift', 'birthday', 'present', 'surprise'];
     const isGiftMission = giftKeywords.some((k) => missionText.includes(k));
     if (isGiftMission) {
-      return 0.3 * profile.dimensionWeights.relationships;
+      return wellBeingConfig.boosts.relationshipGift * profile.dimensionWeights.relationships;
     }
   }
 
@@ -162,15 +202,15 @@ function calculateInterestAlignment(
 
   for (const interest of profile.interests.genuineInterests) {
     if (missionText.includes(interest.topic.toLowerCase())) {
-      // Scale by engagement depth
+      // Scale by engagement depth using config values
       const depthMultiplier =
         interest.engagementDepth === 'deep'
-          ? 1.0
+          ? wellBeingConfig.boosts.interestDeep
           : interest.engagementDepth === 'moderate'
-            ? 0.7
-            : 0.4;
+            ? wellBeingConfig.boosts.interestModerate
+            : wellBeingConfig.boosts.interestCasual;
 
-      return 0.3 * profile.dimensionWeights.interests * depthMultiplier;
+      return wellBeingConfig.boosts.interestBase * profile.dimensionWeights.interests * depthMultiplier;
     }
   }
 
@@ -200,14 +240,14 @@ function calculateGivingBoost(
   ];
   const isCharity = charityKeywords.some((k) => missionText.includes(k));
   if (isCharity) {
-    return 0.3 * profile.dimensionWeights.giving;
+    return wellBeingConfig.boosts.givingCharity * profile.dimensionWeights.giving;
   }
 
   // Check for gift keywords
   const giftKeywords = ['gift', 'present', 'birthday', 'anniversary'];
   const isGift = giftKeywords.some((k) => missionText.includes(k));
   if (isGift && profile.giving.giftGiving.frequency !== 'rare') {
-    return 0.2 * profile.dimensionWeights.giving;
+    return wellBeingConfig.boosts.givingGift * profile.dimensionWeights.giving;
   }
 
   return 0;

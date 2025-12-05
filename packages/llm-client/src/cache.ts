@@ -22,6 +22,7 @@ export const TTL_BY_OPERATION: Record<OperationType, number> = {
   ikigai_inference: 7 * 24 * 60 * 60 * 1000, // 7 days - slow changing
   reflection_node: 24 * 60 * 60 * 1000, // 24 hours - daily refresh
   embedding_generation: 90 * 24 * 60 * 60 * 1000, // 90 days - deterministic
+  shopping_intent_detection: 60 * 60 * 1000, // 1 hour - context-dependent
   test: 5 * 60 * 1000, // 5 minutes - for testing
 };
 

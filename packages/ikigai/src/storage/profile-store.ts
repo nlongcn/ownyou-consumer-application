@@ -8,6 +8,7 @@
  * @see docs/architecture/OwnYou_architecture_v13.md Section 2.9
  */
 
+import { NS } from '@ownyou/shared-types';
 import type { IkigaiProfile } from '../types';
 
 /**
@@ -42,9 +43,9 @@ export async function storeIkigaiProfile(
   profile: IkigaiProfile,
   store: MemoryStore
 ): Promise<void> {
-  // Store main profile in semantic memory
+  // Store main profile in semantic memory (v13 Section 8.12)
   await store.put(
-    ['ownyou.semantic', userId],
+    NS.semanticMemory(userId),
     IKIGAI_PROFILE_KEY,
     {
       ...profile,
@@ -54,18 +55,19 @@ export async function storeIkigaiProfile(
   );
 
   // Also store IAB-derived categories for ad relevance (v13 2.9)
-  if (profile.interests.genuineInterests.length > 0) {
-    await store.put(
-      ['ownyou.iab', userId],
-      'ikigai_derived',
-      {
-        derivedFrom: 'ikigai_inference',
-        categories: profile.interests.genuineInterests.map((i) => i.topic),
-        confidence: profile.interests.confidence,
-        updatedAt: Date.now(),
-      }
-    );
-  }
+  // Always write to maintain BBS+ pseudonym relevance - even when empty
+  await store.put(
+    NS.iabClassifications(userId),
+    'ikigai_derived',
+    {
+      derivedFrom: 'ikigai_inference',
+      categories: profile.interests.genuineInterests.map((i) => i.topic),
+      confidence: profile.interests.genuineInterests.length > 0
+        ? profile.interests.confidence
+        : 0,
+      updatedAt: Date.now(),
+    }
+  );
 }
 
 /**
@@ -77,7 +79,7 @@ export async function getExistingProfile(
 ): Promise<IkigaiProfile | undefined> {
   try {
     const result = await store.get(
-      ['ownyou.semantic', userId],
+      NS.semanticMemory(userId),
       IKIGAI_PROFILE_KEY
     );
     if (!result) return undefined;
@@ -150,6 +152,6 @@ export async function deleteIkigaiProfile(
   store: MemoryStore & { delete?: (namespace: readonly string[], key: string) => Promise<void> }
 ): Promise<void> {
   if (store.delete) {
-    await store.delete(['ownyou.semantic', userId], IKIGAI_PROFILE_KEY);
+    await store.delete(NS.semanticMemory(userId), IKIGAI_PROFILE_KEY);
   }
 }

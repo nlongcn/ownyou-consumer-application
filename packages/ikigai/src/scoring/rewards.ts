@@ -11,11 +11,19 @@
  * @see docs/architecture/OwnYou_architecture_v13.md Section 2.7
  */
 
-import type { IkigaiRewards, UserPoints, DEFAULT_REWARDS } from '../types';
+import { NS } from '@ownyou/shared-types';
+import type { IkigaiRewards, UserPoints, RewardsConfig } from '../types';
+import { DEFAULT_REWARDS_CONFIG } from '../types';
 import { getExistingProfile, type MemoryStore } from '../storage/profile-store';
 
 /**
- * Mission card interface - minimal for rewards
+ * Mission card interface - minimal subset for rewards
+ *
+ * NOTE: This is a deliberate subset of the full MissionCard from @ownyou/shared-types.
+ * Using a minimal interface here avoids importing the full agent types just for
+ * rewards calculation. Only the fields needed for reward computation are included.
+ *
+ * @see @ownyou/shared-types/agent.ts for full MissionCard definition
  */
 export interface MissionCard {
   id: string;
@@ -24,15 +32,32 @@ export interface MissionCard {
   summary: string;
 }
 
+// Module-level config, can be updated via setRewardsConfig()
+let rewardsConfig: RewardsConfig = DEFAULT_REWARDS_CONFIG;
+
 /**
- * Default reward multipliers - v13 Section 2.7
+ * Set rewards configuration - v13 Section 2.7
+ *
+ * Allows runtime configuration of reward parameters.
  */
-const REWARD_CONFIG = {
-  basePoints: 100,
-  experienceMultiplier: 2.0,
-  relationshipMultiplier: 1.5,
-  givingMultiplier: 2.5,
-} as const;
+export function setRewardsConfig(config: Partial<RewardsConfig>): void {
+  rewardsConfig = {
+    ...DEFAULT_REWARDS_CONFIG,
+    ...config,
+    multipliers: {
+      ...DEFAULT_REWARDS_CONFIG.multipliers,
+      ...config.multipliers,
+    },
+    tierThresholds: config.tierThresholds ?? DEFAULT_REWARDS_CONFIG.tierThresholds,
+  };
+}
+
+/**
+ * Get current rewards configuration
+ */
+export function getRewardsConfig(): RewardsConfig {
+  return rewardsConfig;
+}
 
 /**
  * Calculate Ikigai rewards for completed mission - v13 Section 2.7
@@ -44,7 +69,7 @@ export async function calculateMissionRewards(
 ): Promise<IkigaiRewards> {
   const profile = await getExistingProfile(userId, store);
 
-  const basePoints = REWARD_CONFIG.basePoints;
+  const basePoints = rewardsConfig.basePoints;
 
   const categories = {
     explorer: 0,
@@ -60,7 +85,7 @@ export async function calculateMissionRewards(
   const experienceTypes = ['travel', 'restaurant', 'events'];
   if (experienceTypes.includes(mission.type)) {
     categories.explorer = Math.round(
-      basePoints * REWARD_CONFIG.experienceMultiplier
+      basePoints * rewardsConfig.multipliers.experience
     );
   }
 
@@ -71,7 +96,7 @@ export async function calculateMissionRewards(
     );
     if (involvesKeyPerson) {
       categories.connector = Math.round(
-        basePoints * REWARD_CONFIG.relationshipMultiplier
+        basePoints * rewardsConfig.multipliers.relationship
       );
     }
   }
@@ -81,7 +106,7 @@ export async function calculateMissionRewards(
   const isGiving = givingKeywords.some((k) => missionText.includes(k));
   if (isGiving) {
     categories.helper = Math.round(
-      basePoints * REWARD_CONFIG.givingMultiplier
+      basePoints * rewardsConfig.multipliers.giving
     );
   }
 
@@ -90,9 +115,9 @@ export async function calculateMissionRewards(
 
   return {
     basePoints,
-    experienceMultiplier: REWARD_CONFIG.experienceMultiplier,
-    relationshipMultiplier: REWARD_CONFIG.relationshipMultiplier,
-    givingMultiplier: REWARD_CONFIG.givingMultiplier,
+    experienceMultiplier: rewardsConfig.multipliers.experience,
+    relationshipMultiplier: rewardsConfig.multipliers.relationship,
+    givingMultiplier: rewardsConfig.multipliers.giving,
     categories,
   };
 }
@@ -126,7 +151,7 @@ export async function awardMissionPoints(
     lastUpdated: Date.now(),
   };
 
-  await store.put(['ownyou.semantic', userId], 'ikigai_points', newPoints as unknown as Record<string, unknown>);
+  await store.put(NS.semanticMemory(userId), 'ikigai_points', newPoints as unknown as Record<string, unknown>);
 
   return totalPoints;
 }
@@ -139,7 +164,7 @@ export async function getUserPoints(
   store: MemoryStore
 ): Promise<UserPoints> {
   try {
-    const result = await store.get(['ownyou.semantic', userId], 'ikigai_points');
+    const result = await store.get(NS.semanticMemory(userId), 'ikigai_points');
     if (!result) {
       return {
         total: 0,
@@ -191,21 +216,16 @@ export function getIkigaiTier(totalPoints: number): {
   nextTierAt: number;
   progress: number;
 } {
-  const tiers = [
-    { name: 'Bronze', threshold: 0 },
-    { name: 'Silver', threshold: 1000 },
-    { name: 'Gold', threshold: 5000 },
-    { name: 'Platinum', threshold: 15000 },
-    { name: 'Diamond', threshold: 50000 },
-  ];
+  // Use configurable tier thresholds
+  const tiers = rewardsConfig.tierThresholds;
 
   let currentTier = tiers[0];
-  let nextTier = tiers[1];
+  let nextTier: typeof tiers[0] | null = tiers[1] ?? null;
 
   for (let i = 0; i < tiers.length; i++) {
     if (totalPoints >= tiers[i].threshold) {
       currentTier = tiers[i];
-      nextTier = tiers[i + 1] || null;
+      nextTier = tiers[i + 1] ?? null;
     }
   }
 

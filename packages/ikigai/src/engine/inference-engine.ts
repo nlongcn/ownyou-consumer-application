@@ -8,6 +8,8 @@
  * @see docs/architecture/OwnYou_architecture_v13.md Section 2.1-2.4
  */
 
+import { NS } from '@ownyou/shared-types';
+import { getRecommendedModel, type ModelTier as LLMModelTier } from '@ownyou/llm-client';
 import type {
   IkigaiProfile,
   IkigaiInferenceConfig,
@@ -19,6 +21,7 @@ import type {
   UserDataBundle,
   MissionFeedbackContext,
   DEFAULT_INFERENCE_CONFIG,
+  ModelTier,
 } from '../types';
 
 import {
@@ -145,7 +148,15 @@ export class IkigaiInferenceEngine {
         options.missionFeedback
       );
 
-      // 8. Create full profile
+      // 8. Extract evidence FIRST (before creating profile)
+      const evidence = this.extractEvidence(
+        experiences,
+        relationships,
+        interests,
+        giving
+      );
+
+      // 9. Create full profile WITH evidence
       const profile: IkigaiProfile = {
         userId,
         updatedAt: Date.now(),
@@ -155,30 +166,21 @@ export class IkigaiInferenceEngine {
         giving,
         dimensionWeights: synthesisResult.dimensionWeights,
         confidence: synthesisResult.overallConfidence,
-        evidence: [], // Populated below
+        evidence, // Evidence included from the start
       };
 
-      // 9. Store profile
+      // 10. Store profile (now includes evidence)
       await storeIkigaiProfile(userId, profile, this.store);
 
-      // 10. Sync key people to entities namespace
+      // 11. Store evidence separately for easy querying
+      await storeEvidence(userId, evidence, this.store);
+
+      // 12. Sync key people to entities namespace
       await syncPeopleToEntities(
         userId,
         relationships.keyPeople,
         this.store
       );
-
-      // 11. Store evidence chains
-      const evidence = this.extractEvidence(
-        experiences,
-        relationships,
-        interests,
-        giving
-      );
-      await storeEvidence(userId, evidence, this.store);
-
-      // 12. Update profile with evidence
-      profile.evidence = evidence;
 
       // 13. Mark batch as completed
       this.batchProcessor.markCompleted(userId);
@@ -306,8 +308,8 @@ export class IkigaiInferenceEngine {
     // For MVP, focus on email-derived IAB classifications
     // Future: financial, calendar, browser
     return {
-      iabClassifications: await this.store.list(['ownyou.iab', userId]),
-      emails: await this.store.list(['ownyou.episodic', userId]),
+      iabClassifications: await this.store.list(NS.iabClassifications(userId)),
+      emails: await this.store.list(NS.episodicMemory(userId)),
       // financial: await this.store.list(['ownyou.financial', userId]),
       // calendar: await this.store.list(['ownyou.calendar', userId]),
     };
@@ -377,19 +379,41 @@ export class IkigaiInferenceEngine {
   }
 
   /**
-   * Get LLM model based on tier
+   * Get LLM model based on tier configuration - v13 Section 6.10
+   *
+   * Model selection priority:
+   * 1. Explicit model override in config (modelOverrides[tier])
+   * 2. llm-client registry via getRecommendedModel()
+   * 3. Fallback to safe default
+   *
+   * NOTE: Model tiers in v13 are PLACEHOLDERS. This method ensures
+   * actual model names come from configuration, never hardcoded.
    */
   private getModel(): string {
-    switch (this.config.modelTier) {
-      case 'fast':
-        return 'gpt-4o-mini';
-      case 'standard':
-        return 'gpt-4o';
-      case 'quality':
-        return 'claude-3-opus';
-      default:
-        return 'gpt-4o';
+    const tier = this.config.modelTier;
+
+    // 1. Check for explicit model override
+    if (this.config.modelOverrides?.[tier]) {
+      return this.config.modelOverrides[tier]!;
     }
+
+    // 2. Use llm-client registry to get recommended model for tier
+    const preferZDR = this.config.preferZDR ?? true;
+    const recommended = getRecommendedModel(tier as LLMModelTier, preferZDR);
+
+    if (recommended) {
+      return recommended;
+    }
+
+    // 3. Fallback - this should rarely happen as registry has models for all tiers
+    // Log warning if we hit this path
+    console.warn(
+      `[Ikigai] No model found for tier '${tier}' in llm-client registry. ` +
+      `Configure modelOverrides in IkigaiInferenceConfig.`
+    );
+
+    // Return a safe fallback based on tier (still from registry, not hardcoded names)
+    return getRecommendedModel('standard' as LLMModelTier, false) ?? 'llama-3.3-70b-versatile';
   }
 
   /**
