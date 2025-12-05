@@ -24,8 +24,8 @@ export interface RestaurantTriggerData {
   /** Desired cuisine type */
   cuisine?: string;
 
-  /** Number of diners */
-  partySize: number;
+  /** Number of diners (defaults to 1 if not specified) */
+  partySize?: number;
 
   /** Desired date/time (ISO string) */
   dateTime?: string;
@@ -161,14 +161,14 @@ export interface RestaurantFavorite {
   /** Cuisine type */
   cuisine: string;
 
-  /** User's rating */
+  /** User's rating (1-5, undefined if not rated yet) */
   userRating?: number;
 
-  /** Notes */
+  /** User notes about this restaurant */
   notes?: string;
 
-  /** Last visited */
-  lastVisited?: string;
+  /** Last visited timestamp (undefined if never visited, just favorited) */
+  lastVisited?: number;
 
   /** Times visited */
   visitCount: number;
@@ -176,6 +176,29 @@ export interface RestaurantFavorite {
   /** Added timestamp */
   addedAt: number;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Configuration Types (v13 compliant - extracted magic numbers)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Urgency threshold configuration
+ * Extracted per Sprint 7 spec lesson I2
+ */
+export interface UrgencyThresholds {
+  /** Hours until event for high urgency (default: 24) */
+  highHours: number;
+  /** Hours until event for medium urgency (default: 72) */
+  mediumHours: number;
+}
+
+/**
+ * Default urgency thresholds for restaurant agent
+ */
+export const DEFAULT_URGENCY_THRESHOLDS: UrgencyThresholds = {
+  highHours: 24,
+  mediumHours: 72,
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Permissions
@@ -195,6 +218,9 @@ export const RESTAURANT_PERMISSIONS: AgentPermissions = {
       NAMESPACES.IAB_CLASSIFICATIONS,
       NAMESPACES.EPISODIC_MEMORY,
       NAMESPACES.PROCEDURAL_MEMORY,
+      NAMESPACES.SEMANTIC_MEMORY,
+      NAMESPACES.ENTITIES,
+      NAMESPACES.RELATIONSHIPS,
     ],
     write: [
       NAMESPACES.DINING_RESERVATIONS,
@@ -247,6 +273,34 @@ export const RESTAURANT_PERMISSIONS: AgentPermissions = {
           specialRequests: { type: 'string', description: 'Special requests' },
         },
         required: ['restaurantId', 'dateTime', 'partySize'],
+      },
+    },
+    {
+      name: 'get_menu',
+      description: 'Retrieve menu items for a restaurant',
+      parameters: {
+        type: 'object',
+        properties: {
+          restaurantId: { type: 'string', description: 'Restaurant ID' },
+          category: { type: 'string', description: 'Menu category filter (appetizers, mains, desserts)' },
+        },
+        required: ['restaurantId'],
+      },
+    },
+    {
+      name: 'check_dietary',
+      description: 'Check if restaurant accommodates specific dietary requirements',
+      parameters: {
+        type: 'object',
+        properties: {
+          restaurantId: { type: 'string', description: 'Restaurant ID' },
+          dietaryRestrictions: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Dietary restrictions to check (vegan, vegetarian, gluten-free, etc.)',
+          },
+        },
+        required: ['restaurantId', 'dietaryRestrictions'],
       },
     },
   ],

@@ -64,6 +64,15 @@ export const NAMESPACES = {
   // Travel Agent (Sprint 7)
   TRAVEL_ITINERARIES: 'ownyou.travel_itineraries',
   TRAVEL_PREFERENCES: 'ownyou.travel_preferences',
+
+  // Calendar (Sprint 7 - Events & Travel Agents)
+  CALENDAR: 'ownyou.calendar',
+
+  // Financial Profile (Sprint 7 - Travel Agent)
+  FINANCIAL_PROFILE: 'ownyou.financial_profile',
+
+  // Interests (Sprint 7 - Events Agent)
+  INTERESTS: 'ownyou.interests',
 } as const;
 
 /**
@@ -162,6 +171,19 @@ export const NS = {
   /** Travel preferences namespace: [namespace, userId] */
   travelPreferences: (userId: string) =>
     [NAMESPACES.TRAVEL_PREFERENCES, userId] as const,
+
+  // Sprint 7: Calendar namespace (Events & Travel Agents)
+  /** Calendar namespace: [namespace, userId] */
+  calendar: (userId: string) => [NAMESPACES.CALENDAR, userId] as const,
+
+  // Sprint 7: Financial profile namespace (Travel Agent)
+  /** Financial profile namespace: [namespace, userId] */
+  financialProfile: (userId: string) =>
+    [NAMESPACES.FINANCIAL_PROFILE, userId] as const,
+
+  // Sprint 7: Interests namespace (Events Agent)
+  /** Interests namespace: [namespace, userId] */
+  interests: (userId: string) => [NAMESPACES.INTERESTS, userId] as const,
 } as const;
 
 /**
@@ -202,6 +224,11 @@ export const NAMESPACE_PRIVACY: Record<Namespace, 'public' | 'sensitive' | 'priv
   // Sprint 7: Travel Agent namespaces
   [NAMESPACES.TRAVEL_ITINERARIES]: 'sensitive', // Travel plans
   [NAMESPACES.TRAVEL_PREFERENCES]: 'public', // Public preferences
+
+  // Sprint 7: Additional namespaces
+  [NAMESPACES.CALENDAR]: 'private', // Calendar is private
+  [NAMESPACES.FINANCIAL_PROFILE]: 'private', // Financial data is private
+  [NAMESPACES.INTERESTS]: 'public', // Interests are public preferences
 };
 
 /**
@@ -245,4 +272,9 @@ export const NAMESPACE_SYNC_SCOPE: Record<Namespace, 'full' | 'selective' | 'non
   // Sprint 7: Travel Agent namespaces
   [NAMESPACES.TRAVEL_ITINERARIES]: 'full', // Itineraries sync
   [NAMESPACES.TRAVEL_PREFERENCES]: 'full', // Preferences sync
+
+  // Sprint 7: Additional namespaces
+  [NAMESPACES.CALENDAR]: 'full', // Calendar syncs across devices
+  [NAMESPACES.FINANCIAL_PROFILE]: 'full', // Financial profile syncs
+  [NAMESPACES.INTERESTS]: 'full', // Interests sync
 };

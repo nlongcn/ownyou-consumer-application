@@ -236,7 +236,7 @@ export interface VisaInfo {
   nationality: string;
   visaRequired: boolean;
   visaType?: string;
-  stayDuration: number;
+  stayDuration?: number;
   processingTime?: string;
   notes?: string;
 }
@@ -269,6 +269,29 @@ export interface OrchestratorState {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Configuration Types (v13 compliant - extracted magic numbers)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Urgency threshold configuration for travel
+ * Extracted per Sprint 7 spec lesson I2
+ */
+export interface TravelUrgencyThresholds {
+  /** Days until departure for high urgency (default: 3) */
+  highDays: number;
+  /** Days until departure for medium urgency (default: 14) */
+  mediumDays: number;
+}
+
+/**
+ * Default urgency thresholds for travel agent
+ */
+export const DEFAULT_TRAVEL_URGENCY_THRESHOLDS: TravelUrgencyThresholds = {
+  highDays: 3,
+  mediumDays: 14,
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Permissions
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -292,6 +315,10 @@ export const TRAVEL_PERMISSIONS: AgentPermissions = {
       NAMESPACES.PROCEDURAL_MEMORY,
       NAMESPACES.TRAVEL_PREFERENCES,
       NAMESPACES.CALENDAR,
+      NAMESPACES.SEMANTIC_MEMORY,
+      NAMESPACES.ENTITIES,
+      NAMESPACES.RELATIONSHIPS,
+      NAMESPACES.FINANCIAL_PROFILE,
     ],
     write: [
       NAMESPACES.TRAVEL_ITINERARIES,

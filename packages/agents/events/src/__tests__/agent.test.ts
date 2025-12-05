@@ -45,7 +45,8 @@ describe('EventsAgent', () => {
   let mockStore: AgentStore;
 
   beforeEach(() => {
-    agent = new EventsAgent();
+    // Provide defaultLocation for tests since trigger data may not include location
+    agent = new EventsAgent({ defaultLocation: 'San Francisco' });
     mockStore = createMockStore();
   });
 
@@ -294,7 +295,8 @@ describe('EventsAgent Tools', () => {
   let mockStore: AgentStore;
 
   beforeEach(() => {
-    agent = new EventsAgent();
+    // Provide defaultLocation for tests since trigger data may not include location
+    agent = new EventsAgent({ defaultLocation: 'San Francisco' });
     mockStore = createMockStore();
   });
 
@@ -381,7 +383,8 @@ describe('EventsAgent Privacy', () => {
   let mockStore: AgentStore;
 
   beforeEach(() => {
-    agent = new EventsAgent();
+    // Provide defaultLocation for tests since trigger data may not include location
+    agent = new EventsAgent({ defaultLocation: 'San Francisco' });
     mockStore = createMockStore();
   });
 

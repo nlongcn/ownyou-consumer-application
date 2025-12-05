@@ -241,6 +241,29 @@ export interface EventFavorite {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Configuration Types (v13 compliant - extracted magic numbers)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Urgency threshold configuration
+ * Extracted per Sprint 7 spec lesson I2
+ */
+export interface UrgencyThresholds {
+  /** Hours until event for high urgency (default: 24) */
+  highHours: number;
+  /** Hours until event for medium urgency (default: 72) */
+  mediumHours: number;
+}
+
+/**
+ * Default urgency thresholds for events agent
+ */
+export const DEFAULT_URGENCY_THRESHOLDS: UrgencyThresholds = {
+  highHours: 24,
+  mediumHours: 72,
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Permissions
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -258,6 +281,10 @@ export const EVENTS_PERMISSIONS: AgentPermissions = {
       NAMESPACES.IAB_CLASSIFICATIONS,
       NAMESPACES.EPISODIC_MEMORY,
       NAMESPACES.PROCEDURAL_MEMORY,
+      NAMESPACES.SEMANTIC_MEMORY,
+      NAMESPACES.ENTITIES,
+      NAMESPACES.RELATIONSHIPS,
+      NAMESPACES.INTERESTS,
     ],
     write: [
       NAMESPACES.EVENT_TICKETS,
@@ -343,6 +370,36 @@ export const EVENTS_PERMISSIONS: AgentPermissions = {
           dateTime: { type: 'string', description: 'Event date/time' },
         },
         required: ['eventId', 'title', 'dateTime'],
+      },
+    },
+    {
+      name: 'invite_friends',
+      description: 'Send event invitations to friends/companions',
+      parameters: {
+        type: 'object',
+        properties: {
+          eventId: { type: 'string', description: 'Event ID' },
+          companions: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'List of companion names or IDs to invite',
+          },
+          message: { type: 'string', description: 'Optional invitation message' },
+        },
+        required: ['eventId', 'companions'],
+      },
+    },
+    {
+      name: 'purchase_tickets',
+      description: 'Purchase tickets for an event',
+      parameters: {
+        type: 'object',
+        properties: {
+          eventId: { type: 'string', description: 'Event ID' },
+          ticketCount: { type: 'number', description: 'Number of tickets to purchase' },
+          ticketType: { type: 'string', description: 'Type of ticket (general, VIP, etc.)' },
+        },
+        required: ['eventId', 'ticketCount'],
       },
     },
   ],

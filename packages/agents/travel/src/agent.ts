@@ -29,7 +29,35 @@ import {
   type ItineraryDay,
   type ItineraryActivity,
   type VisaInfo,
+  type TravelUrgencyThresholds,
+  DEFAULT_TRAVEL_URGENCY_THRESHOLDS,
 } from './types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Configuration
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * TravelAgent configuration options
+ * v13 compliant - all magic numbers extracted to config
+ */
+export interface TravelAgentConfig {
+  /** Seed for mock APIs (for deterministic testing) */
+  mockSeed?: number;
+  /** Ikigai alignment boost for travel mission cards */
+  ikigaiAlignmentBoost?: number;
+  /** Maximum number of flights/hotels to return from search */
+  searchLimit?: number;
+  /** Urgency thresholds for determining mission urgency */
+  urgencyThresholds?: TravelUrgencyThresholds;
+}
+
+const DEFAULT_CONFIG: Required<TravelAgentConfig> = {
+  mockSeed: 42,
+  ikigaiAlignmentBoost: 0.4,
+  searchLimit: 10,
+  urgencyThresholds: DEFAULT_TRAVEL_URGENCY_THRESHOLDS,
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TravelAgent
@@ -75,12 +103,14 @@ export class TravelAgent extends BaseAgent {
   private flightsMock: GoogleFlightsMock;
   private tripAdvisorMock: TripAdvisorMock;
   private bookingMock: BookingMock;
+  private config: Required<TravelAgentConfig>;
 
-  constructor() {
+  constructor(config: TravelAgentConfig = {}) {
     super(TRAVEL_PERMISSIONS);
-    this.flightsMock = new GoogleFlightsMock({ seed: 42 });
-    this.tripAdvisorMock = new TripAdvisorMock({ seed: 42 });
-    this.bookingMock = new BookingMock({ seed: 42 });
+    this.config = { ...DEFAULT_CONFIG, ...config };
+    this.flightsMock = new GoogleFlightsMock({ seed: this.config.mockSeed });
+    this.tripAdvisorMock = new TripAdvisorMock({ seed: this.config.mockSeed });
+    this.bookingMock = new BookingMock({ seed: this.config.mockSeed });
   }
 
   /**
@@ -94,16 +124,28 @@ export class TravelAgent extends BaseAgent {
       return {
         success: false,
         error: 'Missing or invalid trigger data - expected TravelTriggerData',
-        usage: this.limitsEnforcer.getUsage(),
-        toolCalls: [],
-        llmCalls: [],
-        memoryOps: [],
-      };
+        // Note: usage, toolCalls, llmCalls, memoryOps populated by BaseAgent.run()
+      } as AgentResult;
     }
 
     const trigger = triggerData as TravelTriggerData;
 
     try {
+      // Track evidence references for mission card (v13 compliance)
+      const evidenceRefs: string[] = [];
+
+      // Step 0: Read Ikigai profile for personalization (v13 Section 2.9)
+      const ikigaiProfile = await this.readIkigaiProfile(store, userId);
+      if (ikigaiProfile) {
+        evidenceRefs.push(`${NAMESPACES.IKIGAI_PROFILE}:profile`);
+      }
+
+      // Read travel preferences if available
+      const travelPrefs = await this.readTravelPreferences(store, userId);
+      if (travelPrefs) {
+        evidenceRefs.push(`${NAMESPACES.TRAVEL_PREFERENCES}:preferences`);
+      }
+
       // Initialize trip plan
       const tripPlan: Partial<TripPlan> = {
         id: `trip_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
@@ -122,12 +164,14 @@ export class TravelAgent extends BaseAgent {
       if (trigger.nationality) {
         const visaInfo = await this.checkVisa(trigger.destination, trigger.nationality);
         tripPlan.visaInfo = visaInfo;
+        evidenceRefs.push(`visa_check:${trigger.destination}:${trigger.nationality}`);
       }
 
       // Step 2: Search flights
       const flights = await this.searchFlights(trigger);
       if (flights.length > 0) {
         tripPlan.flight = this.selectBestFlight(flights, trigger);
+        evidenceRefs.push(`flight_search:${trigger.origin}:${trigger.destination}`);
       }
 
       // Step 3: Search return flights for round trips
@@ -135,6 +179,7 @@ export class TravelAgent extends BaseAgent {
         const returnFlights = await this.searchReturnFlights(trigger);
         if (returnFlights.length > 0) {
           tripPlan.returnFlight = this.selectBestFlight(returnFlights, trigger);
+          evidenceRefs.push(`flight_search:${trigger.destination}:${trigger.origin}`);
         }
       }
 
@@ -142,11 +187,13 @@ export class TravelAgent extends BaseAgent {
       const hotels = await this.searchHotels(trigger);
       if (hotels.length > 0) {
         tripPlan.hotel = this.selectBestHotel(hotels, trigger);
+        evidenceRefs.push(`hotel_search:${trigger.destination}`);
       }
 
       // Step 5: Build itinerary if requested
       if (trigger.includeActivities || trigger.interests?.length) {
         tripPlan.itinerary = await this.buildItinerary(trigger);
+        evidenceRefs.push(`itinerary:${trigger.destination}`);
       }
 
       // Step 6: Calculate total costs
@@ -154,15 +201,16 @@ export class TravelAgent extends BaseAgent {
 
       // Step 7: Determine urgency and Ikigai dimensions
       const urgency = this.determineUrgency(trigger.departureDate);
-      const ikigaiDimensions = this.determineIkigaiDimensions(trigger);
+      const ikigaiDimensions = this.determineIkigaiDimensions(trigger, ikigaiProfile);
 
-      // Step 8: Generate mission card
+      // Step 8: Generate mission card with evidence refs
       const missionCard = this.generateMissionCard(
         userId,
         trigger,
         tripPlan as TripPlan,
         urgency,
-        ikigaiDimensions
+        ikigaiDimensions,
+        evidenceRefs
       );
 
       // Step 9: Store trip plan and mission card
@@ -173,21 +221,59 @@ export class TravelAgent extends BaseAgent {
         success: true,
         missionCard,
         response: `Trip to ${trigger.destination} planned successfully. Total estimated cost: $${tripPlan.estimatedCost?.total}`,
-        usage: this.limitsEnforcer.getUsage(),
-        toolCalls: [],
-        llmCalls: [],
-        memoryOps: [],
-      };
+        // Note: usage, toolCalls, llmCalls, memoryOps populated by BaseAgent.run()
+      } as AgentResult;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       return {
         success: false,
         error: `Travel planning failed: ${errorMessage}`,
-        usage: this.limitsEnforcer.getUsage(),
-        toolCalls: [],
-        llmCalls: [],
-        memoryOps: [],
-      };
+        // Note: usage, toolCalls, llmCalls, memoryOps populated by BaseAgent.run()
+      } as AgentResult;
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Private Methods - Memory Access
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Read Ikigai profile for personalization (v13 Section 2.9)
+   */
+  private async readIkigaiProfile(
+    store: AgentContext['store'],
+    userId: string
+  ): Promise<{ travelPreferences?: string[]; favoriteActivities?: string[] } | null> {
+    try {
+      const namespace = NS.ikigaiProfile(userId);
+      const result = await store.get(namespace, 'profile');
+      this.recordMemoryOp('read', NAMESPACES.IKIGAI_PROFILE, 'profile');
+      if (result) {
+        return result as { travelPreferences?: string[]; favoriteActivities?: string[] };
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Read travel preferences from memory
+   */
+  private async readTravelPreferences(
+    store: AgentContext['store'],
+    userId: string
+  ): Promise<{ preferredCabin?: string; preferredAirlines?: string[]; loyaltyPrograms?: string[] } | null> {
+    try {
+      const namespace = NS.travelPreferences(userId);
+      const result = await store.get(namespace, 'preferences');
+      this.recordMemoryOp('read', NAMESPACES.TRAVEL_PREFERENCES, 'preferences');
+      if (result) {
+        return result as { preferredCabin?: string; preferredAirlines?: string[]; loyaltyPrograms?: string[] };
+      }
+      return null;
+    } catch {
+      return null;
     }
   }
 
@@ -250,9 +336,10 @@ export class TravelAgent extends BaseAgent {
       origin: trigger.origin,
       destination: trigger.destination,
       departureDate: trigger.departureDate,
+      passengers: trigger.travelers || 1,
       cabin: trigger.cabinClass,
       maxPrice: trigger.budget?.max,
-      limit: 10,
+      limit: this.config.searchLimit,
     });
 
     const durationMs = Date.now() - startTime;
@@ -278,9 +365,10 @@ export class TravelAgent extends BaseAgent {
       origin: trigger.destination,
       destination: trigger.origin,
       departureDate: trigger.returnDate,
+      passengers: trigger.travelers || 1,
       cabin: trigger.cabinClass,
       maxPrice: trigger.budget?.max,
-      limit: 10,
+      limit: this.config.searchLimit,
     });
 
     const durationMs = Date.now() - startTime;
@@ -306,7 +394,7 @@ export class TravelAgent extends BaseAgent {
       checkOut: trigger.returnDate || trigger.departureDate,
       guests: trigger.travelers || 1,
       maxPrice: trigger.budget?.max ? trigger.budget.max / 7 : undefined, // Per night
-      limit: 10,
+      limit: this.config.searchLimit,
     });
 
     const durationMs = Date.now() - startTime;
@@ -508,22 +596,25 @@ export class TravelAgent extends BaseAgent {
 
   /**
    * Determine urgency based on departure date
+   * Uses config thresholds per Sprint 7 spec lesson I2
    */
   private determineUrgency(departureDate: string): 'low' | 'medium' | 'high' {
     const departure = new Date(departureDate);
     const now = new Date();
     const daysUntil = (departure.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
 
-    if (daysUntil < 3) return 'high';
-    if (daysUntil < 14) return 'medium';
+    const { highDays, mediumDays } = this.config.urgencyThresholds;
+    if (daysUntil < highDays) return 'high';
+    if (daysUntil < mediumDays) return 'medium';
     return 'low';
   }
 
   /**
-   * Determine Ikigai dimensions based on travel context
+   * Determine Ikigai dimensions based on travel context and profile (v13 Section 2.9)
    */
   private determineIkigaiDimensions(
-    trigger: TravelTriggerData
+    trigger: TravelTriggerData,
+    ikigaiProfile?: { travelPreferences?: string[]; favoriteActivities?: string[] } | null
   ): Array<'passion' | 'mission' | 'profession' | 'vocation' | 'relationships' | 'wellbeing' | 'growth' | 'contribution'> {
     const dimensions: Array<'passion' | 'mission' | 'profession' | 'vocation' | 'relationships' | 'wellbeing' | 'growth' | 'contribution'> = [];
 
@@ -552,6 +643,23 @@ export class TravelAgent extends BaseAgent {
         dimensions.push('passion');
     }
 
+    // Use Ikigai profile to enhance dimensions (v13 Section 2.9)
+    if (ikigaiProfile?.favoriteActivities) {
+      if (ikigaiProfile.favoriteActivities.some(a =>
+        a.toLowerCase().includes('travel') ||
+        a.toLowerCase().includes('adventure') ||
+        a.toLowerCase().includes('explore')
+      )) {
+        dimensions.push('passion');
+      }
+      if (ikigaiProfile.favoriteActivities.some(a =>
+        a.toLowerCase().includes('work') ||
+        a.toLowerCase().includes('business')
+      )) {
+        dimensions.push('profession');
+      }
+    }
+
     // Default to passion if nothing else
     if (dimensions.length === 0) {
       dimensions.push('passion');
@@ -562,13 +670,15 @@ export class TravelAgent extends BaseAgent {
 
   /**
    * Generate mission card from trip plan
+   * Includes evidenceRefs for v13 compliance
    */
   private generateMissionCard(
     _userId: string,
     trigger: TravelTriggerData,
     tripPlan: TripPlan,
     urgency: 'low' | 'medium' | 'high',
-    ikigaiDimensions: Array<'passion' | 'mission' | 'profession' | 'vocation' | 'relationships' | 'wellbeing' | 'growth' | 'contribution'>
+    ikigaiDimensions: Array<'passion' | 'mission' | 'profession' | 'vocation' | 'relationships' | 'wellbeing' | 'growth' | 'contribution'>,
+    evidenceRefs: string[] = []
   ): MissionCard {
     const now = Date.now();
     const missionId = `mission_travel_${now}_${Math.random().toString(36).slice(2, 8)}`;
@@ -589,7 +699,7 @@ export class TravelAgent extends BaseAgent {
       createdAt: now,
       expiresAt: new Date(trigger.departureDate).getTime(),
       ikigaiDimensions,
-      ikigaiAlignmentBoost: 0.4, // Travel is high-impact
+      ikigaiAlignmentBoost: this.config.ikigaiAlignmentBoost,
       primaryAction: {
         label: 'View Trip Plan',
         type: 'navigate',
@@ -632,7 +742,7 @@ export class TravelAgent extends BaseAgent {
         },
       ],
       agentThreadId: `thread_${missionId}`,
-      evidenceRefs: [],
+      evidenceRefs,
     };
   }
 
@@ -660,5 +770,69 @@ export class TravelAgent extends BaseAgent {
     const namespace = NS.missionCards(userId);
     this.recordMemoryOp('write', NAMESPACES.MISSION_CARDS, missionCard.id);
     await store.put(namespace, missionCard.id, missionCard);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Episode Recording Overrides (v13 Section 8.4.2)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Override describeTrigger for travel-specific episode situation
+   */
+  protected override describeTrigger(trigger: unknown): string {
+    if (!trigger || !this.isTravelTrigger(trigger)) {
+      return 'Travel planning without specific criteria';
+    }
+
+    const t = trigger as TravelTriggerData;
+    const parts: string[] = [];
+
+    parts.push(`${t.origin} → ${t.destination}`);
+
+    if (t.returnDate) {
+      parts.push(`${t.departureDate} to ${t.returnDate}`);
+    } else {
+      parts.push(`one-way on ${t.departureDate}`);
+    }
+
+    if (t.travelers && t.travelers > 1) parts.push(`for ${t.travelers} travelers`);
+    if (t.travelStyle) parts.push(`${t.travelStyle} style`);
+    if (t.cabinClass) parts.push(`${t.cabinClass} class`);
+    if (t.budget?.max) parts.push(`(budget: $${t.budget.max})`);
+
+    return `User planned trip: ${parts.join(', ')}`;
+  }
+
+  /**
+   * Override extractTags for travel-specific episode tags
+   */
+  protected override extractTags(trigger: unknown, mission: MissionCard): string[] {
+    const baseTags = super.extractTags(trigger, mission);
+
+    if (trigger && this.isTravelTrigger(trigger)) {
+      const t = trigger as TravelTriggerData;
+
+      // Add destination as tag
+      baseTags.push(`destination:${t.destination.toLowerCase().replace(/\s+/g, '-')}`);
+
+      // Add travel style
+      if (t.travelStyle) baseTags.push(`style:${t.travelStyle}`);
+
+      // Add cabin class
+      if (t.cabinClass) baseTags.push(`cabin:${t.cabinClass}`);
+
+      // Add trip type
+      baseTags.push(t.returnDate ? 'round-trip' : 'one-way');
+
+      // Add companions flag
+      if (t.companions?.length) baseTags.push('group-travel');
+
+      // Add interests
+      if (t.interests) {
+        t.interests.forEach((i) => baseTags.push(`interest:${i.toLowerCase()}`));
+      }
+    }
+
+    return [...new Set(baseTags)]; // Remove duplicates
   }
 }

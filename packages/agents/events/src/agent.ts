@@ -17,7 +17,39 @@ import {
   type EventsTriggerData,
   type Event,
   type EventCategory,
+  type EventFavorite,
+  type UrgencyThresholds,
+  DEFAULT_URGENCY_THRESHOLDS,
 } from './types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Configuration
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * EventsAgent configuration options
+ * v13 compliant - all magic numbers extracted to config
+ */
+export interface EventsAgentConfig {
+  /** Default location for event searches when user has no stored preference */
+  defaultLocation?: string;
+  /** Seed for mock APIs (for deterministic testing) */
+  mockSeed?: number;
+  /** Ikigai alignment boost for event mission cards */
+  ikigaiAlignmentBoost?: number;
+  /** Maximum number of events to return from search */
+  searchLimit?: number;
+  /** Urgency thresholds for determining mission urgency */
+  urgencyThresholds?: UrgencyThresholds;
+}
+
+const DEFAULT_CONFIG: Required<EventsAgentConfig> = {
+  defaultLocation: '', // Empty = require explicit location or user memory lookup
+  mockSeed: 42,
+  ikigaiAlignmentBoost: 0.3,
+  searchLimit: 10,
+  urgencyThresholds: DEFAULT_URGENCY_THRESHOLDS,
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // EventsAgent
@@ -53,11 +85,13 @@ export class EventsAgent extends BaseAgent {
 
   private ticketmasterMock: TicketmasterMock;
   private calendarMock: CalendarMock;
+  private config: Required<EventsAgentConfig>;
 
-  constructor() {
+  constructor(config: EventsAgentConfig = {}) {
     super(EVENTS_PERMISSIONS);
-    this.ticketmasterMock = new TicketmasterMock({ seed: 42 });
-    this.calendarMock = new CalendarMock({ seed: 42 });
+    this.config = { ...DEFAULT_CONFIG, ...config };
+    this.ticketmasterMock = new TicketmasterMock({ seed: this.config.mockSeed });
+    this.calendarMock = new CalendarMock({ seed: this.config.mockSeed });
   }
 
   /**
@@ -71,57 +105,74 @@ export class EventsAgent extends BaseAgent {
       return {
         success: false,
         error: 'Missing or invalid trigger data - expected EventsTriggerData',
-        usage: this.limitsEnforcer.getUsage(),
-        toolCalls: [],
-        llmCalls: [],
-        memoryOps: [],
-      };
+        // Note: usage, toolCalls, llmCalls, memoryOps populated by BaseAgent.run()
+      } as AgentResult;
     }
 
     const trigger = triggerData as EventsTriggerData;
 
+    // Track evidence refs for v13 compliance
+    const evidenceRefs: string[] = [];
+
     try {
-      // 1. Search for events
-      const events = await this.searchEvents(trigger);
+      // 1. Read user's Ikigai profile for personalization (v13 Section 2.9)
+      const ikigaiProfile = await this.readIkigaiProfile(store, userId);
+      if (ikigaiProfile) {
+        evidenceRefs.push(`ikigai:${userId}`);
+      }
+
+      // 2. Resolve location: trigger > user semantic memory > config default
+      const location = await this.resolveLocation(store, userId, trigger);
+      if (!location) {
+        return {
+          success: false,
+          error: 'No location specified and no default location found in user profile',
+          // Note: usage, toolCalls, llmCalls, memoryOps populated by BaseAgent.run()
+        } as AgentResult;
+      }
+
+      // 3. Search for events with resolved location
+      const events = await this.searchEvents({
+        ...trigger,
+        location,
+      });
 
       if (events.length === 0) {
         return {
           success: true,
           response: `No events found matching criteria: ${trigger.query}`,
-          usage: this.limitsEnforcer.getUsage(),
-          toolCalls: [],
-          llmCalls: [],
-          memoryOps: [],
-        };
+          // Note: usage, toolCalls, llmCalls, memoryOps populated by BaseAgent.run()
+        } as AgentResult;
       }
 
-      // 2. Check calendar for the top event if date is specified
+      // 4. Check calendar for the top event if date is specified
       const topEvent = events[0];
       let hasConflict = false;
       if (topEvent.startDateTime) {
         hasConflict = await this.checkCalendarConflict(userId, topEvent.startDateTime);
       }
 
-      // 3. Determine urgency based on timing
+      // 5. Determine urgency based on timing (using config thresholds)
       const urgency = this.determineUrgency(trigger.dateRange);
 
-      // 4. Determine Ikigai dimensions
-      const ikigaiDimensions = this.determineIkigaiDimensions(trigger);
+      // 6. Determine Ikigai dimensions (enhanced with profile data)
+      const ikigaiDimensions = this.determineIkigaiDimensions(trigger, ikigaiProfile);
 
-      // 5. Generate mission card
+      // 7. Generate mission card with evidence refs
       const missionCard = this.generateMissionCard(
         userId,
         trigger,
         events,
         urgency,
         ikigaiDimensions,
-        hasConflict
+        hasConflict,
+        evidenceRefs
       );
 
-      // 6. Store mission card
+      // 8. Store mission card
       await this.storeMissionCard(store, userId, missionCard);
 
-      // 7. Store event favorite if it's a popular event
+      // 9. Store event favorite if it's a popular event
       if (topEvent.ticketAvailability === 'limited') {
         await this.storeEventFavorite(store, userId, topEvent);
       }
@@ -130,21 +181,15 @@ export class EventsAgent extends BaseAgent {
         success: true,
         missionCard,
         response: `Found ${events.length} events matching "${trigger.query}"${hasConflict ? ' (calendar conflict detected)' : ''}`,
-        usage: this.limitsEnforcer.getUsage(),
-        toolCalls: [],
-        llmCalls: [],
-        memoryOps: [],
-      };
+        // Note: usage, toolCalls, llmCalls, memoryOps populated by BaseAgent.run()
+      } as AgentResult;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       return {
         success: false,
         error: `Event search failed: ${errorMessage}`,
-        usage: this.limitsEnforcer.getUsage(),
-        toolCalls: [],
-        llmCalls: [],
-        memoryOps: [],
-      };
+        // Note: usage, toolCalls, llmCalls, memoryOps populated by BaseAgent.run()
+      } as AgentResult;
     }
   }
 
@@ -161,6 +206,68 @@ export class EventsAgent extends BaseAgent {
     return typeof trigger.query === 'string';
   }
 
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Ikigai and Location Resolution (v13 Section 2.9)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Read user's Ikigai profile from store
+   * v13 Section 2.9: Agents read Ikigai profile for personalization
+   */
+  private async readIkigaiProfile(
+    store: AgentContext['store'],
+    userId: string
+  ): Promise<{ interests?: string[]; favoriteActivities?: string[] } | null> {
+    try {
+      const namespace = NS.ikigaiProfile(userId);
+      const result = await store.get(namespace, 'profile');
+      this.recordMemoryOp('read', NAMESPACES.IKIGAI_PROFILE, 'profile');
+
+      if (result) {
+        return result as { interests?: string[]; favoriteActivities?: string[] };
+      }
+      return null;
+    } catch {
+      // Profile not found or error - continue without it
+      return null;
+    }
+  }
+
+  /**
+   * Resolve location from trigger, user memory, or config
+   * Priority: trigger.location > semantic memory > config.defaultLocation
+   */
+  private async resolveLocation(
+    store: AgentContext['store'],
+    userId: string,
+    trigger: EventsTriggerData
+  ): Promise<string | undefined> {
+    // 1. Use explicit trigger location if provided
+    if (trigger.location) {
+      return trigger.location;
+    }
+
+    // 2. Try to read from user's semantic memory
+    try {
+      const namespace = NS.semanticMemory(userId);
+      const result = await store.get(namespace, 'location_preferences');
+      this.recordMemoryOp('read', NAMESPACES.SEMANTIC_MEMORY, 'location_preferences');
+
+      if (result && typeof result === 'object' && 'defaultCity' in result) {
+        return (result as { defaultCity: string }).defaultCity;
+      }
+    } catch {
+      // Continue to fallback
+    }
+
+    // 3. Fall back to config default (may be empty string = require explicit)
+    return this.config.defaultLocation || undefined;
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Event Search
+  // ─────────────────────────────────────────────────────────────────────────────
+
   /**
    * Search events using mock API
    */
@@ -168,14 +275,14 @@ export class EventsAgent extends BaseAgent {
     const startTime = Date.now();
 
     const searchResult = await this.ticketmasterMock.searchEvents({
-      location: trigger.location || 'San Francisco',
+      location: trigger.location || this.config.defaultLocation,
       category: trigger.category as MockEventCategory | undefined,
       startDate: trigger.dateRange?.start,
       endDate: trigger.dateRange?.end,
       priceMin: trigger.priceRange?.min,
       priceMax: trigger.priceRange?.max,
       query: trigger.query,
-      limit: 10,
+      limit: this.config.searchLimit,
     });
 
     const durationMs = Date.now() - startTime;
@@ -246,6 +353,7 @@ export class EventsAgent extends BaseAgent {
 
   /**
    * Determine urgency based on date range
+   * Uses config thresholds per Sprint 7 spec lesson I2
    */
   private determineUrgency(dateRange?: { start: string; end: string }): 'low' | 'medium' | 'high' {
     if (!dateRange?.start) return 'medium';
@@ -254,17 +362,19 @@ export class EventsAgent extends BaseAgent {
     const now = new Date();
     const hoursUntil = (requestedTime.getTime() - now.getTime()) / (1000 * 60 * 60);
 
-    if (hoursUntil < 4) return 'high';
-    if (hoursUntil < 24) return 'high';
-    if (hoursUntil < 72) return 'medium';
+    const thresholds = this.config.urgencyThresholds;
+    if (hoursUntil < thresholds.highHours) return 'high';
+    if (hoursUntil < thresholds.mediumHours) return 'medium';
     return 'low';
   }
 
   /**
-   * Determine Ikigai dimensions based on context
+   * Determine Ikigai dimensions based on context and user's Ikigai profile
+   * Enhanced to use profile data per v13 Section 2.9
    */
   private determineIkigaiDimensions(
-    trigger: EventsTriggerData
+    trigger: EventsTriggerData,
+    ikigaiProfile?: { interests?: string[]; favoriteActivities?: string[] } | null
   ): Array<'passion' | 'mission' | 'profession' | 'vocation' | 'relationships' | 'wellbeing' | 'growth' | 'contribution'> {
     const dimensions: Array<'passion' | 'mission' | 'profession' | 'vocation' | 'relationships' | 'wellbeing' | 'growth' | 'contribution'> = [];
 
@@ -300,6 +410,30 @@ export class EventsAgent extends BaseAgent {
         dimensions.push('passion');
     }
 
+    // Check if event category aligns with user's interests from Ikigai profile
+    if (ikigaiProfile?.interests && trigger.category) {
+      const categoryLower = trigger.category.toLowerCase();
+      const hasMatchingInterest = ikigaiProfile.interests.some(
+        (interest) => interest.toLowerCase().includes(categoryLower) ||
+          categoryLower.includes(interest.toLowerCase())
+      );
+      if (hasMatchingInterest && !dimensions.includes('passion')) {
+        dimensions.push('passion');
+      }
+    }
+
+    // Check if event type is in user's favorite activities
+    if (ikigaiProfile?.favoriteActivities?.some(a =>
+      a.toLowerCase().includes('event') ||
+      a.toLowerCase().includes('concert') ||
+      a.toLowerCase().includes('show') ||
+      a.toLowerCase().includes('live')
+    )) {
+      if (!dimensions.includes('passion')) {
+        dimensions.push('passion');
+      }
+    }
+
     // Default to passion if nothing else
     if (dimensions.length === 0) {
       dimensions.push('passion');
@@ -310,6 +444,7 @@ export class EventsAgent extends BaseAgent {
 
   /**
    * Generate mission card from search results
+   * Now accepts evidenceRefs for v13 compliance
    */
   private generateMissionCard(
     _userId: string,
@@ -317,7 +452,8 @@ export class EventsAgent extends BaseAgent {
     events: Event[],
     urgency: 'low' | 'medium' | 'high',
     ikigaiDimensions: Array<'passion' | 'mission' | 'profession' | 'vocation' | 'relationships' | 'wellbeing' | 'growth' | 'contribution'>,
-    hasConflict: boolean
+    hasConflict: boolean,
+    evidenceRefs: string[] = []
   ): MissionCard {
     const now = Date.now();
     const missionId = `mission_events_${now}_${Math.random().toString(36).slice(2, 8)}`;
@@ -331,6 +467,9 @@ export class EventsAgent extends BaseAgent {
       ? 'Free'
       : `$${topEvent.priceRange.min}-$${topEvent.priceRange.max}`;
 
+    // Add event reference to evidence
+    const allEvidence = [...evidenceRefs, `event:${topEvent.id}`];
+
     const summary = `${topEvent.name} at ${topEvent.venue.name} • ${priceText} • ${topEvent.ticketAvailability}${hasConflict ? ' ⚠️ Calendar conflict' : ''}`;
 
     return {
@@ -343,7 +482,7 @@ export class EventsAgent extends BaseAgent {
       createdAt: now,
       expiresAt: topEvent.startDateTime ? new Date(topEvent.startDateTime).getTime() : undefined,
       ikigaiDimensions,
-      ikigaiAlignmentBoost: 0.3,
+      ikigaiAlignmentBoost: this.config.ikigaiAlignmentBoost,
       primaryAction: {
         label: 'View Event',
         type: 'navigate',
@@ -389,7 +528,7 @@ export class EventsAgent extends BaseAgent {
         },
       ],
       agentThreadId: `thread_${missionId}`,
-      evidenceRefs: [],
+      evidenceRefs: allEvidence,
     };
   }
 
@@ -408,6 +547,7 @@ export class EventsAgent extends BaseAgent {
 
   /**
    * Store event as favorite
+   * Uses proper EventFavorite type per Sprint 7 spec lesson I4
    */
   private async storeEventFavorite(
     store: AgentContext['store'],
@@ -415,13 +555,16 @@ export class EventsAgent extends BaseAgent {
     event: Event
   ): Promise<void> {
     const namespace = NS.eventFavorites(userId);
-    const favorite = {
+
+    // Create a complete EventFavorite with all fields populated
+    const favorite: EventFavorite = {
       eventId: event.id,
       eventName: event.name,
       category: event.category,
       venueName: event.venue.name,
       addedAt: Date.now(),
     };
+
     this.recordMemoryOp('write', NAMESPACES.EVENT_FAVORITES, event.id);
     await store.put(namespace, event.id, favorite);
   }
@@ -431,5 +574,53 @@ export class EventsAgent extends BaseAgent {
    */
   private capitalizeFirst(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Episode Recording Overrides (v13 Section 8.4.2)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * Override describeTrigger for events-specific episode situation
+   */
+  protected override describeTrigger(trigger: unknown): string {
+    if (!trigger || !this.isEventsTrigger(trigger)) {
+      return 'Event search without specific criteria';
+    }
+
+    const t = trigger as EventsTriggerData;
+    const parts: string[] = [];
+
+    if (t.category) parts.push(`${t.category} events`);
+    if (t.location) parts.push(`in ${t.location}`);
+    if (t.dateRange?.start) {
+      const startDate = new Date(t.dateRange.start).toLocaleDateString();
+      const endDate = t.dateRange.end ? new Date(t.dateRange.end).toLocaleDateString() : '';
+      parts.push(endDate ? `from ${startDate} to ${endDate}` : `on ${startDate}`);
+    }
+    if (t.companions?.length) parts.push(`with ${t.companions.length} companions`);
+    if (t.priceRange?.max) parts.push(`(max $${t.priceRange.max})`);
+
+    return parts.length > 0
+      ? `User searched for events: ${parts.join(', ')}`
+      : `User searched for events: "${t.query}"`;
+  }
+
+  /**
+   * Override extractTags for events-specific episode tags
+   */
+  protected override extractTags(trigger: unknown, mission: import('@ownyou/shared-types').MissionCard): string[] {
+    const baseTags = super.extractTags(trigger, mission);
+
+    if (trigger && this.isEventsTrigger(trigger)) {
+      const t = trigger as EventsTriggerData;
+      if (t.category) baseTags.push(`category:${t.category}`);
+      if (t.companions?.length) baseTags.push('group-activity');
+      if (t.interests) {
+        t.interests.forEach((i) => baseTags.push(`interest:${i.toLowerCase()}`));
+      }
+    }
+
+    return [...new Set(baseTags)]; // Remove duplicates
   }
 }
