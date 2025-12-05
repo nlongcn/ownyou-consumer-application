@@ -115,6 +115,68 @@ describe('AgentCoordinator', () => {
         // daily_digest maps to shopping and content
         expect(results.length).toBe(2);
       });
+
+      it('should use custom schedule agents when provided in config', async () => {
+        const customCoordinator = new AgentCoordinator({
+          agentFactory: (type) => {
+            switch (type) {
+              case 'shopping':
+                return mockShoppingAgent as any;
+              case 'content':
+                return mockContentAgent as any;
+              default:
+                return null;
+            }
+          },
+          scheduleAgents: {
+            custom_schedule: ['content'],
+          },
+        });
+
+        const trigger: ScheduledTrigger = {
+          id: 'test_1',
+          mode: 'scheduled',
+          scheduleId: 'custom_schedule',
+          scheduledAt: Date.now(),
+          createdAt: Date.now(),
+        };
+
+        const context = {
+          userId: 'user_123',
+          store: {} as any,
+          tools: [],
+        };
+
+        const results = await customCoordinator.routeTrigger(trigger, context);
+
+        expect(results.length).toBe(1);
+        expect(results[0].agentType).toBe('content');
+        expect(mockContentAgent.run).toHaveBeenCalled();
+        expect(mockShoppingAgent.run).not.toHaveBeenCalled();
+      });
+
+      it('should allow runtime updates to schedule agents', async () => {
+        coordinator.setScheduleAgents('new_schedule', ['shopping']);
+
+        const trigger: ScheduledTrigger = {
+          id: 'test_1',
+          mode: 'scheduled',
+          scheduleId: 'new_schedule',
+          scheduledAt: Date.now(),
+          createdAt: Date.now(),
+        };
+
+        const context = {
+          userId: 'user_123',
+          store: {} as any,
+          tools: [],
+        };
+
+        const results = await coordinator.routeTrigger(trigger, context);
+
+        expect(results.length).toBe(1);
+        expect(results[0].agentType).toBe('shopping');
+      });
     });
 
     describe('user triggers', () => {
@@ -139,6 +201,70 @@ describe('AgentCoordinator', () => {
         expect(results).toHaveLength(1);
         expect(results[0].agentType).toBe('shopping');
         expect(mockShoppingAgent.run).toHaveBeenCalled();
+      });
+    });
+
+    describe('event triggers', () => {
+      it('should use custom event agents when provided in config', async () => {
+        const customCoordinator = new AgentCoordinator({
+          agentFactory: (type) => {
+            switch (type) {
+              case 'shopping':
+                return mockShoppingAgent as any;
+              case 'content':
+                return mockContentAgent as any;
+              default:
+                return null;
+            }
+          },
+          eventAgents: {
+            custom_event: ['shopping'],
+          },
+        });
+
+        const trigger = {
+          id: 'test_1',
+          mode: 'event' as const,
+          eventSource: 'custom_event',
+          payload: {},
+          createdAt: Date.now(),
+        };
+
+        const context = {
+          userId: 'user_123',
+          store: {} as any,
+          tools: [],
+        };
+
+        const results = await customCoordinator.routeTrigger(trigger, context);
+
+        expect(results.length).toBe(1);
+        expect(results[0].agentType).toBe('shopping');
+        expect(mockShoppingAgent.run).toHaveBeenCalled();
+        expect(mockContentAgent.run).not.toHaveBeenCalled();
+      });
+
+      it('should allow runtime updates to event agents', async () => {
+        coordinator.setEventAgents('custom_event_source', ['content']);
+
+        const trigger = {
+          id: 'test_1',
+          mode: 'event' as const,
+          eventSource: 'custom_event_source',
+          payload: {},
+          createdAt: Date.now(),
+        };
+
+        const context = {
+          userId: 'user_123',
+          store: {} as any,
+          tools: [],
+        };
+
+        const results = await coordinator.routeTrigger(trigger, context);
+
+        expect(results.length).toBe(1);
+        expect(results[0].agentType).toBe('content');
       });
     });
   });
