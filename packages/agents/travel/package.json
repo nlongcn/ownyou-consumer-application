@@ -1,0 +1,29 @@
+{
+  "name": "@ownyou/agents-travel",
+  "version": "0.1.0",
+  "description": "OwnYou Travel Agent - L3 multi-step travel planning with flights, hotels, and itineraries",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@ownyou/agents-base": "workspace:*",
+    "@ownyou/ikigai": "workspace:*",
+    "@ownyou/mock-apis": "workspace:*",
+    "@ownyou/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "vitest": "^1.6.0"
+  },
+  "keywords": [
+    "ownyou",
+    "agent",
+    "travel",
+    "l3"
+  ]
+}
