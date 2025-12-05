@@ -11,43 +11,44 @@
 
 ### Sprint 0: Foundation (COMPLETED)
 
-| Package | Description | Tests |
-|---------|-------------|-------|
-| `@ownyou/shared-types` | v13 type definitions (Memory, Episode, Entity, Ikigai, Agent, Identity, Namespaces) | 91 |
-| `@ownyou/memory-store` | LangGraph Store-compatible interface with IndexedDB + SQLite backends, hybrid search | 87 |
-| `@ownyou/llm-client` | Abstract interface with budget management (skeleton) | 39 |
-| `@ownyou/observability` | Agent traces (10.2), cost metering, memory operation tracking | 17 |
-| `@ownyou/integration-tests` | Sprint 0 success criteria validation | 7 |
+| Package                       | Description                                                                          | Tests |
+| ----------------------------- | ------------------------------------------------------------------------------------ | ----- |
+| `@ownyou/shared-types`      | v13 type definitions (Memory, Episode, Entity, Ikigai, Agent, Identity, Namespaces)  | 91    |
+| `@ownyou/memory-store`      | LangGraph Store-compatible interface with IndexedDB + SQLite backends, hybrid search | 87    |
+| `@ownyou/llm-client`        | Abstract interface with budget management (skeleton)                                 | 39    |
+| `@ownyou/observability`     | Agent traces (10.2), cost metering, memory operation tracking                        | 17    |
+| `@ownyou/integration-tests` | Sprint 0 success criteria validation                                                 | 7     |
 
 **Total:** 241 tests
 
 ### Sprint 1a: Desktop Infrastructure (COMPLETED)
 
-| Deliverable | Status |
-|-------------|--------|
-| Tauri scaffold | ✅ `apps/desktop/` with React frontend |
-| SQLite backend | ✅ sql.js (WebAssembly) cross-platform |
-| Custom protocol | ✅ `ownyou://` deep links working |
+| Deliverable     | Status                                  |
+| --------------- | --------------------------------------- |
+| Tauri scaffold  | ✅`apps/desktop/` with React frontend |
+| SQLite backend  | ✅ sql.js (WebAssembly) cross-platform  |
+| Custom protocol | ✅`ownyou://` deep links working      |
 
 ### Sprint 1b: OAuth + Email + IAB Migration (COMPLETED)
 
-| Package | Description | Tests |
-|---------|-------------|-------|
-| `@ownyou/oauth` | Unified OAuth (Microsoft + Google, browser + desktop) | 46 |
-| `@ownyou/iab-classifier` | IAB classification workflow | 5 |
-| `@ownyou/email` | Email fetch + classification pipeline | 35 |
+| Package                    | Description                                           | Tests |
+| -------------------------- | ----------------------------------------------------- | ----- |
+| `@ownyou/oauth`          | Unified OAuth (Microsoft + Google, browser + desktop) | 46    |
+| `@ownyou/iab-classifier` | IAB classification workflow                           | 5     |
+| `@ownyou/email`          | Email fetch + classification pipeline                 | 35    |
 
 ### Sprint 2: LLM Client Consolidation (COMPLETED)
 
-| Deliverable | Status |
-|-------------|--------|
-| Real providers | ✅ OpenAI, Anthropic, Google, Groq, DeepInfra, Ollama |
-| WebLLM provider | ✅ Local browser inference for 100% budget fallback |
-| Response cache | ✅ LLMCache with TTL by operation, LRU eviction |
-| Fallback chain | ✅ v13 6.11.3 implementation |
-| IAB migration | ✅ iab-classifier uses @ownyou/llm-client |
+| Deliverable     | Status                                                |
+| --------------- | ----------------------------------------------------- |
+| Real providers  | ✅ OpenAI, Anthropic, Google, Groq, DeepInfra, Ollama |
+| WebLLM provider | ✅ Local browser inference for 100% budget fallback   |
+| Response cache  | ✅ LLMCache with TTL by operation, LRU eviction       |
+| Fallback chain  | ✅ v13 6.11.3 implementation                          |
+| IAB migration   | ✅ iab-classifier uses @ownyou/llm-client             |
 
 **Current State:**
+
 - Email data flows through: OAuth → Fetch → IAB Classify → Memory Store
 - LLM infrastructure complete with 7 providers + fallback + caching
 - No agents built yet
@@ -84,30 +85,30 @@
 
 ## v13 Architecture References
 
-| Section | Requirement | Sprint 3 Implementation |
-|---------|-------------|------------------------|
-| **3.6.1** | Agent Types | Shopping Agent definition |
-| **3.6.2** | Agent Permissions | PrivacyGuard enforcement |
-| **3.6.3** | Agent Levels (L1/L2/L3) | LimitsEnforcer |
-| **3.4** | Mission Cards | MissionCard type + UI |
-| **8.4.2** | Episodes | Episode recording from agent runs |
-| **8.12** | Namespaces | missions, episodic_memory namespaces |
-| **10.2** | Agent Traces | AgentTracer integration |
+| Section         | Requirement             | Sprint 3 Implementation              |
+| --------------- | ----------------------- | ------------------------------------ |
+| **3.6.1** | Agent Types             | Shopping Agent definition            |
+| **3.6.2** | Agent Permissions       | PrivacyGuard enforcement             |
+| **3.6.3** | Agent Levels (L1/L2/L3) | LimitsEnforcer                       |
+| **3.4**   | Mission Cards           | MissionCard type + UI                |
+| **8.4.2** | Episodes                | Episode recording from agent runs    |
+| **8.12**  | Namespaces              | missions, episodic_memory namespaces |
+| **10.2**  | Agent Traces            | AgentTracer integration              |
 
 ---
 
 ## Deliverables
 
-| # | Deliverable | Priority | Acceptance Criteria |
-|---|-------------|----------|---------------------|
-| 1 | Agent Framework | P0 | BaseAgent, LimitsEnforcer, PrivacyGuard |
-| 2 | Shopping Agent | P0 | Detects purchase intent, generates missions |
-| 3 | Mission Card Storage | P0 | Cards stored in `ownyou.missions` namespace |
-| 4 | Mission Card UI | P0 | Display cards with actions |
-| 5 | User Feedback | P0 | Capture love/like/meh feedback |
-| 6 | Episode Recording | P0 | Episodes stored in `ownyou.episodic` |
-| 7 | Agent Triggers | P1 | Scheduled + on-demand triggering |
-| 8 | Integration Tests | P1 | Full loop tested |
+| # | Deliverable          | Priority | Acceptance Criteria                           |
+| - | -------------------- | -------- | --------------------------------------------- |
+| 1 | Agent Framework      | P0       | BaseAgent, LimitsEnforcer, PrivacyGuard       |
+| 2 | Shopping Agent       | P0       | Detects purchase intent, generates missions   |
+| 3 | Mission Card Storage | P0       | Cards stored in `ownyou.missions` namespace |
+| 4 | Mission Card UI      | P0       | Display cards with actions                    |
+| 5 | User Feedback        | P0       | Capture love/like/meh feedback                |
+| 6 | Episode Recording    | P0       | Episodes stored in `ownyou.episodic`        |
+| 7 | Agent Triggers       | P1       | Scheduled + on-demand triggering              |
+| 8 | Integration Tests    | P1       | Full loop tested                              |
 
 ---
 
@@ -1465,7 +1466,7 @@ export function MissionFeed({ store, userId, onMissionAction }: MissionFeedProps
       const result = await store.list<MissionCardType>(
         NS.missionCards(userId)
       );
-      
+    
       // Sort by urgency and creation date
       const sorted = result.items
         .filter((m) => m.status === 'CREATED' || m.status === 'PRESENTED')
@@ -1475,7 +1476,7 @@ export function MissionFeed({ store, userId, onMissionAction }: MissionFeedProps
           if (urgencyDiff !== 0) return urgencyDiff;
           return b.createdAt - a.createdAt;
         });
-      
+    
       setMissions(sorted);
     } catch (error) {
       console.error('Failed to load missions:', error);
@@ -1514,7 +1515,7 @@ export function MissionFeed({ store, userId, onMissionAction }: MissionFeedProps
     const episodes = await store.list<Episode>(
       NS.episodicMemory(userId)
     );
-    
+  
     const episode = episodes.items.find((e) => e.missionId === missionId);
     if (episode) {
       const updatedEpisode = {
@@ -1522,7 +1523,7 @@ export function MissionFeed({ store, userId, onMissionAction }: MissionFeedProps
         userFeedback: feedback,
         outcome: feedback === 'meh' ? 'negative' : 'positive',
       };
-      
+    
       await store.put(
         NS.episodicMemory(userId),
         episode.id,
@@ -1537,7 +1538,7 @@ export function MissionFeed({ store, userId, onMissionAction }: MissionFeedProps
     // Handle built-in actions
     if (actionType === 'confirm') {
       const action = payload as { action: string; duration?: number };
-      
+    
       if (action.action === 'dismiss') {
         const mission = missions.find((m) => m.id === missionId);
         if (mission) {
@@ -1549,7 +1550,7 @@ export function MissionFeed({ store, userId, onMissionAction }: MissionFeedProps
           await loadMissions();
         }
       }
-      
+    
       if (action.action === 'snooze' && action.duration) {
         const mission = missions.find((m) => m.id === missionId);
         if (mission) {
@@ -1760,30 +1761,30 @@ export class AgentScheduler {
 
 ### Week 1: Agent Framework
 
-| Day | Focus | Deliverables |
-|-----|-------|--------------|
+| Day | Focus           | Deliverables                                 |
+| --- | --------------- | -------------------------------------------- |
 | 1-2 | BaseAgent class | Abstract base with memory, LLM, tool methods |
-| 3 | LimitsEnforcer | L1/L2/L3 limit checking with tests |
-| 4 | PrivacyGuard | Namespace access control with tests |
-| 5 | Integration | Connect to existing packages |
+| 3   | LimitsEnforcer  | L1/L2/L3 limit checking with tests           |
+| 4   | PrivacyGuard    | Namespace access control with tests          |
+| 5   | Integration     | Connect to existing packages                 |
 
 ### Week 2: Shopping Agent
 
-| Day | Focus | Deliverables |
-|-----|-------|--------------|
-| 6-7 | Agent implementation | ShoppingAgent using BaseAgent |
-| 8 | Purchase intent detection | Pattern matching from IAB data |
-| 9 | Mock tools | search-deals, price-check |
-| 10 | Mission generation | LLM-powered card creation |
+| Day | Focus                     | Deliverables                   |
+| --- | ------------------------- | ------------------------------ |
+| 6-7 | Agent implementation      | ShoppingAgent using BaseAgent  |
+| 8   | Purchase intent detection | Pattern matching from IAB data |
+| 9   | Mock tools                | search-deals, price-check      |
+| 10  | Mission generation        | LLM-powered card creation      |
 
 ### Week 3: UI + Integration
 
-| Day | Focus | Deliverables |
-|-----|-------|--------------|
-| 11-12 | Mission Card UI | Component + FeedbackButtons |
-| 13 | Mission Feed | List view with actions |
-| 14 | Agent Scheduler | Scheduled + on-demand running |
-| 15 | Integration testing | Full loop working |
+| Day   | Focus               | Deliverables                  |
+| ----- | ------------------- | ----------------------------- |
+| 11-12 | Mission Card UI     | Component + FeedbackButtons   |
+| 13    | Mission Feed        | List view with actions        |
+| 14    | Agent Scheduler     | Scheduled + on-demand running |
+| 15    | Integration testing | Full loop working             |
 
 ---
 
@@ -1823,11 +1824,11 @@ describe('LimitsEnforcer', () => {
       // Mock time
       jest.useFakeTimers();
       enforcer.reset();
-      
+    
       expect(enforcer.isTimedOut()).toBe(false);
-      
+    
       jest.advanceTimersByTime(120 * 1000 + 1);
-      
+    
       expect(enforcer.isTimedOut()).toBe(true);
     });
   });
@@ -1978,6 +1979,7 @@ describe('ShoppingAgent Integration', () => {
 > **Status:** See `ownyou-sprint3-status.md` for current implementation status.
 
 ### Agent Framework
+
 - [ ] BaseAgent abstract class implemented
 - [ ] LimitsEnforcer enforces L1/L2/L3 limits
 - [ ] PrivacyGuard blocks unauthorized namespace access
@@ -1985,6 +1987,7 @@ describe('ShoppingAgent Integration', () => {
 - [ ] LLM calls tracked with cost estimation
 
 ### Shopping Agent
+
 - [ ] Detects purchase intent from IAB classifications (LLM + rules)
 - [ ] Generates relevant mission cards
 - [ ] Respects L2 limits (≤10 tools, ≤5 LLM calls, ≤120s)
@@ -1992,6 +1995,7 @@ describe('ShoppingAgent Integration', () => {
 - [ ] Records episodes for learning
 
 ### Mission UI
+
 - [ ] MissionCard component displays all fields
 - [ ] FeedbackButtons capture user response
 - [ ] MissionFeed shows sorted list
@@ -1999,6 +2003,7 @@ describe('ShoppingAgent Integration', () => {
 - [ ] Feedback updates episode
 
 ### Integration
+
 - [ ] AgentScheduler runs Shopping Agent on schedule
 - [ ] Full loop: IAB data → Agent → Mission → Feedback → Episode
 - [ ] Admin dashboard shows missions
@@ -2008,13 +2013,13 @@ describe('ShoppingAgent Integration', () => {
 
 ## Risks and Mitigations
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| No IAB data to work with | Low | High | Seed test data, require email connection first |
-| LLM costs high during testing | Medium | Medium | Use mock LLM in tests, cache responses |
-| Agent produces irrelevant missions | Medium | Medium | Confidence thresholds, user feedback loop |
-| L2 limits too restrictive | Low | Low | Tune limits based on actual usage |
-| UI doesn't match UX expectations | Medium | Medium | Iterate based on user feedback |
+| Risk                               | Likelihood | Impact | Mitigation                                     |
+| ---------------------------------- | ---------- | ------ | ---------------------------------------------- |
+| No IAB data to work with           | Low        | High   | Seed test data, require email connection first |
+| LLM costs high during testing      | Medium     | Medium | Use mock LLM in tests, cache responses         |
+| Agent produces irrelevant missions | Medium     | Medium | Confidence thresholds, user feedback loop      |
+| L2 limits too restrictive          | Low        | Low    | Tune limits based on actual usage              |
+| UI doesn't match UX expectations   | Medium     | Medium | Iterate based on user feedback                 |
 
 ---
 
@@ -2023,6 +2028,7 @@ describe('ShoppingAgent Integration', () => {
 ### New Packages
 
 **@ownyou/agents-base:**
+
 - `packages/agents/base/src/index.ts`
 - `packages/agents/base/src/base-agent.ts`
 - `packages/agents/base/src/limits-enforcer.ts`
@@ -2032,6 +2038,7 @@ describe('ShoppingAgent Integration', () => {
 - `packages/agents/base/package.json`
 
 **@ownyou/agents-shopping:**
+
 - `packages/agents/shopping/src/index.ts`
 - `packages/agents/shopping/src/agent.ts`
 - `packages/agents/shopping/src/triggers.ts`
@@ -2041,6 +2048,7 @@ describe('ShoppingAgent Integration', () => {
 - `packages/agents/shopping/package.json`
 
 **@ownyou/ui-components:**
+
 - `packages/ui-components/src/index.ts`
 - `packages/ui-components/src/MissionCard.tsx`
 - `packages/ui-components/src/MissionFeed.tsx`
@@ -2048,6 +2056,7 @@ describe('ShoppingAgent Integration', () => {
 - `packages/ui-components/package.json`
 
 ### Modified Files
+
 - `pnpm-workspace.yaml` - Add new packages
 - `apps/desktop/src/App.tsx` - Add MissionFeed
 
@@ -2055,20 +2064,21 @@ describe('ShoppingAgent Integration', () => {
 
 ## v13 Compliance Checklist
 
-- [x] **Agent Types (3.6.1):** Shopping Agent defined
-- [x] **Agent Permissions (3.6.2):** PrivacyGuard enforces access
-- [x] **Agent Levels (3.6.3):** LimitsEnforcer implements L1/L2/L3
-- [x] **Mission Cards (3.4):** MissionCard type + UI
-- [x] **Episodes (8.4.2):** Episode recording from agent runs
-- [x] **Namespaces (8.12):** Uses NS factory functions
-- [x] **Traces (10.2):** AgentTracer integration
-- [x] **Privacy Tiers (8.11):** PrivacyGuard respects tiers
+- [X] **Agent Types (3.6.1):** Shopping Agent defined
+- [X] **Agent Permissions (3.6.2):** PrivacyGuard enforces access
+- [X] **Agent Levels (3.6.3):** LimitsEnforcer implements L1/L2/L3
+- [X] **Mission Cards (3.4):** MissionCard type + UI
+- [X] **Episodes (8.4.2):** Episode recording from agent runs
+- [X] **Namespaces (8.12):** Uses NS factory functions
+- [X] **Traces (10.2):** AgentTracer integration
+- [X] **Privacy Tiers (8.11):** PrivacyGuard respects tiers
 
 ---
 
 ## What Comes After Sprint 3?
 
 After Sprint 3, you'll have:
+
 - ✅ Agent framework proven with one agent
 - ✅ Shopping Agent producing missions
 - ✅ Mission UI with feedback loop
@@ -2077,21 +2087,23 @@ After Sprint 3, you'll have:
 **Sprint 4 candidates:**
 
 1. **Reflection Node + Memory Intelligence**
+
    - Memory decay (5%/week)
    - Episode consolidation → procedural rules
    - Pruning weak memories
-
 2. **Content Agent (L1) + Ikigai Inference**
+
    - Second agent proves framework scales
    - Ikigai profile built from IAB data
-
 3. **Travel Agent (L3) + Calendar Sync**
+
    - Most complex agent
    - Second data source (calendar)
 
 **Recommended:** Sprint 4 = Reflection Node + Content Agent
 
 This proves:
+
 - Memory learns from feedback
 - Agent pattern scales to multiple agents
 - System becomes smarter over time
@@ -2102,36 +2114,36 @@ This proves:
 
 ### Phase 1: Agent Framework (Week 1)
 
-| Task | Files | Acceptance |
-|------|-------|------------|
-| Package scaffold | `packages/agents/base/package.json`, `tsconfig.json` | Package builds |
-| LimitsEnforcer | `src/limits-enforcer.ts` + tests | L1/L2/L3 limits enforced |
-| PrivacyGuard | `src/privacy-guard.ts` + tests | Namespace access controlled |
-| ToolExecutor | `src/tool-executor.ts` | Tool calls tracked |
-| BaseAgent | `src/base-agent.ts` | Abstract class with memory/LLM/trace |
-| Types | `src/types.ts` | AgentResult, AgentContext exported |
+| Task             | Files                                                    | Acceptance                           |
+| ---------------- | -------------------------------------------------------- | ------------------------------------ |
+| Package scaffold | `packages/agents/base/package.json`, `tsconfig.json` | Package builds                       |
+| LimitsEnforcer   | `src/limits-enforcer.ts` + tests                       | L1/L2/L3 limits enforced             |
+| PrivacyGuard     | `src/privacy-guard.ts` + tests                         | Namespace access controlled          |
+| ToolExecutor     | `src/tool-executor.ts`                                 | Tool calls tracked                   |
+| BaseAgent        | `src/base-agent.ts`                                    | Abstract class with memory/LLM/trace |
+| Types            | `src/types.ts`                                         | AgentResult, AgentContext exported   |
 
 ### Phase 2: Shopping Agent (Week 2)
 
-| Task | Files | Acceptance |
-|------|-------|------------|
-| Package scaffold | `packages/agents/shopping/package.json` | Package builds |
-| ShoppingAgent | `src/agent.ts` | Extends BaseAgent, L2 level |
-| Purchase intent | `src/triggers.ts` | Detects IAB shopping categories |
-| Mock tools | `src/tools/search-deals.ts`, `price-check.ts` | Return mock data |
-| Mission generation | Agent `execute()` method | LLM generates card |
-| Tests | `__tests__/agent.test.ts` | Agent produces mission |
+| Task               | Files                                             | Acceptance                      |
+| ------------------ | ------------------------------------------------- | ------------------------------- |
+| Package scaffold   | `packages/agents/shopping/package.json`         | Package builds                  |
+| ShoppingAgent      | `src/agent.ts`                                  | Extends BaseAgent, L2 level     |
+| Purchase intent    | `src/triggers.ts`                               | Detects IAB shopping categories |
+| Mock tools         | `src/tools/search-deals.ts`, `price-check.ts` | Return mock data                |
+| Mission generation | Agent `execute()` method                        | LLM generates card              |
+| Tests              | `__tests__/agent.test.ts`                       | Agent produces mission          |
 
 ### Phase 3: UI + Integration (Week 3)
 
-| Task | Files | Acceptance |
-|------|-------|------------|
-| UI package scaffold | `packages/ui-components/package.json` | Package builds |
-| MissionCard | `src/MissionCard.tsx` | Displays card data |
-| FeedbackButtons | `src/FeedbackButtons.tsx` | Love/like/meh buttons |
-| MissionFeed | `src/MissionFeed.tsx` | List of cards |
-| Integration | `src/admin-dashboard/app/missions/` | UI displays missions |
-| Full loop test | Integration test | Email → Agent → Card → Feedback → Episode |
+| Task                | Files                                   | Acceptance                                    |
+| ------------------- | --------------------------------------- | --------------------------------------------- |
+| UI package scaffold | `packages/ui-components/package.json` | Package builds                                |
+| MissionCard         | `src/MissionCard.tsx`                 | Displays card data                            |
+| FeedbackButtons     | `src/FeedbackButtons.tsx`             | Love/like/meh buttons                         |
+| MissionFeed         | `src/MissionFeed.tsx`                 | List of cards                                 |
+| Integration         | `src/admin-dashboard/app/missions/`   | UI displays missions                          |
+| Full loop test      | Integration test                        | Email → Agent → Card → Feedback → Episode |
 
 ### Critical Files to Read
 
@@ -2176,7 +2188,276 @@ Before implementation, review these existing files:
 
 ---
 
-**Document Status:** Sprint 3 Technical Specification v1.1 (Implementation Status Added)
-**Previous Sprint:** Sprint 2 (LLM Client Consolidation)
-**Architecture Reference:** v13 Sections 3.4, 3.6, 8.4.2, 8.12, 10.2
-**Remediation:** See `docs/bugfixing/sprint3-remediation.md`
+
+# Sprint 3 Implementation Status
+
+**Last Updated:** 2025-12-03
+**Specification:** `ownyou-sprint3-spec.md`
+**Code Review:** Passed (2025-12-03) - Minor issues fixed
+
+---
+
+## Overall Status: ✅ COMPLETE (100%)
+
+Sprint 3 is fully implemented with all critical functionality working.
+
+### Post-Review Fixes (2025-12-03)
+
+Two minor code quality issues identified in code review have been fixed:
+
+1. **BaseAgent initialization** - Replaced hacky null assertion with proper lazy getter
+2. **StoreAdapter abstraction** - Created adapter layer to decouple UI from IndexedDB
+
+---
+
+## Package Status
+
+| Package                     | Status      | Tests | Notes                                     |
+| --------------------------- | ----------- | ----- | ----------------------------------------- |
+| `@ownyou/agents-base`     | ✅ Complete | 62    | BaseAgent, LimitsEnforcer, PrivacyGuard   |
+| `@ownyou/agents-shopping` | ✅ Complete | 29    | LLM + rule-based intent detection         |
+| `@ownyou/scheduler`       | ✅ Complete | 25    | Background task scheduling                |
+| `@ownyou/ui-components`   | ✅ Complete | 14    | MissionCard, MissionFeed, FeedbackButtons |
+| Integration Tests           | ✅ Complete | 10    | Full agent loop tests                     |
+| Admin Dashboard             | ✅ Complete | 12    | Missions page + feedback handler          |
+
+**Total Tests:** 152 passing
+
+---
+
+## Success Criteria Checklist
+
+### Agent Framework ✅
+
+- [X] BaseAgent abstract class implemented
+- [X] LimitsEnforcer enforces L1/L2/L3 limits (throws on exceed)
+- [X] PrivacyGuard blocks unauthorized namespace access
+- [X] Memory operations tracked in traces
+- [X] LLM calls tracked with cost estimation
+
+### Shopping Agent ✅
+
+- [X] Detects purchase intent from IAB classifications (hybrid LLM + rules)
+- [X] Generates relevant mission cards
+- [X] Respects L2 limits (≤10 tools, ≤5 LLM calls, ≤120s)
+- [X] Uses mock tools (search-deals, price-check)
+- [X] Records episodes for learning
+
+### Mission UI ✅
+
+- [X] MissionCard component displays all fields
+- [X] FeedbackButtons capture user response (love/like/meh)
+- [X] MissionFeed shows sorted list with filtering
+- [X] Actions (dismiss, snooze) work
+- [X] Feedback updates episode outcome
+
+### Integration ✅
+
+- [X] AgentScheduler runs Shopping Agent on schedule
+- [X] Full loop: IAB data → Agent → Mission → Feedback → Episode
+- [X] Admin dashboard shows missions (`/missions` route)
+- [X] All tests passing
+
+---
+
+## Files Created
+
+### @ownyou/agents-base
+
+- `packages/agents/base/src/index.ts`
+- `packages/agents/base/src/base-agent.ts`
+- `packages/agents/base/src/limits-enforcer.ts`
+- `packages/agents/base/src/privacy-guard.ts`
+- `packages/agents/base/src/types.ts`
+- `packages/agents/base/src/__tests__/base-agent.test.ts`
+- `packages/agents/base/src/__tests__/limits-enforcer.test.ts`
+- `packages/agents/base/src/__tests__/privacy-guard.test.ts`
+- `packages/agents/base/package.json`
+- `packages/agents/base/PACKAGE.md`
+
+### @ownyou/agents-shopping
+
+- `packages/agents/shopping/src/index.ts`
+- `packages/agents/shopping/src/agent.ts`
+- `packages/agents/shopping/src/triggers.ts`
+- `packages/agents/shopping/src/types.ts`
+- `packages/agents/shopping/src/tools/search-deals.ts`
+- `packages/agents/shopping/src/tools/price-check.ts`
+- `packages/agents/shopping/src/__tests__/agent.test.ts`
+- `packages/agents/shopping/package.json`
+- `packages/agents/shopping/PACKAGE.md`
+
+### @ownyou/scheduler
+
+- `packages/scheduler/src/index.ts`
+- `packages/scheduler/src/agent-scheduler.ts`
+- `packages/scheduler/src/types.ts`
+- `packages/scheduler/src/__tests__/agent-scheduler.test.ts`
+- `packages/scheduler/package.json`
+
+### @ownyou/ui-components
+
+- `packages/ui-components/src/index.ts`
+- `packages/ui-components/src/MissionCard.tsx`
+- `packages/ui-components/src/MissionFeed.tsx`
+- `packages/ui-components/src/FeedbackButtons.tsx`
+- `packages/ui-components/src/types.ts`
+- `packages/ui-components/src/__tests__/MissionCard.test.tsx`
+- `packages/ui-components/package.json`
+
+### Admin Dashboard Integration
+
+- `src/admin-dashboard/app/missions/page.tsx`
+- `src/admin-dashboard/lib/feedback-handler.ts`
+- `src/admin-dashboard/lib/store-adapter.ts` *(added in post-review fix)*
+- `src/admin-dashboard/lib/__tests__/feedback-handler.test.ts`
+
+### Integration Tests
+
+- `packages/integration-tests/src/__tests__/agent-loop.test.ts`
+
+---
+
+## v13 Compliance
+
+| Section         | Requirement             | Status                                    |
+| --------------- | ----------------------- | ----------------------------------------- |
+| **3.6.1** | Agent Types             | ✅ Shopping agent with type='shopping'    |
+| **3.6.2** | Agent Permissions       | ✅ PrivacyGuard with memoryAccess rules   |
+| **3.6.3** | Agent Levels (L1/L2/L3) | ✅ LimitsEnforcer throws on exceed        |
+| **3.4**   | Mission Cards           | ✅ MissionCard type + UI components       |
+| **8.4.2** | Episodes                | ✅ Episode recording with feedback loop   |
+| **8.12**  | Namespaces              | ✅ Uses NS factory functions consistently |
+| **10.2**  | Agent Traces            | ✅ Usage tracking (tools/llm/memory)      |
+
+---
+
+## Key Implementation Details
+
+### Hybrid LLM Intent Detection
+
+The shopping agent uses a hybrid approach:
+
+1. **Primary:** LLM-based intent detection with structured prompt
+2. **Fallback:** Rule-based detection when LLM unavailable
+3. **Graceful degradation:** System continues working if LLM fails
+
+```typescript
+// In triggers.ts
+export async function evaluateTriggerHybrid(
+  trigger: ShoppingTriggerData,
+  llmClient?: LLMClient,
+  userId?: string
+): Promise<TriggerEvaluationResult> {
+  // Try LLM first, fall back to rules
+  if (llmClient && userId) {
+    try {
+      return await detectPurchaseIntentWithLLM(trigger, llmClient, userId);
+    } catch (error) {
+      console.error('LLM intent detection failed, falling back to rules:', error);
+    }
+  }
+  return evaluateTrigger(trigger); // Rule-based fallback
+}
+```
+
+### Episode Recording
+
+Episodes are automatically recorded when a mission card is created:
+
+- Stored in `NS.episodicMemory(userId)` namespace
+- Links to mission via `missionId` field
+- Initial outcome is `'pending'`
+- Updated to `'positive'` or `'negative'` based on user feedback
+
+### Feedback Loop
+
+1. User rates mission (love/like/meh)
+2. Mission status updated to COMPLETED
+3. Linked episode outcome updated
+4. Episode stats refresh in UI
+
+### BaseAgent Lazy Initialization (Post-Review Fix)
+
+The BaseAgent uses a lazy getter pattern for the LimitsEnforcer to handle the TypeScript challenge of needing the subclass's `level` property before the enforcer can be created:
+
+```typescript
+// In base-agent.ts
+private _limitsEnforcer: LimitsEnforcer | null = null;
+
+get limitsEnforcer(): LimitsEnforcer {
+  if (!this._limitsEnforcer) {
+    this._limitsEnforcer = new LimitsEnforcer(this.level, this._customLimits);
+  }
+  return this._limitsEnforcer;
+}
+```
+
+This pattern:
+
+- Avoids unsafe type assertions (`null as unknown as T`)
+- Defers initialization until the subclass's `level` is available
+- Allows reset between agent runs for fresh tracking
+
+### StoreAdapter Abstraction (Post-Review Fix)
+
+The `StoreAdapter` class provides a simplified interface over `IndexedDBStore`:
+
+```typescript
+// Usage in missions page
+const store = createStoreAdapter('ownyou_store');
+
+// Simple list operation
+const missions = await store.list<MissionCard>(NS.missionCards(userId), { limit: 100 });
+
+// Simple put operation
+await store.put(NS.missionCards(userId), mission.id, updatedMission);
+```
+
+Benefits:
+
+- Decouples UI from direct IndexedDB dependency
+- Simplifies migration to `MemoryStore + IndexedDBBackend` later
+- Cleaner API with proper TypeScript typing
+- Accepts NS helper functions directly (handles readonly tuple conversion)
+
+---
+
+## Historical Notes
+
+### Initial Implementation (Before Remediation)
+
+The initial code review on 2025-12-03 identified items marked as "missing" in `sprint3-remediation.md`. However, upon deeper inspection:
+
+- LLM intent detection was already implemented
+- Episode recording was already implemented
+- Agent scheduler was already implemented
+
+The remediation doc was outdated - written before implementation was complete.
+
+### Final Completion
+
+- Missions page added to admin-dashboard
+- Feedback handler wired to update episodes
+- Tailwind config updated for ui-components
+- Documentation inconsistencies fixed (namespace paths, import paths)
+
+---
+
+## Next Steps: Sprint 4
+
+Sprint 3 provides a solid foundation for:
+
+1. **Memory Intelligence (Recommended)**
+
+   - Memory decay (5%/week)
+   - Episode consolidation → procedural rules
+   - Reflection node for insights
+2. **Additional Agents**
+
+   - Content Agent (L1) - proves framework scales
+   - Travel Agent (L3) - complex multi-step agent
+3. **Desktop App Integration**
+
+   - MissionFeed in Tauri app
+   - Background scheduler service

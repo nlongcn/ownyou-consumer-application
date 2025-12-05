@@ -271,4 +271,122 @@ export class AgentCoordinator {
   setEventAgents(eventSource: string, agents: AgentType[]): void {
     this.eventAgents[eventSource] = agents;
   }
+
+  /**
+   * Validate schedule-agent mappings
+   *
+   * Checks that all provided schedule IDs have agent mappings.
+   * Logs warnings for any unmapped schedules.
+   *
+   * @param scheduleIds - List of schedule IDs to validate
+   * @returns Validation result with unmapped schedules
+   *
+   * @example
+   * ```typescript
+   * const result = coordinator.validateScheduleMappings(['daily_digest', 'custom_schedule']);
+   * if (!result.valid) {
+   *   console.warn('Unmapped schedules:', result.unmappedSchedules);
+   * }
+   * ```
+   */
+  validateScheduleMappings(scheduleIds: string[]): {
+    valid: boolean;
+    unmappedSchedules: string[];
+    emptyMappings: string[];
+  } {
+    const unmappedSchedules: string[] = [];
+    const emptyMappings: string[] = [];
+
+    for (const scheduleId of scheduleIds) {
+      const agents = this.scheduleAgents[scheduleId];
+      if (agents === undefined) {
+        unmappedSchedules.push(scheduleId);
+        console.warn(
+          `[AgentCoordinator] Schedule '${scheduleId}' has no agent mapping. ` +
+          `Use setScheduleAgents('${scheduleId}', [...]) to configure.`
+        );
+      } else if (agents.length === 0) {
+        emptyMappings.push(scheduleId);
+        console.warn(
+          `[AgentCoordinator] Schedule '${scheduleId}' maps to empty agent list. ` +
+          `No agents will be triggered.`
+        );
+      }
+    }
+
+    return {
+      valid: unmappedSchedules.length === 0 && emptyMappings.length === 0,
+      unmappedSchedules,
+      emptyMappings,
+    };
+  }
+
+  /**
+   * Validate event-agent mappings
+   *
+   * Checks that all provided event sources have agent mappings.
+   * Logs warnings for any unmapped event sources.
+   *
+   * @param eventSources - List of event sources to validate
+   * @returns Validation result with unmapped event sources
+   */
+  validateEventMappings(eventSources: string[]): {
+    valid: boolean;
+    unmappedEvents: string[];
+    emptyMappings: string[];
+  } {
+    const unmappedEvents: string[] = [];
+    const emptyMappings: string[] = [];
+
+    for (const eventSource of eventSources) {
+      const agents = this.eventAgents[eventSource];
+      if (agents === undefined) {
+        unmappedEvents.push(eventSource);
+        console.warn(
+          `[AgentCoordinator] Event source '${eventSource}' has no agent mapping. ` +
+          `Use setEventAgents('${eventSource}', [...]) to configure.`
+        );
+      } else if (agents.length === 0) {
+        emptyMappings.push(eventSource);
+        // Note: Empty is valid for some event sources (e.g., 'location' not yet implemented)
+        // Only log at debug level
+      }
+    }
+
+    return {
+      valid: unmappedEvents.length === 0,
+      unmappedEvents,
+      emptyMappings,
+    };
+  }
+
+  /**
+   * Get all configured schedule mappings
+   */
+  getScheduleMappings(): Record<string, AgentType[]> {
+    return { ...this.scheduleAgents };
+  }
+
+  /**
+   * Get all configured event mappings
+   */
+  getEventMappings(): Record<string, AgentType[]> {
+    return { ...this.eventAgents };
+  }
+
+  /**
+   * Check if a schedule has agent mappings
+   */
+  hasScheduleMapping(scheduleId: string): boolean {
+    const agents = this.scheduleAgents[scheduleId];
+    return agents !== undefined && agents.length > 0;
+  }
+
+  /**
+   * Check if an event source has agent mappings
+   */
+  hasEventMapping(eventSource: string): boolean {
+    const agents = this.eventAgents[eventSource];
+    return agents !== undefined && agents.length > 0;
+  }
 }

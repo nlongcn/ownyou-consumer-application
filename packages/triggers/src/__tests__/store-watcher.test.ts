@@ -3,6 +3,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { NAMESPACES } from '@ownyou/shared-types';
 import { StoreWatcher } from '../data-driven/store-watcher';
 import type { DataTrigger } from '../types';
 
@@ -11,7 +12,7 @@ describe('StoreWatcher', () => {
 
   beforeEach(() => {
     watcher = new StoreWatcher({
-      namespaces: ['ownyou.iab', 'ownyou.semantic'],
+      namespaces: [NAMESPACES.IAB_CLASSIFICATIONS, NAMESPACES.SEMANTIC_MEMORY],
       debounceMs: 10, // Short for testing
       batchSize: 5,
     });
@@ -34,12 +35,12 @@ describe('StoreWatcher', () => {
   describe('handleStoreEvent', () => {
     it('should create data trigger from store event', async () => {
       const callback = vi.fn();
-      watcher.onNamespaceChange('ownyou.iab', callback);
+      watcher.onNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, callback);
       watcher.start();
 
       watcher.handleStoreEvent({
         type: 'put',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
         key: 'classification_1',
       });
 
@@ -49,20 +50,20 @@ describe('StoreWatcher', () => {
       expect(callback).toHaveBeenCalledTimes(1);
       const trigger = callback.mock.calls[0][0] as DataTrigger;
       expect(trigger.mode).toBe('data');
-      expect(trigger.namespace).toBe('ownyou.iab');
+      expect(trigger.namespace).toBe(NAMESPACES.IAB_CLASSIFICATIONS);
       expect(trigger.key).toBe('classification_1');
       expect(trigger.changeType).toBe('create');
     });
 
     it('should detect update vs create', async () => {
       const callback = vi.fn();
-      watcher.onNamespaceChange('ownyou.iab', callback);
+      watcher.onNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, callback);
       watcher.start();
 
       // First event - should be create
       watcher.handleStoreEvent({
         type: 'put',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
         key: 'classification_1',
       });
 
@@ -74,7 +75,7 @@ describe('StoreWatcher', () => {
       // Second event - should be update
       watcher.handleStoreEvent({
         type: 'put',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
         key: 'classification_1',
       });
 
@@ -86,12 +87,12 @@ describe('StoreWatcher', () => {
 
     it('should detect delete', async () => {
       const callback = vi.fn();
-      watcher.onNamespaceChange('ownyou.iab', callback);
+      watcher.onNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, callback);
       watcher.start();
 
       watcher.handleStoreEvent({
         type: 'delete',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
         key: 'classification_1',
       });
 
@@ -103,7 +104,7 @@ describe('StoreWatcher', () => {
 
     it('should ignore unwatched namespaces', async () => {
       const callback = vi.fn();
-      watcher.onNamespaceChange('ownyou.iab', callback);
+      watcher.onNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, callback);
       watcher.start();
 
       watcher.handleStoreEvent({
@@ -119,23 +120,23 @@ describe('StoreWatcher', () => {
 
     it('should ignore non-put/delete events', async () => {
       const callback = vi.fn();
-      watcher.onNamespaceChange('ownyou.iab', callback);
+      watcher.onNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, callback);
       watcher.start();
 
       watcher.handleStoreEvent({
         type: 'get',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
         key: 'item_1',
       });
 
       watcher.handleStoreEvent({
         type: 'list',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
       });
 
       watcher.handleStoreEvent({
         type: 'search',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
       });
 
       await watcher.forceFlush();
@@ -147,18 +148,18 @@ describe('StoreWatcher', () => {
   describe('batching', () => {
     it('should batch changes before flushing', async () => {
       const callback = vi.fn();
-      watcher.onNamespaceChange('ownyou.iab', callback);
+      watcher.onNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, callback);
       watcher.start();
 
       // Add multiple events quickly
       watcher.handleStoreEvent({
         type: 'put',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
         key: 'item_1',
       });
       watcher.handleStoreEvent({
         type: 'put',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
         key: 'item_2',
       });
 
@@ -172,14 +173,14 @@ describe('StoreWatcher', () => {
 
     it('should flush immediately when batch size reached', async () => {
       const callback = vi.fn();
-      watcher.onNamespaceChange('ownyou.iab', callback);
+      watcher.onNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, callback);
       watcher.start();
 
       // Add 5 events (batch size) - should flush immediately
       for (let i = 0; i < 5; i++) {
         watcher.handleStoreEvent({
           type: 'put',
-          namespace: ['ownyou.iab', 'user_123'],
+          namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
           key: `item_${i}`,
         });
       }
@@ -196,13 +197,13 @@ describe('StoreWatcher', () => {
       const callback1 = vi.fn();
       const callback2 = vi.fn();
 
-      watcher.onNamespaceChange('ownyou.iab', callback1);
-      watcher.onNamespaceChange('ownyou.iab', callback2);
+      watcher.onNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, callback1);
+      watcher.onNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, callback2);
       watcher.start();
 
       watcher.handleStoreEvent({
         type: 'put',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
         key: 'item_1',
       });
 
@@ -214,13 +215,13 @@ describe('StoreWatcher', () => {
 
     it('should allow unregistering callbacks', async () => {
       const callback = vi.fn();
-      watcher.onNamespaceChange('ownyou.iab', callback);
-      watcher.offNamespaceChange('ownyou.iab', callback);
+      watcher.onNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, callback);
+      watcher.offNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, callback);
       watcher.start();
 
       watcher.handleStoreEvent({
         type: 'put',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
         key: 'item_1',
       });
 
@@ -233,13 +234,13 @@ describe('StoreWatcher', () => {
       const errorCallback = vi.fn().mockRejectedValue(new Error('Callback error'));
       const goodCallback = vi.fn();
 
-      watcher.onNamespaceChange('ownyou.iab', errorCallback);
-      watcher.onNamespaceChange('ownyou.iab', goodCallback);
+      watcher.onNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, errorCallback);
+      watcher.onNamespaceChange(NAMESPACES.IAB_CLASSIFICATIONS, goodCallback);
       watcher.start();
 
       watcher.handleStoreEvent({
         type: 'put',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
         key: 'item_1',
       });
 

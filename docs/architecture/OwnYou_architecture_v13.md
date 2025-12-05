@@ -158,19 +158,19 @@ The Ikigai layer passively extracts well-being signals from user data to priorit
 
 ```typescript
 interface IkigaiProfile {
-  user_id: string;
-  updated_at: timestamp;
+  userId: string;
+  updatedAt: number;
 
   // Inferred from data via LLM prompts
   experiences: {
-    preferred_types: string[];     // ["travel", "concerts", "dining", "outdoor"]
+    preferredTypes: string[];     // ["travel", "concerts", "dining", "outdoor"]
     frequency: "rare" | "occasional" | "frequent";
-    recent_activities: Activity[]; // Last 90 days
+    recentActivities: Activity[]; // Last 90 days
   };
 
   relationships: {
-    key_people: Person[];          // Extracted from emails, calendar, transactions
-    social_frequency: "solo" | "couple" | "social" | "very_social";
+    keyPeople: Person[];          // Extracted from emails, calendar, transactions
+    socialFrequency: "solo" | "couple" | "social" | "very_social";
   };
 
   interests: {
@@ -180,11 +180,11 @@ interface IkigaiProfile {
 
   giving: {
     causes: string[];              // Charities, volunteer activities
-    gift_giving_frequency: number; // Purchases identified as gifts
+    giftGivingFrequency: number;   // Purchases identified as gifts
   };
 
   // Weights for mission ranking
-  dimension_weights: {
+  dimensionWeights: {
     experiences: number;           // 0-1, based on historical engagement
     relationships: number;
     interests: number;
@@ -194,18 +194,18 @@ interface IkigaiProfile {
   // Evidence chain for transparency
   evidence: {
     dimension: string;
-    source_type: "email" | "transaction" | "calendar" | "browser";
-    source_id: string;
-    signal_strength: number;  // 0.0-1.0
-    extracted_at: timestamp;
+    sourceType: "email" | "transaction" | "calendar" | "browser";
+    sourceId: string;
+    signalStrength: number;  // 0.0-1.0
+    extractedAt: number;
   }[];
 }
 
 interface Person {
   name: string;
-  relationship_strength: number;   // Based on interaction frequency
-  shared_interests: string[];      // What they do together
-  last_interaction: timestamp;
+  relationshipStrength: number;   // Based on interaction frequency
+  sharedInterests: string[];      // What they do together
+  lastInteraction: number;
 }
 ```
 
@@ -383,13 +383,13 @@ Return structured JSON matching IkigaiProfile schema.
 ```typescript
 interface IkigaiInferenceConfig {
   // Don't run on every item - batch for efficiency
-  batch_window: "daily" | "weekly";
+  batchWindow: "daily" | "weekly";
 
   // Minimum new items before triggering inference
-  min_items_threshold: 10;
+  minItemsThreshold: 10;
 
   // Run all 4 dimension prompts in parallel
-  parallel_inference: true;
+  parallelInference: true;
 
   // Model choice is USER CONFIGURABLE in Settings
   // User selects based on their cost/quality preferences
@@ -403,15 +403,15 @@ Missions are ranked by **well-being value**, which weights experiences and relat
 ```typescript
 interface MissionWellBeingScore {
   // Core practical value (always present)
-  utility_score: number;           // 0-1: How useful is this mission?
+  utilityScore: number;           // 0-1: How useful is this mission?
 
   // Ikigai enhancement (optional boost)
-  experience_boost: number;        // 0-0.5: Does this create an experience?
-  relationship_boost: number;      // 0-0.5: Does this involve key people?
-  interest_alignment: number;      // 0-0.3: Does this match their interests?
+  experienceBoost: number;        // 0-0.5: Does this create an experience?
+  relationshipBoost: number;      // 0-0.5: Does this involve key people?
+  interestAlignment: number;      // 0-0.3: Does this match their interests?
 
   // Final ranking score
-  total_score: number;             // utility + boosts, capped at 2.0
+  totalScore: number;             // utility + boosts, capped at 2.0
 }
 ```
 
@@ -429,12 +429,12 @@ Users earn points for completing missions, with bonuses for well-being-aligned a
 
 ```typescript
 interface IkigaiRewards {
-  base_points: 100;
+  basePoints: 100;
 
   // Multipliers
-  experience_multiplier: 2.0;      // 2x for experiences
-  relationship_multiplier: 1.5;    // 1.5x when involves key people
-  giving_multiplier: 2.5;          // 2.5x for charitable/gift missions
+  experienceMultiplier: 2.0;      // 2x for experiences
+  relationshipMultiplier: 1.5;    // 1.5x when involves key people
+  givingMultiplier: 2.5;          // 2.5x for charitable/gift missions
 
   // Point categories (visible to user)
   categories: {
@@ -472,19 +472,19 @@ Replace thumbs up/down with a heart that communicates ikigai relevance through s
 
 ```typescript
 interface MissionFeedback {
-  mission_id: string;
-  timestamp: timestamp;
+  missionId: string;
+  timestamp: number;
 
   // Ikigai signal: 0 = meh, 1 = like, 2 = love
-  ikigai_signal: 0 | 1 | 2;
+  ikigaiSignal: 0 | 1 | 2;
 
   // How the signal was captured
-  signal_source: "explicit_tap" | "implicit_engage" | "implicit_complete";
+  signalSource: "explicit_tap" | "implicit_engage" | "implicit_complete";
 
   // Context for learning
-  mission_type: string;
-  time_to_engage?: number;
-  time_to_complete?: number;
+  missionType: string;
+  timeToEngage?: number;
+  timeToComplete?: number;
 }
 ```
 
@@ -498,12 +498,12 @@ This subsection explicitly maps how Ikigai inference outputs flow into the Memor
 
 | Ikigai Dimension | Inference Outputs | Storage Namespace | Example |
 |------------------|-------------------|-------------------|---------|
-| **Passion** | interests, hobbies, creative_outlets | `semanticMemory` | "photography", "jazz music" |
-| **Mission** | causes, values, impact_areas | `semanticMemory` | "climate action", "mentoring" |
+| **Passion** | interests, hobbies, creativeOutlets | `semanticMemory` | "photography", "jazz music" |
+| **Mission** | causes, values, impactAreas | `semanticMemory` | "climate action", "mentoring" |
 | **Vocation** | skills, expertise, certifications | `semanticMemory` + `entities` | "data science", "PMP certified" |
-| **Profession** | job_title, industry, income_bracket | `semanticMemory` + `iab_classifications` | "Sr. Engineer", "Tech/Software" |
-| **Relationships** | key_people, relationship_types | `entities` | {name: "Sarah", type: "spouse"} |
-| **Well-being** | health_goals, stress_indicators | `semanticMemory` (privacy-protected) | "improve sleep", "reduce anxiety" |
+| **Profession** | jobTitle, industry, incomeBracket | `semanticMemory` + `iabClassifications` | "Sr. Engineer", "Tech/Software" |
+| **Relationships** | keyPeople, relationshipTypes | `entities` | {name: "Sarah", type: "spouse"} |
+| **Well-being** | healthGoals, stressIndicators | `semanticMemory` (privacy-protected) | "improve sleep", "reduce anxiety" |
 
 #### Storage Flow
 
@@ -521,24 +521,24 @@ async function storeIkigaiInference(userId: string, inference: IkigaiInference):
       mission: inference.mission,
       vocation: inference.vocation,
       profession: inference.profession,
-      well_being: inference.well_being,
-      confidence: inference.overall_confidence,
-      last_updated: new Date().toISOString(),
+      wellBeing: inference.wellBeing,
+      confidence: inference.overallConfidence,
+      lastUpdated: new Date().toISOString(),
     }
   );
 
   // 2. Key people → entities namespace (for cross-mission reference)
-  for (const person of inference.relationships.key_people) {
+  for (const person of inference.relationships.keyPeople) {
     await store.put(
-      NAMESPACES.entities(userId),
+      NS.entities(userId),
       `person:${person.name.toLowerCase().replace(/\s+/g, '_')}`,
       {
-        entity_type: "person",
+        entityType: "person",
         name: person.name,
-        relationship: person.relationship_type,
-        mentioned_in: person.source_contexts,
-        first_seen: person.first_mentioned,
-        last_seen: new Date().toISOString(),
+        relationship: person.relationshipType,
+        mentionedIn: person.sourceContexts,
+        firstSeen: person.firstMentioned,
+        lastSeen: new Date().toISOString(),
       }
     );
   }
@@ -546,10 +546,10 @@ async function storeIkigaiInference(userId: string, inference: IkigaiInference):
   // 3. Professional profile → IAB alignment for ad relevance
   if (inference.profession.industry) {
     await store.put(
-      NAMESPACES.iab_classifications(userId),
+      NS.iabClassifications(userId),
       "ikigai_derived",
       {
-        derived_from: "ikigai_inference",
+        derivedFrom: "ikigai_inference",
         categories: mapProfessionToIAB(inference.profession),
         confidence: inference.profession.confidence,
       }
@@ -571,7 +571,7 @@ const ikigaiContext = await store.search(
 
 // Entity lookup for personalization
 const knownPeople = await store.list(
-  NAMESPACES.entities(userId),
+  NS.entities(userId),
   { prefix: "person:" }
 );
 ```
@@ -660,29 +660,29 @@ interface MissionCard {
 
   // State
   status: "CREATED" | "PRESENTED" | "ACTIVE" | "SNOOZED" | "DISMISSED" | "COMPLETED";
-  created_at: timestamp;
-  expires_at?: timestamp;
-  snoozed_until?: timestamp;
+  createdAt: number;
+  expiresAt?: number;
+  snoozedUntil?: number;
 
   // Ikigai context
-  ikigai_dimensions: string[];  // Which dimensions this serves
-  ikigai_alignment_boost: number;  // How much completion improves alignment
+  ikigaiDimensions: string[];  // Which dimensions this serves
+  ikigaiAlignmentBoost: number;  // How much completion improves alignment
 
   // Actions
-  primary_action: {
+  primaryAction: {
     label: string;
     type: "navigate" | "confirm" | "input" | "external";
     payload: any;
   };
-  secondary_actions?: Action[];
+  secondaryActions?: Action[];
 
   // Agent context
-  agent_thread_id: string;  // For resuming conversation
-  evidence_refs: string[];  // Store keys that triggered this
+  agentThreadId: string;  // For resuming conversation
+  evidenceRefs: string[];  // Store keys that triggered this
 
   // Feedback
-  user_rating?: 1 | 2 | 3 | 4 | 5;
-  completion_feedback?: string;
+  userRating?: 1 | 2 | 3 | 4 | 5;
+  completionFeedback?: string;
 }
 ```
 
@@ -738,121 +738,121 @@ Each Mission Agent has defined capabilities, memory access, and external integra
 
 ```typescript
 interface AgentPermissions {
-  agent_type: string;
+  agentType: string;
 
-  memory_access: {
+  memoryAccess: {
     read: string[];      // Namespaces agent can read
     write: string[];     // Namespaces agent can write
     search: string[];    // Namespaces agent can semantic search
   };
 
-  external_apis: {
+  externalApis: {
     name: string;
-    rate_limit: string;  // e.g., "100/hour"
-    requires_user_consent: boolean;
+    rateLimit: string;  // e.g., "100/hour"
+    requiresUserConsent: boolean;
   }[];
 
-  tool_definitions: ToolDefinition[];
+  toolDefinitions: ToolDefinition[];
 }
 
 const AGENT_PERMISSIONS: Record<string, AgentPermissions> = {
   shopping: {
-    agent_type: "shopping",
-    memory_access: {
+    agentType: "shopping",
+    memoryAccess: {
       read: [
         "semanticMemory",
         "episodicMemory",
         "entities",
-        "iab_classifications",
-        "shopping_preferences",
+        "iabClassifications",
+        "shoppingPreferences",
       ],
       write: [
-        "shopping_searches",
-        "shopping_recommendations",
+        "shoppingSearches",
+        "shoppingRecommendations",
         "episodicMemory",
         "proceduralMemory:shopping",
       ],
       search: ["semanticMemory", "episodicMemory", "entities"],
     },
-    external_apis: [
-      { name: "SerpAPI", rate_limit: "100/hour", requires_user_consent: false },
-      { name: "Amazon PA-API", rate_limit: "1/second", requires_user_consent: false },
+    externalApis: [
+      { name: "SerpAPI", rateLimit: "100/hour", requiresUserConsent: false },
+      { name: "Amazon PA-API", rateLimit: "1/second", requiresUserConsent: false },
     ],
-    tool_definitions: [
-      { name: "search_products", description: "Search for products matching criteria" },
-      { name: "compare_prices", description: "Compare prices across retailers" },
-      { name: "track_price", description: "Set up price drop alerts" },
-      { name: "find_deals", description: "Find current deals on saved items" },
+    toolDefinitions: [
+      { name: "searchProducts", description: "Search for products matching criteria" },
+      { name: "comparePrices", description: "Compare prices across retailers" },
+      { name: "trackPrice", description: "Set up price drop alerts" },
+      { name: "findDeals", description: "Find current deals on saved items" },
     ],
   },
 
   travel: {
-    agent_type: "travel",
-    memory_access: {
+    agentType: "travel",
+    memoryAccess: {
       read: [
         "semanticMemory",
         "episodicMemory",
         "entities",
         "relationships",        // For travel companions
         "calendar",             // For availability
-        "financial_profile",    // For budget awareness
-        "travel_preferences",
+        "financialProfile",     // For budget awareness
+        "travelPreferences",
       ],
       write: [
-        "travel_itineraries",
-        "travel_bookings",
+        "travelItineraries",
+        "travelBookings",
         "episodicMemory",
         "proceduralMemory:travel",
       ],
       search: ["semanticMemory", "episodicMemory", "entities", "relationships"],
     },
-    external_apis: [
-      { name: "Google Flights", rate_limit: "60/hour", requires_user_consent: false },
-      { name: "Tripadvisor", rate_limit: "100/hour", requires_user_consent: false },
-      { name: "Booking.com", rate_limit: "60/hour", requires_user_consent: true },
+    externalApis: [
+      { name: "Google Flights", rateLimit: "60/hour", requiresUserConsent: false },
+      { name: "Tripadvisor", rateLimit: "100/hour", requiresUserConsent: false },
+      { name: "Booking.com", rateLimit: "60/hour", requiresUserConsent: true },
     ],
-    tool_definitions: [
-      { name: "search_flights", description: "Search flights with preferences (direct, timing)" },
-      { name: "search_hotels", description: "Search accommodations matching preferences" },
-      { name: "build_itinerary", description: "Create day-by-day travel plan" },
-      { name: "check_visa", description: "Check visa requirements for destination" },
+    toolDefinitions: [
+      { name: "searchFlights", description: "Search flights with preferences (direct, timing)" },
+      { name: "searchHotels", description: "Search accommodations matching preferences" },
+      { name: "buildItinerary", description: "Create day-by-day travel plan" },
+      { name: "checkVisa", description: "Check visa requirements for destination" },
     ],
   },
 
   restaurant: {
-    agent_type: "restaurant",
-    memory_access: {
+    agentType: "restaurant",
+    memoryAccess: {
       read: [
         "semanticMemory",
         "episodicMemory",
         "entities",
         "relationships",
-        "dining_preferences",
+        "diningPreferences",
       ],
       write: [
-        "dining_reservations",
-        "restaurant_favorites",
+        "diningReservations",
+        "restaurantFavorites",
         "episodicMemory",
         "proceduralMemory:restaurant",
       ],
       search: ["semanticMemory", "episodicMemory", "entities"],
     },
-    external_apis: [
-      { name: "Yelp", rate_limit: "100/hour", requires_user_consent: false },
-      { name: "OpenTable", rate_limit: "60/hour", requires_user_consent: true },
-      { name: "Google Places", rate_limit: "100/hour", requires_user_consent: false },
+    externalApis: [
+      { name: "Yelp", rateLimit: "100/hour", requiresUserConsent: false },
+      { name: "OpenTable", rateLimit: "60/hour", requiresUserConsent: true },
+      { name: "Google Places", rateLimit: "100/hour", requiresUserConsent: false },
     ],
-    tool_definitions: [
-      { name: "search_restaurants", description: "Find restaurants matching criteria" },
-      { name: "make_reservation", description: "Book a table at selected restaurant" },
-      { name: "get_menu", description: "Retrieve menu and pricing" },
-      { name: "check_dietary", description: "Verify dietary accommodation availability" },
+    toolDefinitions: [
+      { name: "searchRestaurants", description: "Find restaurants matching criteria" },
+      { name: "makeReservation", description: "Book a table at selected restaurant" },
+      { name: "getMenu", description: "Retrieve menu and pricing" },
+      { name: "checkDietary", description: "Verify dietary accommodation availability" },
     ],
   },
 
   events: {
-    agent_type: "events",
-    memory_access: {
+    agentType: "events",
+    memoryAccess: {
       read: [
         "semanticMemory",
         "episodicMemory",
@@ -862,69 +862,69 @@ const AGENT_PERMISSIONS: Record<string, AgentPermissions> = {
         "interests",
       ],
       write: [
-        "event_interests",
-        "event_bookings",
+        "eventInterests",
+        "eventBookings",
         "episodicMemory",
         "proceduralMemory:events",
       ],
       search: ["semanticMemory", "episodicMemory", "interests"],
     },
-    external_apis: [
-      { name: "Ticketmaster", rate_limit: "60/hour", requires_user_consent: false },
-      { name: "Eventbrite", rate_limit: "100/hour", requires_user_consent: false },
-      { name: "Meetup", rate_limit: "60/hour", requires_user_consent: false },
+    externalApis: [
+      { name: "Ticketmaster", rateLimit: "60/hour", requiresUserConsent: false },
+      { name: "Eventbrite", rateLimit: "100/hour", requiresUserConsent: false },
+      { name: "Meetup", rateLimit: "60/hour", requiresUserConsent: false },
     ],
-    tool_definitions: [
-      { name: "search_events", description: "Find events matching interests and location" },
-      { name: "check_availability", description: "Verify ticket availability and pricing" },
-      { name: "add_to_calendar", description: "Add event to user's calendar" },
-      { name: "invite_friends", description: "Share event with contacts" },
+    toolDefinitions: [
+      { name: "searchEvents", description: "Find events matching interests and location" },
+      { name: "checkAvailability", description: "Verify ticket availability and pricing" },
+      { name: "addToCalendar", description: "Add event to user's calendar" },
+      { name: "inviteFriends", description: "Share event with contacts" },
     ],
   },
 
   content: {
-    agent_type: "content",
-    memory_access: {
+    agentType: "content",
+    memoryAccess: {
       read: [
         "semanticMemory",
         "episodicMemory",
         "interests",
-        "content_history",
+        "contentHistory",
       ],
       write: [
-        "content_recommendations",
-        "saved_content",
+        "contentRecommendations",
+        "savedContent",
         "episodicMemory",
         "proceduralMemory:content",
       ],
       search: ["semanticMemory", "interests"],
     },
-    external_apis: [
-      { name: "RSS Feeds", rate_limit: "unlimited", requires_user_consent: false },
-      { name: "Podcast APIs", rate_limit: "100/hour", requires_user_consent: false },
-      { name: "News APIs", rate_limit: "100/hour", requires_user_consent: false },
+    externalApis: [
+      { name: "RSS Feeds", rateLimit: "unlimited", requiresUserConsent: false },
+      { name: "Podcast APIs", rateLimit: "100/hour", requiresUserConsent: false },
+      { name: "News APIs", rateLimit: "100/hour", requiresUserConsent: false },
     ],
-    tool_definitions: [
-      { name: "recommend_content", description: "Suggest articles, podcasts, videos" },
-      { name: "summarize_article", description: "Generate summary of linked content" },
-      { name: "find_similar", description: "Find related content to a given item" },
-      { name: "save_for_later", description: "Save content to reading list" },
+    toolDefinitions: [
+      { name: "recommendContent", description: "Suggest articles, podcasts, videos" },
+      { name: "summarizeArticle", description: "Generate summary of linked content" },
+      { name: "findSimilar", description: "Find related content to a given item" },
+      { name: "saveForLater", description: "Save content to reading list" },
     ],
   },
 
   diagnostic: {
-    agent_type: "diagnostic",
-    memory_access: {
+    agentType: "diagnostic",
+    memoryAccess: {
       read: ["*"],  // Can read ALL namespaces for analysis
-      write: ["diagnostic_reports"],  // Can ONLY write reports
+      write: ["diagnosticReports"],  // Can ONLY write reports
       search: ["*"],
     },
-    external_apis: [],  // No external APIs - analysis only
-    tool_definitions: [
-      { name: "analyze_profile", description: "Analyze user profile completeness" },
-      { name: "find_patterns", description: "Identify behavioral patterns across data" },
-      { name: "suggest_connections", description: "Suggest data connections user might want" },
-      { name: "generate_insights", description: "Generate actionable insights from data" },
+    externalApis: [],  // No external APIs - analysis only
+    toolDefinitions: [
+      { name: "analyzeProfile", description: "Analyze user profile completeness" },
+      { name: "findPatterns", description: "Identify behavioral patterns across data" },
+      { name: "suggestConnections", description: "Suggest data connections user might want" },
+      { name: "generateInsights", description: "Generate actionable insights from data" },
     ],
   },
 };
@@ -4687,14 +4687,14 @@ interface Memory {
   context: string;                    // Domain hint: "travel", "shopping", "dining", etc.
 
   // Bi-temporal model (when was this true vs when did we learn it)
-  valid_at: timestamp;                // When fact became true in reality
-  invalid_at?: timestamp;             // When fact stopped being true (null = still valid)
-  created_at: timestamp;              // When system learned this
+  validAt: number;                    // When fact became true in reality
+  invalidAt?: number;                 // When fact stopped being true (null = still valid)
+  createdAt: number;                  // When system learned this
 
   // Strength & decay
   strength: number;                   // Starts at 1.0, increases on access/confirmation
-  last_accessed: timestamp;           // For decay calculation
-  access_count: number;               // How often retrieved
+  lastAccessed: number;               // For decay calculation
+  accessCount: number;                // How often retrieved
 
   // Provenance (for transparency and BBS+ authenticity)
   sources: string[];                  // Episode IDs or data source refs that contributed
@@ -4702,7 +4702,7 @@ interface Memory {
   contradictions?: string[];          // Any conflicting observations
 
   // Privacy tier
-  privacy_tier: "public" | "sensitive" | "private";
+  privacyTier: "public" | "sensitive" | "private";
 }
 ```
 
@@ -4719,12 +4719,12 @@ interface Episode {
   reasoning: string;      // How the agent approached it
   action: string;         // What solution was provided
   outcome: string;        // What happened (success/failure/partial)
-  user_feedback?: string; // Explicit feedback or inferred satisfaction
+  userFeedback?: string;  // Explicit feedback or inferred satisfaction
 
   // Metadata
-  agent_type: string;     // "travel", "shopping", "restaurant", etc.
-  mission_id: string;     // Link to mission card
-  timestamp: timestamp;
+  agentType: string;      // "travel", "shopping", "restaurant", etc.
+  missionId: string;      // Link to mission card
+  timestamp: number;
 
   // For few-shot retrieval
   tags: string[];         // Searchable tags: ["booking", "flight", "negative_outcome"]
@@ -4738,29 +4738,29 @@ Agent-specific behavioral rules that evolve:
 ```typescript
 interface ProceduralRule {
   id: string;
-  agent_type: string;                 // Which agent this applies to
+  agentType: string;                  // Which agent this applies to
   rule: string;                       // Natural language instruction
 
   // Evidence
-  derived_from: string[];             // Episode IDs that led to this rule
+  derivedFrom: string[];              // Episode IDs that led to this rule
   confidence: number;                 // How strongly supported by evidence
 
   // Lifecycle
-  created_at: timestamp;
-  last_validated: timestamp;          // Last time episodes confirmed this
-  override_count: number;             // Times user overrode this behavior
+  createdAt: number;
+  lastValidated: number;              // Last time episodes confirmed this
+  overrideCount: number;              // Times user overrode this behavior
 }
 
 // Example procedural rules:
 const travelAgentRules = [
   {
     rule: "Always filter for direct flights first - user has strong aversion to layovers",
-    derived_from: ["episode_123", "episode_456"],
+    derivedFrom: ["episode_123", "episode_456"],
     confidence: 0.95
   },
   {
     rule: "Suggest mid-range options before budget - user returned budget items twice",
-    derived_from: ["episode_789"],
+    derivedFrom: ["episode_789"],
     confidence: 0.8
   }
 ];
@@ -4781,31 +4781,31 @@ interface Entity {
   properties: Record<string, unknown>; // { "relationship": "partner", "dietary": "vegetarian" }
 
   // Temporal
-  first_seen: timestamp;
-  last_mentioned: timestamp;
-  mention_count: number;
+  firstSeen: number;
+  lastMentioned: number;
+  mentionCount: number;
 
   // Provenance
-  source_memories: string[];          // Memory IDs where this entity was mentioned
+  sourceMemories: string[];           // Memory IDs where this entity was mentioned
 }
 
 // === RELATIONSHIP SCHEMA ===
 interface Relationship {
   id: string;
-  from_entity: string;                // Entity ID (usually "USER" for user-centric)
-  to_entity: string;                  // Entity ID
+  fromEntity: string;                 // Entity ID (usually "USER" for user-centric)
+  toEntity: string;                   // Entity ID
   type: string;                       // "KNOWS", "PREFERS", "VISITED", "PURCHASED"
 
   // Temporal (bi-temporal for history)
-  valid_at: timestamp;                // When relationship became true
-  invalid_at?: timestamp;             // When relationship ended (null = still valid)
-  created_at: timestamp;              // When system learned this
+  validAt: number;                    // When relationship became true
+  invalidAt?: number;                 // When relationship ended (null = still valid)
+  createdAt: number;                  // When system learned this
 
   // Properties
   properties: Record<string, unknown>; // { "strength": 0.8, "context": "dining" }
 
   // Provenance
-  source_memories: string[];
+  sourceMemories: string[];
 }
 
 // === MVP IMPLEMENTATION (Store-based, no graph DB) ===

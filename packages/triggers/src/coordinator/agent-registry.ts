@@ -5,6 +5,7 @@
  */
 
 import type { AgentType } from '@ownyou/shared-types';
+import { NAMESPACES, type Namespace } from '@ownyou/shared-types';
 
 /**
  * Agent registration entry
@@ -12,8 +13,8 @@ import type { AgentType } from '@ownyou/shared-types';
 export interface AgentRegistryEntry {
   /** Agent type identifier */
   type: AgentType;
-  /** Namespaces that trigger this agent */
-  namespaces: string[];
+  /** Namespaces that trigger this agent (v13 Section 8.12) */
+  namespaces: Namespace[];
   /** User intents this agent handles */
   intents: string[];
   /** Agent description */
@@ -28,14 +29,22 @@ export interface AgentRegistryEntry {
 export const DEFAULT_AGENT_REGISTRY: AgentRegistryEntry[] = [
   {
     type: 'shopping',
-    namespaces: ['ownyou.iab', 'ownyou.semantic', 'ownyou.entities'],
+    namespaces: [
+      NAMESPACES.IAB_CLASSIFICATIONS,
+      NAMESPACES.SEMANTIC_MEMORY,
+      NAMESPACES.ENTITIES,
+    ],
     intents: ['shopping', 'buy', 'purchase', 'deal', 'price', 'compare', 'discount'],
     description: 'Shopping Assistant - finds deals based on user interests',
     enabled: true,
   },
   {
     type: 'content',
-    namespaces: ['ownyou.iab', 'ownyou.semantic', 'ownyou.entities'],
+    namespaces: [
+      NAMESPACES.IAB_CLASSIFICATIONS,
+      NAMESPACES.SEMANTIC_MEMORY,
+      NAMESPACES.ENTITIES,
+    ],
     intents: ['content', 'read', 'article', 'recommend', 'news', 'learn', 'watch'],
     description: 'Content Recommender - suggests articles and media',
     enabled: true,
@@ -43,14 +52,14 @@ export const DEFAULT_AGENT_REGISTRY: AgentRegistryEntry[] = [
   // Future agents (disabled until implemented)
   {
     type: 'travel',
-    namespaces: ['ownyou.semantic', 'ownyou.entities'],
+    namespaces: [NAMESPACES.SEMANTIC_MEMORY, NAMESPACES.ENTITIES],
     intents: ['travel', 'flight', 'hotel', 'vacation', 'trip', 'booking'],
     description: 'Travel Planner - helps with travel planning',
     enabled: false,
   },
   {
     type: 'restaurant',
-    namespaces: ['ownyou.semantic', 'ownyou.entities'],
+    namespaces: [NAMESPACES.SEMANTIC_MEMORY, NAMESPACES.ENTITIES],
     intents: ['restaurant', 'food', 'dinner', 'lunch', 'reservation', 'dining'],
     description: 'Restaurant Finder - finds dining options',
     enabled: false,

@@ -10,7 +10,6 @@
 
 import type { AgentContext, AgentStore } from '@ownyou/agents-base';
 import type { LLMClient } from '@ownyou/llm-client';
-import type { MemoryStore } from '@ownyou/memory-store';
 import type { AgentType } from '@ownyou/shared-types';
 import type { Trigger, TriggerResult, EventTrigger } from '../types';
 import { StoreWatcher, type StoreWatcherConfig } from '../data-driven/store-watcher';
@@ -21,8 +20,8 @@ import { AgentCoordinator, type AgentFactory, type AgentRegistryEntry } from '..
  * TriggerEngine configuration
  */
 export interface TriggerEngineConfig {
-  /** Memory store for data triggers and agent context */
-  store: MemoryStore;
+  /** Store for data triggers and agent context (AgentStore interface) */
+  store: AgentStore;
   /** LLM client for agent operations */
   llm?: LLMClient;
   /** User ID for namespacing */
@@ -280,7 +279,7 @@ export class TriggerEngine {
   private getAgentContext(): Omit<AgentContext, 'triggerData'> {
     return {
       userId: this.config.userId,
-      store: this.config.store as unknown as AgentStore,
+      store: this.config.store,
       llm: this.config.llm,
       tools: [],
     };

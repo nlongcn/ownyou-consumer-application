@@ -17,7 +17,9 @@
     "@ownyou/agents-shopping": "workspace:*",
     "@ownyou/agents-content": "workspace:*",
     "@ownyou/reflection": "workspace:*",
-    "@ownyou/memory": "workspace:*"
+    "@ownyou/memory": "workspace:*",
+    "@ownyou/resilience": "workspace:*",
+    "@ownyou/triggers": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.3.3",

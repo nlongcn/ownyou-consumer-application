@@ -46,6 +46,46 @@ export const DEFAULT_FALLBACK_CONFIG: Partial<FallbackChainConfig> = {
 };
 
 /**
+ * Context summary constants for graceful degradation
+ *
+ * When LLM fallback exhausts all options, we show a summary of the user's
+ * context. These control the minimum content length to bother summarizing,
+ * and the maximum summary length to display.
+ */
+const MIN_CONTEXT_LENGTH_FOR_SUMMARY = 50;
+const MAX_CONTEXT_SUMMARY_LENGTH = 200;
+
+/**
+ * Alternative provider mapping (v13 Section 6.11.3)
+ *
+ * When the primary provider fails, automatically select an alternative.
+ * This enables automatic provider switching in the fallback chain.
+ */
+export const ALTERNATIVE_PROVIDERS: Record<string, string> = {
+  openai: 'anthropic',
+  anthropic: 'openai',
+  google: 'groq',
+  groq: 'deepinfra',
+  deepinfra: 'groq',
+};
+
+/**
+ * Get the alternative provider for a given provider name
+ *
+ * @param providerName - Name of the current provider (e.g., 'openai')
+ * @returns Alternative provider name, or undefined if none configured
+ *
+ * @example
+ * ```typescript
+ * const alt = getAlternativeProvider('openai');
+ * // alt === 'anthropic'
+ * ```
+ */
+export function getAlternativeProvider(providerName: string): string | undefined {
+  return ALTERNATIVE_PROVIDERS[providerName.toLowerCase()];
+}
+
+/**
  * Model downgrade mapping
  */
 const MODEL_DOWNGRADES: Record<string, string> = {
@@ -280,17 +320,16 @@ export function gracefulDegradation(request: LLMRequest): LLMResponse {
 function extractContextSummary(request: LLMRequest): string | undefined {
   // Look for context in system message
   const systemMessage = request.messages.find(m => m.role === 'system');
-  if (systemMessage && systemMessage.content.length > 50) {
-    // Return first 200 chars of context
-    return systemMessage.content.slice(0, 200) + '...';
+  if (systemMessage && systemMessage.content.length > MIN_CONTEXT_LENGTH_FOR_SUMMARY) {
+    return systemMessage.content.slice(0, MAX_CONTEXT_SUMMARY_LENGTH) + '...';
   }
 
   // Look for context in user messages
   const userMessages = request.messages.filter(m => m.role === 'user');
   if (userMessages.length > 0) {
     const combined = userMessages.map(m => m.content).join(' ');
-    if (combined.length > 50) {
-      return combined.slice(0, 200) + '...';
+    if (combined.length > MIN_CONTEXT_LENGTH_FOR_SUMMARY) {
+      return combined.slice(0, MAX_CONTEXT_SUMMARY_LENGTH) + '...';
     }
   }
 
