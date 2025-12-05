@@ -23,21 +23,25 @@ export interface AgentCoordinatorConfig {
   agentFactory: AgentFactory;
   /** Custom registry (optional) */
   registry?: AgentRegistry;
+  /** Schedule to agent mapping (optional, uses defaults if not provided) */
+  scheduleAgents?: Record<string, AgentType[]>;
+  /** Event source to agent mapping (optional, uses defaults if not provided) */
+  eventAgents?: Record<string, AgentType[]>;
 }
 
 /**
- * Schedule to agent mapping
+ * Default schedule to agent mapping
  */
-const SCHEDULE_AGENTS: Record<string, AgentType[]> = {
+const DEFAULT_SCHEDULE_AGENTS: Record<string, AgentType[]> = {
   daily_digest: ['shopping', 'content'],
   weekly_review: ['shopping'],
   monthly_planning: ['shopping'],
 };
 
 /**
- * Event source to agent mapping
+ * Default event source to agent mapping
  */
-const EVENT_AGENTS: Record<string, AgentType[]> = {
+const DEFAULT_EVENT_AGENTS: Record<string, AgentType[]> = {
   calendar: ['shopping', 'content'],
   location: [],
   webhook: [],
@@ -70,10 +74,14 @@ const EVENT_AGENTS: Record<string, AgentType[]> = {
 export class AgentCoordinator {
   private registry: AgentRegistry;
   private agentFactory: AgentFactory;
+  private scheduleAgents: Record<string, AgentType[]>;
+  private eventAgents: Record<string, AgentType[]>;
 
   constructor(config: AgentCoordinatorConfig) {
     this.registry = config.registry ?? new AgentRegistry();
     this.agentFactory = config.agentFactory;
+    this.scheduleAgents = config.scheduleAgents ?? DEFAULT_SCHEDULE_AGENTS;
+    this.eventAgents = config.eventAgents ?? DEFAULT_EVENT_AGENTS;
   }
 
   /**
@@ -219,14 +227,14 @@ export class AgentCoordinator {
    * Get agents for a schedule ID
    */
   private getAgentsForSchedule(scheduleId: string): AgentType[] {
-    return SCHEDULE_AGENTS[scheduleId] ?? [];
+    return this.scheduleAgents[scheduleId] ?? [];
   }
 
   /**
    * Get agents for an event source
    */
   private getAgentsForEvent(eventSource: string): AgentType[] {
-    return EVENT_AGENTS[eventSource] ?? [];
+    return this.eventAgents[eventSource] ?? [];
   }
 
   /**
@@ -248,5 +256,19 @@ export class AgentCoordinator {
    */
   setAgentEnabled(type: AgentType, enabled: boolean): boolean {
     return this.registry.setEnabled(type, enabled);
+  }
+
+  /**
+   * Set agents for a schedule ID
+   */
+  setScheduleAgents(scheduleId: string, agents: AgentType[]): void {
+    this.scheduleAgents[scheduleId] = agents;
+  }
+
+  /**
+   * Set agents for an event source
+   */
+  setEventAgents(eventSource: string, agents: AgentType[]): void {
+    this.eventAgents[eventSource] = agents;
   }
 }
