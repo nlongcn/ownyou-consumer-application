@@ -7,6 +7,8 @@ import {
   llmInferenceWithFallback,
   gracefulDegradation,
   getDowngradedModel,
+  getAlternativeProvider,
+  ALTERNATIVE_PROVIDERS,
   type FallbackChainConfig,
 } from '../fallback';
 import type { LLMRequest, LLMResponse, LLMProvider } from '@ownyou/llm-client';
@@ -366,6 +368,33 @@ describe('LLM Fallback Chain', () => {
       for (const level of actualLevels) {
         expect(typeof level).toBe('string');
       }
+    });
+  });
+
+  describe('getAlternativeProvider', () => {
+    it('should return correct alternative providers (v13 Section 6.11.3)', () => {
+      expect(getAlternativeProvider('openai')).toBe('anthropic');
+      expect(getAlternativeProvider('anthropic')).toBe('openai');
+      expect(getAlternativeProvider('google')).toBe('groq');
+      expect(getAlternativeProvider('groq')).toBe('deepinfra');
+      expect(getAlternativeProvider('deepinfra')).toBe('groq');
+    });
+
+    it('should handle case-insensitive provider names', () => {
+      expect(getAlternativeProvider('OpenAI')).toBe('anthropic');
+      expect(getAlternativeProvider('ANTHROPIC')).toBe('openai');
+      expect(getAlternativeProvider('Google')).toBe('groq');
+    });
+
+    it('should return undefined for unknown providers', () => {
+      expect(getAlternativeProvider('unknown')).toBeUndefined();
+      expect(getAlternativeProvider('custom-provider')).toBeUndefined();
+    });
+
+    it('should export ALTERNATIVE_PROVIDERS constant', () => {
+      expect(ALTERNATIVE_PROVIDERS).toBeDefined();
+      expect(ALTERNATIVE_PROVIDERS.openai).toBe('anthropic');
+      expect(ALTERNATIVE_PROVIDERS.anthropic).toBe('openai');
     });
   });
 

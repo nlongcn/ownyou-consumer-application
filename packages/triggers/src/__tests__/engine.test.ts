@@ -3,6 +3,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { NAMESPACES } from '@ownyou/shared-types';
 import { TriggerEngine } from '../engine/trigger-engine';
 
 // Mock agent
@@ -41,7 +42,7 @@ describe('TriggerEngine', () => {
     engine = new TriggerEngine({
       store: mockStore as any,
       userId: 'user_123',
-      watchNamespaces: ['ownyou.iab', 'ownyou.semantic'],
+      watchNamespaces: [NAMESPACES.IAB_CLASSIFICATIONS, NAMESPACES.SEMANTIC_MEMORY],
       schedules: {
         test_schedule: 'every 1h',
       },
@@ -153,7 +154,7 @@ describe('TriggerEngine', () => {
       // Simulate store event
       watcher.handleStoreEvent({
         type: 'put',
-        namespace: ['ownyou.iab', 'user_123'],
+        namespace: [NAMESPACES.IAB_CLASSIFICATIONS, 'user_123'],
         key: 'classification_1',
       });
 

@@ -15,7 +15,12 @@ export {
 } from './agent-registry';
 
 export {
+  IntentClassifier,
   classifyIntent,
   getIntentFromKeywords,
   matchesIntent,
+  getDefaultClassifier,
+  DEFAULT_INTENT_PATTERNS,
+  DEFAULT_ENTITY_PATTERNS,
+  type IntentClassifierConfig,
 } from './intent-classifier';

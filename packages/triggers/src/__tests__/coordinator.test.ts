@@ -3,6 +3,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { NAMESPACES } from '@ownyou/shared-types';
 import { AgentCoordinator, AgentRegistry, classifyIntent } from '../coordinator';
 import type { DataTrigger, ScheduledTrigger, UserTrigger } from '../types';
 
@@ -49,7 +50,7 @@ describe('AgentCoordinator', () => {
         const trigger: DataTrigger = {
           id: 'test_1',
           mode: 'data',
-          namespace: 'ownyou.iab',
+          namespace: NAMESPACES.IAB_CLASSIFICATIONS,
           key: 'classification_1',
           changeType: 'create',
           value: { category: 'Electronics' },
@@ -311,7 +312,7 @@ describe('AgentCoordinator', () => {
       const trigger: DataTrigger = {
         id: 'test_1',
         mode: 'data',
-        namespace: 'ownyou.iab',
+        namespace: NAMESPACES.IAB_CLASSIFICATIONS,
         key: 'item_1',
         changeType: 'create',
         value: {},
@@ -339,7 +340,7 @@ describe('AgentCoordinator', () => {
       const trigger: DataTrigger = {
         id: 'test_1',
         mode: 'data',
-        namespace: 'ownyou.iab',
+        namespace: NAMESPACES.IAB_CLASSIFICATIONS,
         key: 'item_1',
         changeType: 'create',
         value: {},
@@ -376,7 +377,7 @@ describe('AgentRegistry', () => {
   });
 
   it('should index agents by namespace', () => {
-    const agents = registry.getAgentsForNamespace('ownyou.iab');
+    const agents = registry.getAgentsForNamespace(NAMESPACES.IAB_CLASSIFICATIONS);
     expect(agents).toContain('shopping');
     expect(agents).toContain('content');
   });
@@ -392,6 +393,89 @@ describe('AgentRegistry', () => {
 
     registry.setEnabled('shopping', true);
     expect(registry.getEnabledAgents().some(a => a.type === 'shopping')).toBe(true);
+  });
+});
+
+describe('AgentCoordinator validation', () => {
+  it('should validate schedule mappings and identify unmapped schedules', () => {
+    const coordinator = new AgentCoordinator({
+      agentFactory: () => null,
+    });
+
+    const result = coordinator.validateScheduleMappings([
+      'daily_digest',     // Has default mapping
+      'unknown_schedule', // No mapping
+    ]);
+
+    expect(result.valid).toBe(false);
+    expect(result.unmappedSchedules).toContain('unknown_schedule');
+    expect(result.unmappedSchedules).not.toContain('daily_digest');
+  });
+
+  it('should validate event mappings and identify unmapped events', () => {
+    const coordinator = new AgentCoordinator({
+      agentFactory: () => null,
+    });
+
+    const result = coordinator.validateEventMappings([
+      'calendar',        // Has default mapping
+      'unknown_source',  // No mapping
+    ]);
+
+    expect(result.valid).toBe(false);
+    expect(result.unmappedEvents).toContain('unknown_source');
+    expect(result.unmappedEvents).not.toContain('calendar');
+  });
+
+  it('should identify empty mappings', () => {
+    const coordinator = new AgentCoordinator({
+      agentFactory: () => null,
+    });
+
+    // Set an empty mapping
+    coordinator.setScheduleAgents('empty_schedule', []);
+
+    const result = coordinator.validateScheduleMappings(['empty_schedule']);
+
+    expect(result.valid).toBe(false);
+    expect(result.emptyMappings).toContain('empty_schedule');
+  });
+
+  it('should pass validation when all mappings exist', () => {
+    const coordinator = new AgentCoordinator({
+      agentFactory: () => null,
+    });
+
+    const result = coordinator.validateScheduleMappings([
+      'daily_digest',
+      'weekly_review',
+    ]);
+
+    expect(result.valid).toBe(true);
+    expect(result.unmappedSchedules).toHaveLength(0);
+  });
+
+  it('should provide getter methods for mappings', () => {
+    const coordinator = new AgentCoordinator({
+      agentFactory: () => null,
+    });
+
+    const scheduleMappings = coordinator.getScheduleMappings();
+    const eventMappings = coordinator.getEventMappings();
+
+    expect(scheduleMappings.daily_digest).toBeDefined();
+    expect(eventMappings.calendar).toBeDefined();
+  });
+
+  it('should check individual mapping existence', () => {
+    const coordinator = new AgentCoordinator({
+      agentFactory: () => null,
+    });
+
+    expect(coordinator.hasScheduleMapping('daily_digest')).toBe(true);
+    expect(coordinator.hasScheduleMapping('nonexistent')).toBe(false);
+    expect(coordinator.hasEventMapping('calendar')).toBe(true);
+    expect(coordinator.hasEventMapping('nonexistent')).toBe(false);
   });
 });
 
