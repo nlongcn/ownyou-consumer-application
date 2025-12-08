@@ -1,7 +1,7 @@
 # OwnYou System Architecture Specification (v13)
 
 **Status:** DRAFT - PENDING APPROVAL
-**Date:** December 2025
+**Date:** December 2025 (Updated December 7, 2025)
 **Supersedes:** v12
 
 **Key Changes from v12:**
@@ -10,6 +10,7 @@
 - **Error Handling & Resilience (6.11):** Circuit breakers, LLM fallback chains, partial data handling
 - **Agent Specification Matrix (3.6):** Per-agent tools, namespace permissions, external APIs
 - **Observability & Debugging (10):** Agent tracing, sync debugging, cost metering, GDPR data export
+- **Reflection Namespace (8.12):** Added `reflectionState` namespace for reflection trigger state
 
 **Key Changes from v11 (preserved from v12):**
 
@@ -5718,6 +5719,9 @@ const NS = {
   missionFeedback: (userId: string, missionId: string) =>
     ["ownyou.feedback", userId, missionId],
 
+  // === REFLECTION STATE ===
+  reflectionState: (userId: string) => ["ownyou.reflection", userId],
+
   // === BBS+ IDENTITY ===
   pseudonyms: (userId: string) => ["ownyou.pseudonyms", userId],
   disclosureHistory: (userId: string) => ["ownyou.disclosures", userId],
@@ -5786,6 +5790,7 @@ Not all memory syncs — some is device-specific, some is shared:
 | `ikigai_profile` | ✅ Yes | Core user understanding shared |
 | `missionCards` | ✅ Yes | Active missions visible everywhere |
 | `mission_feedback` | ✅ Yes | Feedback informs all devices |
+| `reflectionState` | ✅ Yes | Reflection triggers must be consistent |
 | `earnings` | ✅ Yes | Financial data must be accurate everywhere |
 | **Device-local only:** | | |
 | `embedding_queue` | ❌ No | Device-specific processing queue |

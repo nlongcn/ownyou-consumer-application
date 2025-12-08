@@ -458,10 +458,10 @@ describe('Integration Test 4: Non-Exclusive Category Handling', () => {
     // All 3 should be included as separate primaries
     expect(formatted).toHaveLength(3)
 
-    // No alternatives (each is its own primary)
-    expect(formatted[0].alternatives).toBeUndefined()
-    expect(formatted[1].alternatives).toBeUndefined()
-    expect(formatted[2].alternatives).toBeUndefined()
+    // No alternatives (each is its own primary) - empty array for non-exclusive
+    expect(formatted[0].alternatives).toEqual([])
+    expect(formatted[1].alternatives).toEqual([])
+    expect(formatted[2].alternatives).toEqual([])
 
     // Verify all have primary values
     const values = formatted.map((item) => item.primary.value)

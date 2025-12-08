@@ -119,7 +119,7 @@ async function generateCommunitySummaries(
       generatedAt: Date.now(),
     };
 
-    await store.put(['ownyou.summaries', userId], context, summary);
+    await store.put(NS.communitySummaries(userId), context, summary);
   }
 }
 
@@ -131,7 +131,7 @@ export async function getCommunitySummary(
   context: string,
   store: MemoryStore
 ): Promise<CommunitySummary | null> {
-  return store.get<CommunitySummary>(['ownyou.summaries', userId], context);
+  return store.get<CommunitySummary>(NS.communitySummaries(userId), context);
 }
 
 /**

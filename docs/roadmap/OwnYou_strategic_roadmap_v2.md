@@ -25,8 +25,7 @@ Phase 5: UI Layer ████████████████████�
 
 ### New Approach (Vertical Slices)
 ```
-Sprint 0-6: Foundation→Ikigai     ████████░░░░░░░░░░░░░░░░░░░░░░ (COMPLETE - Ikigai intelligence)
-Sprint 7: Travel + Agents         █████████░░░░░░░░░░░░░░░░░░░░░ (L2/L3 agents)
+Sprint 0-7: Foundation→Agents     █████████░░░░░░░░░░░░░░░░░░░░░ (COMPLETE - L2/L3 agents)
 Sprint 8-9: Data Sources          █████████░░░░░░░░░░░░░░░░░░░░░ (financial→calendar)
 ...continues...
 ```
@@ -72,9 +71,9 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 | 3.5 Agent Coordinator | Sprint 5 | ✅ Complete |
 | 3.6.1 Shopping Agent (L1-2) | Sprint 3 | ✅ Complete |
 | 3.6.1 Content Agent (L1) | Sprint 4 | ✅ Complete |
-| 3.6.1 Restaurant Agent (L2) | Sprint 7 | 🔲 Planned |
-| 3.6.1 Events Agent (L2) | Sprint 7 | 🔲 Planned |
-| 3.6.1 Travel Agent (L3) | Sprint 7 | 🔲 Planned |
+| 3.6.1 Restaurant Agent (L2) | Sprint 7 | ✅ Complete |
+| 3.6.1 Events Agent (L2) | Sprint 7 | ✅ Complete |
+| 3.6.1 Travel Agent (L3) | Sprint 7 | ✅ Complete |
 | 3.6.1 Diagnostic Agent (L2) | Sprint 8 | 🔲 Planned |
 | 3.6.2 Namespace Access Control | Sprint 3 | ✅ Complete |
 | 3.6.3 Agent Complexity Levels (L1/L2/L3) | Sprint 3 | ✅ Complete |
@@ -290,8 +289,8 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 
 ---
 
-### Sprint 7: Additional Agents (Restaurant, Events, Travel) 🔲
-**Duration:** 4 weeks | **v13 Coverage:** Section 3.6.1 (Remaining agents)
+### Sprint 7: Additional Agents (Restaurant, Events, Travel) ✅
+**Duration:** 4 weeks | **Completed:** 2025-12-07 | **Tests:** 179 passing
 
 **Goal:** Complete MVP agent roster with varying complexity levels
 
@@ -302,21 +301,23 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 | Week 3-4 | Travel Agent (L3) | Multi-step planning, flights + hotels (mock) |
 
 **New Packages:**
-- `@ownyou/agents-restaurant` — L2 dining agent
-- `@ownyou/agents-events` — L2 events agent
-- `@ownyou/agents-travel` — L3 travel planning agent
+- `@ownyou/agents-restaurant` — L2 dining agent (55 tests)
+- `@ownyou/agents-events` — L2 events agent (24 tests)
+- `@ownyou/agents-travel` — L3 travel planning agent (49 tests)
+- `@ownyou/mock-apis` — Mock external APIs (51 tests)
 
 **Success Criteria:**
-- [ ] Restaurant Agent respects L2 limits (10 tools, 5 LLM, 120s)
-- [ ] Events Agent integrates with mock calendar
-- [ ] Travel Agent handles multi-step workflows (L3)
-- [ ] All agents use memory system
-- [ ] All agents learn from feedback
+- [x] Restaurant Agent respects L2 limits (10 tools, 5 LLM, 120s)
+- [x] Events Agent integrates with mock calendar
+- [x] Travel Agent handles multi-step workflows (L3)
+- [x] All agents use memory system
+- [x] All agents learn from feedback
 
 ---
 
-### Sprint 8: Data Sources (Financial, Calendar, Diagnostic) 🔲
+### Sprint 8: Data Sources (Financial, Calendar) + Diagnostic Agent 🔲
 **Duration:** 3 weeks | **v13 Coverage:** Section 3.6.1 (Diagnostic), Phase 2 Track A
+**Spec:** `docs/sprints/ownyou-sprint8-spec.md`
 
 **Goal:** Expand data sources and add diagnostic agent
 
@@ -327,9 +328,9 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 | Week 3 | Diagnostic Agent | Profile analysis, Pattern finding, Connection suggestions |
 
 **New Packages:**
-- `@ownyou/data-financial` — Financial data connector
-- `@ownyou/data-calendar` — Calendar data connector
-- `@ownyou/agents-diagnostic` — L2 diagnostic agent
+- `@ownyou/data-financial` — Financial data connector (Plaid Link, transaction classification)
+- `@ownyou/data-calendar` — Calendar data connector (Google/Microsoft, relationship extraction)
+- `@ownyou/agents-diagnostic` — L2 diagnostic agent (read-all, write-restricted)
 
 **Success Criteria:**
 - [ ] Financial transactions classified by IAB
@@ -337,6 +338,7 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 - [ ] Diagnostic Agent analyzes complete profile
 - [ ] Data sources feed Ikigai inference
 - [ ] 4 data sources working (email, financial, calendar, browser)
+- [ ] 130+ tests passing
 
 ---
 
@@ -384,6 +386,11 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 - [ ] All sync data encrypted
 - [ ] E2EE backup working
 - [ ] Key recovery tested
+
+**Post-Sprint Action Items:**
+- [ ] **Complete Plaid Registration** - Privy wallet auth enables "phishing-resistant MFA" answer
+  - Screenshot wallet connection flow for Q4 documentation
+  - See: `docs/architecture/PLAID/PLAID_application.md`
 
 ---
 
@@ -478,7 +485,7 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 | **4** | **3 weeks** | **COMPLETE** | Memory Intelligence, Content Agent |
 | **5** | **2 weeks** | **COMPLETE** | Resilience + Triggers | 6.11, 3.1-3.5 |
 | **6** | **3 weeks** | **COMPLETE** | Ikigai Intelligence | 2 |
-| 7 | 4 weeks | Restaurant, Events, Travel Agents | 3.6.1 |
+| **7** | **4 weeks** | **COMPLETE** | Restaurant, Events, Travel Agents | 3.6.1 |
 | 8 | 3 weeks | Financial, Calendar, Diagnostic | Data sources |
 | 9 | 2 weeks | Observability | 10 |
 | 10 | 3 weeks | Cross-Device Sync | 5 |
@@ -493,16 +500,12 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 ## Sprint Dependency Graph
 
 ```
-Sprint 0-6 (COMPLETE ✅)
+Sprint 0-7 (COMPLETE ✅)
     │
-    │ Foundation, memory, agents, resilience, triggers, Ikigai all working
-    │
-    ▼
-Sprint 7 ← NEXT
-(Restaurant, Events, Travel Agents)
+    │ Foundation, memory, agents (5 types), resilience, triggers, Ikigai all working
     │
     ▼
-Sprint 8
+Sprint 8 ← NEXT
 (Data Sources + Diagnostic)
     │
     ├──────────────────────┐
@@ -576,6 +579,168 @@ Sprint 9               Sprint 10
 
 ---
 
+## Learnings & Best Practices
+
+*Captured from Sprint 0-7 code review (December 7, 2025)*
+
+### Namespace Management
+
+**What Worked:**
+- Single source of truth in `@ownyou/shared-types/namespaces.ts`
+- Factory functions (`NS.iabClassifications(userId)`) prevent hardcoded strings
+- Consistent import pattern across all packages
+
+**What Failed:**
+- Hardcoded namespace strings (e.g., `'ownyou.reflection'`) bypass type safety
+- Local duplicate constants (even with "matches shared-types" comments) drift over time
+- Missing factory functions force developers to hardcode
+
+**Best Practice:** Every new namespace needs:
+1. Entry in `NAMESPACES` constant
+2. Factory function in `NS` object
+3. Sync scope and privacy settings documented
+
+### Testing Quality
+
+**Patterns That Work:**
+| Pattern | Example | Benefit |
+|---------|---------|---------|
+| Real implementation testing | `InMemoryBackend` for store tests | Catches integration bugs |
+| Mathematical verification | Budget tracking with exact cost calculations | Proves correctness |
+| State machine testing | Circuit breaker state transitions | Covers all paths |
+| Fake timers | Cache TTL tests | Deterministic timing tests |
+
+**Anti-Patterns to Avoid:**
+| Anti-Pattern | Problem | Fix |
+|--------------|---------|-----|
+| `get: vi.fn(() => null)` | Can't test personalization | Return realistic data for specific keys |
+| Never verifying `put` calls | Unknown what was stored | Use `.toHaveBeenCalledWith()` assertions |
+| Hollow mock responses | Tests pass but logic untested | Vary responses based on input |
+| Implicit mock API testing | Parameter passing not verified | Assert on mock API call parameters |
+
+**Test Coverage Targets:**
+- Core infrastructure: 90%+ (memory-store, llm-client, triggers)
+- Agent business logic: 80%+ (currently ~65%, needs isolated unit tests)
+- UI components: 80%+ (currently ~25%, needs expansion)
+
+### Sprint Review Process
+
+**Recommended Review Checklist:**
+1. ☐ All packages import namespaces from `@ownyou/shared-types`
+2. ☐ No hardcoded namespace strings in source files
+3. ☐ All new namespaces have factory functions
+4. ☐ Business logic functions have isolated unit tests
+5. ☐ Mock store returns realistic data for tested scenarios
+6. ☐ Store writes verified with `.toHaveBeenCalledWith()`
+7. ☐ Dead code removed (search for unused exports)
+
+### Priority-Based Fix Ordering
+
+When addressing code review findings, use this priority order:
+
+| Priority | Criteria | Action |
+|----------|----------|--------|
+| P1 - Critical | v13 architecture violations, broken type safety | Fix before next sprint |
+| P2 - High | Shallow test verification, missing unit tests | Fix this sprint |
+| P3 - Medium | Under-tested components, missing edge cases | Next sprint backlog |
+| P4 - Low | Technical debt, anti-patterns | Opportunistic fixes |
+
+### Agent Test Improvement Template
+
+For agents with shallow mock stores, apply this pattern:
+
+```typescript
+// BEFORE (anti-pattern)
+get: vi.fn(async () => null)
+
+// AFTER (realistic mock)
+get: vi.fn(async (ns, key) => {
+  if (key === 'profile') return { dietaryPreferences: ['vegan'] };
+  if (key === 'history') return [{ venue: 'Thai Place', rating: 4 }];
+  return null;
+})
+```
+
+Add store write verification:
+```typescript
+expect(mockStore.put).toHaveBeenCalledWith(
+  expect.any(Array),
+  expect.stringMatching(/^mission_/),
+  expect.objectContaining({
+    type: 'restaurant',
+    primaryAction: expect.objectContaining({ type: 'navigate' }),
+  })
+);
+```
+
+### Agent Architecture Conformance (Sprint 8 Post-Mortem)
+
+**Background:** The Diagnostic Agent was initially built as a standalone class instead of extending `BaseAgent`, requiring a complete rewrite. This section captures learnings to prevent similar architectural violations.
+
+**Root Causes Identified:**
+1. No reference to existing implementations before building
+2. Treating agent domain as "different" despite uniform architecture requirement
+3. Tests validated behavior but not structure
+4. Missing structural validation step
+
+**MANDATORY for New Agents:**
+
+Before implementing ANY new agent, read these files FIRST:
+```bash
+# 1. Read base interface (understand contract)
+cat packages/agents/base/src/base-agent.ts
+
+# 2. Read reference implementation (see pattern in practice)
+cat packages/agents/restaurant/src/agent.ts
+```
+
+**Structural Tests Required:**
+
+Write these tests BEFORE implementing the agent:
+```typescript
+// These tests catch architectural violations early
+describe('Agent Structure', () => {
+  it('should extend BaseAgent', () => {
+    expect(agent).toBeInstanceOf(BaseAgent);
+  });
+
+  it('should have correct agentType', () => {
+    expect(agent.agentType).toBe('expected-type');
+  });
+
+  it('should have correct level', () => {
+    expect(['L1', 'L2', 'L3']).toContain(agent.level);
+  });
+
+  it('should return AgentResult with missionCard on success', async () => {
+    const result = await agent.run(context);
+    expect(result).toHaveProperty('success');
+    expect(result).toHaveProperty('missionCard');
+  });
+});
+```
+
+**Agent Conformance Checklist:**
+
+| Requirement | Pattern |
+|-------------|---------|
+| Extends BaseAgent | `class XAgent extends BaseAgent` |
+| Has agentType | `readonly agentType = 'x' as const` |
+| Has level | `readonly level = 'L2' as const` |
+| Implements execute | `protected async execute(ctx: AgentContext): Promise<AgentResult>` |
+| Has permissions | `export const X_PERMISSIONS: AgentPermissions = { ... }` |
+| Has trigger type | `export interface XTriggerData { ... }` |
+| Returns MissionCard | `return { success: true, missionCard }` |
+| Records tool calls | Uses `this.recordToolCall()` |
+| Records memory ops | Uses `this.recordMemoryOp()` |
+| Supports episodes | Overrides `describeTrigger()` and `extractTags()` |
+
+**Key Lesson:** Domain complexity ≠ structural complexity. Complex domain logic (pattern detection, LLM insights) lives INSIDE the `execute()` method, not in a different class structure.
+
+See: `docs/bugfixing/DIAGNOSTIC_AGENT_POST_MORTEM.md` for full analysis.
+
+---
+
 ## Document History
 
 | Version | Date | Changes |
@@ -585,10 +750,13 @@ Sprint 9               Sprint 10
 | v2.1 | 2025-12-04 | Sprint 4 completed - Memory Intelligence + Content Agent |
 | v2.2 | 2025-12-05 | Sprint 5 completed - Resilience + Trigger System (227 tests) |
 | v2.3 | 2025-12-05 | Sprint 6 completed - Ikigai Intelligence Layer |
+| v2.4 | 2025-12-07 | Sprint 7 completed - Restaurant, Events, Travel Agents (179 tests) |
+| v2.5 | 2025-12-07 | Added Learnings & Best Practices section from Sprint 0-7 code review |
+| v2.6 | 2025-12-08 | Added Agent Architecture Conformance section from Sprint 8 post-mortem |
 
 ---
 
-**Document Status:** Strategic Roadmap v2.3 - ACTIVE
-**Date:** 2025-12-05
+**Document Status:** Strategic Roadmap v2.6 - ACTIVE
+**Date:** 2025-12-08
 **Validates Against:** OwnYou_architecture_v13.md
-**Next Sprint:** Sprint 7 (Restaurant, Events, Travel Agents)
+**Next Sprint:** Sprint 8 (Data Sources + Diagnostic Agent)

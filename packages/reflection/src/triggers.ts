@@ -10,6 +10,7 @@
 
 import type { MemoryStore } from '@ownyou/memory-store';
 import type { LLMClient } from '@ownyou/llm-client';
+import { NS } from '@ownyou/shared-types';
 import {
   runReflection,
   DEFAULT_REFLECTION_CONFIG,
@@ -44,7 +45,7 @@ export class ReflectionTriggerManager {
    */
   async loadState(): Promise<void> {
     const stored = await this.store.get<TriggerState>(
-      ['ownyou.reflection', this.userId],
+      NS.reflectionState(this.userId),
       STATE_KEY
     );
 
@@ -57,7 +58,7 @@ export class ReflectionTriggerManager {
    * Save state to store
    */
   private async saveState(): Promise<void> {
-    await this.store.put(['ownyou.reflection', this.userId], STATE_KEY, this.state);
+    await this.store.put(NS.reflectionState(this.userId), STATE_KEY, this.state);
   }
 
   /**

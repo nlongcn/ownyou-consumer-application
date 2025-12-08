@@ -71,9 +71,74 @@ todos = [
 
 1. **Read package spec** from sprint document
 2. **Identify acceptance criteria**
-3. **Use `implement-package` skill** for implementation
-4. **Use `v13-compliance-check` skill** before marking complete
-5. **Commit after each package**
+3. **For AGENT packages: Read reference implementation FIRST** (see Agent Implementation Protocol below)
+4. **Use `implement-package` skill** for implementation
+5. **Use `v13-compliance-check` skill** before marking complete
+6. **Commit after each package**
+
+## Agent Implementation Protocol (MANDATORY)
+
+**Background:** Sprint 8 post-mortem revealed agents built without referencing existing implementations violated the BaseAgent pattern, requiring complete rewrites.
+
+### Before Implementing ANY Agent
+
+**STOP. Read these files FIRST:**
+
+```bash
+# 1. Understand the contract
+Read: packages/agents/base/src/base-agent.ts
+
+# 2. See the pattern in practice
+Read: packages/agents/restaurant/src/agent.ts
+```
+
+### Agent Structural Tests (Write BEFORE Implementation)
+
+```typescript
+describe('Agent Structure', () => {
+  it('should extend BaseAgent', () => {
+    expect(agent).toBeInstanceOf(BaseAgent);
+  });
+
+  it('should have correct agentType', () => {
+    expect(agent.agentType).toBe('expected-type');
+  });
+
+  it('should have correct level', () => {
+    expect(['L1', 'L2', 'L3']).toContain(agent.level);
+  });
+
+  it('should return AgentResult with missionCard', async () => {
+    const result = await agent.run(context);
+    expect(result).toHaveProperty('success');
+    expect(result).toHaveProperty('missionCard');
+  });
+});
+```
+
+### Agent Conformance Checklist
+
+Every agent MUST have:
+
+| Requirement | Pattern |
+|-------------|---------|
+| Extends BaseAgent | `class XAgent extends BaseAgent` |
+| Has agentType | `readonly agentType = 'x' as const` |
+| Has level | `readonly level = 'L2' as const` |
+| Implements execute | `protected async execute(ctx): Promise<AgentResult>` |
+| Has permissions | `export const X_PERMISSIONS: AgentPermissions` |
+| Has trigger type | `export interface XTriggerData` |
+| Returns MissionCard | `return { success: true, missionCard }` |
+| Records tool calls | Uses `this.recordToolCall()` |
+| Records memory ops | Uses `this.recordMemoryOp()` |
+
+### Key Insight
+
+**Domain complexity ≠ structural complexity.**
+
+An agent with complex domain logic (LLM inference, pattern detection, multi-step workflows) still uses the SAME class structure as simple agents. The complexity lives INSIDE `execute()`, not in a different architecture.
+
+**See:** `docs/bugfixing/DIAGNOSTIC_AGENT_POST_MORTEM.md` for full analysis.
 
 ## Sprint Workflow Decision Tree
 
@@ -202,6 +267,9 @@ Before marking sprint work complete:
 - [ ] Sprint spec read and understood
 - [ ] All packages implemented in dependency order
 - [ ] Each package passed v13-compliance-check
+- [ ] **For agent packages:** Reference implementation read BEFORE coding
+- [ ] **For agent packages:** Structural tests written BEFORE implementation
+- [ ] **For agent packages:** Agent Conformance Checklist passed
 - [ ] All tests passing
 - [ ] Code committed with meaningful messages
 - [ ] Sprint status updated

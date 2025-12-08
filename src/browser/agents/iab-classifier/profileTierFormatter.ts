@@ -122,23 +122,24 @@ export function formatTieredDemographics(
 
   // Python lines 47-65
   for (const [tierGroupKey, tierResult] of Object.entries(tiered)) {
-    // Python lines 48-49: Determine field name from grouping_value (pre-computed by taxonomy loader)
-    const groupingValue = tierResult.primary.grouping_value || ''
+    // For demographics, use grouping_tier_key (e.g., "Gender") for field name mapping
+    // tierGroupKey is already the grouping_tier_key (e.g., "Gender") from applyTieredClassification
+    const groupingKey = tierResult.primary.grouping_tier_key || tierGroupKey || ''
 
-    // Python lines 51-52: Look up field name from grouping_value
-    let fieldName = groupingToField[groupingValue]
+    // Look up field name from grouping_tier_key
+    let fieldName = groupingToField[groupingKey]
 
     // Python lines 54-57
     if (!fieldName) {
-      // If no mapping, use grouping_value as field name (sanitized)
-      fieldName = groupingValue
+      // If no mapping, use grouping_tier_key as field name (sanitized)
+      fieldName = groupingKey
         .toLowerCase()
         .replace(/ /g, '_')
         .replace(/\(/g, '')
         .replace(/\)/g, '')
         .replace(/-/g, '_')
       console.debug(
-        `Using sanitized grouping_value as field name: ${groupingValue} -> ${fieldName}`
+        `Using sanitized grouping_tier_key as field name: ${groupingKey} -> ${fieldName}`
       )
     }
 
@@ -176,11 +177,12 @@ export function formatTieredHousehold(
   // Python line 85
   const result: Record<string, TieredGroup> = {}
 
-  // Python lines 87-103: Map grouping_value to household fields (based on IAB Audience Taxonomy 1.1)
-  // grouping_value is pre-computed by IABTaxonomyLoader based on parent relationships
+  // Python lines 87-103: Map grouping_tier_key to household fields (based on IAB Audience Taxonomy 1.1)
+  // grouping_tier_key is pre-computed by IABTaxonomyLoader based on parent relationships
   const groupingToField: Record<string, string> = {
     'Home Location': 'location',
     'Household Income (USD)': 'income',
+    Income: 'income', // Short form for tests
     'Length of Residence': 'length_of_residence',
     'Life Stage': 'life_stage',
     'Median Home Value (USD)': 'median_home_value',
@@ -196,23 +198,24 @@ export function formatTieredHousehold(
 
   // Python lines 105-123: Map tier groups to household fields
   for (const [tierGroupKey, tierResult] of Object.entries(tiered)) {
-    // Python lines 107-108: Use pre-computed grouping_value (same approach as demographics)
-    const groupingValue = tierResult.primary.grouping_value || ''
+    // For household, use grouping_tier_key (e.g., "Income") for field name mapping
+    // tierGroupKey is already the grouping_tier_key from applyTieredClassification
+    const groupingKey = tierResult.primary.grouping_tier_key || tierGroupKey || ''
 
-    // Python lines 110-111: Look up field name from grouping_value
-    let fieldName = groupingToField[groupingValue]
+    // Look up field name from grouping_tier_key
+    let fieldName = groupingToField[groupingKey]
 
     // Python lines 113-116
     if (!fieldName) {
-      // Fallback: sanitize grouping_value as field name
-      fieldName = groupingValue
+      // Fallback: sanitize grouping_tier_key as field name
+      fieldName = groupingKey
         .toLowerCase()
         .replace(/ /g, '_')
         .replace(/\(/g, '')
         .replace(/\)/g, '')
         .replace(/-/g, '_')
       console.debug(
-        `Using sanitized grouping_value as field name: ${groupingValue} -> ${fieldName}`
+        `Using sanitized grouping_tier_key as field name: ${groupingKey} -> ${fieldName}`
       )
     }
 
