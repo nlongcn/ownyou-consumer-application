@@ -87,6 +87,16 @@ export const NAMESPACES = {
 
   // Sprint 8: Diagnostic Agent
   DIAGNOSTIC_REPORTS: 'ownyou.diagnostic_reports',
+
+  // Sprint 10: Cross-Device Sync (v13 Section 5.2, 8.14)
+  SYNC_STATE: 'ownyou.sync_state', // Vector clocks, conflict resolution state
+  SYNC_PEERS: 'ownyou.sync_peers', // Known peer devices
+  DEVICE_REGISTRY: 'ownyou.devices', // Registered devices for this wallet
+
+  // Sprint 10: E2EE Backup (v13 Section 5.3, 5.4)
+  BACKUP_MANIFEST: 'ownyou.backup_manifest', // Backup metadata, checksums
+  BACKUP_HISTORY: 'ownyou.backup_history', // Backup/restore history
+  RECOVERY_KEY_HASH: 'ownyou.recovery_key_hash', // Hash of recovery key for verification
 } as const;
 
 /**
@@ -230,6 +240,30 @@ export const NS = {
   /** Diagnostic reports namespace: [namespace, userId] */
   diagnosticReports: (userId: string) =>
     [NAMESPACES.DIAGNOSTIC_REPORTS, userId] as const,
+
+  // Sprint 10: Cross-Device Sync namespaces
+  /** Sync state namespace: [namespace, userId] - vector clocks, conflict resolution */
+  syncState: (userId: string) => [NAMESPACES.SYNC_STATE, userId] as const,
+
+  /** Sync peers namespace: [namespace, userId] - known peer devices */
+  syncPeers: (userId: string) => [NAMESPACES.SYNC_PEERS, userId] as const,
+
+  /** Device registry namespace: [namespace, userId] - registered devices */
+  deviceRegistry: (userId: string) =>
+    [NAMESPACES.DEVICE_REGISTRY, userId] as const,
+
+  // Sprint 10: E2EE Backup namespaces
+  /** Backup manifest namespace: [namespace, userId] - backup metadata */
+  backupManifest: (userId: string) =>
+    [NAMESPACES.BACKUP_MANIFEST, userId] as const,
+
+  /** Backup history namespace: [namespace, userId] - backup/restore history */
+  backupHistory: (userId: string) =>
+    [NAMESPACES.BACKUP_HISTORY, userId] as const,
+
+  /** Recovery key hash namespace: [namespace, userId] - for key verification */
+  recoveryKeyHash: (userId: string) =>
+    [NAMESPACES.RECOVERY_KEY_HASH, userId] as const,
 } as const;
 
 /**
@@ -289,6 +323,16 @@ export const NAMESPACE_PRIVACY: Record<Namespace, 'public' | 'sensitive' | 'priv
 
   // Sprint 8: Diagnostic Agent
   [NAMESPACES.DIAGNOSTIC_REPORTS]: 'private', // Diagnostic reports are private
+
+  // Sprint 10: Cross-Device Sync
+  [NAMESPACES.SYNC_STATE]: 'private', // Internal sync state
+  [NAMESPACES.SYNC_PEERS]: 'private', // Peer device list
+  [NAMESPACES.DEVICE_REGISTRY]: 'private', // Device registration
+
+  // Sprint 10: E2EE Backup
+  [NAMESPACES.BACKUP_MANIFEST]: 'private', // Backup metadata
+  [NAMESPACES.BACKUP_HISTORY]: 'private', // Backup history
+  [NAMESPACES.RECOVERY_KEY_HASH]: 'private', // Recovery key verification
 };
 
 /**
@@ -351,4 +395,14 @@ export const NAMESPACE_SYNC_SCOPE: Record<Namespace, 'full' | 'selective' | 'non
 
   // Sprint 8: Diagnostic Agent
   [NAMESPACES.DIAGNOSTIC_REPORTS]: 'full', // Reports sync across devices
+
+  // Sprint 10: Cross-Device Sync
+  [NAMESPACES.SYNC_STATE]: 'full', // Sync state must be consistent across devices
+  [NAMESPACES.SYNC_PEERS]: 'full', // Peer list syncs so devices know each other
+  [NAMESPACES.DEVICE_REGISTRY]: 'full', // Device registry syncs
+
+  // Sprint 10: E2EE Backup
+  [NAMESPACES.BACKUP_MANIFEST]: 'full', // Manifest syncs so all devices know backup status
+  [NAMESPACES.BACKUP_HISTORY]: 'full', // History syncs for audit
+  [NAMESPACES.RECOVERY_KEY_HASH]: 'full', // Key hash syncs for verification
 };
