@@ -262,6 +262,9 @@ export interface CalendarPipelineConfig {
   // Relationship extraction
   minEventsForFrequentContact: number;
   relationshipDecayDays: number; // Days since last event before strength decreases
+  recencyWeight: number; // Weight for recency in relationship strength (0-1)
+  frequencyWeight: number; // Weight for frequency in relationship strength (0-1)
+  maxEventsForFrequency: number; // Max events before frequency factor caps at 1.0
 
   // Free time detection
   weekendStartHour: number; // Hour when weekend "starts" (e.g., Saturday 8 AM)
@@ -280,6 +283,9 @@ export const DEFAULT_CALENDAR_CONFIG: CalendarPipelineConfig = {
   modelTier: 'fast',
   minEventsForFrequentContact: 3,
   relationshipDecayDays: 90,
+  recencyWeight: 0.6, // Recency contributes 60% to relationship strength
+  frequencyWeight: 0.4, // Frequency contributes 40% to relationship strength
+  maxEventsForFrequency: 20, // Cap frequency factor at 20 events
   weekendStartHour: 8,
   weekendEndHour: 22,
   minFreeHoursForFreeWeekend: 16,

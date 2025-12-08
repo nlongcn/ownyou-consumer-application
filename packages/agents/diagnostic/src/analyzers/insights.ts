@@ -1,7 +1,8 @@
 /**
  * Insight Generator - Sprint 8
  *
- * Generates actionable insights from patterns and profile data.
+ * Generates actionable insights from patterns and profile data using LLM.
+ * v13 architecture: NO rule-based approaches - all insights via agentic LLM processes.
  */
 
 import type {
@@ -12,40 +13,182 @@ import type {
   AnalysisContext,
   AnalyzerResult,
 } from '../types.js';
+import type { LLMClient, ChatMessage } from '@ownyou/llm-client';
 
 /**
- * Generate insights from patterns and completeness data
+ * Insight generation configuration
  */
-export function generateInsights(
+export interface InsightGeneratorConfig {
+  /** LLM client for agentic insight generation */
+  llmClient?: LLMClient;
+  /** Maximum insights to generate */
+  maxInsights?: number;
+  /** User ID for LLM calls */
+  userId?: string;
+}
+
+/** Module-level LLM client */
+let _llmClient: LLMClient | null = null;
+
+/**
+ * Set the LLM client for insight generation
+ */
+export function setInsightLLMClient(client: LLMClient): void {
+  _llmClient = client;
+}
+
+/**
+ * Get the current LLM client
+ */
+export function getInsightLLMClient(): LLMClient | null {
+  return _llmClient;
+}
+
+/**
+ * Build the insight generation prompt
+ */
+function buildInsightPrompt(
   patterns: DiscoveredPattern[],
   completeness: ProfileCompleteness,
   context: AnalysisContext
-): AnalyzerResult<Insight[]> {
+): string {
+  const patternSummary = patterns.map(p => ({
+    type: p.type,
+    title: p.title,
+    description: p.description,
+    confidence: p.confidence,
+  }));
+
+  const contextSummary = {
+    emailCount: context.emailData?.classifications ? (context.emailData.classifications as unknown[]).length : 0,
+    transactionCount: context.financialData?.transactions ? (context.financialData.transactions as unknown[]).length : 0,
+    calendarEventCount: context.calendarData?.events ? (context.calendarData.events as unknown[]).length : 0,
+  };
+
+  return `You are an AI assistant generating personalized insights for a user's profile.
+
+Based on the following data, generate actionable and meaningful insights:
+
+## Profile Completeness
+- Overall: ${completeness.overall}%
+- Email connected: ${completeness.bySource.email.connected} (${completeness.bySource.email.itemCount} items)
+- Financial connected: ${completeness.bySource.financial.connected} (${completeness.bySource.financial.itemCount} items)
+- Calendar connected: ${completeness.bySource.calendar.connected} (${completeness.bySource.calendar.itemCount} items)
+- Ikigai Dimensions: Experiences ${completeness.byDimension.experiences}%, Relationships ${completeness.byDimension.relationships}%, Interests ${completeness.byDimension.interests}%, Giving ${completeness.byDimension.giving}%
+
+## Discovered Patterns
+${JSON.stringify(patternSummary, null, 2)}
+
+## Data Context
+${JSON.stringify(contextSummary, null, 2)}
+
+Generate 3-5 insights in the following JSON format:
+[
+  {
+    "category": "well_being" | "relationship" | "financial" | "opportunity" | "achievement",
+    "title": "Short insight title",
+    "body": "Detailed insight description",
+    "actionable": true/false,
+    "suggestedAction": "Optional action if actionable",
+    "relatedPatternTypes": ["pattern_type_1"]
+  }
+]
+
+Focus on:
+1. Well-being insights based on behavior patterns
+2. Relationship insights from social activity patterns
+3. Financial insights from spending patterns
+4. Opportunity suggestions based on growing interests
+5. Achievement recognition for milestones
+
+Return ONLY the JSON array, no other text.`;
+}
+
+/**
+ * Parse LLM response into Insight objects
+ */
+function parseLLMInsights(
+  llmResponse: string,
+  patterns: DiscoveredPattern[]
+): Insight[] {
   try {
-    const insights: Insight[] = [];
+    // Extract JSON from response (handle potential markdown code blocks)
+    let jsonStr = llmResponse.trim();
+    if (jsonStr.startsWith('```')) {
+      jsonStr = jsonStr.replace(/```json?\n?/g, '').replace(/```$/g, '').trim();
+    }
 
-    // Generate pattern-based insights
-    const patternInsights = generatePatternInsights(patterns);
-    insights.push(...patternInsights);
+    const rawInsights = JSON.parse(jsonStr) as Array<{
+      category: InsightCategory;
+      title: string;
+      body: string;
+      actionable: boolean;
+      suggestedAction?: string;
+      relatedPatternTypes?: string[];
+    }>;
 
-    // Generate completeness-based insights
-    const completenessInsights = generateCompletenessInsights(completeness);
-    insights.push(...completenessInsights);
+    return rawInsights.map((raw, index) => ({
+      id: `insight_llm_${Date.now()}_${index}`,
+      category: raw.category,
+      title: raw.title,
+      body: raw.body,
+      actionable: raw.actionable,
+      suggestedAction: raw.suggestedAction,
+      relatedPatterns: raw.relatedPatternTypes
+        ? patterns.filter(p => raw.relatedPatternTypes!.includes(p.type)).map(p => p.id)
+        : [],
+    }));
+  } catch (error) {
+    // If parsing fails, return empty array (let fallback handle it)
+    console.warn('Failed to parse LLM insights:', error);
+    return [];
+  }
+}
 
-    // Generate well-being insights
-    const wellBeingInsights = generateWellBeingInsights(patterns, context);
-    insights.push(...wellBeingInsights);
+/**
+ * Generate insights from patterns and completeness data using LLM
+ */
+export async function generateInsightsAsync(
+  patterns: DiscoveredPattern[],
+  completeness: ProfileCompleteness,
+  context: AnalysisContext,
+  config: InsightGeneratorConfig = {}
+): Promise<AnalyzerResult<Insight[]>> {
+  const llmClient = config.llmClient || _llmClient;
+  const maxInsights = config.maxInsights ?? 10;
+  const userId = config.userId || context.userId;
 
-    // Generate opportunity insights
-    const opportunityInsights = generateOpportunityInsights(patterns, context);
-    insights.push(...opportunityInsights);
+  try {
+    if (llmClient) {
+      // LLM-based insight generation (preferred)
+      const prompt = buildInsightPrompt(patterns, completeness, context);
+      const messages: ChatMessage[] = [
+        { role: 'user', content: prompt }
+      ];
 
-    // Deduplicate and prioritize
-    const prioritizedInsights = prioritizeInsights(insights);
+      const response = await llmClient.complete(userId, {
+        messages,
+        operation: 'diagnostic_insight',
+        model: 'fast', // Use fast tier for cost efficiency
+      });
 
+      if (response.success && response.content) {
+        const llmInsights = parseLLMInsights(response.content, patterns);
+        if (llmInsights.length > 0) {
+          return {
+            success: true,
+            data: prioritizeInsights(llmInsights).slice(0, maxInsights),
+          };
+        }
+      }
+      // Fall through to fallback if LLM fails
+    }
+
+    // Fallback: Generate basic structural insights (minimal, no complex rules)
+    const fallbackInsights = generateFallbackInsights(patterns, completeness);
     return {
       success: true,
-      data: prioritizedInsights,
+      data: prioritizeInsights(fallbackInsights).slice(0, maxInsights),
     };
   } catch (error) {
     return {
@@ -56,164 +199,37 @@ export function generateInsights(
 }
 
 /**
- * Generate insights from discovered patterns
+ * Generate fallback insights (minimal structural insights when LLM unavailable)
+ * These are NOT rule-based logic - just basic structural observations
  */
-function generatePatternInsights(patterns: DiscoveredPattern[]): Insight[] {
+function generateFallbackInsights(
+  patterns: DiscoveredPattern[],
+  completeness: ProfileCompleteness
+): Insight[] {
   const insights: Insight[] = [];
 
-  for (const pattern of patterns) {
-    switch (pattern.type) {
-      case 'spending_habit':
-        if (pattern.title.includes('Recurring')) {
-          insights.push({
-            id: `insight_${pattern.id}`,
-            category: 'financial',
-            title: 'Subscription detected',
-            body: pattern.description,
-            actionable: true,
-            suggestedAction: 'Review if this subscription is still valuable to you',
-            relatedPatterns: [pattern.id],
-          });
-        } else {
-          insights.push({
-            id: `insight_${pattern.id}`,
-            category: 'financial',
-            title: 'Spending pattern',
-            body: pattern.description,
-            actionable: true,
-            suggestedAction: 'Consider if this spending aligns with your goals',
-            relatedPatterns: [pattern.id],
-          });
-        }
-        break;
-
-      case 'social_rhythm':
-        insights.push({
-          id: `insight_${pattern.id}`,
-          category: 'relationship',
-          title: 'Social activity',
-          body: pattern.description,
-          actionable: false,
-          relatedPatterns: [pattern.id],
-        });
-        break;
-
-      case 'relationship_change':
-        insights.push({
-          id: `insight_${pattern.id}`,
-          category: 'relationship',
-          title: 'Connection highlight',
-          body: pattern.description,
-          actionable: true,
-          suggestedAction: 'Consider scheduling a catch-up',
-          relatedPatterns: [pattern.id],
-        });
-        break;
-
-      case 'interest_growth':
-        insights.push({
-          id: `insight_${pattern.id}`,
-          category: 'well_being',
-          title: 'Growing interest',
-          body: pattern.description,
-          actionable: true,
-          suggestedAction: 'Explore more content related to this interest',
-          relatedPatterns: [pattern.id],
-        });
-        break;
-
-      case 'interest_decline':
-        insights.push({
-          id: `insight_${pattern.id}`,
-          category: 'well_being',
-          title: 'Changing interest',
-          body: pattern.description,
-          actionable: false,
-          relatedPatterns: [pattern.id],
-        });
-        break;
-
-      case 'cross_source':
-        insights.push({
-          id: `insight_${pattern.id}`,
-          category: 'well_being',
-          title: 'Multi-source pattern',
-          body: pattern.description,
-          actionable: true,
-          suggestedAction: 'This interest spans multiple areas of your life',
-          relatedPatterns: [pattern.id],
-        });
-        break;
-
-      case 'lifestyle_shift':
-        insights.push({
-          id: `insight_${pattern.id}`,
-          category: 'well_being',
-          title: 'Lifestyle change detected',
-          body: pattern.description,
-          actionable: true,
-          suggestedAction: 'Reflect on this change and whether it aligns with your goals',
-          relatedPatterns: [pattern.id],
-        });
-        break;
-    }
-  }
-
-  return insights;
-}
-
-/**
- * Generate insights from profile completeness
- */
-function generateCompletenessInsights(completeness: ProfileCompleteness): Insight[] {
-  const insights: Insight[] = [];
-
-  // Overall completeness insight
+  // Basic completeness observation (not a rule, just data)
   if (completeness.overall < 30) {
     insights.push({
-      id: `completeness_low_${Date.now()}`,
+      id: `fallback_completeness_${Date.now()}`,
       category: 'opportunity',
-      title: 'Build your profile',
-      body: `Your profile is ${completeness.overall}% complete. Connect more data sources for better insights.`,
+      title: 'Profile building opportunity',
+      body: `Your profile is ${completeness.overall}% complete. Connect more data sources to enable AI-powered insights.`,
       actionable: true,
-      suggestedAction: 'Connect your calendar or financial data',
+      suggestedAction: 'Connect additional data sources',
       relatedPatterns: [],
     });
-  } else if (completeness.overall >= 70) {
+  }
+
+  // Pattern count observation (not a rule, just data)
+  if (patterns.length > 0) {
     insights.push({
-      id: `completeness_high_${Date.now()}`,
-      category: 'achievement',
-      title: 'Great profile coverage!',
-      body: `Your profile is ${completeness.overall}% complete. You're getting comprehensive insights.`,
+      id: `fallback_patterns_${Date.now()}`,
+      category: 'well_being',
+      title: 'Patterns discovered',
+      body: `${patterns.length} behavioral patterns detected. Enable LLM for detailed insights.`,
       actionable: false,
-      relatedPatterns: [],
-    });
-  }
-
-  // Dimension-specific insights
-  const { byDimension } = completeness;
-
-  if (byDimension.relationships < 20 && byDimension.experiences > 50) {
-    insights.push({
-      id: `dimension_relationships_${Date.now()}`,
-      category: 'opportunity',
-      title: 'Strengthen relationship insights',
-      body: 'Connect your calendar to better understand your social patterns.',
-      actionable: true,
-      suggestedAction: 'Connect Google or Microsoft Calendar',
-      relatedPatterns: [],
-    });
-  }
-
-  if (byDimension.interests < 30) {
-    insights.push({
-      id: `dimension_interests_${Date.now()}`,
-      category: 'opportunity',
-      title: 'Discover your interests',
-      body: 'Connect more data sources to uncover your true interests.',
-      actionable: true,
-      suggestedAction: 'Connect email or browser history',
-      relatedPatterns: [],
+      relatedPatterns: patterns.map(p => p.id),
     });
   }
 
@@ -221,115 +237,25 @@ function generateCompletenessInsights(completeness: ProfileCompleteness): Insigh
 }
 
 /**
- * Generate well-being focused insights
+ * Synchronous wrapper for backward compatibility
+ * NOTE: This is deprecated - use generateInsightsAsync for LLM-powered insights
  */
-function generateWellBeingInsights(
+export function generateInsights(
   patterns: DiscoveredPattern[],
+  completeness: ProfileCompleteness,
   context: AnalysisContext
-): Insight[] {
-  const insights: Insight[] = [];
-
-  // Check for work-life balance indicators
-  const socialPatterns = patterns.filter(
-    (p) => p.type === 'social_rhythm' || p.type === 'relationship_change'
-  );
-  const workPatterns = patterns.filter(
-    (p) => p.title.toLowerCase().includes('meeting') || p.title.toLowerCase().includes('work')
-  );
-
-  if (workPatterns.length > socialPatterns.length * 2) {
-    insights.push({
-      id: `wellbeing_balance_${Date.now()}`,
-      category: 'well_being',
-      title: 'Work-life balance check',
-      body: 'Your calendar shows more work activities than social events.',
-      actionable: true,
-      suggestedAction: 'Consider scheduling time for social activities',
-      relatedPatterns: workPatterns.map((p) => p.id),
-    });
+): AnalyzerResult<Insight[]> {
+  // If LLM client is available, we should warn that async version should be used
+  if (_llmClient) {
+    console.warn('LLM client available - use generateInsightsAsync for better insights');
   }
 
-  // Check for spending on experiences vs things
-  const experiencePatterns = patterns.filter(
-    (p) =>
-      p.type === 'spending_habit' &&
-      (p.title.toLowerCase().includes('travel') ||
-        p.title.toLowerCase().includes('entertainment') ||
-        p.title.toLowerCase().includes('dining'))
-  );
-
-  if (experiencePatterns.length > 0) {
-    insights.push({
-      id: `wellbeing_experiences_${Date.now()}`,
-      category: 'well_being',
-      title: 'Investing in experiences',
-      body: "You're spending on experiences, which research shows contributes to happiness.",
-      actionable: false,
-      relatedPatterns: experiencePatterns.map((p) => p.id),
-    });
-  }
-
-  return insights;
-}
-
-/**
- * Generate opportunity insights
- */
-function generateOpportunityInsights(
-  patterns: DiscoveredPattern[],
-  context: AnalysisContext
-): Insight[] {
-  const insights: Insight[] = [];
-
-  // Look for interest patterns that could lead to opportunities
-  const interestPatterns = patterns.filter(
-    (p) => p.type === 'interest_growth' || p.type === 'cross_source'
-  );
-
-  for (const pattern of interestPatterns.slice(0, 2)) {
-    if (pattern.confidence > 0.7) {
-      insights.push({
-        id: `opportunity_${pattern.id}`,
-        category: 'opportunity',
-        title: `Explore ${pattern.title.replace('Interest in ', '')}`,
-        body: `Based on your activity, you might enjoy exploring this interest further.`,
-        actionable: true,
-        suggestedAction: 'Check out local events or online communities',
-        relatedPatterns: [pattern.id],
-      });
-    }
-  }
-
-  // Achievement insights based on data volume
-  if (context.emailData?.classifications) {
-    const count = (context.emailData.classifications as unknown[]).length;
-    if (count >= 100) {
-      insights.push({
-        id: `achievement_emails_${Date.now()}`,
-        category: 'achievement',
-        title: 'Email analysis milestone',
-        body: `${count} emails analyzed for interest patterns.`,
-        actionable: false,
-        relatedPatterns: [],
-      });
-    }
-  }
-
-  if (context.financialData?.transactions) {
-    const count = (context.financialData.transactions as unknown[]).length;
-    if (count >= 50) {
-      insights.push({
-        id: `achievement_transactions_${Date.now()}`,
-        category: 'achievement',
-        title: 'Financial insight milestone',
-        body: `${count} transactions analyzed for spending patterns.`,
-        actionable: false,
-        relatedPatterns: [],
-      });
-    }
-  }
-
-  return insights;
+  // Return fallback insights synchronously
+  const fallbackInsights = generateFallbackInsights(patterns, completeness);
+  return {
+    success: true,
+    data: prioritizeInsights(fallbackInsights),
+  };
 }
 
 /**

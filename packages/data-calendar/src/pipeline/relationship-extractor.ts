@@ -24,6 +24,12 @@ export interface RelationshipExtractorConfig {
   weekendStartHour?: number;
   weekendEndHour?: number;
   minFreeHoursForFreeWeekend?: number;
+  /** Weight for recency in relationship strength calculation (0-1) */
+  recencyWeight?: number;
+  /** Weight for frequency in relationship strength calculation (0-1) */
+  frequencyWeight?: number;
+  /** Maximum events to count for frequency factor */
+  maxEventsForFrequency?: number;
 }
 
 /**
@@ -48,6 +54,9 @@ export function extractFrequentContacts(
 ): FrequentContact[] {
   const minEvents = config.minEventsForFrequentContact ?? DEFAULT_CALENDAR_CONFIG.minEventsForFrequentContact;
   const decayDays = config.relationshipDecayDays ?? DEFAULT_CALENDAR_CONFIG.relationshipDecayDays;
+  const recencyWeight = config.recencyWeight ?? DEFAULT_CALENDAR_CONFIG.recencyWeight;
+  const frequencyWeight = config.frequencyWeight ?? DEFAULT_CALENDAR_CONFIG.frequencyWeight;
+  const maxEventsForFrequency = config.maxEventsForFrequency ?? DEFAULT_CALENDAR_CONFIG.maxEventsForFrequency;
 
   // Build contact interaction map
   const contactMap = new Map<string, ContactInteraction>();
@@ -94,12 +103,12 @@ export function extractFrequentContacts(
     // Get unique event types
     const eventTypes = [...new Set(contact.events.map(e => e.eventType))];
 
-    // Calculate relationship strength (0-1)
+    // Calculate relationship strength (0-1) using configurable weights
     const lastEventDate = new Date(contact.events[0].date).getTime();
     const daysSinceLastEvent = (now - lastEventDate) / (1000 * 60 * 60 * 24);
     const recencyFactor = Math.max(0, 1 - daysSinceLastEvent / decayDays);
-    const frequencyFactor = Math.min(contact.events.length / 20, 1); // Cap at 20 events
-    const relationshipStrength = (recencyFactor * 0.6 + frequencyFactor * 0.4);
+    const frequencyFactor = Math.min(contact.events.length / maxEventsForFrequency, 1);
+    const relationshipStrength = (recencyFactor * recencyWeight + frequencyFactor * frequencyWeight);
 
     frequentContacts.push({
       email: contact.email,

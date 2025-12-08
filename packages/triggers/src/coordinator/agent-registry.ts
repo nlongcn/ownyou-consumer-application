@@ -64,6 +64,18 @@ export const DEFAULT_AGENT_REGISTRY: AgentRegistryEntry[] = [
     description: 'Restaurant Finder - finds dining options',
     enabled: false,
   },
+  // Sprint 8: Diagnostic Agent
+  {
+    type: 'diagnostic',
+    namespaces: [
+      // Triggers on new data source connections
+      NAMESPACES.FINANCIAL_PROFILE,
+      NAMESPACES.CALENDAR_PROFILE,
+    ],
+    intents: ['diagnostic', 'profile', 'analysis', 'patterns', 'insights', 'completeness'],
+    description: 'Diagnostic Agent - analyzes profile completeness and patterns',
+    enabled: true,
+  },
   // Note: Additional agent types can be registered dynamically
   // via AgentRegistry.register()
 ];

@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   analyzeProfileCompleteness,
-  generateCompletnessSuggestions,
+  generateCompletenessSuggestions,
   calculateProfileScore,
 } from '../analyzers/completeness.js';
 import type { AnalysisContext, ProfileCompleteness } from '../types.js';
@@ -178,7 +178,7 @@ describe('Completeness Analyzer', () => {
     });
   });
 
-  describe('generateCompletnessSuggestions', () => {
+  describe('generateCompletenessSuggestions', () => {
     it('should suggest connecting financial data when missing', () => {
       const completeness: ProfileCompleteness = {
         overall: 20,
@@ -197,7 +197,7 @@ describe('Completeness Analyzer', () => {
         missingData: ['financial', 'calendar', 'browser'],
       };
 
-      const suggestions = generateCompletnessSuggestions(completeness);
+      const suggestions = generateCompletenessSuggestions(completeness);
 
       expect(suggestions.length).toBeGreaterThan(0);
       const financialSuggestion = suggestions.find((s) => s.source === 'financial');
@@ -223,7 +223,7 @@ describe('Completeness Analyzer', () => {
         missingData: ['calendar', 'browser'],
       };
 
-      const suggestions = generateCompletnessSuggestions(completeness);
+      const suggestions = generateCompletenessSuggestions(completeness);
 
       const calendarSuggestion = suggestions.find((s) => s.source === 'calendar');
       expect(calendarSuggestion).toBeDefined();
@@ -248,7 +248,7 @@ describe('Completeness Analyzer', () => {
         missingData: ['calendar', 'browser'],
       };
 
-      const suggestions = generateCompletnessSuggestions(completeness);
+      const suggestions = generateCompletenessSuggestions(completeness);
 
       const healthSuggestion = suggestions.find((s) => s.source === 'health');
       expect(healthSuggestion).toBeDefined();
@@ -273,7 +273,7 @@ describe('Completeness Analyzer', () => {
         missingData: ['email', 'financial', 'calendar', 'browser'],
       };
 
-      const suggestions = generateCompletnessSuggestions(completeness);
+      const suggestions = generateCompletenessSuggestions(completeness);
 
       // Financial and calendar should be high priority
       const highPriority = suggestions.filter((s) => s.priority === 'high');
