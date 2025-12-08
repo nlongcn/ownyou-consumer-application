@@ -360,28 +360,32 @@ export function groupClassificationsByTier(
 
   // Python lines 259-282
   for (const c of classifications) {
-    // Python line 260
-    const groupingValue = c.grouping_value || ''
+    // For demographics/household (mutually exclusive), use grouping_tier_key (e.g., "Gender")
+    // For interests/purchase_intent (non-exclusive), use grouping_value (e.g., "Technology")
+    const isMutuallyExclusive = section === 'demographics' || section === 'household'
+    const groupingKey = isMutuallyExclusive
+      ? c.grouping_tier_key || c.grouping_value || ''
+      : c.grouping_value || ''
 
     // Python lines 261-266
-    if (!groupingValue) {
+    if (!groupingKey) {
       console.warn(
-        `Classification missing grouping_value: ` +
+        `Classification missing grouping key: ` +
           `taxonomy_id=${c.taxonomy_id}, value=${c.value}`
       )
       continue
     }
 
     // Python lines 268-270
-    if (!(groupingValue in groups)) {
-      groups[groupingValue] = []
-      console.debug(`[${section}] Created new group: '${groupingValue}'`)
+    if (!(groupingKey in groups)) {
+      groups[groupingKey] = []
+      console.debug(`[${section}] Created new group: '${groupingKey}'`)
     }
 
     // Python lines 272-276
-    groups[groupingValue].push(c)
+    groups[groupingKey].push(c)
     console.debug(
-      `[${section}] Added to group '${groupingValue}': ${c.value} ` +
+      `[${section}] Added to group '${groupingKey}': ${c.value} ` +
         `(ID ${c.taxonomy_id}, confidence ${(c.confidence || 0).toFixed(2)})`
     )
   }
@@ -391,12 +395,12 @@ export function groupClassificationsByTier(
     `[${section}] Grouped ${classifications.length} classifications ` +
       `into ${Object.keys(groups).length} groups:`
   )
-  for (const [groupingValue, items] of Object.entries(groups)) {
+  for (const [groupKey, items] of Object.entries(groups)) {
     const values = items
       .slice(0, 5)
       .map((item) => `${item.value}(${(item.confidence || 0).toFixed(2)})`)
       .join(', ')
-    console.log(`  '${groupingValue}': ${items.length} items - ${values}`)
+    console.log(`  '${groupKey}': ${items.length} items - ${values}`)
   }
 
   // Python line 284

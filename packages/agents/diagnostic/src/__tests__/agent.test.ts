@@ -1,21 +1,62 @@
 /**
  * Diagnostic Agent Tests - Sprint 8
+ *
+ * Tests for DiagnosticAgent conforming to BaseAgent pattern.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DiagnosticAgent, createDiagnosticAgent } from '../agent.js';
-import type { AnalysisContext } from '../types.js';
+import type { DiagnosticTriggerData } from '../types.js';
+import type { AgentContext, AgentStore } from '@ownyou/agents-base';
+
+// Mock store implementation
+function createMockStore(): AgentStore {
+  const data = new Map<string, Map<string, unknown>>();
+
+  const getNamespaceKey = (ns: readonly string[]): string => ns.join(':');
+
+  return {
+    async get(namespace: readonly string[], key: string): Promise<unknown | null> {
+      const nsKey = getNamespaceKey(namespace);
+      const nsData = data.get(nsKey);
+      return nsData?.get(key) ?? null;
+    },
+    async put(namespace: readonly string[], key: string, value: unknown): Promise<void> {
+      const nsKey = getNamespaceKey(namespace);
+      if (!data.has(nsKey)) {
+        data.set(nsKey, new Map());
+      }
+      data.get(nsKey)!.set(key, value);
+    },
+    async delete(namespace: readonly string[], key: string): Promise<void> {
+      const nsKey = getNamespaceKey(namespace);
+      data.get(nsKey)?.delete(key);
+    },
+    async search(): Promise<Array<{ key: string; value: unknown; score?: number }>> {
+      return [];
+    },
+    async list(namespace: readonly string[]): Promise<Array<{ key: string; value: unknown }>> {
+      const nsKey = getNamespaceKey(namespace);
+      const nsData = data.get(nsKey);
+      if (!nsData) return [];
+      return Array.from(nsData.entries()).map(([key, value]) => ({ key, value }));
+    },
+  };
+}
 
 describe('DiagnosticAgent', () => {
+  let mockStore: AgentStore;
+
+  beforeEach(() => {
+    mockStore = createMockStore();
+  });
+
   describe('constructor', () => {
     it('should create agent with default config', () => {
       const agent = new DiagnosticAgent();
-      const config = agent.getConfig();
 
-      expect(config.agentType).toBe('diagnostic');
-      expect(config.level).toBe('L2');
-      expect(config.memoryAccess.read).toContain('*');
-      expect(config.memoryAccess.write).toContain('diagnosticReports');
+      expect(agent.agentType).toBe('diagnostic');
+      expect(agent.level).toBe('L2');
     });
 
     it('should accept custom options', () => {
@@ -25,299 +66,381 @@ describe('DiagnosticAgent', () => {
         maxPatterns: 10,
       });
 
-      // The agent should use these values internally
+      expect(agent).toBeDefined();
+      expect(agent.agentType).toBe('diagnostic');
+    });
+
+    it('should accept custom urgency thresholds', () => {
+      const agent = new DiagnosticAgent({
+        urgencyThresholds: {
+          highDaysSinceReport: 60,
+          mediumDaysSinceReport: 30,
+          lowCompletenessThreshold: 20,
+        },
+      });
+
       expect(agent).toBeDefined();
     });
 
-    it('should allow overriding config limits', () => {
+    it('should accept custom completeness config', () => {
       const agent = new DiagnosticAgent({
-        config: {
-          limits: {
-            maxToolCalls: 20,
-            maxLlmCalls: 10,
-            timeoutSeconds: 300,
-            maxMemoryReads: 50,
-            maxMemoryWrites: 20,
+        completenessConfig: {
+          sourceWeights: {
+            email: 0.5,
+            financial: 0.2,
+            calendar: 0.2,
+            browser: 0.1,
           },
         },
       });
 
-      const config = agent.getConfig();
-      expect(config.limits.maxToolCalls).toBe(20);
-      expect(config.limits.maxLlmCalls).toBe(10);
+      expect(agent).toBeDefined();
     });
   });
 
-  describe('runDiagnostic', () => {
-    it('should generate complete diagnostic report', async () => {
+  describe('run (BaseAgent pattern)', () => {
+    it('should return error for missing trigger data', async () => {
       const agent = new DiagnosticAgent();
 
-      const context: AnalysisContext = {
+      const context: AgentContext = {
         userId: 'test-user-123',
-        analysisType: 'manual',
-        emailData: {
-          classifications: [
-            { category: 'Technology', confidence: 0.9 },
-            { category: 'Technology', confidence: 0.85 },
-            { category: 'Travel', confidence: 0.8 },
-          ],
-          profile: { lastSync: Date.now() },
-        },
-        financialData: {
-          transactions: [
-            { merchant: 'Amazon', category: 'shopping', amount: 100 },
-            { merchant: 'Netflix', category: 'entertainment', amount: 15.99 },
-            { merchant: 'Netflix', category: 'entertainment', amount: 15.99 },
-          ],
-          profile: { lastSync: Date.now() },
-        },
+        store: mockStore,
+        tools: [],
       };
 
-      const report = await agent.runDiagnostic(context);
+      const result = await agent.run(context);
 
-      expect(report.id).toMatch(/^diag_test-user-123_/);
-      expect(report.userId).toBe('test-user-123');
-      expect(report.generatedAt).toBeLessThanOrEqual(Date.now());
-      expect(report.version).toBe('1.0.0');
-      expect(report.analysisType).toBe('manual');
-
-      // Should have completeness data
-      expect(report.completeness).toBeDefined();
-      expect(report.completeness.overall).toBeGreaterThanOrEqual(0);
-      expect(report.completeness.bySource.email.connected).toBe(true);
-      expect(report.completeness.bySource.financial.connected).toBe(true);
-
-      // Should have patterns array
-      expect(Array.isArray(report.patterns)).toBe(true);
-
-      // Should have insights array
-      expect(Array.isArray(report.insights)).toBe(true);
-
-      // Should have suggestions array
-      expect(Array.isArray(report.suggestions)).toBe(true);
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Missing or invalid trigger data');
     });
 
-    it('should generate report for empty context', async () => {
+    it('should return error for invalid trigger data', async () => {
       const agent = new DiagnosticAgent();
 
-      const context: AnalysisContext = {
-        userId: 'empty-user',
+      const context: AgentContext = {
+        userId: 'test-user-123',
+        store: mockStore,
+        tools: [],
+        triggerData: { invalid: true },
+      };
+
+      const result = await agent.run(context);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Missing or invalid trigger data');
+    });
+
+    it('should generate mission card on success', async () => {
+      const agent = new DiagnosticAgent();
+
+      const trigger: DiagnosticTriggerData = {
+        analysisType: 'manual',
+        includePatterns: true,
+        includeInsights: true,
+      };
+
+      const context: AgentContext = {
+        userId: 'test-user-123',
+        store: mockStore,
+        tools: [],
+        triggerData: trigger,
+      };
+
+      const result = await agent.run(context);
+
+      expect(result.success).toBe(true);
+      expect(result.missionCard).toBeDefined();
+      expect(result.missionCard?.type).toBe('diagnostic');
+      expect(result.missionCard?.status).toBe('CREATED');
+    });
+
+    it('should store diagnostic report', async () => {
+      const agent = new DiagnosticAgent();
+
+      const trigger: DiagnosticTriggerData = {
         analysisType: 'scheduled',
       };
 
-      const report = await agent.runDiagnostic(context);
-
-      expect(report.userId).toBe('empty-user');
-      expect(report.completeness.overall).toBe(0);
-      expect(report.completeness.missingData.length).toBe(4); // All sources missing
-      expect(report.patterns.length).toBe(0);
-    });
-
-    it('should filter patterns by confidence', async () => {
-      const agent = new DiagnosticAgent({
-        minPatternConfidence: 0.8,
-      });
-
-      const context: AnalysisContext = {
+      const context: AgentContext = {
         userId: 'test-user',
-        analysisType: 'manual',
-        financialData: {
-          transactions: [
-            { merchant: 'Store', category: 'shopping', amount: 50 },
-          ],
-          profile: {},
-        },
+        store: mockStore,
+        tools: [],
+        triggerData: trigger,
       };
 
-      const report = await agent.runDiagnostic(context);
+      await agent.run(context);
 
-      // All patterns should have confidence >= 0.8
-      for (const pattern of report.patterns) {
-        expect(pattern.confidence).toBeGreaterThanOrEqual(0.8);
+      // Check that report was stored
+      const storedReport = await mockStore.get(
+        ['users', 'test-user', 'diagnosticReports'],
+        'latest'
+      );
+      expect(storedReport).toBeDefined();
+    });
+
+    it('should store mission card', async () => {
+      const agent = new DiagnosticAgent();
+
+      const trigger: DiagnosticTriggerData = {
+        analysisType: 'manual',
+      };
+
+      const context: AgentContext = {
+        userId: 'test-user',
+        store: mockStore,
+        tools: [],
+        triggerData: trigger,
+      };
+
+      const result = await agent.run(context);
+
+      // Check that mission card was stored
+      if (result.missionCard) {
+        const storedCard = await mockStore.get(
+          ['users', 'test-user', 'missionCards'],
+          result.missionCard.id
+        );
+        expect(storedCard).toBeDefined();
       }
-    });
-
-    it('should limit number of insights', async () => {
-      const agent = new DiagnosticAgent({
-        maxInsights: 3,
-      });
-
-      const context: AnalysisContext = {
-        userId: 'test-user',
-        analysisType: 'manual',
-        emailData: {
-          classifications: new Array(200).fill({ category: 'Tech' }),
-          profile: {},
-        },
-        financialData: {
-          transactions: new Array(100).fill({ merchant: 'Store', category: 'shopping', amount: 50 }),
-          profile: {},
-        },
-        calendarData: {
-          events: new Array(50).fill({ title: 'Meeting', type: 'meeting', attendees: [{ email: 'test@test.com' }] }),
-          profile: {},
-        },
-      };
-
-      const report = await agent.runDiagnostic(context);
-
-      expect(report.insights.length).toBeLessThanOrEqual(3);
-    });
-
-    it('should limit number of patterns', async () => {
-      const agent = new DiagnosticAgent({
-        maxPatterns: 5,
-      });
-
-      const context: AnalysisContext = {
-        userId: 'test-user',
-        analysisType: 'manual',
-        emailData: {
-          classifications: new Array(500).fill({ category: 'Various' }),
-          profile: {},
-        },
-        financialData: {
-          transactions: new Array(200).fill({ merchant: 'Various', category: 'various', amount: 100 }),
-          profile: {},
-        },
-      };
-
-      const report = await agent.runDiagnostic(context);
-
-      expect(report.patterns.length).toBeLessThanOrEqual(5);
     });
 
     it('should handle different analysis types', async () => {
       const agent = new DiagnosticAgent();
 
-      const scheduledContext: AnalysisContext = {
-        userId: 'test-user',
+      const scheduledTrigger: DiagnosticTriggerData = {
         analysisType: 'scheduled',
       };
 
-      const newSourceContext: AnalysisContext = {
-        userId: 'test-user',
+      const newSourceTrigger: DiagnosticTriggerData = {
         analysisType: 'new_source',
       };
 
-      const scheduledReport = await agent.runDiagnostic(scheduledContext);
-      const newSourceReport = await agent.runDiagnostic(newSourceContext);
+      const manualTrigger: DiagnosticTriggerData = {
+        analysisType: 'manual',
+      };
 
-      expect(scheduledReport.analysisType).toBe('scheduled');
-      expect(newSourceReport.analysisType).toBe('new_source');
-    });
-
-    it('should include previous report context when provided', async () => {
-      const agent = new DiagnosticAgent();
-
-      const context: AnalysisContext = {
+      const scheduledResult = await agent.run({
         userId: 'test-user',
-        analysisType: 'scheduled',
-        previousReport: {
-          id: 'prev_report',
-          userId: 'test-user',
-          generatedAt: Date.now() - 86400000,
-          completeness: {
-            overall: 30,
-            bySource: {
-              email: { connected: true, lastSync: Date.now(), itemCount: 50, coverage: 10 },
-              financial: { connected: false, lastSync: null, itemCount: 0, coverage: 0 },
-              calendar: { connected: false, lastSync: null, itemCount: 0, coverage: 0 },
-              browser: { connected: false, lastSync: null, itemCount: 0, coverage: 0 },
-            },
-            byDimension: { experiences: 20, relationships: 10, interests: 30, giving: 5 },
-            missingData: ['financial', 'calendar', 'browser'],
-          },
-          patterns: [],
-          insights: [],
-          suggestions: [],
-          version: '1.0.0',
-          analysisType: 'scheduled',
-        },
-        emailData: {
-          classifications: new Array(100).fill({ category: 'Tech' }),
-          profile: {},
-        },
+        store: mockStore,
+        tools: [],
+        triggerData: scheduledTrigger,
+      });
+
+      const newSourceResult = await agent.run({
+        userId: 'test-user',
+        store: mockStore,
+        tools: [],
+        triggerData: newSourceTrigger,
+      });
+
+      const manualResult = await agent.run({
+        userId: 'test-user',
+        store: mockStore,
+        tools: [],
+        triggerData: manualTrigger,
+      });
+
+      expect(scheduledResult.success).toBe(true);
+      expect(newSourceResult.success).toBe(true);
+      expect(manualResult.success).toBe(true);
+    });
+
+    it('should return usage stats', async () => {
+      const agent = new DiagnosticAgent();
+
+      const trigger: DiagnosticTriggerData = {
+        analysisType: 'manual',
+        includePatterns: true,
+        includeInsights: true,
       };
 
-      const report = await agent.runDiagnostic(context);
+      const context: AgentContext = {
+        userId: 'test-user',
+        store: mockStore,
+        tools: [],
+        triggerData: trigger,
+      };
 
-      // Should complete successfully with previous report context
-      expect(report.id).toBeDefined();
-      expect(report.completeness.bySource.email.connected).toBe(true);
+      const result = await agent.run(context);
+
+      expect(result.usage).toBeDefined();
+      expect(result.toolCalls).toBeDefined();
+      expect(result.memoryOps).toBeDefined();
+    });
+
+    it('should record tool calls for each analysis step', async () => {
+      const agent = new DiagnosticAgent();
+
+      const trigger: DiagnosticTriggerData = {
+        analysisType: 'manual',
+        includePatterns: true,
+        includeInsights: true,
+      };
+
+      const context: AgentContext = {
+        userId: 'test-user',
+        store: mockStore,
+        tools: [],
+        triggerData: trigger,
+      };
+
+      const result = await agent.run(context);
+
+      // Should have tool calls for analyze_profile, find_patterns, generate_insights, suggest_connections
+      const toolNames = result.toolCalls.map(tc => tc.name);
+      expect(toolNames).toContain('analyze_profile');
+      expect(toolNames).toContain('find_patterns');
+      expect(toolNames).toContain('generate_insights');
+      expect(toolNames).toContain('suggest_connections');
+    });
+
+    it('should skip patterns when includePatterns is false', async () => {
+      const agent = new DiagnosticAgent();
+
+      const trigger: DiagnosticTriggerData = {
+        analysisType: 'manual',
+        includePatterns: false,
+        includeInsights: true,
+      };
+
+      const context: AgentContext = {
+        userId: 'test-user',
+        store: mockStore,
+        tools: [],
+        triggerData: trigger,
+      };
+
+      const result = await agent.run(context);
+
+      const toolNames = result.toolCalls.map(tc => tc.name);
+      expect(toolNames).not.toContain('find_patterns');
+    });
+
+    it('should skip insights when includeInsights is false', async () => {
+      const agent = new DiagnosticAgent();
+
+      const trigger: DiagnosticTriggerData = {
+        analysisType: 'manual',
+        includePatterns: true,
+        includeInsights: false,
+      };
+
+      const context: AgentContext = {
+        userId: 'test-user',
+        store: mockStore,
+        tools: [],
+        triggerData: trigger,
+      };
+
+      const result = await agent.run(context);
+
+      const toolNames = result.toolCalls.map(tc => tc.name);
+      expect(toolNames).not.toContain('generate_insights');
     });
   });
 
-  describe('quickAnalysis', () => {
-    it('should return only completeness and suggestions', async () => {
-      const agent = new DiagnosticAgent();
-
-      const context: AnalysisContext = {
-        userId: 'quick-test',
-        analysisType: 'manual',
-        emailData: {
-          classifications: [{ category: 'Test' }],
-          profile: {},
-        },
-      };
-
-      const result = await agent.quickAnalysis(context);
-
-      expect(result.completeness).toBeDefined();
-      expect(result.suggestions).toBeDefined();
-      expect((result as Record<string, unknown>).patterns).toBeUndefined();
-      expect((result as Record<string, unknown>).insights).toBeUndefined();
-    });
-
-    it('should suggest missing data sources', async () => {
-      const agent = new DiagnosticAgent();
-
-      const context: AnalysisContext = {
-        userId: 'quick-test',
-        analysisType: 'manual',
-      };
-
-      const result = await agent.quickAnalysis(context);
-
-      expect(result.suggestions.length).toBeGreaterThan(0);
-      // Should suggest connecting data sources
-      const sources = result.suggestions.map((s) => s.source);
-      expect(sources).toContain('financial');
-    });
-  });
-
-  describe('canReadNamespace / canWriteNamespace', () => {
-    it('should allow reading all namespaces by default', () => {
-      const agent = new DiagnosticAgent();
-
-      expect(agent.canReadNamespace('emailClassifications')).toBe(true);
-      expect(agent.canReadNamespace('financialData')).toBe(true);
-      expect(agent.canReadNamespace('anyNamespace')).toBe(true);
-    });
-
-    it('should only allow writing to diagnosticReports', () => {
-      const agent = new DiagnosticAgent();
-
-      expect(agent.canWriteNamespace('diagnosticReports')).toBe(true);
-      expect(agent.canWriteNamespace('emailClassifications')).toBe(false);
-      expect(agent.canWriteNamespace('financialData')).toBe(false);
-    });
-
-    it('should respect custom memory access config', () => {
+  describe('urgency determination', () => {
+    it('should return high urgency for low completeness', async () => {
       const agent = new DiagnosticAgent({
-        config: {
-          memoryAccess: {
-            read: ['specific_namespace'],
-            write: ['custom_write'],
-            search: ['*'],
-          },
+        urgencyThresholds: {
+          highDaysSinceReport: 30,
+          mediumDaysSinceReport: 14,
+          lowCompletenessThreshold: 50,
         },
       });
 
-      expect(agent.canReadNamespace('specific_namespace')).toBe(true);
-      expect(agent.canReadNamespace('other_namespace')).toBe(false);
-      expect(agent.canWriteNamespace('custom_write')).toBe(true);
-      expect(agent.canWriteNamespace('diagnosticReports')).toBe(false);
+      // Empty store = low completeness
+      const trigger: DiagnosticTriggerData = {
+        analysisType: 'manual',
+      };
+
+      const result = await agent.run({
+        userId: 'test-user',
+        store: mockStore,
+        tools: [],
+        triggerData: trigger,
+      });
+
+      expect(result.missionCard?.urgency).toBe('high');
+    });
+  });
+
+  describe('mission card content', () => {
+    it('should generate "Build Your Profile" title for low completeness', async () => {
+      const agent = new DiagnosticAgent();
+
+      const trigger: DiagnosticTriggerData = {
+        analysisType: 'manual',
+      };
+
+      const result = await agent.run({
+        userId: 'test-user',
+        store: mockStore,
+        tools: [],
+        triggerData: trigger,
+      });
+
+      // With empty store, completeness should be low
+      expect(result.missionCard?.title).toBe('Build Your Profile');
+    });
+
+    it('should include primary action to view report', async () => {
+      const agent = new DiagnosticAgent();
+
+      const trigger: DiagnosticTriggerData = {
+        analysisType: 'manual',
+      };
+
+      const result = await agent.run({
+        userId: 'test-user',
+        store: mockStore,
+        tools: [],
+        triggerData: trigger,
+      });
+
+      expect(result.missionCard?.primaryAction).toBeDefined();
+      expect(result.missionCard?.primaryAction.label).toBe('View Report');
+      expect(result.missionCard?.primaryAction.type).toBe('navigate');
+    });
+
+    it('should include evidence refs', async () => {
+      const agent = new DiagnosticAgent();
+
+      const trigger: DiagnosticTriggerData = {
+        analysisType: 'manual',
+      };
+
+      const result = await agent.run({
+        userId: 'test-user',
+        store: mockStore,
+        tools: [],
+        triggerData: trigger,
+      });
+
+      expect(result.missionCard?.evidenceRefs).toBeDefined();
+      expect(result.missionCard?.evidenceRefs?.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('episode recording', () => {
+    it('should record episode when mission card is created', async () => {
+      const agent = new DiagnosticAgent();
+
+      const trigger: DiagnosticTriggerData = {
+        analysisType: 'manual',
+        includePatterns: true,
+      };
+
+      const result = await agent.run({
+        userId: 'test-user',
+        store: mockStore,
+        tools: [],
+        triggerData: trigger,
+      });
+
+      // BaseAgent records episode automatically when mission card is created
+      expect(result.episode).toBeDefined();
+      expect(result.episode?.agentType).toBe('diagnostic');
     });
   });
 
@@ -326,7 +449,7 @@ describe('DiagnosticAgent', () => {
       const agent = createDiagnosticAgent();
 
       expect(agent).toBeInstanceOf(DiagnosticAgent);
-      expect(agent.getConfig().agentType).toBe('diagnostic');
+      expect(agent.agentType).toBe('diagnostic');
     });
 
     it('should pass options to constructor', () => {

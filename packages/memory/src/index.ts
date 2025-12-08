@@ -121,6 +121,5 @@ export {
   purgeOldArchives,
   checkQuotas,
   DEFAULT_QUOTAS,
-  ARCHIVED_NAMESPACE,
   type MemoryQuotas,
 } from './lifecycle';

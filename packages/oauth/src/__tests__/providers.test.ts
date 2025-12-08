@@ -26,36 +26,37 @@ describe('MicrosoftOAuthProvider', () => {
   });
 
   describe('getAuthorizationUrl', () => {
-    it('should generate valid Microsoft authorization URL', () => {
+    it('should generate valid Microsoft authorization URL', async () => {
       const state = 'random-state-123';
-      const url = provider.getAuthorizationUrl(state);
+      const result = await provider.getAuthorizationUrl(state);
 
-      expect(url).toContain('https://login.microsoftonline.com/common/oauth2/v2.0/authorize');
-      expect(url).toContain(`client_id=${config.clientId}`);
-      expect(url).toContain(`redirect_uri=${encodeURIComponent(config.redirectUri)}`);
-      expect(url).toContain(`state=${state}`);
-      expect(url).toContain('response_type=code');
-      expect(url).toContain('offline_access'); // Required for refresh tokens
+      expect(result.url).toContain('https://login.microsoftonline.com/common/oauth2/v2.0/authorize');
+      expect(result.url).toContain(`client_id=${config.clientId}`);
+      expect(result.url).toContain(`redirect_uri=${encodeURIComponent(config.redirectUri)}`);
+      expect(result.url).toContain(`state=${state}`);
+      expect(result.url).toContain('response_type=code');
+      expect(result.url).toContain('offline_access'); // Required for refresh tokens
+      expect(result.codeVerifier).toBeDefined(); // PKCE
     });
 
-    it('should include all configured scopes', () => {
+    it('should include all configured scopes', async () => {
       const state = 'test-state';
-      const url = provider.getAuthorizationUrl(state);
+      const result = await provider.getAuthorizationUrl(state);
 
       for (const scope of config.scopes) {
-        expect(url).toContain(encodeURIComponent(scope));
+        expect(result.url).toContain(encodeURIComponent(scope));
       }
     });
 
-    it('should use custom tenant ID when provided', () => {
+    it('should use custom tenant ID when provided', async () => {
       const customConfig: MicrosoftOAuthConfig = {
         ...config,
         tenantId: 'my-tenant-id',
       };
       const customProvider = new MicrosoftOAuthProvider(customConfig);
 
-      const url = customProvider.getAuthorizationUrl('state');
-      expect(url).toContain('https://login.microsoftonline.com/my-tenant-id/oauth2/v2.0/authorize');
+      const result = await customProvider.getAuthorizationUrl('state');
+      expect(result.url).toContain('https://login.microsoftonline.com/my-tenant-id/oauth2/v2.0/authorize');
     });
   });
 
@@ -142,7 +143,7 @@ describe('GoogleOAuthProvider', () => {
 });
 
 describe('Desktop OAuth flows', () => {
-  it('should use ownyou:// redirect URI for desktop Microsoft', () => {
+  it('should use ownyou:// redirect URI for desktop Microsoft', async () => {
     const desktopConfig: MicrosoftOAuthConfig = {
       provider: 'microsoft',
       platform: 'desktop',
@@ -152,9 +153,9 @@ describe('Desktop OAuth flows', () => {
     };
 
     const provider = new MicrosoftOAuthProvider(desktopConfig);
-    const url = provider.getAuthorizationUrl('state');
+    const result = await provider.getAuthorizationUrl('state');
 
-    expect(url).toContain(encodeURIComponent('ownyou://oauth/callback/microsoft'));
+    expect(result.url).toContain(encodeURIComponent('ownyou://oauth/callback/microsoft'));
   });
 
   it('should use ownyou:// redirect URI for desktop Google', () => {

@@ -11,11 +11,6 @@ import { NS, NAMESPACES } from '@ownyou/shared-types';
 import { calculateEffectiveStrength, PRUNE_THRESHOLD } from './decay';
 
 /**
- * Archived memory namespace (within semantic memory)
- */
-export const ARCHIVED_NAMESPACE = 'ownyou.semantic_archived';
-
-/**
  * Archive a single memory
  */
 export async function archiveMemory(

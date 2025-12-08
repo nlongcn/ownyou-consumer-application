@@ -2,7 +2,85 @@
  * Diagnostic Agent Types - Sprint 8
  *
  * Type definitions for profile analysis, pattern detection, and insight generation.
+ *
+ * @see docs/sprints/ownyou-sprint8-spec.md
  */
+
+import type { AgentPermissions } from '@ownyou/shared-types';
+import { NAMESPACES } from '@ownyou/shared-types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Trigger Data
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Trigger data for diagnostic agent activation
+ */
+export interface DiagnosticTriggerData {
+  /** Type of analysis to perform */
+  analysisType: 'scheduled' | 'new_source' | 'manual';
+
+  /** Focus on specific data source (optional) */
+  focusSource?: DataSource;
+
+  /** Include pattern analysis */
+  includePatterns?: boolean;
+
+  /** Include insight generation */
+  includeInsights?: boolean;
+
+  /** Previous report ID for comparison (optional) */
+  previousReportId?: string;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Permissions (v13 Section 3.6.1)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Diagnostic agent permissions
+ * v13: Read ALL namespaces, write only diagnosticReports
+ */
+export const DIAGNOSTIC_PERMISSIONS: AgentPermissions = {
+  agentType: 'diagnostic',
+  memoryAccess: {
+    read: [
+      // ALL namespaces - diagnostic can read everything
+      NAMESPACES.IKIGAI_PROFILE,
+      NAMESPACES.IAB_CLASSIFICATIONS,
+      NAMESPACES.EPISODIC_MEMORY,
+      NAMESPACES.PROCEDURAL_MEMORY,
+      NAMESPACES.SEMANTIC_MEMORY,
+      NAMESPACES.ENTITIES,
+      NAMESPACES.RELATIONSHIPS,
+      NAMESPACES.FINANCIAL_PROFILE,
+      NAMESPACES.FINANCIAL_TRANSACTIONS,
+      NAMESPACES.CALENDAR_EVENTS,
+      NAMESPACES.CALENDAR_PROFILE,
+      NAMESPACES.CALENDAR_CONTACTS,
+      NAMESPACES.EMAIL_CLASSIFICATIONS,
+      NAMESPACES.MISSION_CARDS,
+      NAMESPACES.DIAGNOSTIC_REPORTS,
+    ],
+    write: [
+      // ONLY diagnostic reports
+      NAMESPACES.DIAGNOSTIC_REPORTS,
+      NAMESPACES.EPISODIC_MEMORY,
+      NAMESPACES.MISSION_CARDS,
+    ],
+    search: [
+      NAMESPACES.EPISODIC_MEMORY,
+      NAMESPACES.SEMANTIC_MEMORY,
+      NAMESPACES.ENTITIES,
+    ],
+  },
+  externalApis: [], // Diagnostic agent has no external APIs
+  toolDefinitions: [],
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Pattern Types
+// ─────────────────────────────────────────────────────────────────────────────
 
 /**
  * Pattern types for behavioral analysis
@@ -184,52 +262,34 @@ export const DEFAULT_COMPLETENESS_CONFIG: CompletenessConfig = {
   dimensionCoverageWeight: 0.3,
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Configuration (v13 Compliant - Configurable Thresholds)
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
- * Diagnostic agent configuration
+ * Urgency thresholds for diagnostic insights
  */
-export interface DiagnosticAgentConfig {
-  agentType: 'diagnostic';
-  level: 'L2';
-
-  memoryAccess: {
-    read: string[];
-    write: string[];
-    search: string[];
-  };
-
-  limits: {
-    maxToolCalls: number;
-    maxLlmCalls: number;
-    timeoutSeconds: number;
-    maxMemoryReads: number;
-    maxMemoryWrites: number;
-  };
-
-  /** Completeness analysis configuration */
-  completeness?: CompletenessConfig;
+export interface DiagnosticUrgencyThresholds {
+  /** Days since last report for high urgency */
+  highDaysSinceReport: number;
+  /** Days since last report for medium urgency */
+  mediumDaysSinceReport: number;
+  /** Completeness threshold below which is high urgency */
+  lowCompletenessThreshold: number;
 }
 
 /**
- * Default agent configuration
+ * Default urgency thresholds
  */
-export const DEFAULT_DIAGNOSTIC_CONFIG: DiagnosticAgentConfig = {
-  agentType: 'diagnostic',
-  level: 'L2',
-
-  memoryAccess: {
-    read: ['*'], // Can read ALL namespaces
-    write: ['diagnosticReports'], // Can ONLY write reports
-    search: ['*'],
-  },
-
-  limits: {
-    maxToolCalls: 10,
-    maxLlmCalls: 5,
-    timeoutSeconds: 120,
-    maxMemoryReads: 25,
-    maxMemoryWrites: 10,
-  },
+export const DEFAULT_URGENCY_THRESHOLDS: DiagnosticUrgencyThresholds = {
+  highDaysSinceReport: 30,
+  mediumDaysSinceReport: 14,
+  lowCompletenessThreshold: 30,
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Analysis Context
+// ─────────────────────────────────────────────────────────────────────────────
 
 /**
  * Analysis context passed to analyzers

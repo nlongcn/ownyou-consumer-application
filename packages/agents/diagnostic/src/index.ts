@@ -3,10 +3,13 @@
  *
  * Diagnostic Agent for OwnYou - Analyzes complete user profile,
  * finds patterns, and generates insights.
+ *
+ * Conforms to BaseAgent pattern per v13 Section 3.6.
  */
 
 // Types
 export type {
+  DiagnosticTriggerData,
   PatternType,
   InsightCategory,
   DataSource,
@@ -17,19 +20,23 @@ export type {
   Insight,
   DataSuggestion,
   DiagnosticReport,
-  DiagnosticAgentConfig,
   AnalysisContext,
   AnalyzerResult,
   SourceWeights,
   CoverageThresholds,
   CompletenessConfig,
+  DiagnosticUrgencyThresholds,
 } from './types.js';
 
-export { DEFAULT_DIAGNOSTIC_CONFIG, DEFAULT_COMPLETENESS_CONFIG } from './types.js';
+export {
+  DIAGNOSTIC_PERMISSIONS,
+  DEFAULT_COMPLETENESS_CONFIG,
+  DEFAULT_URGENCY_THRESHOLDS,
+} from './types.js';
 
 // Agent
 export { DiagnosticAgent, createDiagnosticAgent } from './agent.js';
-export type { DiagnosticAgentOptions } from './agent.js';
+export type { DiagnosticAgentConfig } from './agent.js';
 
 // Analyzers
 export {

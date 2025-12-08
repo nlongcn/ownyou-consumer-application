@@ -14,14 +14,7 @@
  */
 
 import type { BaseStore } from '@langchain/langgraph'
-
-// v13 Namespace constants (Section 8.12)
-// These match @ownyou/shared-types/namespaces.ts
-const V13_NAMESPACES = {
-  IAB_CLASSIFICATIONS: 'ownyou.iab',
-  EPISODIC_MEMORY: 'ownyou.episodic',
-  SEMANTIC_MEMORY: 'ownyou.semantic',
-} as const
+import { NAMESPACES, NS } from '@ownyou/shared-types'
 
 // ============================================================================
 // TYPES
@@ -92,7 +85,7 @@ interface MemoryIndex {
  * @returns Namespace tuple in v13 format
  */
 export function getIABNamespace(userId: string): string[] {
-  return [V13_NAMESPACES.IAB_CLASSIFICATIONS, userId]
+  return [NAMESPACES.IAB_CLASSIFICATIONS, userId]
 }
 
 /**
@@ -102,7 +95,7 @@ export function getIABNamespace(userId: string): string[] {
  * @returns Namespace tuple in v13 format
  */
 export function getSemanticNamespace(userId: string): string[] {
-  return [V13_NAMESPACES.SEMANTIC_MEMORY, userId]
+  return [NAMESPACES.SEMANTIC_MEMORY, userId]
 }
 
 /**
@@ -112,7 +105,7 @@ export function getSemanticNamespace(userId: string): string[] {
  * @returns Namespace tuple in v13 format
  */
 export function getEpisodicNamespace(userId: string): string[] {
-  return [V13_NAMESPACES.EPISODIC_MEMORY, userId]
+  return [NAMESPACES.EPISODIC_MEMORY, userId]
 }
 
 // Legacy functions for backward compatibility (deprecated)
@@ -124,9 +117,9 @@ export function getUserNamespace(userId: string, collection: string = 'iab_taxon
   if (collection === 'iab_taxonomy_profile') {
     return getIABNamespace(userId)
   } else if (collection === 'processed_emails') {
-    return [V13_NAMESPACES.EPISODIC_MEMORY, userId] // Processed emails are episodic
+    return [NAMESPACES.EPISODIC_MEMORY, userId] // Processed emails are episodic
   } else if (collection === 'memory_index') {
-    return [V13_NAMESPACES.IAB_CLASSIFICATIONS, userId] // Index lives with IAB data
+    return [NAMESPACES.IAB_CLASSIFICATIONS, userId] // Index lives with IAB data
   }
   // Fallback: still v13 compliant order
   return [`ownyou.${collection}`, userId]

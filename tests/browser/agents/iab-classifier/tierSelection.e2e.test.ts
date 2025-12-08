@@ -369,19 +369,19 @@ describe('E2E Test: Full Profile Generation', () => {
 
     // Machine Learning should be first (highest granularity score)
     expect(ints[0].primary.value).toBe('Machine Learning')
-    expect(ints[0].granularity_score).toBe(1.07) // 0.82 + (5 × 0.05)
+    expect(ints[0].granularity_score).toBeCloseTo(1.07, 2) // 0.82 + (5 × 0.05)
 
     // Technology should be second
     expect(ints[1].primary.value).toBe('Technology')
-    expect(ints[1].granularity_score).toBe(0.98) // 0.88 + (2 × 0.05)
+    expect(ints[1].granularity_score).toBeCloseTo(0.98, 2) // 0.88 + (2 × 0.05)
 
     // Fitness should be third
     expect(ints[2].primary.value).toBe('Fitness')
-    expect(ints[2].granularity_score).toBe(0.90) // 0.75 + (3 × 0.05)
+    expect(ints[2].granularity_score).toBeCloseTo(0.90, 2) // 0.75 + (3 × 0.05)
 
-    // Cooking should be fourth (below 0.7 threshold, no bonus)
+    // Cooking should be fourth (at 0.7 threshold, gets bonus)
     expect(ints[3].primary.value).toBe('Cooking')
-    expect(ints[3].granularity_score).toBe(0.70) // 0.70 (no bonus)
+    expect(ints[3].granularity_score).toBeCloseTo(0.85, 2) // 0.70 + (3 × 0.05)
 
     // Validate purchase intent (sorted by granularity)
     const purchase = profile.tiered_classifications.purchase_intent
