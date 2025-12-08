@@ -3,7 +3,7 @@
  *
  * Tests for the Data Export UI component (GDPR compliance).
  */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import {
@@ -11,6 +11,16 @@ import {
   ExportOptions,
   DeleteDataModal,
 } from '../components/DataExport';
+
+// Suppress console.error during tests for expected errors
+// (e.g., when testing error handling in DataExport component)
+const originalConsoleError = console.error;
+beforeEach(() => {
+  console.error = vi.fn();
+});
+afterEach(() => {
+  console.error = originalConsoleError;
+});
 
 describe('DataExport (v13 Section 10.6)', () => {
   describe('ExportOptions', () => {

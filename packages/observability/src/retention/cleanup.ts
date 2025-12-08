@@ -7,13 +7,20 @@
 import type { RetentionPolicy } from './types';
 
 /**
- * Default retention policies per v13 architecture
+ * Default retention policies per v13 architecture Section 10.7
+ *
+ * Reference: docs/architecture/OwnYou_architecture_v13.md:6749-6754
+ * - agent_traces: 30 days (debugging recent issues)
+ * - sync_logs: 14 days (short-lived operational data)
+ * - llm_metrics: 90 days (billing reconciliation)
+ * - error_logs: 7 days (short, high-volume)
+ * - audit_log: 365 days (long for compliance)
  */
 export const DEFAULT_RETENTION_POLICIES: Record<string, RetentionPolicy> = {
-  'ownyou.debug.traces': { namespace: 'ownyou.debug.traces', retentionDays: 7 },
-  'ownyou.debug.sync': { namespace: 'ownyou.debug.sync', retentionDays: 30 },
+  'ownyou.debug.traces': { namespace: 'ownyou.debug.traces', retentionDays: 30 },
+  'ownyou.debug.sync': { namespace: 'ownyou.debug.sync', retentionDays: 14 },
   'ownyou.debug.llm': { namespace: 'ownyou.debug.llm', retentionDays: 90 },
-  'ownyou.debug.errors': { namespace: 'ownyou.debug.errors', retentionDays: 30 },
+  'ownyou.debug.errors': { namespace: 'ownyou.debug.errors', retentionDays: 7 },
   'ownyou.debug.audit': { namespace: 'ownyou.debug.audit', retentionDays: 365 },
 };
 

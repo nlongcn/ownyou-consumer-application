@@ -2,6 +2,39 @@
  * SyncLogger - v13 Section 10.3
  *
  * Logs cross-device sync events for debugging.
+ *
+ * ## Current Implementation (Sprint 9)
+ *
+ * This implementation uses in-memory storage for sync logs. All logs are
+ * stored in an array and will be lost on app restart.
+ *
+ * This is intentional for Sprint 9 as sync functionality (OrbitDB) is not
+ * yet implemented. This class provides the infrastructure for Sprint 10.
+ *
+ * ## TODO: Sprint 10 - Store Integration
+ *
+ * Add LangGraph Store persistence to comply with v13 Section 10.1:
+ * "All observability data stays on-device" (implies persistence)
+ *
+ * Required changes:
+ * 1. Add Store dependency to constructor: `constructor(store: BaseStore, deviceId: string)`
+ * 2. Persist logs using NS.debugSync(deviceId) namespace
+ * 3. Load existing logs on initialization
+ * 4. Add integration tests for Store operations
+ *
+ * Example:
+ * ```typescript
+ * constructor(store: BaseStore, deviceId: string) {
+ *   this.store = store;
+ *   this.deviceId = deviceId;
+ * }
+ *
+ * async logSyncStarted(options: {...}): Promise<SyncLog> {
+ *   const log = { ... };
+ *   await this.store.put(NS.debugSync(this.deviceId), log.logId, log);
+ *   return log;
+ * }
+ * ```
  */
 
 import type {

@@ -2,6 +2,52 @@
  * LLMMetricsCollector - v13 Section 10.4
  *
  * Collects and aggregates LLM usage metrics for cost tracking and budgeting.
+ *
+ * ## Throttle State Calculation
+ *
+ * This class calculates `throttle_state` based on budget usage percentage.
+ * The throttle state is exposed via `getMetrics()` for consumers to act upon.
+ *
+ * ## Throttle State Enforcement (v13 Section 6.10)
+ *
+ * **IMPORTANT:** This class CALCULATES throttle states but does NOT ENFORCE them.
+ * Actual enforcement must be implemented by the LLM client layer.
+ *
+ * Per v13 Section 6.10, enforcement should work as follows:
+ *
+ * | State | Threshold | Action |
+ * |-------|-----------|--------|
+ * | normal | <50% | No restrictions |
+ * | warning | 50% | Log warning, user notification |
+ * | reduced | 80% | Switch to cheaper models (e.g., GPT-4 → GPT-3.5) |
+ * | deferred | 95% | Only process user-initiated requests |
+ * | local_only | 100% | Use WebLLM or cached responses only |
+ *
+ * ## TODO: Integration with @ownyou/llm-client
+ *
+ * The LLM client should check throttle state before making inference calls:
+ *
+ * ```typescript
+ * // In @ownyou/llm-client
+ * async inference(request: InferenceRequest): Promise<InferenceResponse> {
+ *   const throttleState = this.metricsCollector.getMetrics().currentPeriod.throttleState;
+ *
+ *   switch (throttleState) {
+ *     case 'reduced':
+ *       request = this.downgradeModel(request);
+ *       break;
+ *     case 'deferred':
+ *       if (!request.isUserInitiated) {
+ *         throw new ThrottledError('Non-urgent requests deferred due to budget');
+ *       }
+ *       break;
+ *     case 'local_only':
+ *       return this.useLocalLLM(request);
+ *   }
+ *
+ *   return this.executeInference(request);
+ * }
+ * ```
  */
 
 import type {

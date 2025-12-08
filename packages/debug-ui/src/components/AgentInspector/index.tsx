@@ -43,7 +43,7 @@ export function TraceList({ traces, onSelect, selectedId }: TraceListProps): Rea
           />
           <span className="agent-type">{trace.agentType}</span>
           <span className="duration">
-            {trace.endedAt ? `${trace.endedAt - trace.startedAt}ms` : 'running'}
+            {trace.endTime ? `${trace.endTime - trace.startTime}ms` : 'running'}
           </span>
         </div>
       ))}
@@ -150,9 +150,9 @@ export function TraceDetail({ trace }: TraceDetailProps): React.ReactElement {
       </div>
 
       <div className="trace-meta">
-        <div>Started: {new Date(trace.startedAt).toLocaleString()}</div>
-        {trace.endedAt && (
-          <div>Duration: {trace.endedAt - trace.startedAt}ms</div>
+        <div>Started: {new Date(trace.startTime).toLocaleString()}</div>
+        {trace.endTime && (
+          <div>Duration: {trace.endTime - trace.startTime}ms</div>
         )}
       </div>
 
@@ -281,8 +281,8 @@ export function AgentInspector({
       if (filters.status && trace.status !== filters.status) {
         return false;
       }
-      if (filters.minDurationMs && trace.endedAt) {
-        const duration = trace.endedAt - trace.startedAt;
+      if (filters.minDurationMs && trace.endTime) {
+        const duration = trace.endTime - trace.startTime;
         if (duration < filters.minDurationMs) {
           return false;
         }

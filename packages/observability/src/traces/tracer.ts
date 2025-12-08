@@ -2,6 +2,35 @@
  * Agent Tracer - v13 Section 10.2
  *
  * Records and manages agent execution traces.
+ *
+ * ## Current Implementation (Sprint 9)
+ *
+ * This implementation uses in-memory storage for trace data. All traces are
+ * stored in a Map and will be lost on app restart.
+ *
+ * ## TODO: Sprint 10 - Store Integration
+ *
+ * Add LangGraph Store persistence to comply with v13 Section 10.1:
+ * "All observability data stays on-device" (implies persistence)
+ *
+ * Required changes:
+ * 1. Add Store dependency to constructor: `constructor(store: BaseStore)`
+ * 2. Persist traces using NS.debugTraces(userId) namespace
+ * 3. Load existing traces on initialization
+ * 4. Add integration tests for Store operations
+ *
+ * Example:
+ * ```typescript
+ * constructor(store: BaseStore) {
+ *   this.store = store;
+ * }
+ *
+ * async startTrace(options: TraceStartOptions): Promise<AgentTrace> {
+ *   const trace = { ... };
+ *   await this.store.put(NS.debugTraces(options.userId), trace.id, trace);
+ *   return trace;
+ * }
+ * ```
  */
 
 import type {

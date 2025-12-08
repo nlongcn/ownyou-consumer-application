@@ -23,28 +23,29 @@ describe('RetentionManager (v13 Section 10)', () => {
     vi.useRealTimers();
   });
 
-  describe('Default Retention Policies', () => {
-    it('should have policy for debug traces', () => {
+  describe('Default Retention Policies (v13 Section 10.7)', () => {
+    // v13 Reference: docs/architecture/OwnYou_architecture_v13.md:6749-6754
+    it('should have policy for debug traces (30 days per v13)', () => {
       expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.traces']).toBeDefined();
-      expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.traces'].retentionDays).toBe(7);
+      expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.traces'].retentionDays).toBe(30);
     });
 
-    it('should have policy for debug sync logs', () => {
+    it('should have policy for debug sync logs (14 days per v13)', () => {
       expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.sync']).toBeDefined();
-      expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.sync'].retentionDays).toBe(30);
+      expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.sync'].retentionDays).toBe(14);
     });
 
-    it('should have policy for debug LLM metrics', () => {
+    it('should have policy for debug LLM metrics (90 days per v13)', () => {
       expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.llm']).toBeDefined();
       expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.llm'].retentionDays).toBe(90);
     });
 
-    it('should have policy for debug errors', () => {
+    it('should have policy for debug errors (7 days per v13)', () => {
       expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.errors']).toBeDefined();
-      expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.errors'].retentionDays).toBe(30);
+      expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.errors'].retentionDays).toBe(7);
     });
 
-    it('should have policy for debug audit', () => {
+    it('should have policy for debug audit (365 days per v13)', () => {
       expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.audit']).toBeDefined();
       expect(DEFAULT_RETENTION_POLICIES['ownyou.debug.audit'].retentionDays).toBe(365);
     });
@@ -153,7 +154,7 @@ describe('RetentionManager (v13 Section 10)', () => {
       const policy = manager.getPolicy('ownyou.debug.traces');
 
       expect(policy).toBeDefined();
-      expect(policy?.retentionDays).toBe(7);
+      expect(policy?.retentionDays).toBe(30); // v13: 30 days for traces
     });
 
     it('should return undefined for unknown namespace', () => {

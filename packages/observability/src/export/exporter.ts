@@ -16,23 +16,78 @@ import type {
 
 /**
  * All exportable namespaces (user data only)
+ *
+ * IMPORTANT: This list must be kept in sync with NAMESPACES in @ownyou/shared-types.
+ * When adding new user data namespaces, update this list to ensure GDPR exports
+ * include all user data.
+ *
+ * TODO: Generate this list dynamically from @ownyou/shared-types NAMESPACES
+ * to ensure single source of truth. Example:
+ *
+ * ```typescript
+ * import { NAMESPACES, NAMESPACE_PRIVACY } from '@ownyou/shared-types';
+ * const ALL_EXPORTABLE_NAMESPACES = Object.values(NAMESPACES)
+ *   .filter(ns => typeof ns === 'string' && !ns.startsWith('ownyou.debug.'))
+ *   .filter(ns => NAMESPACE_PRIVACY[ns] !== 'system');
+ * ```
+ *
+ * Last verified against v13 architecture: 2025-12-08
  */
 const ALL_EXPORTABLE_NAMESPACES: ExportableNamespace[] = [
+  // Core memory (Section 8.4)
   'ownyou.semantic',
   'ownyou.episodic',
   'ownyou.procedural',
   'ownyou.entities',
   'ownyou.relationships',
   'ownyou.summaries',
+
+  // Classifications
   'ownyou.iab',
+
+  // Ikigai (Section 2)
   'ownyou.ikigai',
   'ownyou.ikigai_evidence',
+
+  // Missions (Section 3)
   'ownyou.missions',
   'ownyou.mission_feedback',
+
+  // Identity (Section 7)
   'ownyou.pseudonyms',
   'ownyou.disclosures',
   'ownyou.tracking_consents',
+
+  // Financial
   'ownyou.earnings',
+
+  // Sprint 7: Restaurant Agent
+  'ownyou.dining_reservations',
+  'ownyou.restaurant_favorites',
+
+  // Sprint 7: Events Agent
+  'ownyou.event_tickets',
+  'ownyou.event_favorites',
+
+  // Sprint 7: Travel Agent
+  'ownyou.travel_itineraries',
+  'ownyou.travel_preferences',
+
+  // Sprint 7: Additional namespaces
+  'ownyou.calendar',
+  'ownyou.financial_profile',
+  'ownyou.interests',
+
+  // Sprint 8: Financial Data
+  'ownyou.financial_transactions',
+
+  // Sprint 8: Calendar Data
+  'ownyou.calendar_events',
+  'ownyou.calendar_profile',
+  'ownyou.calendar_contacts',
+
+  // Sprint 8: Diagnostic Agent
+  'ownyou.diagnostic_reports',
 ];
 
 /**
