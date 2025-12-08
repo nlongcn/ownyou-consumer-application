@@ -73,6 +73,20 @@ export const NAMESPACES = {
 
   // Interests (Sprint 7 - Events Agent)
   INTERESTS: 'ownyou.interests',
+
+  // Reflection (v13 Section 8.12 - Reflection State)
+  REFLECTION_STATE: 'ownyou.reflection',
+
+  // Sprint 8: Financial Data
+  FINANCIAL_TRANSACTIONS: 'ownyou.financial_transactions',
+
+  // Sprint 8: Calendar Data
+  CALENDAR_EVENTS: 'ownyou.calendar_events',
+  CALENDAR_PROFILE: 'ownyou.calendar_profile',
+  CALENDAR_CONTACTS: 'ownyou.calendar_contacts', // Relationship extraction from attendees
+
+  // Sprint 8: Diagnostic Agent
+  DIAGNOSTIC_REPORTS: 'ownyou.diagnostic_reports',
 } as const;
 
 /**
@@ -184,6 +198,38 @@ export const NS = {
   // Sprint 7: Interests namespace (Events Agent)
   /** Interests namespace: [namespace, userId] */
   interests: (userId: string) => [NAMESPACES.INTERESTS, userId] as const,
+
+  // Reflection State (v13 Section 8.12)
+  /** Reflection state namespace: [namespace, userId] */
+  reflectionState: (userId: string) =>
+    [NAMESPACES.REFLECTION_STATE, userId] as const,
+
+  /** Community summaries namespace: [namespace, userId] */
+  communitySummaries: (userId: string) =>
+    [NAMESPACES.COMMUNITY_SUMMARIES, userId] as const,
+
+  // Sprint 8: Financial Data namespaces
+  /** Financial transactions namespace: [namespace, userId] */
+  financialTransactions: (userId: string) =>
+    [NAMESPACES.FINANCIAL_TRANSACTIONS, userId] as const,
+
+  // Sprint 8: Calendar Data namespaces
+  /** Calendar events namespace: [namespace, userId] */
+  calendarEvents: (userId: string) =>
+    [NAMESPACES.CALENDAR_EVENTS, userId] as const,
+
+  /** Calendar profile namespace: [namespace, userId] */
+  calendarProfile: (userId: string) =>
+    [NAMESPACES.CALENDAR_PROFILE, userId] as const,
+
+  /** Calendar contacts namespace: [namespace, userId] - relationship extraction */
+  calendarContacts: (userId: string) =>
+    [NAMESPACES.CALENDAR_CONTACTS, userId] as const,
+
+  // Sprint 8: Diagnostic Agent namespace
+  /** Diagnostic reports namespace: [namespace, userId] */
+  diagnosticReports: (userId: string) =>
+    [NAMESPACES.DIAGNOSTIC_REPORTS, userId] as const,
 } as const;
 
 /**
@@ -229,6 +275,20 @@ export const NAMESPACE_PRIVACY: Record<Namespace, 'public' | 'sensitive' | 'priv
   [NAMESPACES.CALENDAR]: 'private', // Calendar is private
   [NAMESPACES.FINANCIAL_PROFILE]: 'private', // Financial data is private
   [NAMESPACES.INTERESTS]: 'public', // Interests are public preferences
+
+  // Reflection State (v13 Section 8.12)
+  [NAMESPACES.REFLECTION_STATE]: 'private', // Reflection triggers are device-internal
+
+  // Sprint 8: Financial Data
+  [NAMESPACES.FINANCIAL_TRANSACTIONS]: 'private', // Financial transactions are private
+
+  // Sprint 8: Calendar Data
+  [NAMESPACES.CALENDAR_EVENTS]: 'private', // Calendar events are private
+  [NAMESPACES.CALENDAR_PROFILE]: 'private', // Calendar profile is private
+  [NAMESPACES.CALENDAR_CONTACTS]: 'sensitive', // Relationship data is sensitive
+
+  // Sprint 8: Diagnostic Agent
+  [NAMESPACES.DIAGNOSTIC_REPORTS]: 'private', // Diagnostic reports are private
 };
 
 /**
@@ -277,4 +337,18 @@ export const NAMESPACE_SYNC_SCOPE: Record<Namespace, 'full' | 'selective' | 'non
   [NAMESPACES.CALENDAR]: 'full', // Calendar syncs across devices
   [NAMESPACES.FINANCIAL_PROFILE]: 'full', // Financial profile syncs
   [NAMESPACES.INTERESTS]: 'full', // Interests sync
+
+  // Reflection State (v13 Section 8.12 / 8.14.1)
+  [NAMESPACES.REFLECTION_STATE]: 'full', // Reflection triggers must be consistent
+
+  // Sprint 8: Financial Data
+  [NAMESPACES.FINANCIAL_TRANSACTIONS]: 'selective', // Recent transactions sync
+
+  // Sprint 8: Calendar Data
+  [NAMESPACES.CALENDAR_EVENTS]: 'selective', // Recent events sync
+  [NAMESPACES.CALENDAR_PROFILE]: 'full', // Profile syncs across devices
+  [NAMESPACES.CALENDAR_CONTACTS]: 'full', // Relationship data syncs
+
+  // Sprint 8: Diagnostic Agent
+  [NAMESPACES.DIAGNOSTIC_REPORTS]: 'full', // Reports sync across devices
 };
