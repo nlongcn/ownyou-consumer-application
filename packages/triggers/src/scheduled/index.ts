@@ -44,6 +44,17 @@ export const DEFAULT_SCHEDULES = {
     expression: 'every 1h',
     description: 'Hourly check for new mission opportunities',
   },
+
+  /**
+   * Weekly diagnostic report - Sprint 8, v13 Section 3.6.1
+   * Runs Sunday at 9 AM to analyze profile completeness and patterns.
+   */
+  DIAGNOSTIC_WEEKLY: {
+    id: 'diagnostic_weekly_report',
+    expression: '0 9 * * 0', // 9:00 AM Sundays
+    description: 'Weekly diagnostic profile analysis and pattern detection',
+    agentType: 'diagnostic',
+  },
 } as const;
 
 /**

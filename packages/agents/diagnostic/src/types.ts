@@ -133,6 +133,58 @@ export interface DiagnosticReport {
 }
 
 /**
+ * Source weights for completeness calculation
+ */
+export interface SourceWeights {
+  email: number;
+  financial: number;
+  calendar: number;
+  browser: number;
+}
+
+/**
+ * Coverage thresholds - item counts at which source reaches 100% coverage
+ */
+export interface CoverageThresholds {
+  emailFullCoverage: number;
+  financialFullCoverage: number;
+  calendarFullCoverage: number;
+}
+
+/**
+ * Completeness analysis configuration
+ */
+export interface CompletenessConfig {
+  /** Weights for each data source (should sum to 1.0) */
+  sourceWeights: SourceWeights;
+  /** Item counts at which each source reaches 100% coverage */
+  coverageThresholds: CoverageThresholds;
+  /** Weight for source coverage in overall score (0-1) */
+  sourceCoverageWeight: number;
+  /** Weight for dimension coverage in overall score (0-1) */
+  dimensionCoverageWeight: number;
+}
+
+/**
+ * Default completeness configuration
+ */
+export const DEFAULT_COMPLETENESS_CONFIG: CompletenessConfig = {
+  sourceWeights: {
+    email: 0.3,
+    financial: 0.3,
+    calendar: 0.25,
+    browser: 0.15,
+  },
+  coverageThresholds: {
+    emailFullCoverage: 500,
+    financialFullCoverage: 200,
+    calendarFullCoverage: 100,
+  },
+  sourceCoverageWeight: 0.7,
+  dimensionCoverageWeight: 0.3,
+};
+
+/**
  * Diagnostic agent configuration
  */
 export interface DiagnosticAgentConfig {
@@ -152,6 +204,9 @@ export interface DiagnosticAgentConfig {
     maxMemoryReads: number;
     maxMemoryWrites: number;
   };
+
+  /** Completeness analysis configuration */
+  completeness?: CompletenessConfig;
 }
 
 /**

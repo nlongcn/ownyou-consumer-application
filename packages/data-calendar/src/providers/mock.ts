@@ -588,11 +588,10 @@ export function createMockCalendarClient(config?: MockCalendarConfig): MockCalen
 /**
  * Generate mock events directly (for testing)
  */
-export function generateMockEvents(count: number, daysRange: number = 90): CalendarEvent[] {
+export async function generateMockEvents(count: number, daysRange: number = 90): Promise<CalendarEvent[]> {
   const client = new MockCalendarClient({ eventCount: count, daysRange });
-  // Access internal events through fetch
-  const result = client.fetchEvents();
-  return result instanceof Promise ? [] : (result as CalendarFetchResult).events;
+  const result = await client.fetchEvents();
+  return result.events;
 }
 
 /**

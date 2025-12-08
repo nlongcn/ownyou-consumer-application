@@ -6,8 +6,10 @@
 
 export {
   analyzeProfileCompleteness,
-  generateCompletnessSuggestions,
+  generateCompletenessSuggestions,
   calculateProfileScore,
+  setCompletenessConfig,
+  getCompletenessConfig,
 } from './completeness.js';
 
 export {
@@ -18,6 +20,11 @@ export {
 
 export {
   generateInsights,
+  generateInsightsAsync,
+  setInsightLLMClient,
+  getInsightLLMClient,
   filterByCategory,
   getActionableInsights,
 } from './insights.js';
+
+export type { InsightGeneratorConfig } from './insights.js';

@@ -10,25 +10,59 @@ import type {
   AnalysisContext,
   AnalyzerResult,
   DataSuggestion,
+  CompletenessConfig,
 } from '../types.js';
+
+import { DEFAULT_COMPLETENESS_CONFIG } from '../types.js';
+
+/** Module-level config that can be set for analysis */
+let _completenessConfig: CompletenessConfig = DEFAULT_COMPLETENESS_CONFIG;
+
+/**
+ * Set the completeness configuration for subsequent analyses
+ */
+export function setCompletenessConfig(config: Partial<CompletenessConfig>): void {
+  _completenessConfig = {
+    ...DEFAULT_COMPLETENESS_CONFIG,
+    ...config,
+    sourceWeights: {
+      ...DEFAULT_COMPLETENESS_CONFIG.sourceWeights,
+      ...config.sourceWeights,
+    },
+    coverageThresholds: {
+      ...DEFAULT_COMPLETENESS_CONFIG.coverageThresholds,
+      ...config.coverageThresholds,
+    },
+  };
+}
+
+/**
+ * Get the current completeness configuration
+ */
+export function getCompletenessConfig(): CompletenessConfig {
+  return { ..._completenessConfig };
+}
 
 /**
  * Analyze profile completeness across all data sources
  */
-export function analyzeProfileCompleteness(context: AnalysisContext): AnalyzerResult<ProfileCompleteness> {
+export function analyzeProfileCompleteness(
+  context: AnalysisContext,
+  config: CompletenessConfig = _completenessConfig
+): AnalyzerResult<ProfileCompleteness> {
   try {
     const bySource = {
-      email: analyzeSourceCompleteness('email', context),
-      financial: analyzeSourceCompleteness('financial', context),
-      calendar: analyzeSourceCompleteness('calendar', context),
-      browser: analyzeSourceCompleteness('browser', context),
+      email: analyzeSourceCompleteness('email', context, config),
+      financial: analyzeSourceCompleteness('financial', context, config),
+      calendar: analyzeSourceCompleteness('calendar', context, config),
+      browser: analyzeSourceCompleteness('browser', context, config),
     };
 
     const byDimension = analyzeDimensionCompleteness(context);
     const missingData = identifyMissingData(bySource);
 
-    // Calculate overall completeness (weighted average)
-    const sourceWeights = { email: 0.3, financial: 0.3, calendar: 0.25, browser: 0.15 };
+    // Calculate overall completeness using configurable weights
+    const { sourceWeights, sourceCoverageWeight, dimensionCoverageWeight } = config;
     let overall = 0;
 
     for (const [source, data] of Object.entries(bySource)) {
@@ -38,10 +72,10 @@ export function analyzeProfileCompleteness(context: AnalysisContext): AnalyzerRe
       }
     }
 
-    // Boost for dimension coverage
+    // Boost for dimension coverage using configurable weights
     const dimensionAvg =
       (byDimension.experiences + byDimension.relationships + byDimension.interests + byDimension.giving) / 4;
-    overall = overall * 0.7 + dimensionAvg * 0.3;
+    overall = overall * sourceCoverageWeight + dimensionAvg * dimensionCoverageWeight;
 
     return {
       success: true,
@@ -65,15 +99,16 @@ export function analyzeProfileCompleteness(context: AnalysisContext): AnalyzerRe
  */
 function analyzeSourceCompleteness(
   source: 'email' | 'financial' | 'calendar' | 'browser',
-  context: AnalysisContext
+  context: AnalysisContext,
+  config: CompletenessConfig
 ): SourceCompleteness {
   switch (source) {
     case 'email':
-      return analyzeEmailCompleteness(context);
+      return analyzeEmailCompleteness(context, config);
     case 'financial':
-      return analyzeFinancialCompleteness(context);
+      return analyzeFinancialCompleteness(context, config);
     case 'calendar':
-      return analyzeCalendarCompleteness(context);
+      return analyzeCalendarCompleteness(context, config);
     case 'browser':
       return analyzeBrowserCompleteness(context);
     default:
@@ -84,7 +119,10 @@ function analyzeSourceCompleteness(
 /**
  * Analyze email data completeness
  */
-function analyzeEmailCompleteness(context: AnalysisContext): SourceCompleteness {
+function analyzeEmailCompleteness(
+  context: AnalysisContext,
+  config: CompletenessConfig
+): SourceCompleteness {
   if (!context.emailData) {
     return { connected: false, lastSync: null, itemCount: 0, coverage: 0 };
   }
@@ -92,8 +130,9 @@ function analyzeEmailCompleteness(context: AnalysisContext): SourceCompleteness 
   const { classifications, profile } = context.emailData;
   const itemCount = Array.isArray(classifications) ? classifications.length : 0;
 
-  // Coverage based on item count (max 100% at 500+ items)
-  const coverage = Math.min(100, Math.round((itemCount / 500) * 100));
+  // Coverage based on item count using configurable threshold
+  const threshold = config.coverageThresholds.emailFullCoverage;
+  const coverage = Math.min(100, Math.round((itemCount / threshold) * 100));
 
   return {
     connected: true,
@@ -106,7 +145,10 @@ function analyzeEmailCompleteness(context: AnalysisContext): SourceCompleteness 
 /**
  * Analyze financial data completeness
  */
-function analyzeFinancialCompleteness(context: AnalysisContext): SourceCompleteness {
+function analyzeFinancialCompleteness(
+  context: AnalysisContext,
+  config: CompletenessConfig
+): SourceCompleteness {
   if (!context.financialData) {
     return { connected: false, lastSync: null, itemCount: 0, coverage: 0 };
   }
@@ -114,8 +156,9 @@ function analyzeFinancialCompleteness(context: AnalysisContext): SourceCompleten
   const { transactions, profile } = context.financialData;
   const itemCount = Array.isArray(transactions) ? transactions.length : 0;
 
-  // Coverage based on transaction count (max 100% at 200+ items)
-  const coverage = Math.min(100, Math.round((itemCount / 200) * 100));
+  // Coverage based on transaction count using configurable threshold
+  const threshold = config.coverageThresholds.financialFullCoverage;
+  const coverage = Math.min(100, Math.round((itemCount / threshold) * 100));
 
   return {
     connected: true,
@@ -128,7 +171,10 @@ function analyzeFinancialCompleteness(context: AnalysisContext): SourceCompleten
 /**
  * Analyze calendar data completeness
  */
-function analyzeCalendarCompleteness(context: AnalysisContext): SourceCompleteness {
+function analyzeCalendarCompleteness(
+  context: AnalysisContext,
+  config: CompletenessConfig
+): SourceCompleteness {
   if (!context.calendarData) {
     return { connected: false, lastSync: null, itemCount: 0, coverage: 0 };
   }
@@ -136,8 +182,9 @@ function analyzeCalendarCompleteness(context: AnalysisContext): SourceCompletene
   const { events, profile } = context.calendarData;
   const itemCount = Array.isArray(events) ? events.length : 0;
 
-  // Coverage based on event count (max 100% at 100+ items)
-  const coverage = Math.min(100, Math.round((itemCount / 100) * 100));
+  // Coverage based on event count using configurable threshold
+  const threshold = config.coverageThresholds.calendarFullCoverage;
+  const coverage = Math.min(100, Math.round((itemCount / threshold) * 100));
 
   return {
     connected: true,
@@ -213,7 +260,7 @@ function identifyMissingData(bySource: ProfileCompleteness['bySource']): string[
 /**
  * Generate suggestions for improving profile completeness
  */
-export function generateCompletnessSuggestions(
+export function generateCompletenessSuggestions(
   completeness: ProfileCompleteness
 ): DataSuggestion[] {
   const suggestions: DataSuggestion[] = [];

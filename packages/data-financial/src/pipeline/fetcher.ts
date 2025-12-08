@@ -22,6 +22,9 @@ export interface FetcherConfig {
 
   /** Page size for pagination */
   pageSize?: number;
+
+  /** Maximum transactions to fetch (safety limit to prevent infinite loops) */
+  maxTransactions?: number;
 }
 
 /**
@@ -53,6 +56,7 @@ export class TransactionFetcher {
       useMock: config.useMock ?? true,
       transactionDays: config.transactionDays ?? 90,
       pageSize: config.pageSize ?? 100,
+      maxTransactions: config.maxTransactions ?? 10000,
     };
 
     if (this.config.useMock) {
@@ -128,8 +132,8 @@ export class TransactionFetcher {
       hasMore = result.hasMore;
       cursor = result.nextCursor;
 
-      // Safety limit to prevent infinite loops
-      if (allTransactions.length > 10000) {
+      // Safety limit to prevent infinite loops (configurable)
+      if (allTransactions.length >= this.config.maxTransactions) {
         break;
       }
     }
