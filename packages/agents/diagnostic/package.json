@@ -1,0 +1,40 @@
+{
+  "name": "@ownyou/agents-diagnostic",
+  "version": "0.1.0",
+  "description": "Diagnostic Agent for OwnYou - Analyzes complete user profile, finds patterns, generates insights",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ownyou/agents-base": "workspace:*",
+    "@ownyou/data-financial": "workspace:*",
+    "@ownyou/data-calendar": "workspace:*",
+    "@ownyou/llm-client": "workspace:*",
+    "@ownyou/memory-store": "workspace:*",
+    "@ownyou/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.6.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "license": "MIT"
+}

@@ -52,6 +52,41 @@ export const NAMESPACES = {
 
   // LLM Cache (v13 Section 6.11.3 - Fallback Chain Step 5)
   LLM_CACHE: 'ownyou.llm_cache',
+
+  // Restaurant Agent (Sprint 7)
+  DINING_RESERVATIONS: 'ownyou.dining_reservations',
+  RESTAURANT_FAVORITES: 'ownyou.restaurant_favorites',
+
+  // Events Agent (Sprint 7)
+  EVENT_TICKETS: 'ownyou.event_tickets',
+  EVENT_FAVORITES: 'ownyou.event_favorites',
+
+  // Travel Agent (Sprint 7)
+  TRAVEL_ITINERARIES: 'ownyou.travel_itineraries',
+  TRAVEL_PREFERENCES: 'ownyou.travel_preferences',
+
+  // Calendar (Sprint 7 - Events & Travel Agents)
+  CALENDAR: 'ownyou.calendar',
+
+  // Financial Profile (Sprint 7 - Travel Agent)
+  FINANCIAL_PROFILE: 'ownyou.financial_profile',
+
+  // Interests (Sprint 7 - Events Agent)
+  INTERESTS: 'ownyou.interests',
+
+  // Reflection (v13 Section 8.12 - Reflection State)
+  REFLECTION_STATE: 'ownyou.reflection',
+
+  // Sprint 8: Financial Data
+  FINANCIAL_TRANSACTIONS: 'ownyou.financial_transactions',
+
+  // Sprint 8: Calendar Data
+  CALENDAR_EVENTS: 'ownyou.calendar_events',
+  CALENDAR_PROFILE: 'ownyou.calendar_profile',
+  CALENDAR_CONTACTS: 'ownyou.calendar_contacts', // Relationship extraction from attendees
+
+  // Sprint 8: Diagnostic Agent
+  DIAGNOSTIC_REPORTS: 'ownyou.diagnostic_reports',
 } as const;
 
 /**
@@ -123,6 +158,78 @@ export const NS = {
 
   /** LLM cache namespace: [namespace, userId] - for response caching (v13 6.11.3) */
   llmCache: (userId: string) => [NAMESPACES.LLM_CACHE, userId] as const,
+
+  // Sprint 7: Restaurant Agent namespaces
+  /** Dining reservations namespace: [namespace, userId] */
+  diningReservations: (userId: string) =>
+    [NAMESPACES.DINING_RESERVATIONS, userId] as const,
+
+  /** Restaurant favorites namespace: [namespace, userId] */
+  restaurantFavorites: (userId: string) =>
+    [NAMESPACES.RESTAURANT_FAVORITES, userId] as const,
+
+  // Sprint 7: Events Agent namespaces
+  /** Event tickets namespace: [namespace, userId] */
+  eventTickets: (userId: string) =>
+    [NAMESPACES.EVENT_TICKETS, userId] as const,
+
+  /** Event favorites namespace: [namespace, userId] */
+  eventFavorites: (userId: string) =>
+    [NAMESPACES.EVENT_FAVORITES, userId] as const,
+
+  // Sprint 7: Travel Agent namespaces
+  /** Travel itineraries namespace: [namespace, userId] */
+  travelItineraries: (userId: string) =>
+    [NAMESPACES.TRAVEL_ITINERARIES, userId] as const,
+
+  /** Travel preferences namespace: [namespace, userId] */
+  travelPreferences: (userId: string) =>
+    [NAMESPACES.TRAVEL_PREFERENCES, userId] as const,
+
+  // Sprint 7: Calendar namespace (Events & Travel Agents)
+  /** Calendar namespace: [namespace, userId] */
+  calendar: (userId: string) => [NAMESPACES.CALENDAR, userId] as const,
+
+  // Sprint 7: Financial profile namespace (Travel Agent)
+  /** Financial profile namespace: [namespace, userId] */
+  financialProfile: (userId: string) =>
+    [NAMESPACES.FINANCIAL_PROFILE, userId] as const,
+
+  // Sprint 7: Interests namespace (Events Agent)
+  /** Interests namespace: [namespace, userId] */
+  interests: (userId: string) => [NAMESPACES.INTERESTS, userId] as const,
+
+  // Reflection State (v13 Section 8.12)
+  /** Reflection state namespace: [namespace, userId] */
+  reflectionState: (userId: string) =>
+    [NAMESPACES.REFLECTION_STATE, userId] as const,
+
+  /** Community summaries namespace: [namespace, userId] */
+  communitySummaries: (userId: string) =>
+    [NAMESPACES.COMMUNITY_SUMMARIES, userId] as const,
+
+  // Sprint 8: Financial Data namespaces
+  /** Financial transactions namespace: [namespace, userId] */
+  financialTransactions: (userId: string) =>
+    [NAMESPACES.FINANCIAL_TRANSACTIONS, userId] as const,
+
+  // Sprint 8: Calendar Data namespaces
+  /** Calendar events namespace: [namespace, userId] */
+  calendarEvents: (userId: string) =>
+    [NAMESPACES.CALENDAR_EVENTS, userId] as const,
+
+  /** Calendar profile namespace: [namespace, userId] */
+  calendarProfile: (userId: string) =>
+    [NAMESPACES.CALENDAR_PROFILE, userId] as const,
+
+  /** Calendar contacts namespace: [namespace, userId] - relationship extraction */
+  calendarContacts: (userId: string) =>
+    [NAMESPACES.CALENDAR_CONTACTS, userId] as const,
+
+  // Sprint 8: Diagnostic Agent namespace
+  /** Diagnostic reports namespace: [namespace, userId] */
+  diagnosticReports: (userId: string) =>
+    [NAMESPACES.DIAGNOSTIC_REPORTS, userId] as const,
 } as const;
 
 /**
@@ -151,6 +258,37 @@ export const NAMESPACE_PRIVACY: Record<Namespace, 'public' | 'sensitive' | 'priv
   [NAMESPACES.SYNC_LOGS]: 'private',
   [NAMESPACES.LLM_BUDGET]: 'private', // User's LLM budget tracking
   [NAMESPACES.LLM_CACHE]: 'private', // Cached LLM responses - device-local
+
+  // Sprint 7: Restaurant Agent namespaces
+  [NAMESPACES.DINING_RESERVATIONS]: 'sensitive', // Reservation details
+  [NAMESPACES.RESTAURANT_FAVORITES]: 'public', // Public preferences
+
+  // Sprint 7: Events Agent namespaces
+  [NAMESPACES.EVENT_TICKETS]: 'sensitive', // Ticket purchase info
+  [NAMESPACES.EVENT_FAVORITES]: 'public', // Public preferences
+
+  // Sprint 7: Travel Agent namespaces
+  [NAMESPACES.TRAVEL_ITINERARIES]: 'sensitive', // Travel plans
+  [NAMESPACES.TRAVEL_PREFERENCES]: 'public', // Public preferences
+
+  // Sprint 7: Additional namespaces
+  [NAMESPACES.CALENDAR]: 'private', // Calendar is private
+  [NAMESPACES.FINANCIAL_PROFILE]: 'private', // Financial data is private
+  [NAMESPACES.INTERESTS]: 'public', // Interests are public preferences
+
+  // Reflection State (v13 Section 8.12)
+  [NAMESPACES.REFLECTION_STATE]: 'private', // Reflection triggers are device-internal
+
+  // Sprint 8: Financial Data
+  [NAMESPACES.FINANCIAL_TRANSACTIONS]: 'private', // Financial transactions are private
+
+  // Sprint 8: Calendar Data
+  [NAMESPACES.CALENDAR_EVENTS]: 'private', // Calendar events are private
+  [NAMESPACES.CALENDAR_PROFILE]: 'private', // Calendar profile is private
+  [NAMESPACES.CALENDAR_CONTACTS]: 'sensitive', // Relationship data is sensitive
+
+  // Sprint 8: Diagnostic Agent
+  [NAMESPACES.DIAGNOSTIC_REPORTS]: 'private', // Diagnostic reports are private
 };
 
 /**
@@ -182,4 +320,35 @@ export const NAMESPACE_SYNC_SCOPE: Record<Namespace, 'full' | 'selective' | 'non
   [NAMESPACES.SYNC_LOGS]: 'none', // Device-local
   [NAMESPACES.LLM_BUDGET]: 'full', // Budget syncs across devices (per-user limit)
   [NAMESPACES.LLM_CACHE]: 'none', // Device-local cache, never syncs
+
+  // Sprint 7: Restaurant Agent namespaces
+  [NAMESPACES.DINING_RESERVATIONS]: 'full', // Reservations sync
+  [NAMESPACES.RESTAURANT_FAVORITES]: 'full', // Favorites sync
+
+  // Sprint 7: Events Agent namespaces
+  [NAMESPACES.EVENT_TICKETS]: 'full', // Tickets sync
+  [NAMESPACES.EVENT_FAVORITES]: 'full', // Favorites sync
+
+  // Sprint 7: Travel Agent namespaces
+  [NAMESPACES.TRAVEL_ITINERARIES]: 'full', // Itineraries sync
+  [NAMESPACES.TRAVEL_PREFERENCES]: 'full', // Preferences sync
+
+  // Sprint 7: Additional namespaces
+  [NAMESPACES.CALENDAR]: 'full', // Calendar syncs across devices
+  [NAMESPACES.FINANCIAL_PROFILE]: 'full', // Financial profile syncs
+  [NAMESPACES.INTERESTS]: 'full', // Interests sync
+
+  // Reflection State (v13 Section 8.12 / 8.14.1)
+  [NAMESPACES.REFLECTION_STATE]: 'full', // Reflection triggers must be consistent
+
+  // Sprint 8: Financial Data
+  [NAMESPACES.FINANCIAL_TRANSACTIONS]: 'selective', // Recent transactions sync
+
+  // Sprint 8: Calendar Data
+  [NAMESPACES.CALENDAR_EVENTS]: 'selective', // Recent events sync
+  [NAMESPACES.CALENDAR_PROFILE]: 'full', // Profile syncs across devices
+  [NAMESPACES.CALENDAR_CONTACTS]: 'full', // Relationship data syncs
+
+  // Sprint 8: Diagnostic Agent
+  [NAMESPACES.DIAGNOSTIC_REPORTS]: 'full', // Reports sync across devices
 };
