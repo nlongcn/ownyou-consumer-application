@@ -95,9 +95,43 @@ Increase to v13-compliant `0.8` when:
 
 ---
 
+## Sprint 8 Deferrals
+
+### DEF-003: Real API Client Implementations (Plaid, Calendar)
+
+**Priority:** P0
+**Target Sprint:** Sprint 9+
+**Source:** Sprint 8 Code Review
+
+**Description:**
+Sprint 8 implements mock-only clients for financial (Plaid) and calendar (Google/Microsoft) data sources. Real API client implementations are deferred to Sprint 9+ when actual API integration is needed.
+
+**Current State:**
+- `@ownyou/data-financial`: Mock Plaid client in `packages/data-financial/src/plaid/mock.ts`
+- `@ownyou/data-calendar`: Mock calendar clients in `packages/data-calendar/src/providers/mock.ts`
+- Full pipeline architecture ready for real clients
+- PII sanitization pattern available in `packages/ikigai/src/engine/data-sanitizer.ts`
+
+**When to Address:**
+Implement real API clients when:
+- Plaid developer account and credentials are available
+- Google Calendar OAuth app registration is complete
+- Microsoft Graph API app registration is complete
+- Production environment requires real data sources
+
+**Implementation Notes:**
+1. Create `packages/data-financial/src/plaid/client.ts` implementing `PlaidClient` interface
+2. Create `packages/data-calendar/src/providers/google.ts` implementing `CalendarProvider` interface
+3. Create `packages/data-calendar/src/providers/microsoft.ts` implementing `CalendarProvider` interface
+4. Integrate PII sanitization before storing raw API responses
+5. Add appropriate circuit breaker configs to `@ownyou/resilience`
+
+---
+
 ## Document History
 
 | Date | Sprint | Items Added |
 |------|--------|-------------|
 | 2025-12-05 | Sprint 5 | DEF-001: Amazon PA-API config |
 | 2025-12-05 | Sprint 5 | DEF-002: Email minCoverage deviation |
+| 2025-12-08 | Sprint 8 | DEF-003: Real API client implementations (Plaid, Calendar) |

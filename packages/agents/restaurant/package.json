@@ -1,0 +1,29 @@
+{
+  "name": "@ownyou/agents-restaurant",
+  "version": "0.1.0",
+  "description": "Restaurant Agent for OwnYou - L2 agent for restaurant discovery, dietary preference matching, and reservations",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@ownyou/agents-base": "workspace:*",
+    "@ownyou/ikigai": "workspace:*",
+    "@ownyou/mock-apis": "workspace:*",
+    "@ownyou/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.0"
+  }
+}

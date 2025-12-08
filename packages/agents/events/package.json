@@ -1,0 +1,34 @@
+{
+  "name": "@ownyou/agents-events",
+  "version": "0.1.0",
+  "description": "Events Agent for OwnYou - L2 agent for event discovery, calendar integration, and ticket booking",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ownyou/agents-base": "workspace:*",
+    "@ownyou/ikigai": "workspace:*",
+    "@ownyou/mock-apis": "workspace:*",
+    "@ownyou/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.0"
+  }
+}
