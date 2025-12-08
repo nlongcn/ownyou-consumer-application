@@ -19,6 +19,16 @@ export type {
   EventLogOptions,
   TraceQueryOptions,
   CostSummary,
+  // Sprint 9: Enhanced AgentStep Types (v13 Section 10.2)
+  AgentStepType,
+  AgentStep,
+  LLMStepDetail,
+  ToolStepDetail,
+  MemoryStepDetail,
+  ExternalApiStepDetail,
+  DecisionStepDetail,
+  TraceResourceSummary,
+  RecordStepOptions,
 } from './types';
 
 export { AgentTracer } from './tracer';

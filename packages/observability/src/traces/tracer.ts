@@ -17,6 +17,9 @@ import type {
   MemoryOpRecord,
   TraceQueryOptions,
   CostSummary,
+  RecordStepOptions,
+  AgentStep,
+  TraceResourceSummary,
 } from './types';
 
 /**
@@ -49,6 +52,18 @@ export class AgentTracer {
       startTime: Date.now(),
       spans: [],
       events: [],
+      // Sprint 9: Enhanced step tracking (v13 Section 10.2)
+      steps: [],
+      resources: {
+        llmCalls: 0,
+        llmTokens: { input: 0, output: 0 },
+        llmCostUsd: 0,
+        toolCalls: 0,
+        memoryReads: 0,
+        memoryWrites: 0,
+        externalApiCalls: 0,
+      },
+      // Legacy cost tracking
       totalCostUsd: 0,
       llmCalls: 0,
       toolCalls: 0,
@@ -192,6 +207,73 @@ export class AgentTracer {
     if (!trace) return;
 
     trace.memoryOps[record.operation] += record.count;
+  }
+
+  // ========== Sprint 9: Enhanced Step Recording (v13 Section 10.2) ==========
+
+  /**
+   * Record an agent step with full detail
+   */
+  recordStep(traceId: string, options: RecordStepOptions): void {
+    const trace = this.traces.get(traceId);
+    if (!trace) return;
+
+    const step: AgentStep = {
+      stepIndex: trace.steps.length,
+      stepType: options.stepType,
+      timestamp: Date.now(),
+      durationMs: options.durationMs,
+      llm: options.llm,
+      tool: options.tool,
+      memory: options.memory,
+      externalApi: options.externalApi,
+      decision: options.decision,
+    };
+
+    trace.steps.push(step);
+
+    // Update resource summary based on step type
+    this.updateResourceSummary(trace, options);
+  }
+
+  /**
+   * Update trace resource summary based on step
+   */
+  private updateResourceSummary(trace: AgentTrace, step: RecordStepOptions): void {
+    switch (step.stepType) {
+      case 'llm_call':
+        if (step.llm) {
+          trace.resources.llmCalls++;
+          trace.resources.llmTokens.input += step.llm.tokens.input;
+          trace.resources.llmTokens.output += step.llm.tokens.output;
+          trace.resources.llmCostUsd += step.llm.costUsd;
+          // Also update legacy tracking
+          trace.totalCostUsd += step.llm.costUsd;
+          trace.llmCalls++;
+        }
+        break;
+
+      case 'tool_call':
+        trace.resources.toolCalls++;
+        trace.toolCalls++;
+        break;
+
+      case 'memory_read':
+        trace.resources.memoryReads++;
+        break;
+
+      case 'memory_write':
+        trace.resources.memoryWrites++;
+        break;
+
+      case 'external_api':
+        trace.resources.externalApiCalls++;
+        break;
+
+      case 'decision':
+        // Decisions don't have resource impact
+        break;
+    }
   }
 
   /**

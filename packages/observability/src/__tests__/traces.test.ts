@@ -269,3 +269,266 @@ describe('CostMeter (v13 Section 10.4)', () => {
     expect(summary.traceCount).toBe(3);
   });
 });
+
+// ========== Sprint 9: Enhanced AgentStep Types (v13 Section 10.2) ==========
+
+import type {
+  AgentStep,
+  LLMStepDetail,
+  ToolStepDetail,
+  MemoryStepDetail,
+  ExternalApiStepDetail,
+  DecisionStepDetail,
+} from '../traces';
+
+describe('Enhanced AgentStep Types (v13 Section 10.2)', () => {
+  let tracer: AgentTracer;
+  const userId = 'user_123';
+
+  beforeEach(() => {
+    tracer = new AgentTracer();
+  });
+
+  describe('AgentStep Recording', () => {
+    it('should record LLM call step with full detail', () => {
+      const trace = tracer.startTrace({ userId, agentType: 'shopping' });
+
+      tracer.recordStep(trace.id, {
+        stepType: 'llm_call',
+        llm: {
+          model: 'gpt-4o-mini',
+          promptPreview: 'You are a shopping assistant...',
+          responsePreview: 'Based on your preferences...',
+          tokens: { input: 150, output: 75 },
+          costUsd: 0.0005,
+        },
+      });
+
+      const updated = tracer.getTrace(trace.id);
+      expect(updated?.steps.length).toBe(1);
+
+      const step = updated?.steps[0];
+      expect(step?.stepType).toBe('llm_call');
+      expect(step?.llm?.model).toBe('gpt-4o-mini');
+      expect(step?.llm?.tokens.input).toBe(150);
+      expect(step?.llm?.costUsd).toBe(0.0005);
+    });
+
+    it('should record tool call step with full detail', () => {
+      const trace = tracer.startTrace({ userId, agentType: 'restaurant' });
+
+      tracer.recordStep(trace.id, {
+        stepType: 'tool_call',
+        tool: {
+          name: 'search_restaurants',
+          args: { cuisine: 'italian', location: 'NYC' },
+          resultPreview: '{"results": [{"name": "Bella Italia"...]}',
+          success: true,
+        },
+      });
+
+      const updated = tracer.getTrace(trace.id);
+      const step = updated?.steps[0];
+      expect(step?.stepType).toBe('tool_call');
+      expect(step?.tool?.name).toBe('search_restaurants');
+      expect(step?.tool?.success).toBe(true);
+    });
+
+    it('should record tool call step with error', () => {
+      const trace = tracer.startTrace({ userId, agentType: 'events' });
+
+      tracer.recordStep(trace.id, {
+        stepType: 'tool_call',
+        tool: {
+          name: 'search_events',
+          args: { query: 'concerts' },
+          resultPreview: '',
+          success: false,
+          error: 'API rate limit exceeded',
+        },
+      });
+
+      const updated = tracer.getTrace(trace.id);
+      const step = updated?.steps[0];
+      expect(step?.tool?.success).toBe(false);
+      expect(step?.tool?.error).toBe('API rate limit exceeded');
+    });
+
+    it('should record memory read step', () => {
+      const trace = tracer.startTrace({ userId, agentType: 'diagnostic' });
+
+      tracer.recordStep(trace.id, {
+        stepType: 'memory_read',
+        memory: {
+          operation: 'search',
+          namespace: 'ownyou.semantic',
+          query: 'user preferences for dining',
+          resultCount: 5,
+        },
+      });
+
+      const updated = tracer.getTrace(trace.id);
+      const step = updated?.steps[0];
+      expect(step?.stepType).toBe('memory_read');
+      expect(step?.memory?.operation).toBe('search');
+      expect(step?.memory?.resultCount).toBe(5);
+    });
+
+    it('should record memory write step', () => {
+      const trace = tracer.startTrace({ userId, agentType: 'content' });
+
+      tracer.recordStep(trace.id, {
+        stepType: 'memory_write',
+        memory: {
+          operation: 'write',
+          namespace: 'ownyou.episodic',
+          key: 'ep_1234',
+        },
+      });
+
+      const updated = tracer.getTrace(trace.id);
+      const step = updated?.steps[0];
+      expect(step?.stepType).toBe('memory_write');
+      expect(step?.memory?.operation).toBe('write');
+      expect(step?.memory?.key).toBe('ep_1234');
+    });
+
+    it('should record external API call step', () => {
+      const trace = tracer.startTrace({ userId, agentType: 'travel' });
+
+      tracer.recordStep(trace.id, {
+        stepType: 'external_api',
+        externalApi: {
+          service: 'Skyscanner',
+          endpoint: '/flights/search',
+          statusCode: 200,
+          latencyMs: 350,
+          cached: false,
+        },
+      });
+
+      const updated = tracer.getTrace(trace.id);
+      const step = updated?.steps[0];
+      expect(step?.stepType).toBe('external_api');
+      expect(step?.externalApi?.service).toBe('Skyscanner');
+      expect(step?.externalApi?.statusCode).toBe(200);
+      expect(step?.externalApi?.cached).toBe(false);
+    });
+
+    it('should record decision step', () => {
+      const trace = tracer.startTrace({ userId, agentType: 'shopping' });
+
+      tracer.recordStep(trace.id, {
+        stepType: 'decision',
+        decision: {
+          decisionPoint: 'select_product_recommendation',
+          optionsConsidered: ['Product A', 'Product B', 'Product C'],
+          selected: 'Product B',
+          reasoning: 'Best price-quality ratio based on user preferences',
+        },
+      });
+
+      const updated = tracer.getTrace(trace.id);
+      const step = updated?.steps[0];
+      expect(step?.stepType).toBe('decision');
+      expect(step?.decision?.selected).toBe('Product B');
+      expect(step?.decision?.optionsConsidered).toHaveLength(3);
+    });
+
+    it('should auto-increment step index', () => {
+      const trace = tracer.startTrace({ userId, agentType: 'restaurant' });
+
+      tracer.recordStep(trace.id, { stepType: 'memory_read', memory: { operation: 'read', namespace: 'ownyou.ikigai' } });
+      tracer.recordStep(trace.id, { stepType: 'llm_call', llm: { model: 'gpt-4o', promptPreview: '', responsePreview: '', tokens: { input: 100, output: 50 }, costUsd: 0.001 } });
+      tracer.recordStep(trace.id, { stepType: 'tool_call', tool: { name: 'reserve_table', args: {}, resultPreview: '', success: true } });
+
+      const updated = tracer.getTrace(trace.id);
+      expect(updated?.steps[0].stepIndex).toBe(0);
+      expect(updated?.steps[1].stepIndex).toBe(1);
+      expect(updated?.steps[2].stepIndex).toBe(2);
+    });
+
+    it('should capture step duration', () => {
+      const trace = tracer.startTrace({ userId, agentType: 'events' });
+
+      tracer.recordStep(trace.id, {
+        stepType: 'llm_call',
+        durationMs: 1250,
+        llm: {
+          model: 'gpt-4o-mini',
+          promptPreview: 'Find events...',
+          responsePreview: 'Here are upcoming events...',
+          tokens: { input: 200, output: 100 },
+          costUsd: 0.0008,
+        },
+      });
+
+      const updated = tracer.getTrace(trace.id);
+      const step = updated?.steps[0];
+      expect(step?.durationMs).toBe(1250);
+    });
+  });
+
+  describe('Step Type Validation', () => {
+    it('should only accept valid step types', () => {
+      const trace = tracer.startTrace({ userId, agentType: 'shopping' });
+
+      // Valid step types: 'llm_call' | 'tool_call' | 'memory_read' | 'memory_write' | 'decision' | 'external_api'
+      const validTypes = ['llm_call', 'tool_call', 'memory_read', 'memory_write', 'decision', 'external_api'];
+
+      for (const stepType of validTypes) {
+        expect(() => {
+          tracer.recordStep(trace.id, {
+            stepType: stepType as AgentStep['stepType'],
+            // Minimal data - just validating type acceptance
+          });
+        }).not.toThrow();
+      }
+    });
+  });
+
+  describe('Resource Summary with Steps', () => {
+    it('should update resource summary from steps', () => {
+      const trace = tracer.startTrace({ userId, agentType: 'diagnostic' });
+
+      // Record multiple steps
+      tracer.recordStep(trace.id, {
+        stepType: 'llm_call',
+        llm: { model: 'gpt-4o', promptPreview: '', responsePreview: '', tokens: { input: 100, output: 50 }, costUsd: 0.002 },
+      });
+      tracer.recordStep(trace.id, {
+        stepType: 'llm_call',
+        llm: { model: 'gpt-4o', promptPreview: '', responsePreview: '', tokens: { input: 150, output: 75 }, costUsd: 0.003 },
+      });
+      tracer.recordStep(trace.id, {
+        stepType: 'tool_call',
+        tool: { name: 'analyze_profile', args: {}, resultPreview: '', success: true },
+      });
+      tracer.recordStep(trace.id, {
+        stepType: 'memory_read',
+        memory: { operation: 'read', namespace: 'ownyou.ikigai' },
+      });
+      tracer.recordStep(trace.id, {
+        stepType: 'memory_write',
+        memory: { operation: 'write', namespace: 'ownyou.diagnostic_reports' },
+      });
+      tracer.recordStep(trace.id, {
+        stepType: 'external_api',
+        externalApi: { service: 'internal', endpoint: '/analyze', statusCode: 200, latencyMs: 100, cached: false },
+      });
+
+      const updated = tracer.getTrace(trace.id);
+
+      // Resource summary should reflect all steps
+      expect(updated?.resources).toBeDefined();
+      expect(updated?.resources.llmCalls).toBe(2);
+      expect(updated?.resources.llmTokens.input).toBe(250);
+      expect(updated?.resources.llmTokens.output).toBe(125);
+      expect(updated?.resources.llmCostUsd).toBeCloseTo(0.005);
+      expect(updated?.resources.toolCalls).toBe(1);
+      expect(updated?.resources.memoryReads).toBe(1);
+      expect(updated?.resources.memoryWrites).toBe(1);
+      expect(updated?.resources.externalApiCalls).toBe(1);
+    });
+  });
+});
