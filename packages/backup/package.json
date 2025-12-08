@@ -1,0 +1,44 @@
+{
+  "name": "@ownyou/backup",
+  "version": "0.1.0",
+  "description": "E2EE cloud backup for disaster recovery (Signal-style)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ownyou/shared-types": "workspace:*",
+    "@ownyou/sync": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "keywords": [
+    "ownyou",
+    "backup",
+    "e2ee",
+    "recovery",
+    "cloud"
+  ],
+  "license": "MIT"
+}
