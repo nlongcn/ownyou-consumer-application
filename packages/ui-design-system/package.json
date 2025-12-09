@@ -1,7 +1,7 @@
 {
-  "name": "@ownyou/ui-components",
+  "name": "@ownyou/ui-design-system",
   "version": "0.1.0",
-  "description": "Shared UI components for OwnYou - Mission Cards, Feedback UI - v13 Section 4.4",
+  "description": "Design tokens, theme provider, and shared primitives for OwnYou - v13 Section 4.3",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -10,25 +10,31 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./layout": {
-      "import": "./dist/layout/index.js",
-      "types": "./dist/layout/index.d.ts"
+    "./tokens": {
+      "import": "./dist/tokens/index.js",
+      "types": "./dist/tokens/index.d.ts"
     },
-    "./mission": {
-      "import": "./dist/mission/index.js",
-      "types": "./dist/mission/index.d.ts"
+    "./primitives": {
+      "import": "./dist/primitives/index.js",
+      "types": "./dist/primitives/index.d.ts"
     },
-    "./profile": {
-      "import": "./dist/profile/index.js",
-      "types": "./dist/profile/index.d.ts"
+    "./theme": {
+      "import": "./dist/theme/index.js",
+      "types": "./dist/theme/index.d.ts"
     },
-    "./branding": {
-      "import": "./dist/branding/index.js",
-      "types": "./dist/branding/index.d.ts"
+    "./utils": {
+      "import": "./dist/utils/index.js",
+      "types": "./dist/utils/index.d.ts"
+    },
+    "./tailwind.config": {
+      "import": "./tailwind.config.js",
+      "require": "./tailwind.config.cjs"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "tailwind.config.js",
+    "tailwind.config.cjs"
   ],
   "scripts": {
     "build": "tsc",
@@ -38,9 +44,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ownyou/shared-types": "workspace:*",
-    "@ownyou/ui-design-system": "workspace:*",
-    "react-masonry-css": "^1.0.16"
+    "@radix-ui/react-slot": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.2.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",

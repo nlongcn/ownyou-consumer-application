@@ -1,15 +1,9 @@
 import { defineConfig } from 'vitest/config';
-import { resolve } from 'path';
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      '@ownyou/ui-design-system': resolve(__dirname, '../ui-design-system/src'),
-    },
-  },
   test: {
-    environment: 'jsdom',
     globals: true,
+    environment: 'jsdom',
     setupFiles: ['./__tests__/setup.ts'],
     include: ['__tests__/**/*.test.{ts,tsx}'],
     coverage: {

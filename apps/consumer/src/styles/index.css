@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* OwnYou Design System CSS Variables */
+:root {
+  /* Colors from v13 Section 4.3.1 */
+  --color-primary: #87CEEB;
+  --color-secondary: #70DF82;
+  --color-card-bg: #FFFBFB;
+  --color-card-bg-alt: #F4F5F7;
+  --color-text-primary: #000000;
+  --color-text-secondary: #FFFBFB;
+  --color-placeholder: #D9D9D9;
+
+  /* Spacing from v13 Section 4.3.3 */
+  --radius-card: 35px;
+  --radius-card-small: 20px;
+  --radius-image: 12px;
+  --radius-image-large: 21px;
+  --radius-nav: 12.5px;
+  --card-width: 180px;
+  --card-width-desktop: 260px;
+  --card-gap: 13px;
+  --feed-padding: 10px;
+}
+
+/* Global reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Life Savers', sans-serif;
+  font-weight: 700;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-primary);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* PWA safe area handling */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Hide scrollbar but keep scrolling */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus styles for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+/* Card animations */
+.card-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.card-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+
+/* Heart animation for feedback */
+@keyframes heart-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+}
+
+.heart-pulse {
+  animation: heart-pulse 300ms ease-in-out;
+}
+
+/* Masonry grid spacing */
+.masonry-grid {
+  display: flex;
+  margin-left: calc(var(--card-gap) * -1);
+  width: auto;
+}
+
+.masonry-grid-column {
+  padding-left: var(--card-gap);
+  background-clip: padding-box;
+}
+
+.masonry-grid-column > * {
+  margin-bottom: var(--card-gap);
+}
