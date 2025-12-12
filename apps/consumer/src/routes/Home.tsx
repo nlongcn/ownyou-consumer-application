@@ -8,6 +8,7 @@ import { useFeedback } from '../hooks/useFeedback';
 import { useAuth } from '../contexts/AuthContext';
 import { useDataSource } from '../contexts/DataSourceContext';
 import { useTrigger } from '../contexts/TriggerContext';
+import { useToast } from '../contexts/ToastContext';
 import { ChatInput } from '../components/ChatInput';
 
 export function Home() {
@@ -16,6 +17,7 @@ export function Home() {
   const { isAuthenticated, connect, isLoading: isConnecting } = useAuth();
   const { getConnectedSources, isSyncing, dataSources } = useDataSource();
   const { isExecuting: isAgentExecuting } = useTrigger();
+  const { showFeedbackToast, showToast } = useToast();
 
   const { missions, isLoading, error, hasMissions } = useMissions(activeFilter);
   const { updateFeedback } = useFeedback();
@@ -27,7 +29,9 @@ export function Home() {
 
   const handleFeedbackChange = useCallback((missionId: string, state: HeartState) => {
     updateFeedback(missionId, state);
-  }, [updateFeedback]);
+    // Show contextual toast for feedback - Phase 4 UX improvement
+    showFeedbackToast(state);
+  }, [updateFeedback, showFeedbackToast]);
 
   const handleFilterChange = useCallback((filter: FilterTab) => {
     setActiveFilter(filter);
@@ -37,19 +41,21 @@ export function Home() {
     try {
       await snoozeMission(missionId);
       console.log('[Home] Mission snoozed:', missionId);
+      showToast('Mission snoozed - will show again later', 'info', 2000);
     } catch (error) {
       console.error('[Home] Snooze failed:', error);
     }
-  }, [snoozeMission]);
+  }, [snoozeMission, showToast]);
 
   const handleDismiss = useCallback(async (missionId: string) => {
     try {
       await dismissMission(missionId);
       console.log('[Home] Mission dismissed:', missionId);
+      showToast('Mission dismissed', 'info', 2000);
     } catch (error) {
       console.error('[Home] Dismiss failed:', error);
     }
-  }, [dismissMission]);
+  }, [dismissMission, showToast]);
 
   const handleCallToAction = useCallback((missionId: string) => {
     // Find the mission and open its action URL
