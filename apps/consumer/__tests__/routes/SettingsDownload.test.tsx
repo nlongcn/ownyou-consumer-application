@@ -96,10 +96,13 @@ describe('Settings Download Dialog', () => {
     vi.restoreAllMocks();
   });
 
-  it('opens download dialog and triggers download via hidden iframe', async () => {
+  it('opens download dialog and triggers download via local proxy', async () => {
     const user = userEvent.setup();
     const appendSpy = vi.spyOn(document.body, 'appendChild');
+    const removeSpy = vi.spyOn(document.body, 'removeChild');
     const createElementSpy = vi.spyOn(document, 'createElement');
+    // Spy on the click method of all anchor elements
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
     
     renderWithProviders(<Settings />);
 
@@ -117,22 +120,29 @@ describe('Settings Download Dialog', () => {
     // Click Download Desktop App
     await user.click(screen.getByText('Download Desktop App'));
 
-    // Verify iframe was created
-    expect(createElementSpy).toHaveBeenCalledWith('iframe');
+    // Verify anchor tag was created
+    expect(createElementSpy).toHaveBeenCalledWith('a');
     
-    // Find the created iframe from the spy results
-    const createdIframe = createElementSpy.mock.results
+    // Find the created link from the spy results
+    const createdLink = createElementSpy.mock.results
         .map(r => r.value)
-        .find(el => el instanceof HTMLIFrameElement && el.src.includes('releases/download')) as HTMLIFrameElement;
+        .find(el => el instanceof HTMLAnchorElement && el.href.includes('/api/proxy-download')) as HTMLAnchorElement;
         
-    expect(createdIframe).toBeDefined();
-    expect(createdIframe.src).toContain('https://github.com/nlongcn/ownyou-consumer-application/releases/download/');
-    expect(createdIframe.style.display).toBe('none');
+    expect(createdLink).toBeDefined();
+    // Check for proxy URL format
+    expect(createdLink.href).toContain('/api/proxy-download?url=');
+    expect(createdLink.href).toContain(encodeURIComponent('https://github.com/nlongcn/ownyou-consumer-application/releases/download/'));
+    
+    // Verify download attribute is set (now effective)
+    expect(createdLink.download).toBeDefined();
     
     // Verify it was appended
-    expect(appendSpy).toHaveBeenCalledWith(createdIframe);
+    expect(appendSpy).toHaveBeenCalledWith(createdLink);
     
-    // We can't easily test the setTimeout removal in this sync test flow without fake timers,
-    // but the critical part is the append.
+    // Verify it was clicked
+    expect(clickSpy).toHaveBeenCalled();
+    
+    // Verify it was removed
+    expect(removeSpy).toHaveBeenCalledWith(createdLink);
   });
 });
