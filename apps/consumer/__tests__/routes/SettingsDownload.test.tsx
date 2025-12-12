@@ -111,10 +111,10 @@ describe('Settings Download Dialog', () => {
 
     // Verify dialog appears
     expect(screen.getByText('Connect Outlook')).toBeInTheDocument();
-    expect(screen.getByText('Download Desktop App')).toBeInTheDocument();
+    expect(screen.getByText('Open Download Page')).toBeInTheDocument();
 
     // Click Download Desktop App
-    await user.click(screen.getByText('Download Desktop App'));
+    await user.click(screen.getByText('Open Download Page'));
 
     // Verify window.open was called with the Release Tag URL (not the file download)
     expect(openSpy).toHaveBeenCalledWith(
