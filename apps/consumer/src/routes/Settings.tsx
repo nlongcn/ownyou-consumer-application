@@ -107,8 +107,6 @@ function DataSettings() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [exportSuccess, setExportSuccess] = useState(false);
   const [showOutlookChoice, setShowOutlookChoice] = useState(false);
-  const [downloadProgress, setDownloadProgress] = useState<number | null>(null);
-  const [downloadError, setDownloadError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   /**
@@ -320,45 +318,54 @@ function DataSettings() {
       {/* Outlook pre-connect choice dialog - Sprint 11b: Desktop app recommendation */}
       {showOutlookChoice && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl">
             <h3 className="text-lg font-bold text-gray-900 mb-2">Connect Outlook</h3>
-            <p className="text-gray-600 text-sm mb-4">
-              Browser-based Outlook connections expire daily and require re-authentication.
-              For uninterrupted sync, we recommend the desktop app.
-            </p>
+
+            {/* Browser vs Desktop comparison table */}
+            <div className="bg-gray-50 rounded-lg p-3 mb-4">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-1.5 font-semibold text-gray-700">Feature</th>
+                    <th className="text-center py-1.5 font-semibold text-gray-500">Browser</th>
+                    <th className="text-center py-1.5 font-semibold text-green-600">Desktop</th>
+                  </tr>
+                </thead>
+                <tbody className="text-gray-600">
+                  <tr className="border-b border-gray-100">
+                    <td className="py-1.5">Email access</td>
+                    <td className="text-center py-1.5">Daily re-auth</td>
+                    <td className="text-center py-1.5 text-green-600 font-medium">Long-term</td>
+                  </tr>
+                  <tr className="border-b border-gray-100">
+                    <td className="py-1.5">AI inference</td>
+                    <td className="text-center py-1.5">Cloud</td>
+                    <td className="text-center py-1.5 text-green-600 font-medium">Local</td>
+                  </tr>
+                  <tr>
+                    <td className="py-1.5">Privacy level</td>
+                    <td className="text-center py-1.5">Good</td>
+                    <td className="text-center py-1.5 text-green-600 font-medium">Maximum</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
             <div className="space-y-3">
-              {/* Download Desktop App - synchronous for browser compatibility */}
+              {/* Download Desktop App - synchronous redirect for correct filename */}
               {(() => {
                 const { url, platform, filename } = getDesktopDownloadUrl();
                 return (
-                  <>
-                    <button
-                      onClick={() => {
-                        // MUST be synchronous to preserve user gesture for download
-                        // Any async operation before the download triggers popup blocker
-                        setDownloadError(null);
-                        downloadDesktopApp(
-                          url,
-                          filename,
-                          (percent) => setDownloadProgress(percent),
-                          (error) => setDownloadError(error)
-                        );
-                        // Don't close dialog - let user see the download started
-                        // The page will navigate but browser will handle as download
-                      }}
-                      className="w-full py-3 px-4 text-white rounded-lg transition-colors flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700"
-                    >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                      </svg>
-                      Download Desktop App
-                      <span className="text-xs bg-white/20 px-2 py-0.5 rounded">{platform}</span>
-                    </button>
-                    {downloadError && (
-                      <p className="text-red-500 text-sm text-center">{downloadError}</p>
-                    )}
-                  </>
+                  <button
+                    onClick={() => downloadDesktopApp(url, filename)}
+                    className="w-full py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download Desktop App
+                    <span className="text-xs bg-white/20 px-2 py-0.5 rounded">{platform}</span>
+                  </button>
                 );
               })()}
 
@@ -570,37 +577,81 @@ function getDesktopDownloadUrl(): { url: string; platform: string; filename: str
 }
 
 /**
- * Download desktop app - synchronous approach for browser compatibility
- *
- * IMPORTANT: This function must be called synchronously from a click handler.
- * Using async operations (like fetch) before window.location.href will cause
- * the browser to block the download as a popup (user gesture expires).
- *
- * GitHub releases respond with Content-Disposition: attachment header,
- * so the browser will download the file instead of navigating away.
+ * Download desktop app via Cloudflare Worker proxy.
+ * Uses File System Access API (showSaveFilePicker) to let user choose filename.
+ * Falls back to direct download if API not supported.
  */
-function downloadDesktopApp(
-  url: string,
-  _filename: string, // unused
-  onProgress?: (percent: number) => void,
-  _onError?: (error: string) => void
-): void {
-  console.log('[Download] Starting download via trampoline /download.html');
-  onProgress?.(0);
+async function downloadDesktopApp(url: string, filename: string): Promise<void> {
+  console.log('[Download] Starting download for:', filename);
+  const proxyUrl = `https://ownyou-download-proxy.nlongcroft.workers.dev/download/${encodeURIComponent(filename)}?url=${encodeURIComponent(url)}`;
 
-  // Use a local "trampoline" page to initiate the download.
-  // This navigates the user to a same-origin page (/download.html) which then
-  // immediately redirects to the target file URL.
-  // This technique often helps browsers (especially Safari/PWA) respect the
-  // Content-Disposition filename header because the initial navigation is same-origin
-  // and trusted, preventing the "suspicious cross-origin download" fallback behavior
-  // that results in UUID filenames.
-  const trampolineUrl = `/download.html?url=${encodeURIComponent(url)}`;
-  
-  // Use location.assign to treat it as a standard navigation
-  window.location.assign(trampolineUrl);
+  // Check if File System Access API is available
+  const hasFileSystemAccess = 'showSaveFilePicker' in window;
+  console.log('[Download] File System Access API available:', hasFileSystemAccess);
 
-  onProgress?.(100);
+  if (hasFileSystemAccess) {
+    try {
+      // Get file extension for MIME type
+      const ext = filename.split('.').pop()?.toLowerCase() || '';
+      const mimeTypes: Record<string, string> = {
+        'dmg': 'application/x-apple-diskimage',
+        'exe': 'application/x-msdownload',
+        'msi': 'application/x-msi',
+      };
+
+      console.log('[Download] Showing save file picker...');
+
+      // Show native "Save As" dialog with suggested filename
+      const fileHandle = await (window as any).showSaveFilePicker({
+        suggestedName: filename,
+        types: [{
+          description: 'Desktop Application',
+          accept: { [mimeTypes[ext] || 'application/octet-stream']: [`.${ext}`] },
+        }],
+      });
+
+      console.log('[Download] User selected file, fetching from proxy...');
+
+      // Fetch the file
+      const response = await fetch(proxyUrl);
+      if (!response.ok) throw new Error(`Download failed: ${response.status}`);
+      const blob = await response.blob();
+
+      console.log('[Download] Writing file, size:', blob.size);
+
+      // Write to user-selected file
+      const writable = await fileHandle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+
+      console.log('[Download] File saved successfully via File System Access API');
+      alert('Download complete! File saved successfully.');
+      return;
+    } catch (err: any) {
+      console.error('[Download] Error:', err.name, err.message);
+      // User cancelled or API failed
+      if (err.name === 'AbortError') {
+        console.log('[Download] User cancelled save dialog');
+        return; // User cancelled, don't fall through
+      }
+      // For other errors, fall through to fallback
+      console.warn('[Download] File System Access API failed, using fallback');
+    }
+  }
+
+  // Fallback: Direct navigation (will have UUID filename in Chrome)
+  console.log('[Download] Using fallback download method');
+
+  // Show alert so user knows to rename
+  const proceed = confirm(
+    `Note: Due to browser limitations, the downloaded file may have a random name.\n\n` +
+    `After downloading, please rename it to:\n${filename}\n\n` +
+    `Click OK to proceed with download.`
+  );
+
+  if (proceed) {
+    window.location.href = proxyUrl;
+  }
 }
 
 /**
