@@ -96,8 +96,14 @@ describe('Settings Download Dialog', () => {
     vi.restoreAllMocks();
   });
 
-  it('opens download dialog and triggers download via window.open', async () => {
+  it('opens download dialog and triggers download via anchor tag', async () => {
     const user = userEvent.setup();
+    const appendSpy = vi.spyOn(document.body, 'appendChild');
+    const removeSpy = vi.spyOn(document.body, 'removeChild');
+    const createElementSpy = vi.spyOn(document, 'createElement');
+    // Spy on the click method of all anchor elements
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    
     renderWithProviders(<Settings />);
 
     // Navigate to Data tab
@@ -105,8 +111,6 @@ describe('Settings Download Dialog', () => {
     
     // Click Connect on Outlook
     const connectButtons = screen.getAllByText('Connect');
-    // Assuming Outlook is the first one or finding by accessible name if possible
-    // Given the mock only has Outlook, it should be fine.
     await user.click(connectButtons[0]);
 
     // Verify dialog appears
@@ -116,13 +120,30 @@ describe('Settings Download Dialog', () => {
     // Click Download Desktop App
     await user.click(screen.getByText('Download Desktop App'));
 
-    // Verify window.open was called
-    // Note: The URL depends on the test environment's user agent.
-    // Vitest/JSDOM default user agent usually contains "linux" or "win" or "mac".
-    // We can just check if window.open was called with *some* URL and '_blank'.
-    expect(window.open).toHaveBeenCalledWith(
-        expect.stringContaining('https://github.com/nlongcn/ownyou-consumer-application/releases/download/'),
-        '_blank'
-    );
+    // Verify anchor tag was created
+    expect(createElementSpy).toHaveBeenCalledWith('a');
+    
+    // Find the created link from the spy results
+    // We filter for the one that has the correct href, in case other elements were created
+    const createdLink = createElementSpy.mock.results
+        .map(r => r.value)
+        .find(el => el instanceof HTMLAnchorElement && el.href.includes('releases/download')) as HTMLAnchorElement;
+        
+    expect(createdLink).toBeDefined();
+    expect(createdLink.href).toContain('https://github.com/nlongcn/ownyou-consumer-application/releases/download/');
+    expect(createdLink.target).toBe('_blank');
+    // Check property or attribute for download
+    expect(createdLink.download).toBeDefined();
+    
+    // Verify it was appended
+    expect(appendSpy).toHaveBeenCalledWith(createdLink);
+    
+    // Verify it was clicked (using the prototype spy)
+    expect(clickSpy).toHaveBeenCalled();
+    // Verify the context of the click call was our link
+    expect(clickSpy.mock.contexts[0]).toBe(createdLink);
+    
+    // Verify it was removed
+    expect(removeSpy).toHaveBeenCalledWith(createdLink);
   });
 });
