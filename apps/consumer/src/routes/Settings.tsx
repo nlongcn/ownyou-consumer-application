@@ -585,23 +585,23 @@ function downloadDesktopApp(
   onProgress?: (percent: number) => void,
   _onError?: (error: string) => void // unused - redirect always works
 ): void {
-  console.log('[Download] Starting download via anchor tag click');
+  console.log('[Download] Starting download via hidden iframe');
   onProgress?.(0);
 
-  // Use a temporary anchor tag to trigger download
-  // This is preferred over window.open as it avoids popup blockers
-  // and stays in the same context while still triggering download
-  const link = document.createElement('a');
-  link.href = url;
-  // Note: 'download' attribute is ignored for cross-origin URLs,
-  // but we include it as a hint for same-origin scenarios or if behaviors change
-  link.download = _filename; 
-  link.target = '_blank'; // Open in new tab/window to be safe for cross-origin redirects
-  link.rel = 'noopener noreferrer'; // Security best practice
-  
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  // Use a hidden iframe to trigger download
+  // This is the most robust method for forcing Content-Disposition usage in Safari/PWA
+  // as it treats the request as a top-level navigation in a subframe context
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = url;
+  document.body.appendChild(iframe);
+
+  // Clean up after a delay (long enough for the redirect and download to start)
+  setTimeout(() => {
+    if (document.body.contains(iframe)) {
+        document.body.removeChild(iframe);
+    }
+  }, 60000); // 1 minute timeout
 
   // Mark as complete immediately (actual download happens in background)
   onProgress?.(100);
