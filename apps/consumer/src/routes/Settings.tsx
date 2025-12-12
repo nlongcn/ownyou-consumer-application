@@ -585,19 +585,23 @@ function downloadDesktopApp(
   onProgress?: (percent: number) => void,
   _onError?: (error: string) => void // unused - redirect always works
 ): void {
-  console.log('[Download] Starting download via window.open');
+  console.log('[Download] Starting download via anchor tag click');
   onProgress?.(0);
 
-  // Use window.open with _blank to trigger download in new context
-  // This is more robust for cross-origin downloads and redirects (GitHub releases)
-  // and handles Content-Disposition headers correctly in Safari/Chrome
-  const win = window.open(url, '_blank');
-
-  // If popup blocker blocked it (returns null), fall back to navigation
-  if (!win) {
-    console.warn('[Download] window.open blocked, falling back to window.location.href');
-    window.location.href = url;
-  }
+  // Use a temporary anchor tag to trigger download
+  // This is preferred over window.open as it avoids popup blockers
+  // and stays in the same context while still triggering download
+  const link = document.createElement('a');
+  link.href = url;
+  // Note: 'download' attribute is ignored for cross-origin URLs,
+  // but we include it as a hint for same-origin scenarios or if behaviors change
+  link.download = _filename; 
+  link.target = '_blank'; // Open in new tab/window to be safe for cross-origin redirects
+  link.rel = 'noopener noreferrer'; // Security best practice
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 
   // Mark as complete immediately (actual download happens in background)
   onProgress?.(100);
