@@ -1,7 +1,10 @@
-import { useState } from 'react';
-import { Header, TokenBalance } from '@ownyou/ui-components';
+import { useState, useEffect } from 'react';
+import { Header } from '@ownyou/ui-components';
 import { Card } from '@ownyou/ui-design-system';
 import { useAuth } from '../contexts/AuthContext';
+import { useIkigaiRewards } from '../contexts/IkigaiContext';
+import { useStore } from '../contexts/StoreContext';
+import { NS } from '@ownyou/shared-types';
 
 interface Transaction {
   id: string;
@@ -13,32 +16,45 @@ interface Transaction {
 }
 
 export function Wallet() {
-  const { isAuthenticated, wallet } = useAuth();
-  const [showWithdraw, setShowWithdraw] = useState(false);
+  const { isAuthenticated, wallet, connect, isLoading } = useAuth();
+  const { points, tier, refresh } = useIkigaiRewards();
+  const { store, isReady } = useStore();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoadingTransactions, setIsLoadingTransactions] = useState(true);
 
-  // Mock transaction data - replace with real data from store
-  const transactions: Transaction[] = [
-    {
-      id: '1',
-      type: 'earn',
-      amount: 0.05,
-      description: 'Data contribution reward',
-      timestamp: new Date(Date.now() - 86400000),
-      status: 'completed',
-    },
-    {
-      id: '2',
-      type: 'earn',
-      amount: 0.02,
-      description: 'Profile completion bonus',
-      timestamp: new Date(Date.now() - 172800000),
-      status: 'completed',
-    },
-  ];
+  const userId = wallet?.address ?? 'anonymous';
 
-  const totalEarnings = transactions
-    .filter(t => t.type === 'earn' && t.status === 'completed')
-    .reduce((sum, t) => sum + t.amount, 0);
+  // Load transactions from store
+  useEffect(() => {
+    if (!store || !isReady || !isAuthenticated) {
+      setIsLoadingTransactions(false);
+      return;
+    }
+
+    const loadTransactions = async () => {
+      setIsLoadingTransactions(true);
+      try {
+        // Load transactions from earnings namespace
+        const result = await store.list<Transaction>(
+          NS.earnings(userId),
+          { limit: 20, offset: 0 }
+        );
+        setTransactions(result.items.map(item => ({
+          ...item,
+          timestamp: new Date(item.timestamp),
+        })));
+      } catch (error) {
+        console.error('[Wallet] Failed to load transactions:', error);
+      } finally {
+        setIsLoadingTransactions(false);
+      }
+    };
+
+    loadTransactions();
+  }, [store, isReady, isAuthenticated, userId]);
+
+  // Total points from real data
+  const totalPoints = points.total;
 
   if (!isAuthenticated) {
     return (
@@ -53,8 +69,12 @@ export function Wallet() {
             <p className="text-gray-600 mb-6">
               Connect your wallet to start earning OWN tokens for your data contributions.
             </p>
-            <button className="w-full bg-[#70DF82] text-white py-3 rounded-full font-bold">
-              Connect Wallet
+            <button
+              onClick={connect}
+              disabled={isLoading}
+              className="w-full bg-ownyou-secondary text-white py-3 rounded-full font-bold disabled:opacity-50"
+            >
+              {isLoading ? 'Connecting...' : 'Connect Wallet'}
             </button>
           </Card>
         </div>
@@ -66,25 +86,41 @@ export function Wallet() {
     <div className="flex flex-col min-h-screen">
       <Header showLogo={false} title="Wallet" />
 
-      <div className="flex-1 px-4 py-6 space-y-6">
+      <div className="flex-1 px-4 py-6">
+        <div className="max-w-3xl mx-auto space-y-6">
         {/* Balance Card */}
-        <Card className="p-6 text-center bg-gradient-to-br from-[#70DF82] to-[#50CF62]">
-          <p className="text-white text-sm opacity-80 mb-1">Total Balance</p>
-          <TokenBalance
-            amount={totalEarnings}
-            size="large"
-            className="text-white justify-center"
-          />
+        <Card className="p-6 text-center bg-gradient-to-br from-ownyou-secondary to-green-500">
+          <p className="text-white text-sm opacity-80 mb-1">Total Points</p>
+          <p className="text-4xl font-bold text-white">
+            {totalPoints.toLocaleString()}
+          </p>
           <p className="text-white text-sm opacity-80 mt-2">
             {wallet?.address.slice(0, 6)}...{wallet?.address.slice(-4)}
           </p>
 
+          {/* Tier Progress */}
+          <div className="mt-4 bg-white/20 rounded-full p-3">
+            <div className="flex items-center justify-between text-white text-sm mb-1">
+              <span>{tier.tier} Tier</span>
+              <span>{Math.round(tier.progress * 100)}% to next</span>
+            </div>
+            <div className="h-2 bg-white/30 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-white rounded-full transition-all"
+                style={{ width: `${tier.progress * 100}%` }}
+              />
+            </div>
+            <p className="text-xs text-white/80 mt-1">
+              {tier.nextTierAt - totalPoints} pts to next tier
+            </p>
+          </div>
+
           <div className="mt-6 flex gap-4">
             <button
-              onClick={() => setShowWithdraw(true)}
-              className="flex-1 bg-white text-[#70DF82] py-3 rounded-full font-bold"
+              onClick={refresh}
+              className="flex-1 bg-white text-ownyou-secondary py-3 rounded-full font-bold"
             >
-              Withdraw
+              Refresh
             </button>
             <button className="flex-1 bg-white/20 text-white py-3 rounded-full font-bold">
               History
@@ -92,29 +128,33 @@ export function Wallet() {
           </div>
         </Card>
 
-        {/* Earnings Breakdown */}
+        {/* Points Breakdown by Category */}
         <Card className="p-6">
-          <h3 className="text-lg font-bold mb-4">Earnings Breakdown</h3>
+          <h3 className="text-lg font-bold mb-4">Points Breakdown</h3>
           <div className="space-y-3">
-            <EarningsRow
-              label="Data Contributions"
-              amount={0.05}
-              count={25}
+            <PointsRow
+              label="Explorer"
+              description="Discovering new experiences"
+              points={points.explorer}
+              icon="🧭"
             />
-            <EarningsRow
-              label="Profile Completeness"
-              amount={0.02}
-              count={1}
+            <PointsRow
+              label="Connector"
+              description="Building relationships"
+              points={points.connector}
+              icon="🤝"
             />
-            <EarningsRow
-              label="Feedback Rewards"
-              amount={0.00}
-              count={0}
+            <PointsRow
+              label="Helper"
+              description="Contributing to others"
+              points={points.helper}
+              icon="💝"
             />
-            <EarningsRow
-              label="Referral Bonuses"
-              amount={0.00}
-              count={0}
+            <PointsRow
+              label="Achiever"
+              description="Completing missions"
+              points={points.achiever}
+              icon="🏆"
             />
           </div>
         </Card>
@@ -134,33 +174,37 @@ export function Wallet() {
             </div>
           )}
         </Card>
+        </div>
       </div>
 
-      {/* Withdraw Modal */}
-      {showWithdraw && (
-        <WithdrawModal
-          balance={totalEarnings}
-          onClose={() => setShowWithdraw(false)}
-        />
+      {/* Loading State */}
+      {isLoadingTransactions && (
+        <div className="fixed inset-0 bg-white/50 flex items-center justify-center">
+          <div className="animate-spin w-8 h-8 border-2 border-ownyou-secondary border-t-transparent rounded-full" />
+        </div>
       )}
     </div>
   );
 }
 
-interface EarningsRowProps {
+interface PointsRowProps {
   label: string;
-  amount: number;
-  count: number;
+  description: string;
+  points: number;
+  icon: string;
 }
 
-function EarningsRow({ label, amount, count }: EarningsRowProps) {
+function PointsRow({ label, description, points, icon }: PointsRowProps) {
   return (
     <div className="flex items-center justify-between">
-      <div>
-        <p className="font-medium">{label}</p>
-        <p className="text-sm text-gray-600">{count} contributions</p>
+      <div className="flex items-center gap-3">
+        <span className="text-2xl">{icon}</span>
+        <div>
+          <p className="font-medium">{label}</p>
+          <p className="text-sm text-gray-600">{description}</p>
+        </div>
       </div>
-      <p className="font-bold">{amount.toFixed(2)} OWN</p>
+      <p className="font-bold text-ownyou-secondary">{points.toLocaleString()} pts</p>
     </div>
   );
 }
@@ -190,125 +234,6 @@ function TransactionRow({ transaction }: TransactionRowProps) {
       <p className={`font-bold ${isEarn ? 'text-green-600' : 'text-gray-600'}`}>
         {isEarn ? '+' : '-'}{transaction.amount.toFixed(2)} OWN
       </p>
-    </div>
-  );
-}
-
-interface WithdrawModalProps {
-  balance: number;
-  onClose: () => void;
-}
-
-function WithdrawModal({ balance, onClose }: WithdrawModalProps) {
-  const [amount, setAmount] = useState('');
-  const [step, setStep] = useState<'amount' | 'confirm' | 'success'>('amount');
-
-  const handleWithdraw = () => {
-    // Mock withdrawal - would connect to real blockchain
-    setStep('success');
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <Card className="w-full max-w-sm p-6">
-        {step === 'amount' && (
-          <>
-            <h3 className="text-xl font-bold mb-4 text-center">Withdraw OWN</h3>
-
-            <div className="mb-4">
-              <p className="text-sm text-gray-600 mb-1">Available Balance</p>
-              <p className="text-2xl font-bold">{balance.toFixed(2)} OWN</p>
-            </div>
-
-            <div className="mb-6">
-              <label className="text-sm text-gray-600 block mb-1">Amount to Withdraw</label>
-              <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="0.00"
-                className="w-full p-3 border rounded-lg text-xl font-bold"
-                max={balance}
-                min={0}
-                step={0.01}
-              />
-              <button
-                onClick={() => setAmount(balance.toString())}
-                className="text-sm text-[#70DF82] mt-1"
-              >
-                Max
-              </button>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={onClose}
-                className="flex-1 py-3 border rounded-full font-bold"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => setStep('confirm')}
-                disabled={!amount || parseFloat(amount) <= 0 || parseFloat(amount) > balance}
-                className="flex-1 py-3 bg-[#70DF82] text-white rounded-full font-bold disabled:opacity-50"
-              >
-                Continue
-              </button>
-            </div>
-          </>
-        )}
-
-        {step === 'confirm' && (
-          <>
-            <h3 className="text-xl font-bold mb-4 text-center">Confirm Withdrawal</h3>
-
-            <div className="bg-gray-50 p-4 rounded-lg mb-6 text-center">
-              <p className="text-sm text-gray-600">You are withdrawing</p>
-              <p className="text-3xl font-bold">{parseFloat(amount).toFixed(2)} OWN</p>
-            </div>
-
-            <p className="text-sm text-gray-600 text-center mb-6">
-              This transaction will be processed on the blockchain.
-              Gas fees may apply.
-            </p>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setStep('amount')}
-                className="flex-1 py-3 border rounded-full font-bold"
-              >
-                Back
-              </button>
-              <button
-                onClick={handleWithdraw}
-                className="flex-1 py-3 bg-[#70DF82] text-white rounded-full font-bold"
-              >
-                Confirm
-              </button>
-            </div>
-          </>
-        )}
-
-        {step === 'success' && (
-          <>
-            <div className="text-center py-4">
-              <div className="w-16 h-16 bg-green-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-                <span className="text-3xl">✓</span>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Withdrawal Submitted</h3>
-              <p className="text-gray-600 mb-6">
-                Your withdrawal of {parseFloat(amount).toFixed(2)} OWN has been submitted.
-              </p>
-              <button
-                onClick={onClose}
-                className="w-full py-3 bg-[#70DF82] text-white rounded-full font-bold"
-              >
-                Done
-              </button>
-            </div>
-          </>
-        )}
-      </Card>
     </div>
   );
 }
