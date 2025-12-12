@@ -96,10 +96,22 @@ describe('Settings Download Dialog', () => {
     vi.restoreAllMocks();
   });
 
-  it('opens download dialog and opens release page in new tab', async () => {
+  it('opens download dialog and triggers download via trampoline', async () => {
     const user = userEvent.setup();
-    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
     
+    // Mock window.location.assign
+    const originalLocation = window.location;
+    const assignMock = vi.fn();
+    
+    Object.defineProperty(window, 'location', {
+      value: {
+        ...originalLocation,
+        assign: assignMock,
+        href: originalLocation.href,
+      },
+      writable: true,
+    });
+
     renderWithProviders(<Settings />);
 
     // Navigate to Data tab
@@ -111,16 +123,23 @@ describe('Settings Download Dialog', () => {
 
     // Verify dialog appears
     expect(screen.getByText('Connect Outlook')).toBeInTheDocument();
-    expect(screen.getByText('Open Download Page')).toBeInTheDocument();
+    expect(screen.getByText('Download Desktop App')).toBeInTheDocument();
 
     // Click Download Desktop App
-    await user.click(screen.getByText('Open Download Page'));
+    await user.click(screen.getByText('Download Desktop App'));
 
-    // Verify window.open was called with the Release Tag URL (not the file download)
-    expect(openSpy).toHaveBeenCalledWith(
-        expect.stringContaining('https://github.com/nlongcn/ownyou-consumer-application/releases/tag/v0.1.0'),
-        '_blank',
-        'noopener,noreferrer'
+    // Verify window.location.assign was called with the trampoline URL
+    expect(assignMock).toHaveBeenCalledWith(
+        expect.stringContaining('/download.html?url=')
     );
+    expect(assignMock).toHaveBeenCalledWith(
+        expect.stringContaining(encodeURIComponent('https://github.com/nlongcn/ownyou-consumer-application/releases/download/'))
+    );
+    
+    // Restore window.location
+    Object.defineProperty(window, 'location', {
+        value: originalLocation,
+        writable: true,
+    });
   });
 });
