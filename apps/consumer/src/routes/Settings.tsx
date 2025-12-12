@@ -352,7 +352,7 @@ function DataSettings() {
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                       </svg>
-                      Open Download Page
+                      Download Desktop App
                       <span className="text-xs bg-white/20 px-2 py-0.5 rounded">{platform}</span>
                     </button>
                     {downloadError && (
@@ -585,19 +585,20 @@ function downloadDesktopApp(
   onProgress?: (percent: number) => void,
   _onError?: (error: string) => void
 ): void {
-  console.log('[Download] Opening release page for manual download');
+  console.log('[Download] Starting download via trampoline /download.html');
   onProgress?.(0);
 
-  // Fallback to opening the GitHub Release page.
-  // Direct downloads via cross-origin redirects (GitHub -> Azure) often lose the filename
-  // in browsers like Safari/PWA due to security policies ignoring Content-Disposition.
-  // Opening the release page ensures the user can download the file with the correct name.
-  // We strip the filename from the URL to get the tag/release URL, or use a hardcoded base.
+  // Use a local "trampoline" page to initiate the download.
+  // This navigates the user to a same-origin page (/download.html) which then
+  // immediately redirects to the target file URL.
+  // This technique often helps browsers (especially Safari/PWA) respect the
+  // Content-Disposition filename header because the initial navigation is same-origin
+  // and trusted, preventing the "suspicious cross-origin download" fallback behavior
+  // that results in UUID filenames.
+  const trampolineUrl = `/download.html?url=${encodeURIComponent(url)}`;
   
-  // Convert: .../releases/download/v0.1.0/file.dmg -> .../releases/tag/v0.1.0
-  const releaseUrl = url.replace(/\/download\/(v[\d.]+)\/.*$/, '/tag/$1');
-  
-  window.open(releaseUrl, '_blank', 'noopener,noreferrer');
+  // Use location.assign to treat it as a standard navigation
+  window.location.assign(trampolineUrl);
 
   onProgress?.(100);
 }

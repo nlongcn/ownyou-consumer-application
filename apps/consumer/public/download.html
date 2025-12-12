@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Downloading...</title>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUrl = urlParams.get('url');
+        if (targetUrl) {
+            // Use replace to avoid adding this bouncer to history
+            window.location.replace(targetUrl);
+        } else {
+            document.body.innerText = "Error: No download URL provided.";
+        }
+    </script>
+</head>
+<body>
+    <p>Starting download...</p>
+</body>
+</html>
