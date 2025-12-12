@@ -581,22 +581,24 @@ function getDesktopDownloadUrl(): { url: string; platform: string; filename: str
  */
 function downloadDesktopApp(
   url: string,
-  _filename: string, // unused - browser uses Content-Disposition header
+  _filename: string, // unused
   onProgress?: (percent: number) => void,
-  _onError?: (error: string) => void // unused - redirect always works
+  _onError?: (error: string) => void
 ): void {
-  console.log('[Download] Starting download via window.location.assign');
+  console.log('[Download] Opening release page for manual download');
   onProgress?.(0);
 
-  // Use window.location.assign() to trigger the download.
-  // This treats the request as a top-level navigation.
-  // Browsers generally respect Content-Disposition headers from cross-origin redirects
-  // (like GitHub -> Azure) much better in a top-level navigation context
-  // compared to sub-resource fetches, iframes, or anchor tag clicks with download attributes.
-  // If the server returns a download, the browser will NOT unload the current page.
-  window.location.assign(url);
+  // Fallback to opening the GitHub Release page.
+  // Direct downloads via cross-origin redirects (GitHub -> Azure) often lose the filename
+  // in browsers like Safari/PWA due to security policies ignoring Content-Disposition.
+  // Opening the release page ensures the user can download the file with the correct name.
+  // We strip the filename from the URL to get the tag/release URL, or use a hardcoded base.
+  
+  // Convert: .../releases/download/v0.1.0/file.dmg -> .../releases/tag/v0.1.0
+  const releaseUrl = url.replace(/\/download\/(v[\d.]+)\/.*$/, '/tag/$1');
+  
+  window.open(releaseUrl, '_blank', 'noopener,noreferrer');
 
-  // Mark as complete immediately (actual download happens in background)
   onProgress?.(100);
 }
 
