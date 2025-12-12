@@ -581,24 +581,22 @@ function getDesktopDownloadUrl(): { url: string; platform: string; filename: str
  */
 function downloadDesktopApp(
   url: string,
-  _filename: string, // unused - proxy handles headers
+  _filename: string, // unused - browser uses Content-Disposition header
   onProgress?: (percent: number) => void,
-  _onError?: (error: string) => void
+  _onError?: (error: string) => void // unused - redirect always works
 ): void {
-  console.log('[Download] Starting download via local proxy');
+  console.log('[Download] Starting download via window.location.assign');
   onProgress?.(0);
 
-  // Use local proxy to handle redirects and headers correctly
-  // This avoids CORS issues and ensures the browser respects the filename
-  const proxyUrl = `/api/proxy-download?url=${encodeURIComponent(url)}`;
+  // Use window.location.assign() to trigger the download.
+  // This treats the request as a top-level navigation.
+  // Browsers generally respect Content-Disposition headers from cross-origin redirects
+  // (like GitHub -> Azure) much better in a top-level navigation context
+  // compared to sub-resource fetches, iframes, or anchor tag clicks with download attributes.
+  // If the server returns a download, the browser will NOT unload the current page.
+  window.location.assign(url);
 
-  const link = document.createElement('a');
-  link.href = proxyUrl;
-  link.download = _filename; // Now effective because it's same-origin
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
+  // Mark as complete immediately (actual download happens in background)
   onProgress?.(100);
 }
 

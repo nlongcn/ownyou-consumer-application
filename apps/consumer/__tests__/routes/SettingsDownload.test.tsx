@@ -96,14 +96,26 @@ describe('Settings Download Dialog', () => {
     vi.restoreAllMocks();
   });
 
-  it('opens download dialog and triggers download via local proxy', async () => {
+  it('opens download dialog and triggers download via window.location.assign', async () => {
     const user = userEvent.setup();
-    const appendSpy = vi.spyOn(document.body, 'appendChild');
-    const removeSpy = vi.spyOn(document.body, 'removeChild');
-    const createElementSpy = vi.spyOn(document, 'createElement');
-    // Spy on the click method of all anchor elements
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
     
+    // Mock window.location.assign
+    // Note: window.location is non-configurable in some JSDOM versions/setups, 
+    // but usually 'assign' can be spied on if the environment allows or if we mock location.
+    // In Vitest/JSDOM, we often need to redefine the location object to mock methods.
+    const originalLocation = window.location;
+    const assignMock = vi.fn();
+    
+    // Use Object.defineProperty to overwrite location with a mock that has assign
+    Object.defineProperty(window, 'location', {
+      value: {
+        ...originalLocation,
+        assign: assignMock,
+        href: originalLocation.href,
+      },
+      writable: true,
+    });
+
     renderWithProviders(<Settings />);
 
     // Navigate to Data tab
@@ -120,29 +132,15 @@ describe('Settings Download Dialog', () => {
     // Click Download Desktop App
     await user.click(screen.getByText('Download Desktop App'));
 
-    // Verify anchor tag was created
-    expect(createElementSpy).toHaveBeenCalledWith('a');
+    // Verify window.location.assign was called with the GitHub URL
+    expect(assignMock).toHaveBeenCalledWith(
+        expect.stringContaining('https://github.com/nlongcn/ownyou-consumer-application/releases/download/')
+    );
     
-    // Find the created link from the spy results
-    const createdLink = createElementSpy.mock.results
-        .map(r => r.value)
-        .find(el => el instanceof HTMLAnchorElement && el.href.includes('/api/proxy-download')) as HTMLAnchorElement;
-        
-    expect(createdLink).toBeDefined();
-    // Check for proxy URL format
-    expect(createdLink.href).toContain('/api/proxy-download?url=');
-    expect(createdLink.href).toContain(encodeURIComponent('https://github.com/nlongcn/ownyou-consumer-application/releases/download/'));
-    
-    // Verify download attribute is set (now effective)
-    expect(createdLink.download).toBeDefined();
-    
-    // Verify it was appended
-    expect(appendSpy).toHaveBeenCalledWith(createdLink);
-    
-    // Verify it was clicked
-    expect(clickSpy).toHaveBeenCalled();
-    
-    // Verify it was removed
-    expect(removeSpy).toHaveBeenCalledWith(createdLink);
+    // Restore window.location
+    Object.defineProperty(window, 'location', {
+        value: originalLocation,
+        writable: true,
+    });
   });
 });
