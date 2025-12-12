@@ -581,29 +581,24 @@ function getDesktopDownloadUrl(): { url: string; platform: string; filename: str
  */
 function downloadDesktopApp(
   url: string,
-  _filename: string, // unused - browser uses Content-Disposition header
+  _filename: string, // unused - proxy handles headers
   onProgress?: (percent: number) => void,
-  _onError?: (error: string) => void // unused - redirect always works
+  _onError?: (error: string) => void
 ): void {
-  console.log('[Download] Starting download via hidden iframe');
+  console.log('[Download] Starting download via local proxy');
   onProgress?.(0);
 
-  // Use a hidden iframe to trigger download
-  // This is the most robust method for forcing Content-Disposition usage in Safari/PWA
-  // as it treats the request as a top-level navigation in a subframe context
-  const iframe = document.createElement('iframe');
-  iframe.style.display = 'none';
-  iframe.src = url;
-  document.body.appendChild(iframe);
+  // Use local proxy to handle redirects and headers correctly
+  // This avoids CORS issues and ensures the browser respects the filename
+  const proxyUrl = `/api/proxy-download?url=${encodeURIComponent(url)}`;
 
-  // Clean up after a delay (long enough for the redirect and download to start)
-  setTimeout(() => {
-    if (document.body.contains(iframe)) {
-        document.body.removeChild(iframe);
-    }
-  }, 60000); // 1 minute timeout
+  const link = document.createElement('a');
+  link.href = proxyUrl;
+  link.download = _filename; // Now effective because it's same-origin
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 
-  // Mark as complete immediately (actual download happens in background)
   onProgress?.(100);
 }
 
