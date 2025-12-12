@@ -142,130 +142,88 @@ export function Home() {
     return (
       <div className="flex flex-col min-h-screen">
         <Header showFilters={false} />
-        <div className="flex-1 px-4 py-6 overflow-y-auto">
-          {/* Video Placeholder */}
-          <div className="mb-6">
-            <div
-              className="w-full aspect-video bg-gray-900 rounded-2xl flex items-center justify-center relative overflow-hidden"
-              style={{ maxHeight: '240px' }}
-            >
-              {/* Gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 opacity-80" />
-
-              {/* Play button */}
-              <div className="relative z-10 w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:bg-white transition-colors">
-                <svg className="w-8 h-8 text-gray-900 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
+        <div className="flex-1 flex items-center justify-center px-4 py-8">
+          <div className="w-full max-w-lg">
+            {/* Hero Section */}
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <span className="text-4xl">✨</span>
               </div>
-
-              {/* Video label */}
-              <div className="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                1:30 · How OwnYou Works
-              </div>
+              <h1 className="text-3xl font-bold mb-3">Your AI is Ready</h1>
+              <p className="text-gray-600 text-lg">
+                Connect your email and we'll find savings, insights, and opportunities personalized for you.
+              </p>
             </div>
-          </div>
 
-          {/* Tagline */}
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold mb-2">Unlock Your Personal AI</h1>
-            <p className="text-gray-600">
-              Connect your data to get personalized savings, recommendations, and insights that actually matter to you.
-            </p>
-          </div>
-
-          {/* Connect Data Sources Card */}
-          <Card className="p-6 mb-6">
-            <h2 className="text-lg font-bold mb-4">Connect Your Data</h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Your data stays on your device. We analyze it locally to understand your interests and find opportunities for you.
-            </p>
-
-            {/* Data source buttons */}
-            <div className="space-y-3">
-              <button
-                onClick={() => navigate('/settings?tab=data')}
-                className="w-full flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-blue-400 hover:bg-blue-50 transition-colors"
-              >
-                <span className="text-2xl">📧</span>
-                <div className="text-left">
-                  <p className="font-medium">Connect Email</p>
-                  <p className="text-xs text-gray-500">Gmail or Outlook</p>
-                </div>
-                <svg className="w-5 h-5 ml-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-
-              <button
-                onClick={() => navigate('/settings?tab=data')}
-                className="w-full flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-green-400 hover:bg-green-50 transition-colors"
-              >
-                <span className="text-2xl">📅</span>
-                <div className="text-left">
-                  <p className="font-medium">Connect Calendar</p>
-                  <p className="text-xs text-gray-500">Google or Microsoft Calendar</p>
-                </div>
-                <svg className="w-5 h-5 ml-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-
-              <button
-                onClick={() => window.open('https://chrome.google.com/webstore', '_blank')}
-                className="w-full flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-purple-400 hover:bg-purple-50 transition-colors"
-              >
-                <span className="text-2xl">🧩</span>
-                <div className="text-left">
-                  <p className="font-medium">Browser Extension</p>
-                  <p className="text-xs text-gray-500">Learn from your browsing to find better deals</p>
-                </div>
-                <svg className="w-5 h-5 ml-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-
-              <button
-                onClick={() => window.open('https://ownyou.ai/download', '_blank')}
-                className="w-full flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-indigo-400 hover:bg-indigo-50 transition-colors"
-              >
-                <span className="text-2xl">💻</span>
-                <div className="text-left">
-                  <p className="font-medium">Desktop App</p>
-                  <p className="text-xs text-gray-500">Sync across devices with enhanced privacy</p>
-                </div>
-                <svg className="w-5 h-5 ml-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          </Card>
-
-          {/* What you'll get */}
-          <div className="space-y-4">
-            <h3 className="font-bold text-center">What you'll unlock:</h3>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-green-50 p-4 rounded-xl text-center">
-                <span className="text-2xl mb-2 block">💰</span>
-                <p className="text-sm font-medium">Savings Missions</p>
+            {/* Benefits - FIRST, before asking for action */}
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+                <span className="text-3xl mb-2 block">💰</span>
+                <p className="font-semibold text-sm">Savings Missions</p>
                 <p className="text-xs text-gray-500">Find deals you'll love</p>
               </div>
-              <div className="bg-blue-50 p-4 rounded-xl text-center">
-                <span className="text-2xl mb-2 block">🎯</span>
-                <p className="text-sm font-medium">Ikigai Profile</p>
-                <p className="text-xs text-gray-500">Discover your purpose</p>
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+                <span className="text-3xl mb-2 block">🎯</span>
+                <p className="font-semibold text-sm">Personal Insights</p>
+                <p className="text-xs text-gray-500">Understand your patterns</p>
               </div>
-              <div className="bg-purple-50 p-4 rounded-xl text-center">
-                <span className="text-2xl mb-2 block">🍽️</span>
-                <p className="text-sm font-medium">Smart Suggestions</p>
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+                <span className="text-3xl mb-2 block">🍽️</span>
+                <p className="font-semibold text-sm">Smart Suggestions</p>
                 <p className="text-xs text-gray-500">Restaurants, travel & more</p>
               </div>
-              <div className="bg-orange-50 p-4 rounded-xl text-center">
-                <span className="text-2xl mb-2 block">🔒</span>
-                <p className="text-sm font-medium">100% Private</p>
-                <p className="text-xs text-gray-500">Data never leaves your device</p>
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+                <span className="text-3xl mb-2 block">🔒</span>
+                <p className="font-semibold text-sm">100% Private</p>
+                <p className="text-xs text-gray-500">Data stays on your device</p>
               </div>
             </div>
+
+            {/* Primary CTA - Email connection */}
+            <button
+              onClick={() => navigate('/settings?tab=data')}
+              className="w-full flex items-center gap-4 p-5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl hover:from-blue-600 hover:to-blue-700 transition-all shadow-lg mb-6"
+            >
+              <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <span className="text-3xl">📧</span>
+              </div>
+              <div className="text-left flex-1 min-w-0">
+                <p className="font-bold text-xl">Connect Your Email</p>
+                <p className="text-blue-100 text-sm">Gmail or Outlook • Takes 30 seconds</p>
+              </div>
+              <svg className="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Secondary options - smaller, less prominent */}
+            <div className="flex justify-center gap-4 text-sm">
+              <button
+                onClick={() => navigate('/settings?tab=data')}
+                className="text-gray-500 hover:text-gray-700 flex items-center gap-1"
+              >
+                <span>📅</span> Calendar
+              </button>
+              <span className="text-gray-300">•</span>
+              <button
+                onClick={() => window.open('https://chrome.google.com/webstore', '_blank')}
+                className="text-gray-500 hover:text-gray-700 flex items-center gap-1"
+              >
+                <span>🧩</span> Extension
+              </button>
+              <span className="text-gray-300">•</span>
+              <button
+                onClick={() => navigate('/settings?tab=data')}
+                className="text-gray-500 hover:text-gray-700 flex items-center gap-1"
+              >
+                <span>💻</span> Desktop
+              </button>
+            </div>
+
+            {/* Privacy reassurance */}
+            <p className="text-center text-xs text-gray-400 mt-6">
+              Your data is analyzed locally and never leaves your device.
+            </p>
           </div>
         </div>
       </div>
