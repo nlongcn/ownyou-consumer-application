@@ -1,12 +1,23 @@
 /**
- * MissionCard Base Component
+ * MissionCard Dispatcher Component
  * v13 Section 4.5 - Mission Card Specifications
+ *
+ * Routes to specialized variant components based on mission type.
+ * Each variant has unique styling and layout per Figma designs.
  */
 
-import React from 'react';
-import { cn, Card, CardContent } from '@ownyou/ui-design-system';
-import { FeedbackHeart } from './FeedbackHeart';
-import type { Mission, HeartState, MissionCardType, CARD_DIMENSIONS } from '../types';
+import type { Mission, HeartState } from '../types';
+
+// Import all variant components
+import { MissionCardShopping } from './variants/MissionCardShopping';
+import { MissionCardSavings } from './variants/MissionCardSavings';
+import { MissionCardConsumables } from './variants/MissionCardConsumables';
+import { MissionCardContent } from './variants/MissionCardContent';
+import { MissionCardTravel } from './variants/MissionCardTravel';
+import { MissionCardEntertainment } from './variants/MissionCardEntertainment';
+import { MissionCardFood } from './variants/MissionCardFood';
+import { MissionCardPeople } from './variants/MissionCardPeople';
+import { MissionCardHealth } from './variants/MissionCardHealth';
 
 export interface MissionCardProps {
   /** Mission data */
@@ -15,139 +26,89 @@ export interface MissionCardProps {
   onClick?: () => void;
   /** Feedback state change handler */
   onFeedbackChange?: (state: HeartState) => void;
+  /** Snooze action handler - Sprint 11b Bugfix 8 */
+  onSnooze?: () => void;
+  /** Dismiss action handler - Sprint 11b Bugfix 8 */
+  onDismiss?: () => void;
+  /** Call-to-action handler - Sprint 11b Bugfix 8 */
+  onCallToAction?: () => void;
   /** Additional CSS class names */
   className?: string;
-  /** Show feedback heart */
+  /** Show feedback heart (default: true) */
   showFeedback?: boolean;
 }
 
 /**
- * Get card height based on type
- */
-function getCardHeight(type: MissionCardType): number {
-  const heights: Record<MissionCardType, number> = {
-    shopping: 290,
-    savings: 284,
-    consumables: 284,
-    content: 284,
-    travel: 208,
-    entertainment: 207,
-    food: 287,
-    people: 210,
-    health: 180,
-  };
-  return heights[type] || 284;
-}
-
-/**
- * Check if card type should display price
- */
-function shouldShowPrice(type: MissionCardType): boolean {
-  return type === 'shopping';
-}
-
-/**
- * Check if card type should display brand logo
- */
-function shouldShowBrandLogo(type: MissionCardType): boolean {
-  return ['shopping', 'savings', 'content'].includes(type);
-}
-
-/**
- * Base MissionCard component with v13 Figma styling
+ * MissionCard dispatcher - routes to specialized variant based on mission.type
+ *
+ * Each variant implements type-specific layouts:
+ * - shopping: Product with price, brand logo, 290px
+ * - savings: Utility savings, brand logo, 284px
+ * - consumables: Shopping list style, 284px
+ * - content: Podcast/article with brand, 284px
+ * - travel: Full-bleed destination image, 208px
+ * - entertainment: Event with venue badge, 207px
+ * - food: Recipe with difficulty badge, 287px
+ * - people: Relationship suggestion, 210px
+ * - health: Health metric, 180px
  */
 export function MissionCard({
   mission,
   onClick,
   onFeedbackChange,
+  onSnooze,
+  onDismiss,
+  onCallToAction,
   className,
-  showFeedback = true,
+  // showFeedback is maintained in the API for future flexibility
+  // but currently all variants show feedback per Figma designs
+  showFeedback: _showFeedback = true,
 }: MissionCardProps) {
-  const height = getCardHeight(mission.type);
-  const showPrice = shouldShowPrice(mission.type);
-  const showBrandLogo = shouldShowBrandLogo(mission.type);
+  // Common props for all variants
+  const commonProps = {
+    mission,
+    onClick,
+    onFeedbackChange,
+    onSnooze,
+    onDismiss,
+    onCallToAction,
+    className,
+  };
 
-  return (
-    <Card
-      className={cn(
-        'relative overflow-hidden cursor-pointer',
-        'w-[180px] md:w-[220px] lg:w-[260px]',
-        'transition-transform duration-200 hover:scale-[1.02]',
-        'active:scale-[0.98]',
-        className,
-      )}
-      style={{ height: `${height}px` }}
-      onClick={onClick}
-      role="article"
-      aria-label={mission.title}
-      data-testid={`mission-card-${mission.id}`}
-      data-type={mission.type}
-    >
-      {/* Image Section */}
-      {mission.imageUrl ? (
-        <div className="relative w-full h-[60%] overflow-hidden">
-          <img
-            src={mission.imageUrl}
-            alt={mission.title}
-            className="w-full h-full object-cover rounded-t-[12px]"
-            loading="lazy"
-          />
-          {/* Brand Logo Overlay */}
-          {showBrandLogo && mission.brandLogoUrl && (
-            <div className="absolute bottom-2 left-2 bg-white rounded-full p-1 shadow-sm">
-              <img
-                src={mission.brandLogoUrl}
-                alt={mission.brandName || 'Brand'}
-                className="w-6 h-6 object-contain rounded-full"
-              />
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="w-full h-[60%] bg-placeholder rounded-t-[12px]" />
-      )}
+  // Dispatch to the appropriate variant based on mission type
+  switch (mission.type) {
+    case 'shopping':
+      return <MissionCardShopping {...commonProps} />;
 
-      {/* Content Section */}
-      <CardContent className="p-3 flex flex-col h-[40%]">
-        {/* Title */}
-        <h3 className="font-display text-sm font-bold text-text-primary line-clamp-2">
-          {mission.title}
-        </h3>
+    case 'savings':
+      return <MissionCardSavings {...commonProps} />;
 
-        {/* Subtitle / Brand Name */}
-        {(mission.subtitle || mission.brandName) && (
-          <p className="font-body text-xs text-gray-600 mt-1 line-clamp-1">
-            {mission.subtitle || mission.brandName}
-          </p>
-        )}
+    case 'consumables':
+      return <MissionCardConsumables {...commonProps} />;
 
-        {/* Price Row (shopping cards only) */}
-        {showPrice && mission.price !== undefined && (
-          <div className="flex items-center gap-2 mt-auto">
-            <span className="font-price text-sm font-medium text-text-primary">
-              {mission.currency || '$'}{mission.price.toFixed(2)}
-            </span>
-            {mission.originalPrice && mission.originalPrice > mission.price && (
-              <span className="font-price text-xs text-gray-400 line-through">
-                {mission.currency || '$'}{mission.originalPrice.toFixed(2)}
-              </span>
-            )}
-          </div>
-        )}
+    case 'content':
+      return <MissionCardContent {...commonProps} />;
 
-        {/* Feedback Heart */}
-        {showFeedback && (
-          <div className="absolute bottom-2 right-2">
-            <FeedbackHeart
-              initialState={mission.feedbackState || 'meh'}
-              size="small"
-              onStateChange={onFeedbackChange}
-            />
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
+    case 'travel':
+      return <MissionCardTravel {...commonProps} />;
+
+    case 'entertainment':
+      return <MissionCardEntertainment {...commonProps} />;
+
+    case 'food':
+      return <MissionCardFood {...commonProps} />;
+
+    case 'people':
+      return <MissionCardPeople {...commonProps} />;
+
+    case 'health':
+      return <MissionCardHealth {...commonProps} />;
+
+    default:
+      // Fallback to savings style for unknown types
+      console.warn(`Unknown mission type: ${mission.type}, falling back to savings variant`);
+      return <MissionCardSavings {...commonProps} />;
+  }
 }
 
 export default MissionCard;

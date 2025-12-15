@@ -3,7 +3,6 @@
  * v13 Section 4.6 - Navigation Components
  */
 
-import React from 'react';
 import { cn } from '@ownyou/ui-design-system';
 import { FILTER_TABS, type FilterTab } from '../types';
 

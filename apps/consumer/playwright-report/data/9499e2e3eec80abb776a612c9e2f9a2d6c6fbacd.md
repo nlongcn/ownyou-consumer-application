@@ -1,0 +1,51 @@
+# Page snapshot
+
+```yaml
+- main [ref=e6]:
+  - generic [ref=e7]:
+    - complementary [ref=e8]:
+      - navigation "Main navigation" [ref=e9]:
+        - button "🏠 Home" [ref=e10] [cursor=pointer]:
+          - generic [ref=e11]: 🏠
+          - generic [ref=e12]: Home
+        - button "👤 Profile" [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]: 👤
+          - generic [ref=e15]: Profile
+        - button "💰 Wallet" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: 💰
+          - generic [ref=e18]: Wallet
+        - button "📊 Data" [ref=e19] [cursor=pointer]:
+          - generic [ref=e20]: 📊
+          - generic [ref=e21]: Data
+        - button "⚙️ Settings" [ref=e22] [cursor=pointer]:
+          - generic [ref=e23]: ⚙️
+          - generic [ref=e24]: Settings
+    - main [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e28]:
+          - generic [ref=e30]: OwnYou
+          - generic [ref=e31]:
+            - generic [ref=e32]: 🪙
+            - generic [ref=e33]: "0"
+        - generic [ref=e35]:
+          - img "OwnYou" [ref=e37]
+          - heading "Personal AI, Private by Design" [level=1] [ref=e38]
+          - generic [ref=e39]:
+            - generic [ref=e40]:
+              - generic [ref=e41]: 🔒
+              - paragraph [ref=e42]:
+                - strong [ref=e43]: Your data never leaves your device.
+                - text: No cloud uploads, no third-party access.
+            - generic [ref=e44]:
+              - generic [ref=e45]: 💰
+              - paragraph [ref=e46]:
+                - strong [ref=e47]: Smart shopping, bill management, savings.
+                - text: Personal finance insights that actually help.
+            - generic [ref=e48]:
+              - generic [ref=e49]: 🎁
+              - paragraph [ref=e50]:
+                - strong [ref=e51]: Get paid when advertisers want your attention.
+                - text: You control who sees your profile.
+          - button "Get Started" [ref=e52] [cursor=pointer]
+          - paragraph [ref=e53]: No account needed. Your wallet is created locally.
+```

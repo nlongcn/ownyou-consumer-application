@@ -1,8 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { SyncProvider, useSync } from '../../src/contexts/SyncContext';
-import { AuthProvider } from '../../src/contexts/AuthContext';
 
 // Mock useAuth
 const mockUseAuth = vi.fn();
@@ -84,9 +82,14 @@ describe('SyncContext', () => {
       </SyncProvider>
     );
 
-    await waitFor(() => {
-      expect(screen.getByTestId('connectedDevices')).toHaveTextContent('1');
+    // The useEffect sets connectedDevices to 1 immediately when authenticated
+    // Wait for the state update
+    await act(async () => {
+      // Allow microtasks to run
+      await Promise.resolve();
     });
+
+    expect(screen.getByTestId('connectedDevices')).toHaveTextContent('1');
   });
 
   it('updates lastSynced after sync', async () => {
@@ -95,24 +98,23 @@ describe('SyncContext', () => {
       wallet: { address: '0x123' },
     });
 
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-
     render(
       <SyncProvider>
         <TestComponent />
       </SyncProvider>
     );
 
-    await user.click(screen.getByText('Sync'));
+    // Click sync button
+    await act(async () => {
+      screen.getByText('Sync').click();
+    });
 
     // Advance timers for the mock sync delay
     await act(async () => {
       vi.advanceTimersByTime(1100);
     });
 
-    await waitFor(() => {
-      expect(screen.getByTestId('lastSynced')).not.toHaveTextContent('never');
-    });
+    expect(screen.getByTestId('lastSynced')).not.toHaveTextContent('never');
   });
 
   it('shows syncing status during sync', async () => {
@@ -127,14 +129,14 @@ describe('SyncContext', () => {
       </SyncProvider>
     );
 
-    act(() => {
+    await act(async () => {
       screen.getByText('Sync').click();
+      // Allow microtasks to process
+      await Promise.resolve();
     });
 
     // Should be syncing immediately after click
-    await waitFor(() => {
-      expect(screen.getByTestId('status')).toHaveTextContent('syncing');
-    });
+    expect(screen.getByTestId('status')).toHaveTextContent('syncing');
   });
 
   it('returns to idle after sync completes', async () => {
@@ -149,7 +151,7 @@ describe('SyncContext', () => {
       </SyncProvider>
     );
 
-    act(() => {
+    await act(async () => {
       screen.getByText('Sync').click();
     });
 
@@ -158,9 +160,7 @@ describe('SyncContext', () => {
       vi.advanceTimersByTime(1100);
     });
 
-    await waitFor(() => {
-      expect(screen.getByTestId('status')).toHaveTextContent('idle');
-    });
+    expect(screen.getByTestId('status')).toHaveTextContent('idle');
   });
 
   it('clears pending changes after sync', async () => {
@@ -175,7 +175,7 @@ describe('SyncContext', () => {
       </SyncProvider>
     );
 
-    act(() => {
+    await act(async () => {
       screen.getByText('Sync').click();
     });
 
@@ -184,9 +184,7 @@ describe('SyncContext', () => {
       vi.advanceTimersByTime(1100);
     });
 
-    await waitFor(() => {
-      expect(screen.getByTestId('pendingChanges')).toHaveTextContent('0');
-    });
+    expect(screen.getByTestId('pendingChanges')).toHaveTextContent('0');
   });
 });
 

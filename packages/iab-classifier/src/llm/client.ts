@@ -162,6 +162,34 @@ export class AnalyzerLLMClient {
   }
 
   /**
+   * Get environment variable from Vite or Node.
+   * In browser (Vite), uses import.meta.env.VITE_*
+   * In Node, uses process.env.*
+   */
+  private _getEnvVar(key: string): string {
+    // Check llm_config first (passed explicitly)
+    if (this.llm_config?.api_key) {
+      return this.llm_config.api_key;
+    }
+
+    // Try Vite environment (import.meta.env)
+    if (typeof import.meta !== 'undefined' && (import.meta as any).env) {
+      const viteKey = key.startsWith('VITE_') ? key : `VITE_${key}`;
+      const value = (import.meta as any).env[viteKey];
+      if (value) return value;
+    }
+
+    // Try Node environment (process.env) via globalThis
+    const proc = (globalThis as any).process;
+    if (proc && proc.env) {
+      const value = proc.env[key];
+      if (value) return value;
+    }
+
+    return '';
+  }
+
+  /**
    * Create the appropriate LLM provider instance.
    */
   private _createProvider(): LLMProvider {
@@ -173,66 +201,44 @@ export class AnalyzerLLMClient {
       );
     }
 
-    const config = {
-      apiKey:
-        this.llm_config?.api_key ||
-        (globalThis as any).import?.meta?.env?.[`VITE_${this.provider.toUpperCase()}_API_KEY`] ||
-        '',
-      model: this.model,
-    };
+    // Log API key status for debugging
+    const hasApiKey = !!(this.llm_config?.api_key);
+    console.debug(`[AnalyzerLLMClient] Creating ${this.provider} provider, hasApiKey=${hasApiKey}`);
 
     switch (providerType) {
       case LLMProviderType.OPENAI:
         return new OpenAIProvider({
-          apiKey:
-            this.llm_config?.api_key ||
-            (globalThis as any).import?.meta?.env?.VITE_OPENAI_API_KEY ||
-            '',
+          apiKey: this.llm_config?.api_key || this._getEnvVar('OPENAI_API_KEY'),
           model: this.model,
         });
 
       case LLMProviderType.ANTHROPIC:
         return new AnthropicProvider({
-          apiKey:
-            this.llm_config?.api_key ||
-            (globalThis as any).import?.meta?.env?.VITE_ANTHROPIC_API_KEY ||
-            '',
+          apiKey: this.llm_config?.api_key || this._getEnvVar('ANTHROPIC_API_KEY'),
           model: this.model,
         });
 
       case LLMProviderType.GOOGLE:
         return new GoogleProvider({
-          apiKey:
-            this.llm_config?.api_key ||
-            (globalThis as any).import?.meta?.env?.VITE_GOOGLE_API_KEY ||
-            '',
+          apiKey: this.llm_config?.api_key || this._getEnvVar('GOOGLE_API_KEY'),
           model: this.model,
         });
 
       case LLMProviderType.GROQ:
         return new GroqProvider({
-          apiKey:
-            this.llm_config?.api_key ||
-            (globalThis as any).import?.meta?.env?.NEXT_PUBLIC_GROQ_API_KEY ||
-            '',
+          apiKey: this.llm_config?.api_key || this._getEnvVar('GROQ_API_KEY'),
           model: this.model,
         });
 
       case LLMProviderType.DEEPINFRA:
         return new DeepInfraProvider({
-          apiKey:
-            this.llm_config?.api_key ||
-            (globalThis as any).import?.meta?.env?.NEXT_PUBLIC_DEEPINFRA_API_KEY ||
-            '',
+          apiKey: this.llm_config?.api_key || this._getEnvVar('DEEPINFRA_API_KEY'),
           model: this.model,
         });
 
       case LLMProviderType.OLLAMA:
         return new OllamaProvider({
-          baseUrl:
-            this.llm_config?.base_url ||
-            (globalThis as any).import?.meta?.env?.VITE_OLLAMA_HOST ||
-            'http://localhost:11434',
+          baseUrl: this.llm_config?.base_url || this._getEnvVar('OLLAMA_HOST') || 'http://localhost:11434',
           model: this.model,
         });
 

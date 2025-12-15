@@ -3,7 +3,6 @@
  * v13 Section 4.4 - Branding Components
  */
 
-import React from 'react';
 import { cn } from '@ownyou/ui-design-system';
 
 export interface TokenBalanceProps {
@@ -29,7 +28,7 @@ const SIZE_MAP = {
  * Token balance display with coin icon
  */
 export function TokenBalance({
-  balance,
+  balance = 0,
   showIcon = true,
   size = 'medium',
   onClick,

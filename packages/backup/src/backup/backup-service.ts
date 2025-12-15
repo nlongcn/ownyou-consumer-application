@@ -19,6 +19,25 @@ import { DEFAULT_BACKUP_CONFIG, DEFAULT_BACKUP_POLICY } from '../types.js';
 import { getSyncableNamespaces } from '@ownyou/sync';
 
 /**
+ * Type guard for syncable records with timestamp
+ *
+ * Ensures records have a valid timestamp for incremental backup logic.
+ */
+interface SyncableRecord {
+  timestamp: number;
+  [key: string]: unknown;
+}
+
+function isSyncableRecord(value: unknown): value is SyncableRecord {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'timestamp' in value &&
+    typeof (value as SyncableRecord).timestamp === 'number'
+  );
+}
+
+/**
  * Backup service configuration
  */
 export interface BackupServiceConfig {
@@ -224,8 +243,13 @@ export function createBackupService(config: BackupServiceConfig) {
           // Filter to only records updated since last backup
           const lastBackupTime = state.lastManifest.createdAt;
           const newRecords = records.filter((r) => {
-            const timestamp = (r.value as Record<string, unknown>)?.timestamp as number;
-            return !timestamp || timestamp > lastBackupTime;
+            // Use type guard to safely check timestamp
+            if (isSyncableRecord(r.value)) {
+              return r.value.timestamp > lastBackupTime;
+            }
+            // Records without valid timestamp are always included in incremental backup
+            // to ensure no data is missed
+            return true;
           });
 
           if (newRecords.length > 0) {
@@ -281,28 +305,50 @@ export function createBackupService(config: BackupServiceConfig) {
 
   /**
    * Cleanup old backups based on retention policy
+   *
+   * Deletes backups in two passes:
+   * 1. First, delete all backups beyond the count limit (unconditionally)
+   * 2. Then, delete any remaining backups older than maxAgeDays
+   *
+   * This fixes the bug where backups beyond count limit but not old enough
+   * were never deleted, causing unbounded storage growth.
    */
   async function cleanupOldBackups(): Promise<void> {
     const policy = config.backupConfig.policy;
     const history = await config.cloudProvider.list();
 
-    if (history.length <= policy.retention.snapshots) {
+    if (history.length === 0) {
       return;
     }
 
-    // Sort by timestamp descending
+    // Sort by timestamp descending (newest first)
     const sorted = history.sort((a, b) => b.timestamp - a.timestamp);
 
-    // Delete backups beyond retention limit
-    const toDelete = sorted.slice(policy.retention.snapshots);
+    // Pass 1: Delete backups beyond count limit UNCONDITIONALLY
+    if (history.length > policy.retention.snapshots) {
+      const toDeleteByCount = sorted.slice(policy.retention.snapshots);
+      for (const backup of toDeleteByCount) {
+        try {
+          await config.cloudProvider.delete(backup.backupId);
+          state.status.backupCount--;
+        } catch (err) {
+          console.warn(`Failed to delete backup ${backup.backupId}:`, err);
+        }
+      }
+    }
 
-    // Also delete backups older than maxAgeDays
+    // Pass 2: Delete any backups older than maxAgeDays (regardless of count)
+    // This runs on all backups, not just the remaining after count check
     const cutoff = Date.now() - policy.retention.maxAgeDays * 24 * 60 * 60 * 1000;
 
-    for (const backup of toDelete) {
+    for (const backup of sorted) {
       if (backup.timestamp < cutoff) {
-        await config.cloudProvider.delete(backup.backupId);
-        state.status.backupCount--;
+        try {
+          await config.cloudProvider.delete(backup.backupId);
+          state.status.backupCount--;
+        } catch (err) {
+          console.warn(`Failed to delete old backup ${backup.backupId}:`, err);
+        }
       }
     }
   }

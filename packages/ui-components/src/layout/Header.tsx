@@ -3,7 +3,6 @@
  * v13 Section 4.6 - Navigation Components
  */
 
-import React from 'react';
 import { cn } from '@ownyou/ui-design-system';
 import { FilterTabs } from './FilterTabs';
 import type { FilterTab } from '../types';
@@ -23,6 +22,12 @@ export interface HeaderProps {
   showFilters?: boolean;
   /** Show token balance */
   showTokenBalance?: boolean;
+  /** Show logo (when false, shows title instead) - Sprint 11b Bugfix 13 */
+  showLogo?: boolean;
+  /** Page title (shown when showLogo is false) - Sprint 11b Bugfix 13 */
+  title?: string;
+  /** Back button handler (shows back arrow when provided) - Sprint 11b Bugfix 13 */
+  onBack?: () => void;
 }
 
 /**
@@ -36,7 +41,13 @@ export function Header({
   className,
   showFilters = true,
   showTokenBalance = true,
+  showLogo = true,
+  title,
+  onBack,
 }: HeaderProps) {
+  // Page header mode: showLogo=false, title provided
+  const isPageHeader = !showLogo && title;
+
   return (
     <div
       className={cn(
@@ -46,14 +57,35 @@ export function Header({
       )}
       data-testid="header"
     >
-      {/* Top Row: Logo and Token Balance */}
+      {/* Top Row: Logo/Title and Token Balance */}
       <div className="flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center" data-testid="header-logo">
-          {logo || (
-            <span className="font-display text-xl font-bold text-text-primary">
-              OwnYou
-            </span>
+        {/* Left side: Back button + Logo/Title */}
+        <div className="flex items-center gap-2" data-testid="header-logo">
+          {/* Back button - Sprint 11b Bugfix 13 */}
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="p-2 -ml-2 rounded-full hover:bg-black/10 transition-colors"
+              aria-label="Go back"
+              data-testid="header-back"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          )}
+
+          {/* Logo or Title - Sprint 11b Bugfix 13 */}
+          {isPageHeader ? (
+            <h1 className="font-display text-xl font-bold text-text-primary">
+              {title}
+            </h1>
+          ) : (
+            logo || (
+              <span className="font-display text-xl font-bold text-text-primary">
+                OwnYou
+              </span>
+            )
           )}
         </div>
 

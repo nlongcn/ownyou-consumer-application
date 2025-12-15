@@ -3,8 +3,7 @@
  * v13 Section 4.5.1 - Health card (180px height)
  */
 
-import React from 'react';
-import { cn, Card, CardContent } from '@ownyou/ui-design-system';
+import { cn, Card, CardContent, cardDimensions, cardHeights, radius } from '@ownyou/ui-design-system';
 import { FeedbackHeart } from '../FeedbackHeart';
 import type { Mission, HeartState } from '../../types';
 
@@ -55,16 +54,20 @@ export function MissionCardHealth({
     <Card
       className={cn(
         'relative overflow-hidden cursor-pointer',
-        'w-[180px] md:w-[220px] lg:w-[260px]',
         'transition-transform duration-200 hover:scale-[1.02]',
         'active:scale-[0.98]',
         className,
       )}
-      style={{ height: '180px' }}
+      style={{
+        width: cardDimensions.width,
+        height: cardHeights.health,
+      }}
       onClick={onClick}
       role="article"
       aria-label={`Health: ${mission.title}`}
       data-testid={`mission-card-health-${mission.id}`}
+      data-mission-card
+      data-mission-id={mission.id}
     >
       {/* Compact Layout */}
       <CardContent className="p-3 flex flex-col h-full">
@@ -80,7 +83,7 @@ export function MissionCardHealth({
           </span>
 
           {/* Small Image or Icon */}
-          <div className="w-12 h-12 rounded-[12px] overflow-hidden flex-shrink-0">
+          <div className="w-12 h-12 overflow-hidden flex-shrink-0" style={{ borderRadius: radius.image }}>
             {mission.imageUrl ? (
               <img
                 src={mission.imageUrl}

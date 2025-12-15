@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 
 /**
  * Outlook OAuth Callback Endpoint
  *
  * Handles OAuth 2.0 callback from Microsoft after user grants consent
- * Exchanges authorization code for access token and refresh token
+ * Exchanges authorization code for access token and refresh token using PKCE
  * Stores tokens in HTTP-only cookies
  *
  * Documentation: https://learn.microsoft.com/en-us/graph/auth-v2-user#2-get-authorization
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest) {
     if (error) {
       console.error('[Outlook OAuth] Authorization error:', error, errorDescription)
       return NextResponse.redirect(
-        new URL(`/emails?error=${encodeURIComponent(error)}`, request.url)
+        new URL(`/emails?error=${encodeURIComponent(error)}&error_description=${encodeURIComponent(errorDescription || '')}`, request.url)
       )
     }
 
@@ -41,9 +42,21 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.log('[Outlook OAuth] Exchanging authorization code for tokens')
+    // Get PKCE code verifier from cookie
+    const cookieStore = await cookies()
+    const codeVerifier = cookieStore.get('outlook_pkce_verifier')?.value
 
-    // Exchange authorization code for access token
+    if (!codeVerifier) {
+      console.error('[Outlook OAuth] PKCE code verifier not found in cookie')
+      return NextResponse.redirect(
+        new URL('/emails?error=pkce_verifier_missing', request.url)
+      )
+    }
+
+    console.log('[Outlook OAuth] Exchanging authorization code for tokens with PKCE')
+    console.log('[Outlook OAuth] Code verifier present:', !!codeVerifier)
+
+    // Exchange authorization code for access token with PKCE
     const tokenResponse = await fetch(
       'https://login.microsoftonline.com/common/oauth2/v2.0/token',
       {
@@ -58,6 +71,7 @@ export async function GET(request: NextRequest) {
           redirect_uri: redirectUri,
           grant_type: 'authorization_code',
           scope: 'Mail.Read offline_access',
+          code_verifier: codeVerifier,
         }),
       }
     )
@@ -104,6 +118,9 @@ export async function GET(request: NextRequest) {
     // Store token expiry time
     const expiryTime = Date.now() + (tokens.expires_in * 1000)
     response.cookies.set('outlook_token_expiry', expiryTime.toString(), cookieOptions)
+
+    // Clear the PKCE verifier cookie
+    response.cookies.delete('outlook_pkce_verifier')
 
     return response
 

@@ -17,3 +17,6 @@ export * from './profile';
 
 // Branding Components
 export * from './branding';
+
+// Connection Components
+export * from './connection';

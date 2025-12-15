@@ -3,7 +3,7 @@
  * v13 Section 4.5.3 - Heart feedback cycle: meh → like → love
  */
 
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { cn } from '@ownyou/ui-design-system';
 import type { HeartState } from '../types';
 

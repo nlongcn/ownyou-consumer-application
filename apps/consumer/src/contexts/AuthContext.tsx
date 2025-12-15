@@ -38,17 +38,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const checkAuth = async () => {
       try {
         const platform = getPlatform();
+        console.log('[AuthContext] checkAuth starting, platform:', platform);
 
+        // Try Tauri secure store first (when available)
         if (platform === 'tauri') {
           // In Tauri, check the secure store for saved wallet
+          // TODO: Implement Tauri store when plugin is configured
           // const store = await Store.load('wallet.json');
           // const savedWallet = await store.get<Wallet>('wallet');
           // if (savedWallet) { ... }
-        } else {
-          // In PWA, check IndexedDB
-          const savedWallet = localStorage.getItem('ownyou_wallet');
-          if (savedWallet) {
+          console.log('[AuthContext] Tauri detected, Tauri store not yet implemented');
+        }
+
+        // Always check localStorage as fallback (works in both PWA and Tauri webview)
+        const savedWallet = localStorage.getItem('ownyou_wallet');
+        console.log('[AuthContext] localStorage check:', savedWallet ? 'found' : 'not found');
+
+        if (savedWallet) {
+          try {
             const wallet = JSON.parse(savedWallet) as Wallet;
+            console.log('[AuthContext] Wallet restored:', wallet.address.slice(0, 10) + '...');
             setState({
               isAuthenticated: true,
               isLoading: false,
@@ -56,6 +65,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
               error: null,
             });
             return;
+          } catch (parseError) {
+            console.error('[AuthContext] Failed to parse saved wallet:', parseError);
+            localStorage.removeItem('ownyou_wallet');
           }
         }
 
@@ -91,15 +103,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Persist wallet
       const platform = getPlatform();
+      console.log('[AuthContext] Saving wallet, platform:', platform);
+
       if (platform === 'tauri') {
-        // Save to Tauri secure store
+        // Save to Tauri secure store (when available)
+        // TODO: Implement Tauri store when plugin is configured
         // const store = await Store.load('wallet.json');
         // await store.set('wallet', mockWallet);
         // await store.save();
-      } else {
-        // Save to localStorage (IndexedDB in production)
-        localStorage.setItem('ownyou_wallet', JSON.stringify(mockWallet));
+        console.log('[AuthContext] Tauri store not yet implemented, using localStorage fallback');
       }
+
+      // Always save to localStorage as fallback (works in both PWA and Tauri webview)
+      localStorage.setItem('ownyou_wallet', JSON.stringify(mockWallet));
+      console.log('[AuthContext] Wallet saved to localStorage');
 
       setState({
         isAuthenticated: true,
@@ -120,14 +137,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const disconnect = useCallback(async () => {
     try {
       const platform = getPlatform();
+      console.log('[AuthContext] Disconnecting, platform:', platform);
+
       if (platform === 'tauri') {
-        // Clear Tauri secure store
+        // Clear Tauri secure store (when available)
+        // TODO: Implement Tauri store when plugin is configured
         // const store = await Store.load('wallet.json');
         // await store.delete('wallet');
         // await store.save();
-      } else {
-        localStorage.removeItem('ownyou_wallet');
+        console.log('[AuthContext] Tauri store not yet implemented');
       }
+
+      // Always clear localStorage (works in both PWA and Tauri webview)
+      localStorage.removeItem('ownyou_wallet');
+      console.log('[AuthContext] Wallet removed from localStorage');
 
       setState({
         isAuthenticated: false,

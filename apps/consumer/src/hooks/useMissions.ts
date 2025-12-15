@@ -1,5 +1,35 @@
-import { useQuery } from '@tanstack/react-query';
-import type { FilterTab } from '../routes/Home';
+/**
+ * useMissions Hook - Fetches missions from LangGraph Store
+ * v13 Section 4.5 - Mission Card Specifications
+ *
+ * Sprint 11a Update: Removed mock data seeding, integrated with Ikigai scoring.
+ * Missions are now generated ONLY by agents (TriggerContext) and sorted
+ * by well-being alignment (IkigaiContext).
+ *
+ * Data Flow:
+ * 1. DataSourceContext syncs data → IAB classifications stored
+ * 2. TriggerContext watches store → triggers agents on new classifications
+ * 3. Agents generate MissionCards → stored in ownyou.missions namespace
+ * 4. This hook fetches missions → sorted by Ikigai well-being score
+ */
+
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
+import { NS } from '@ownyou/shared-types';
+import { useStore } from '../contexts/StoreContext';
+import { useAuth } from '../contexts/AuthContext';
+import type { FilterTab } from '@ownyou/ui-components';
+
+// Optional: Import Ikigai context for scoring (if available)
+// This is wrapped in try/catch to allow the hook to work standalone
+let useIkigaiScoring: (() => { sort: (m: Mission[]) => Mission[]; hasProfile: boolean }) | null = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const ikigai = require('../contexts/IkigaiContext');
+  useIkigaiScoring = ikigai.useMissionScoring;
+} catch {
+  // IkigaiContext not available, scoring disabled
+}
 
 export interface Mission {
   id: string;
@@ -12,131 +42,25 @@ export interface Mission {
   price?: number;
   originalPrice?: number;
   savings?: number;
+  currency?: string;
   actionUrl?: string;
   actionLabel?: string;
   reason?: string;
   tags?: string[];
   evidenceChain?: string[];
   relatedMissionIds?: string[];
+  feedbackState?: 'meh' | 'like' | 'love';
   createdAt: Date;
   priority: number;
 }
 
-// Mock data for development - replace with real store queries
-const MOCK_MISSIONS: Mission[] = [
-  {
-    id: '1',
-    type: 'shopping',
-    title: 'Sony WH-1000XM5 Headphones',
-    description: 'Premium noise-cancelling headphones with exceptional sound quality',
-    imageUrl: 'https://via.placeholder.com/360x400',
-    brandName: 'Sony',
-    price: 298.00,
-    originalPrice: 399.99,
-    savings: 25,
-    actionUrl: 'https://example.com/product/1',
-    actionLabel: 'View Deal',
-    reason: 'Based on your interest in audio equipment and work-from-home setup',
-    tags: ['Electronics', 'Audio', 'Work from Home'],
-    evidenceChain: [
-      'You searched for "noise cancelling headphones" last week',
-      'You work from home and value quiet focus time',
-      'This model matches your preference for premium quality',
-    ],
-    createdAt: new Date(),
-    priority: 1,
-  },
-  {
-    id: '2',
-    type: 'savings',
-    title: 'Switch to Green Energy',
-    description: 'Save up to 15% on your energy bills by switching to a renewable provider',
-    imageUrl: 'https://via.placeholder.com/360x284',
-    brandName: 'Octopus Energy',
-    actionUrl: 'https://example.com/switch',
-    actionLabel: 'Get Quote',
-    reason: 'Your current provider may be charging above market rates',
-    tags: ['Utility', 'Savings', 'Green'],
-    createdAt: new Date(),
-    priority: 2,
-  },
-  {
-    id: '3',
-    type: 'content',
-    title: 'The Tim Ferriss Show',
-    description: 'Episode: How to Optimize Your Morning Routine',
-    imageUrl: 'https://via.placeholder.com/360x284',
-    brandName: 'Podcast',
-    actionUrl: 'https://example.com/podcast',
-    actionLabel: 'Listen Now',
-    reason: 'Matches your interest in productivity and self-improvement',
-    tags: ['Podcast', 'Productivity'],
-    createdAt: new Date(),
-    priority: 3,
-  },
-  {
-    id: '4',
-    type: 'travel',
-    title: 'Weekend in Barcelona',
-    description: 'Discover hidden gems in the Gothic Quarter',
-    imageUrl: 'https://via.placeholder.com/360x208',
-    actionUrl: 'https://example.com/travel',
-    actionLabel: 'Explore',
-    reason: 'You mentioned wanting to visit Spain this year',
-    tags: ['Travel', 'Europe', 'Weekend Trip'],
-    createdAt: new Date(),
-    priority: 4,
-  },
-  {
-    id: '5',
-    type: 'health',
-    title: 'Sleep Score: 72',
-    description: 'Your sleep quality has been declining. Here are 3 tips to improve it.',
-    imageUrl: 'https://via.placeholder.com/360x180',
-    actionLabel: 'View Tips',
-    tags: ['Health', 'Sleep', 'Wellness'],
-    createdAt: new Date(),
-    priority: 5,
-  },
-  {
-    id: '6',
-    type: 'food',
-    title: 'Mediterranean Salmon Bowl',
-    description: 'A healthy dinner idea based on your dietary preferences',
-    imageUrl: 'https://via.placeholder.com/360x287',
-    actionLabel: 'View Recipe',
-    reason: 'Matches your preference for high-protein, pescatarian meals',
-    tags: ['Recipe', 'Healthy', 'Dinner'],
-    createdAt: new Date(),
-    priority: 6,
-  },
-  {
-    id: '7',
-    type: 'entertainment',
-    title: 'Hamilton at the West End',
-    description: 'Limited tickets available for next month',
-    imageUrl: 'https://via.placeholder.com/360x207',
-    price: 85.00,
-    actionUrl: 'https://example.com/tickets',
-    actionLabel: 'Get Tickets',
-    reason: 'You enjoyed musicals in the past',
-    tags: ['Theatre', 'Musical', 'London'],
-    createdAt: new Date(),
-    priority: 7,
-  },
-  {
-    id: '8',
-    type: 'people',
-    title: 'Catch up with Sarah',
-    description: "It's been 3 months since you last connected",
-    imageUrl: 'https://via.placeholder.com/360x210',
-    actionLabel: 'Send Message',
-    tags: ['Relationships', 'Friends'],
-    createdAt: new Date(),
-    priority: 8,
-  },
-];
+// REMOVED: Sample missions seeding - Sprint 11a
+// Missions are now ONLY generated by agents through the TriggerContext.
+// Empty state is handled in the UI with an onboarding flow.
 
+/**
+ * Filter missions based on tab selection
+ */
 function filterMissions(missions: Mission[], filter: FilterTab): Mission[] {
   switch (filter) {
     case 'savings':
@@ -151,28 +75,192 @@ function filterMissions(missions: Mission[], filter: FilterTab): Mission[] {
   }
 }
 
-async function fetchMissions(filter: FilterTab): Promise<Mission[]> {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 300));
-
-  // In production, this would query the LangGraph Store
-  // const store = await getStore();
-  // const missions = await store.search(NS.missions(userId), { filter });
-
-  return filterMissions(MOCK_MISSIONS, filter);
-}
-
+/**
+ * useMissions - Fetches and manages mission cards
+ *
+ * Sprint 11a: Missions are now ONLY generated by agents (no seeding).
+ * - Fetches from LangGraph Store (ownyou.missions namespace)
+ * - Applies Ikigai-based well-being scoring for sorting
+ * - Returns empty array for new users (triggers onboarding UI)
+ */
 export function useMissions(filter: FilterTab = 'all') {
+  const { store, isReady } = useStore();
+  const { wallet } = useAuth();
+  const queryClient = useQueryClient();
+
+  const userId = wallet?.address ?? 'anonymous';
+
+  // Get Ikigai scoring if available
+  const ikigaiScoring = useMemo(() => {
+    if (useIkigaiScoring) {
+      try {
+        return useIkigaiScoring();
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }, []);
+
+  // Query missions from store
   const query = useQuery({
-    queryKey: ['missions', filter],
-    queryFn: () => fetchMissions(filter),
+    queryKey: ['missions', filter, userId, isReady],
+    queryFn: async (): Promise<Mission[]> => {
+      // If not authenticated or store not ready, return empty
+      if (!store || !isReady) {
+        return [];
+      }
+
+      try {
+        const namespace = NS.missionCards(userId);
+        const result = await store.list<Mission>(namespace, { limit: 100, offset: 0 });
+
+        // Parse dates
+        let missions = result.items.map(item => ({
+          ...item,
+          createdAt: new Date(item.createdAt),
+        }));
+
+        // Apply filter
+        missions = filterMissions(missions, filter);
+
+        // Sort by Ikigai well-being score if available, otherwise by priority
+        if (ikigaiScoring?.hasProfile) {
+          missions = ikigaiScoring.sort(missions);
+        } else {
+          missions.sort((a, b) => a.priority - b.priority);
+        }
+
+        return missions;
+      } catch (error) {
+        console.error('Failed to fetch missions:', error);
+        throw error;
+      }
+    },
+    enabled: isReady,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
+  // Refresh missions when new ones are generated
+  const refreshMissions = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['missions'] });
+  }, [queryClient]);
+
   return {
     missions: query.data ?? [],
-    isLoading: query.isLoading,
+    isLoading: query.isLoading || !isReady,
     error: query.error as Error | null,
     refetch: query.refetch,
+    refreshMissions,
+    /** Whether missions are from store (true) or pending (false) */
+    isStoreReady: isReady,
+    /** Whether Ikigai scoring is being applied */
+    isIkigaiSorted: ikigaiScoring?.hasProfile ?? false,
+    /** Whether user has any missions (false = show onboarding) */
+    hasMissions: (query.data?.length ?? 0) > 0,
   };
+}
+
+/**
+ * Mission status type for state machine transitions
+ */
+export type MissionStatus = 'ACTIVE' | 'SNOOZED' | 'DISMISSED' | 'COMPLETED';
+
+/**
+ * Hook to update mission status (snooze, dismiss, complete)
+ * Sprint 11b Bugfix 8: Wire mission card actions
+ */
+export function useUpdateMission() {
+  const { store, isReady } = useStore();
+  const { wallet } = useAuth();
+  const queryClient = useQueryClient();
+
+  const updateMissionStatus = useCallback(async (
+    missionId: string,
+    status: MissionStatus,
+    options?: { snoozedUntil?: number }
+  ) => {
+    if (!store || !isReady || !wallet) {
+      throw new Error('Store not ready or not authenticated');
+    }
+
+    const namespace = NS.missionCards(wallet.address);
+
+    // Get current mission
+    const current = await store.get<Mission>(namespace, missionId);
+    if (!current) {
+      throw new Error(`Mission ${missionId} not found`);
+    }
+
+    // Update mission with new status
+    const updated = {
+      ...current,
+      status,
+      ...(options?.snoozedUntil ? { snoozedUntil: options.snoozedUntil } : {}),
+      ...(status === 'COMPLETED' ? { completedAt: new Date().toISOString() } : {}),
+      ...(status === 'DISMISSED' ? { dismissedAt: new Date().toISOString() } : {}),
+    };
+
+    await store.put(namespace, missionId, updated);
+
+    // Invalidate to refetch
+    queryClient.invalidateQueries({ queryKey: ['missions'] });
+
+    return updated;
+  }, [store, isReady, wallet, queryClient]);
+
+  const snoozeMission = useCallback(async (missionId: string, hours: number = 24) => {
+    const snoozedUntil = Date.now() + hours * 60 * 60 * 1000;
+    return updateMissionStatus(missionId, 'SNOOZED', { snoozedUntil });
+  }, [updateMissionStatus]);
+
+  const dismissMission = useCallback(async (missionId: string) => {
+    return updateMissionStatus(missionId, 'DISMISSED');
+  }, [updateMissionStatus]);
+
+  const completeMission = useCallback(async (missionId: string) => {
+    return updateMissionStatus(missionId, 'COMPLETED');
+  }, [updateMissionStatus]);
+
+  return {
+    updateMissionStatus,
+    snoozeMission,
+    dismissMission,
+    completeMission,
+    isReady,
+  };
+}
+
+/**
+ * Hook to add a new mission to the store
+ */
+export function useAddMission() {
+  const { store, isReady } = useStore();
+  const { wallet } = useAuth();
+  const queryClient = useQueryClient();
+
+  const addMission = useCallback(async (mission: Omit<Mission, 'id' | 'createdAt'>) => {
+    if (!store || !isReady || !wallet) {
+      throw new Error('Store not ready or not authenticated');
+    }
+
+    const newMission: Mission = {
+      ...mission,
+      id: `mission-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      createdAt: new Date(),
+    };
+
+    const namespace = NS.missionCards(wallet.address);
+    await store.put(namespace, newMission.id, {
+      ...newMission,
+      createdAt: newMission.createdAt.toISOString(),
+    });
+
+    // Invalidate to refetch
+    queryClient.invalidateQueries({ queryKey: ['missions'] });
+
+    return newMission;
+  }, [store, isReady, wallet, queryClient]);
+
+  return { addMission, isReady };
 }

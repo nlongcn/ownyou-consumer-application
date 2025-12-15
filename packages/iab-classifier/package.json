@@ -35,7 +35,8 @@
   },
   "dependencies": {
     "@langchain/langgraph": "^0.2.0",
-    "@ownyou/llm-client": "workspace:*"
+    "@ownyou/llm-client": "workspace:*",
+    "@ownyou/shared-types": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.3.3",

@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "totalTestDuration": "8291ms",
+  "walletCreationTime": "1041ms",
+  "walletCreated": false,
+  "onboardingFlowDetected": true,
+  "screenshots": [
+    "01-landing-page-unauthenticated.png",
+    "02-get-started-button-visible.png",
+    "03-after-get-started-click.png",
+    "04-post-authentication-state.png"
+  ],
+  "consoleErrors": "None",
+  "networkErrors": "None",
+  "authContextLogs": []
+}

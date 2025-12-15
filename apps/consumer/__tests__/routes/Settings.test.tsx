@@ -20,6 +20,37 @@ vi.mock('../../src/contexts/SyncContext', () => ({
   }),
 }));
 
+// Mock DataSourceContext - used by DataSettings
+vi.mock('../../src/contexts/DataSourceContext', () => ({
+  useDataSource: () => ({
+    dataSources: [
+      { id: 'gmail', provider: 'google', type: 'email', status: 'disconnected' },
+      { id: 'outlook', provider: 'microsoft', type: 'email', status: 'disconnected' },
+      { id: 'google-calendar', provider: 'google', type: 'calendar', status: 'disconnected' },
+    ],
+    connectSource: vi.fn(),
+    disconnectSource: vi.fn(),
+    syncSource: vi.fn(),
+    isSyncing: false,
+  }),
+}));
+
+// Mock useGDPR hook - used by DataSettings
+vi.mock('../../src/hooks/useGDPR', () => ({
+  useGDPR: () => ({
+    downloadExport: vi.fn(),
+    deleteAllDataAndLogout: vi.fn(),
+    isExporting: false,
+    isDeleting: false,
+    isReady: true,
+  }),
+}));
+
+// Mock SyncStatusDetails component
+vi.mock('../../src/components/SyncStatusIndicator', () => ({
+  SyncStatusDetails: () => <div data-testid="sync-status-details">Sync Status Details</div>,
+}));
+
 // Mock ui-components
 vi.mock('@ownyou/ui-components', () => ({
   Header: ({ title }: { title: string }) => <header data-testid="header">{title}</header>,
@@ -29,6 +60,7 @@ vi.mock('@ownyou/ui-design-system', () => ({
   Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="card" className={className}>{children}</div>
   ),
+  colors: {},
 }));
 
 const queryClient = new QueryClient({
@@ -122,49 +154,63 @@ describe('Settings Privacy Section', () => {
 });
 
 describe('Settings Data Section', () => {
-  beforeEach(async () => {
+  it('shows Gmail data source', async () => {
     const user = userEvent.setup();
     renderWithProviders(<Settings />);
     await user.click(screen.getByText('Data'));
+    expect(screen.getByText('Gmail')).toBeInTheDocument();
   });
 
-  it('shows email data source', () => {
-    expect(screen.getByText('Email')).toBeInTheDocument();
+  it('shows Outlook data source', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Settings />);
+    await user.click(screen.getByText('Data'));
+    expect(screen.getByText('Outlook')).toBeInTheDocument();
   });
 
-  it('shows calendar data source', () => {
+  it('shows Calendar data source', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Settings />);
+    await user.click(screen.getByText('Data'));
     expect(screen.getByText('Calendar')).toBeInTheDocument();
   });
 
-  it('shows browser history data source', () => {
-    expect(screen.getByText('Browser History')).toBeInTheDocument();
+  it('shows export data button', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Settings />);
+    await user.click(screen.getByText('Data'));
+    // The GDPR export button with icon
+    expect(screen.getByText(/Export All Data/)).toBeInTheDocument();
   });
 
-  it('shows export data button', () => {
-    expect(screen.getByText('Export All Data')).toBeInTheDocument();
-  });
-
-  it('shows delete data button', () => {
-    expect(screen.getByText('Delete All Data')).toBeInTheDocument();
+  it('shows delete data button', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Settings />);
+    await user.click(screen.getByText('Data'));
+    // The GDPR delete button with icon
+    expect(screen.getByText(/Delete All Data/)).toBeInTheDocument();
   });
 });
 
 describe('Settings About Section', () => {
-  beforeEach(async () => {
+  it('shows app version', async () => {
     const user = userEvent.setup();
     renderWithProviders(<Settings />);
     await user.click(screen.getByText('About'));
-  });
-
-  it('shows app version', () => {
     expect(screen.getByText('Version 0.1.0')).toBeInTheDocument();
   });
 
-  it('shows privacy policy link', () => {
+  it('shows privacy policy link', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Settings />);
+    await user.click(screen.getByText('About'));
     expect(screen.getByText('Privacy Policy')).toBeInTheDocument();
   });
 
-  it('shows terms of service link', () => {
+  it('shows terms of service link', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Settings />);
+    await user.click(screen.getByText('About'));
     expect(screen.getByText('Terms of Service')).toBeInTheDocument();
   });
 });

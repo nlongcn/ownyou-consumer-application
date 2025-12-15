@@ -19,6 +19,9 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+// Initialize persistent logging FIRST - captures all console output to file
+import { initLogger } from './utils/logger';
+initLogger().catch(console.error);
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@ownyou/ui-design-system';

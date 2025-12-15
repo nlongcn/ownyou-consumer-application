@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Wallet } from '../../src/routes/Wallet';
@@ -12,11 +11,25 @@ vi.mock('../../src/contexts/AuthContext', () => ({
   useAuth: () => mockUseAuth(),
 }));
 
+// Mock useIkigaiRewards - Wallet uses this for points and tier
+const mockUseIkigaiRewards = vi.fn();
+
+vi.mock('../../src/contexts/IkigaiContext', () => ({
+  useIkigaiRewards: () => mockUseIkigaiRewards(),
+}));
+
+// Mock useStore - Wallet uses this for transaction history
+const mockUseStore = vi.fn();
+
+vi.mock('../../src/contexts/StoreContext', () => ({
+  useStore: () => mockUseStore(),
+}));
+
 // Mock ui-components
 vi.mock('@ownyou/ui-components', () => ({
   Header: ({ title }: { title: string }) => <header data-testid="header">{title}</header>,
-  TokenBalance: ({ amount }: { amount: number }) => (
-    <div data-testid="token-balance">{amount.toFixed(2)} OWN</div>
+  TokenBalance: ({ balance = 0 }: { balance?: number }) => (
+    <div data-testid="token-balance">{balance.toFixed(2)} OWN</div>
   ),
 }));
 
@@ -48,6 +61,22 @@ describe('Wallet Route - Unauthenticated', () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: false,
       wallet: null,
+      connect: vi.fn(),
+      isLoading: false,
+    });
+    // IkigaiRewards mock - needed even when unauthenticated
+    mockUseIkigaiRewards.mockReturnValue({
+      points: { total: 0, explorer: 0, connector: 0, helper: 0, achiever: 0 },
+      tier: { tier: 'Bronze', nextTierAt: 100, progress: 0 },
+      refresh: vi.fn(),
+      awardPoints: vi.fn(),
+    });
+    // Store mock
+    mockUseStore.mockReturnValue({
+      store: null,
+      isReady: false,
+      error: null,
+      backendType: null,
     });
   });
 
@@ -72,6 +101,24 @@ describe('Wallet Route - Authenticated', () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       wallet: { address: '0x1234567890abcdef1234567890abcdef12345678' },
+      connect: vi.fn(),
+      isLoading: false,
+    });
+    // IkigaiRewards mock with sample data
+    mockUseIkigaiRewards.mockReturnValue({
+      points: { total: 1250, explorer: 400, connector: 300, helper: 350, achiever: 200 },
+      tier: { tier: 'Silver', nextTierAt: 2000, progress: 0.625 },
+      refresh: vi.fn(),
+      awardPoints: vi.fn(),
+    });
+    // Store mock with list method
+    mockUseStore.mockReturnValue({
+      store: {
+        list: vi.fn().mockResolvedValue({ items: [] }),
+      },
+      isReady: true,
+      error: null,
+      backendType: 'memory',
     });
   });
 
@@ -80,9 +127,10 @@ describe('Wallet Route - Authenticated', () => {
     expect(screen.getByTestId('header')).toHaveTextContent('Wallet');
   });
 
-  it('shows token balance', () => {
+  it('shows total points', () => {
     renderWithProviders(<Wallet />);
-    expect(screen.getByTestId('token-balance')).toBeInTheDocument();
+    // The actual component shows "Total Points" label
+    expect(screen.getByText('Total Points')).toBeInTheDocument();
   });
 
   it('shows truncated wallet address', () => {
@@ -90,9 +138,9 @@ describe('Wallet Route - Authenticated', () => {
     expect(screen.getByText(/0x1234...5678/)).toBeInTheDocument();
   });
 
-  it('shows withdraw button', () => {
+  it('shows refresh button', () => {
     renderWithProviders(<Wallet />);
-    expect(screen.getByText('Withdraw')).toBeInTheDocument();
+    expect(screen.getByText('Refresh')).toBeInTheDocument();
   });
 
   it('shows history button', () => {
@@ -101,37 +149,53 @@ describe('Wallet Route - Authenticated', () => {
   });
 });
 
-describe('Wallet Earnings Breakdown', () => {
+describe('Wallet Points Breakdown', () => {
   beforeEach(() => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
-      wallet: { address: '0x1234567890abcdef' },
+      wallet: { address: '0x1234567890abcdef1234567890abcdef12345678' },
+      connect: vi.fn(),
+      isLoading: false,
+    });
+    mockUseIkigaiRewards.mockReturnValue({
+      points: { total: 1250, explorer: 400, connector: 300, helper: 350, achiever: 200 },
+      tier: { tier: 'Silver', nextTierAt: 2000, progress: 0.625 },
+      refresh: vi.fn(),
+      awardPoints: vi.fn(),
+    });
+    mockUseStore.mockReturnValue({
+      store: {
+        list: vi.fn().mockResolvedValue({ items: [] }),
+      },
+      isReady: true,
+      error: null,
+      backendType: 'memory',
     });
   });
 
-  it('shows earnings breakdown section', () => {
+  it('shows points breakdown section', () => {
     renderWithProviders(<Wallet />);
-    expect(screen.getByText('Earnings Breakdown')).toBeInTheDocument();
+    expect(screen.getByText('Points Breakdown')).toBeInTheDocument();
   });
 
-  it('shows data contributions row', () => {
+  it('shows explorer category', () => {
     renderWithProviders(<Wallet />);
-    expect(screen.getByText('Data Contributions')).toBeInTheDocument();
+    expect(screen.getByText('Explorer')).toBeInTheDocument();
   });
 
-  it('shows profile completeness row', () => {
+  it('shows connector category', () => {
     renderWithProviders(<Wallet />);
-    expect(screen.getByText('Profile Completeness')).toBeInTheDocument();
+    expect(screen.getByText('Connector')).toBeInTheDocument();
   });
 
-  it('shows feedback rewards row', () => {
+  it('shows helper category', () => {
     renderWithProviders(<Wallet />);
-    expect(screen.getByText('Feedback Rewards')).toBeInTheDocument();
+    expect(screen.getByText('Helper')).toBeInTheDocument();
   });
 
-  it('shows referral bonuses row', () => {
+  it('shows achiever category', () => {
     renderWithProviders(<Wallet />);
-    expect(screen.getByText('Referral Bonuses')).toBeInTheDocument();
+    expect(screen.getByText('Achiever')).toBeInTheDocument();
   });
 });
 
@@ -139,7 +203,23 @@ describe('Wallet Transaction History', () => {
   beforeEach(() => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
-      wallet: { address: '0x1234567890abcdef' },
+      wallet: { address: '0x1234567890abcdef1234567890abcdef12345678' },
+      connect: vi.fn(),
+      isLoading: false,
+    });
+    mockUseIkigaiRewards.mockReturnValue({
+      points: { total: 1250, explorer: 400, connector: 300, helper: 350, achiever: 200 },
+      tier: { tier: 'Silver', nextTierAt: 2000, progress: 0.625 },
+      refresh: vi.fn(),
+      awardPoints: vi.fn(),
+    });
+    mockUseStore.mockReturnValue({
+      store: {
+        list: vi.fn().mockResolvedValue({ items: [] }),
+      },
+      isReady: true,
+      error: null,
+      backendType: 'memory',
     });
   });
 
@@ -148,61 +228,11 @@ describe('Wallet Transaction History', () => {
     expect(screen.getByText('Recent Activity')).toBeInTheDocument();
   });
 
-  it('shows transaction descriptions', () => {
+  it('shows empty state when no transactions', () => {
     renderWithProviders(<Wallet />);
-    expect(screen.getByText('Data contribution reward')).toBeInTheDocument();
-    expect(screen.getByText('Profile completion bonus')).toBeInTheDocument();
+    expect(screen.getByText('No transactions yet')).toBeInTheDocument();
   });
 });
 
-describe('Wallet Withdraw Modal', () => {
-  beforeEach(() => {
-    mockUseAuth.mockReturnValue({
-      isAuthenticated: true,
-      wallet: { address: '0x1234567890abcdef' },
-    });
-  });
-
-  it('opens withdraw modal when withdraw is clicked', async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<Wallet />);
-
-    await user.click(screen.getByText('Withdraw'));
-    expect(screen.getByText('Withdraw OWN')).toBeInTheDocument();
-  });
-
-  it('shows available balance in modal', async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<Wallet />);
-
-    await user.click(screen.getByText('Withdraw'));
-    expect(screen.getByText('Available Balance')).toBeInTheDocument();
-  });
-
-  it('shows amount input field', async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<Wallet />);
-
-    await user.click(screen.getByText('Withdraw'));
-    expect(screen.getByPlaceholderText('0.00')).toBeInTheDocument();
-  });
-
-  it('shows max button', async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<Wallet />);
-
-    await user.click(screen.getByText('Withdraw'));
-    expect(screen.getByText('Max')).toBeInTheDocument();
-  });
-
-  it('closes modal on cancel', async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<Wallet />);
-
-    await user.click(screen.getByText('Withdraw'));
-    await user.click(screen.getByText('Cancel'));
-
-    // Modal should be closed
-    expect(screen.queryByText('Withdraw OWN')).not.toBeInTheDocument();
-  });
-});
+// Note: Withdraw functionality is planned for future sprint
+// The current Wallet component shows Points breakdown (not token-based withdrawal)

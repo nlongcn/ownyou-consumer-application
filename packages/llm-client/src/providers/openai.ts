@@ -14,6 +14,31 @@ import type { LLMRequest, LLMResponse } from './types';
 import { getContextWindow, getMaxCompletionTokens, calculateCost } from './registry';
 
 /**
+ * Detect if running in Tauri environment
+ */
+function isTauri(): boolean {
+  return typeof window !== 'undefined' &&
+         window.location?.protocol === 'tauri:' &&
+         !!(window as unknown as { __TAURI__?: unknown }).__TAURI__;
+}
+
+/**
+ * Get fetch function - uses Tauri's HTTP plugin when in Tauri to bypass CORS
+ */
+async function getTauriFetch(): Promise<typeof fetch | undefined> {
+  if (!isTauri()) return undefined;
+
+  try {
+    const { fetch: tauriFetch } = await import('@tauri-apps/plugin-http');
+    console.log('[OpenAI Provider] Using Tauri HTTP plugin for CORS-free requests');
+    return tauriFetch as typeof fetch;
+  } catch (e) {
+    console.warn('[OpenAI Provider] Tauri HTTP plugin not available:', e);
+    return undefined;
+  }
+}
+
+/**
  * OpenAI provider configuration
  */
 export interface OpenAIProviderConfig extends ProviderConfig {
@@ -28,7 +53,9 @@ export interface OpenAIProviderConfig extends ProviderConfig {
  * OpenAI LLM Provider
  */
 export class OpenAIProvider extends BaseLLMProvider {
-  private client: OpenAI;
+  private client: OpenAI | null = null;
+  private clientPromise: Promise<OpenAI> | null = null;
+  private openaiConfig: OpenAIProviderConfig;
   private defaultModel: string;
   private defaultMaxTokens: number;
   private defaultTemperature: number;
@@ -40,17 +67,38 @@ export class OpenAIProvider extends BaseLLMProvider {
       throw new Error('OpenAI API key is required');
     }
 
+    this.openaiConfig = config;
     this.defaultModel = config.model ?? 'gpt-4o-mini';
     this.defaultMaxTokens = config.maxTokens ?? 16384;
     this.defaultTemperature = config.temperature ?? 0.7;
+  }
 
-    this.client = new OpenAI({
-      apiKey: config.apiKey,
-      organization: config.organization,
-      dangerouslyAllowBrowser: true,
-      timeout: config.timeout ?? 120000,
-      maxRetries: config.maxRetries ?? 2,
-    });
+  /**
+   * Get or create the OpenAI client (lazy initialization for Tauri fetch support)
+   */
+  private async getClient(): Promise<OpenAI> {
+    if (this.client) return this.client;
+
+    // Prevent multiple initializations
+    if (this.clientPromise) return this.clientPromise;
+
+    this.clientPromise = (async () => {
+      // Try to get Tauri's fetch for CORS-free requests
+      const customFetch = await getTauriFetch();
+
+      this.client = new OpenAI({
+        apiKey: this.openaiConfig.apiKey,
+        organization: this.openaiConfig.organization,
+        dangerouslyAllowBrowser: true,
+        timeout: this.openaiConfig.timeout ?? 120000,
+        maxRetries: this.openaiConfig.maxRetries ?? 2,
+        fetch: customFetch,
+      });
+
+      return this.client;
+    })();
+
+    return this.clientPromise;
   }
 
   getProviderType(): LLMProviderType {
@@ -71,7 +119,8 @@ export class OpenAIProvider extends BaseLLMProvider {
 
   async isAvailable(): Promise<boolean> {
     try {
-      const models = await this.client.models.list();
+      const client = await this.getClient();
+      const models = await client.models.list();
       return models.data.length > 0;
     } catch (error) {
       this.logger.debug(`OpenAI availability check failed: ${error}`);
@@ -119,7 +168,8 @@ export class OpenAIProvider extends BaseLLMProvider {
         params.temperature = temperature;
       }
 
-      const response = await this.client.chat.completions.create(params);
+      const client = await this.getClient();
+      const response = await client.chat.completions.create(params);
 
       const processingTime = (Date.now() - startTime) / 1000;
       const content = response.choices[0]?.message?.content ?? '';

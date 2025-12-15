@@ -1,9 +1,10 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { Header, FeedbackHeart } from '@ownyou/ui-components';
 import type { HeartState } from '@ownyou/ui-components';
-import { Card, Button } from '@ownyou/ui-design-system';
+import { Card, Button, radius } from '@ownyou/ui-design-system';
 import { useMission } from '../hooks/useMission';
 import { useFeedback } from '../hooks/useFeedback';
+import { useUpdateMission } from '../hooks/useMissions';
 
 export function MissionDetail() {
   const { id } = useParams<{ id: string }>();
@@ -11,6 +12,7 @@ export function MissionDetail() {
 
   const { mission, isLoading, error } = useMission(id ?? '');
   const { updateFeedback, getFeedbackState } = useFeedback();
+  const { snoozeMission, dismissMission, completeMission } = useUpdateMission();
 
   const handleFeedbackChange = (state: HeartState) => {
     if (id) {
@@ -20,6 +22,39 @@ export function MissionDetail() {
 
   const handleClose = () => {
     navigate(-1);
+  };
+
+  const handleSnooze = async () => {
+    if (id) {
+      try {
+        await snoozeMission(id);
+        navigate(-1);
+      } catch (error) {
+        console.error('[MissionDetail] Snooze failed:', error);
+      }
+    }
+  };
+
+  const handleDismiss = async () => {
+    if (id) {
+      try {
+        await dismissMission(id);
+        navigate(-1);
+      } catch (error) {
+        console.error('[MissionDetail] Dismiss failed:', error);
+      }
+    }
+  };
+
+  const handleComplete = async () => {
+    if (id) {
+      try {
+        await completeMission(id);
+        navigate(-1);
+      } catch (error) {
+        console.error('[MissionDetail] Complete failed:', error);
+      }
+    }
   };
 
   if (error) {
@@ -42,10 +77,10 @@ export function MissionDetail() {
       <div className="flex flex-col min-h-screen">
         <Header showLogo={false} title="Mission" onBack={handleClose} />
         <div className="flex-1 p-4 animate-pulse">
-          <div className="h-64 bg-[#D9D9D9] rounded-[35px] mb-4" />
-          <div className="h-8 bg-[#D9D9D9] rounded w-3/4 mb-2" />
-          <div className="h-4 bg-[#D9D9D9] rounded w-1/2 mb-4" />
-          <div className="h-24 bg-[#D9D9D9] rounded" />
+          <div className="h-64 bg-placeholder mb-4" style={{ borderRadius: radius.card }} />
+          <div className="h-8 bg-placeholder rounded w-3/4 mb-2" />
+          <div className="h-4 bg-placeholder rounded w-1/2 mb-4" />
+          <div className="h-24 bg-placeholder rounded" />
         </div>
       </div>
     );
@@ -60,7 +95,7 @@ export function MissionDetail() {
       <div className="flex-1 p-4 space-y-4">
         {/* Hero Image */}
         {mission.imageUrl && (
-          <div className="aspect-video rounded-[35px] overflow-hidden">
+          <div className="aspect-video overflow-hidden" style={{ borderRadius: radius.card }}>
             <img
               src={mission.imageUrl}
               alt={mission.title}
@@ -92,11 +127,11 @@ export function MissionDetail() {
                   ${mission.originalPrice.toFixed(2)}
                 </span>
               )}
-              <span className="text-2xl font-bold text-[#70DF82]">
+              <span className="text-2xl font-bold text-ownyou-secondary">
                 ${mission.price.toFixed(2)}
               </span>
               {mission.savings && (
-                <span className="ml-2 text-sm text-[#70DF82]">
+                <span className="ml-2 text-sm text-ownyou-secondary">
                   Save {mission.savings}%
                 </span>
               )}
@@ -122,7 +157,7 @@ export function MissionDetail() {
 
           {/* Why This Mission */}
           {mission.reason && (
-            <div className="bg-[#87CEEB]/20 rounded-2xl p-4 mb-6">
+            <div className="bg-ownyou-primary/20 rounded-2xl p-4 mb-6">
               <h3 className="font-bold mb-2">Why this mission?</h3>
               <p className="text-sm text-gray-700">{mission.reason}</p>
             </div>
@@ -137,6 +172,34 @@ export function MissionDetail() {
           >
             {mission.actionLabel || 'Take Action'}
           </Button>
+
+          {/* Action buttons - Sprint 11b Bugfix 8 */}
+          <div className="flex gap-3 mt-4">
+            <Button
+              variant="secondary"
+              size="md"
+              className="flex-1"
+              onClick={handleComplete}
+            >
+              Complete
+            </Button>
+            <Button
+              variant="secondary"
+              size="md"
+              className="flex-1"
+              onClick={handleSnooze}
+            >
+              Snooze
+            </Button>
+            <Button
+              variant="secondary"
+              size="md"
+              className="flex-1"
+              onClick={handleDismiss}
+            >
+              Dismiss
+            </Button>
+          </div>
         </Card>
 
         {/* Related Missions */}
@@ -155,7 +218,7 @@ export function MissionDetail() {
           <div className="space-y-3 text-sm">
             {mission.evidenceChain?.map((evidence, index) => (
               <div key={index} className="flex items-start gap-2">
-                <span className="text-[#70DF82]">•</span>
+                <span className="text-ownyou-secondary">•</span>
                 <p className="text-gray-700">{evidence}</p>
               </div>
             )) || (

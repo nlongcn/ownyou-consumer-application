@@ -3,11 +3,10 @@
  * v13 Section 4.7 - Masonry Grid Layout
  */
 
-import React from 'react';
 import Masonry from 'react-masonry-css';
-import { cn } from '@ownyou/ui-design-system';
+import { cn, masonryColumns, cardDimensions, cardHeights, radius } from '@ownyou/ui-design-system';
 import { MissionCard } from './MissionCard';
-import type { Mission, HeartState, BREAKPOINT_COLUMNS } from '../types';
+import type { Mission, HeartState } from '../types';
 
 export interface MissionFeedProps {
   /** Array of missions to display */
@@ -16,6 +15,12 @@ export interface MissionFeedProps {
   onMissionClick?: (missionId: string) => void;
   /** Feedback change handler */
   onFeedbackChange?: (missionId: string, state: HeartState) => void;
+  /** Snooze handler - Sprint 11b Bugfix 8 */
+  onSnooze?: (missionId: string) => void;
+  /** Dismiss handler - Sprint 11b Bugfix 8 */
+  onDismiss?: (missionId: string) => void;
+  /** Call-to-action handler - Sprint 11b Bugfix 8 */
+  onCallToAction?: (missionId: string) => void;
   /** Additional CSS class names */
   className?: string;
   /** Loading state */
@@ -25,24 +30,17 @@ export interface MissionFeedProps {
 }
 
 /**
- * Breakpoint columns configuration for masonry layout
- */
-const breakpointCols = {
-  default: 4,   // 1920px+
-  1440: 4,
-  1280: 3,
-  1024: 3,
-  768: 2,
-  640: 2,
-};
-
-/**
  * Loading skeleton for mission cards
  */
 function MissionCardSkeleton() {
   return (
     <div
-      className="w-[180px] h-[284px] rounded-[35px] bg-placeholder animate-pulse"
+      className="bg-placeholder animate-pulse"
+      style={{
+        width: cardDimensions.width,
+        height: cardHeights.savings,
+        borderRadius: radius.card,
+      }}
       data-testid="mission-card-skeleton"
     />
   );
@@ -50,26 +48,44 @@ function MissionCardSkeleton() {
 
 /**
  * Mission feed with masonry layout
+ * Uses design tokens for all spacing values
  */
 export function MissionFeed({
   missions,
   onMissionClick,
   onFeedbackChange,
+  onSnooze,
+  onDismiss,
+  onCallToAction,
   className,
   isLoading = false,
   emptyMessage = 'No missions yet. Check back soon!',
 }: MissionFeedProps) {
+  // Masonry container styles using design tokens
+  const masonryStyle = {
+    marginLeft: cardDimensions.overlapMargin,
+  };
+  const columnStyle = {
+    paddingLeft: cardDimensions.gap,
+  };
+  const itemStyle = {
+    marginBottom: cardDimensions.gap,
+  };
+
   // Loading state with skeletons
   if (isLoading) {
     return (
       <Masonry
-        breakpointCols={breakpointCols}
-        className={cn('flex -ml-[13px] w-auto', className)}
-        columnClassName="pl-[13px] bg-clip-padding"
+        breakpointCols={masonryColumns}
+        className={cn('flex w-auto', className)}
+        style={masonryStyle}
+        columnClassName="bg-clip-padding"
       >
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={`skeleton-${i}`} className="mb-[13px]">
-            <MissionCardSkeleton />
+          <div key={`skeleton-${i}`} style={columnStyle}>
+            <div style={itemStyle}>
+              <MissionCardSkeleton />
+            </div>
           </div>
         ))}
       </Masonry>
@@ -95,17 +111,21 @@ export function MissionFeed({
 
   return (
     <Masonry
-      breakpointCols={breakpointCols}
-      className={cn('flex -ml-[13px] w-auto', className)}
-      columnClassName="pl-[13px] bg-clip-padding"
+      breakpointCols={masonryColumns}
+      className={cn('flex w-auto', className)}
+      style={masonryStyle}
+      columnClassName="bg-clip-padding"
       data-testid="mission-feed"
     >
       {missions.map((mission) => (
-        <div key={mission.id} className="mb-[13px]">
+        <div key={mission.id} style={{ ...columnStyle, ...itemStyle }}>
           <MissionCard
             mission={mission}
             onClick={() => onMissionClick?.(mission.id)}
             onFeedbackChange={(state) => onFeedbackChange?.(mission.id, state)}
+            onSnooze={() => onSnooze?.(mission.id)}
+            onDismiss={() => onDismiss?.(mission.id)}
+            onCallToAction={() => onCallToAction?.(mission.id)}
           />
         </div>
       ))}

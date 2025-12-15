@@ -55,21 +55,65 @@ export interface SignalingConfig {
 
 /**
  * Default signaling configuration
+ *
+ * NOTE: TURN credentials are placeholders.
+ * Actual credentials must be derived from wallet at runtime using
+ * deriveTurnCredentials() from @ownyou/sync/encryption/wallet-encryption.
+ *
+ * @see docs/architecture/OwnYou_architecture_v13.md Section 5.2.3
  */
 export const DEFAULT_SIGNALING_CONFIG: SignalingConfig = {
-  server: 'wss://signal.ownyou.app',
+  server: getEnvVar('VITE_SIGNALING_ENDPOINT', 'wss://signal.ownyou.app'),
   stunServers: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'],
-  turnServer: {
-    url: 'turn:turn.ownyou.app:443',
-    username: 'derived-from-wallet',
-    credential: 'derived-from-wallet',
-  },
+  // TURN credentials are PLACEHOLDERS - must be derived from wallet at runtime
+  // Do NOT use these defaults in production - call deriveTurnCredentials() instead
+  turnServer: undefined, // Must be set via createSignalingConfigWithWallet()
   reconnect: {
     maxAttempts: 5,
     baseDelayMs: 1000,
     maxDelayMs: 30000,
   },
 };
+
+/**
+ * Get environment variable with fallback
+ */
+function getEnvVar(key: string, defaultValue: string): string {
+  if (typeof import.meta !== 'undefined' && (import.meta as { env?: Record<string, string> }).env) {
+    const viteEnv = (import.meta as { env: Record<string, string> }).env;
+    if (viteEnv[key]) {
+      return viteEnv[key];
+    }
+  }
+  if (typeof process !== 'undefined' && process.env?.[key]) {
+    return process.env[key];
+  }
+  return defaultValue;
+}
+
+/**
+ * Create signaling config with wallet-derived TURN credentials
+ *
+ * This is the proper way to configure TURN - credentials are derived
+ * deterministically from the wallet signature.
+ *
+ * @param walletAddress - User's wallet address
+ * @param turnCredentials - Credentials derived from wallet via deriveTurnCredentials()
+ * @returns Complete signaling configuration
+ */
+export function createSignalingConfigWithWallet(
+  walletAddress: string,
+  turnCredentials: { username: string; credential: string }
+): SignalingConfig {
+  return {
+    ...DEFAULT_SIGNALING_CONFIG,
+    turnServer: {
+      url: getEnvVar('VITE_TURN_ENDPOINT', 'turn:turn.ownyou.app:443'),
+      username: turnCredentials.username,
+      credential: turnCredentials.credential,
+    },
+  };
+}
 
 /**
  * Signaling message types

@@ -1,7 +1,7 @@
 # OwnYou System Architecture Specification (v13)
 
 **Status:** DRAFT - PENDING APPROVAL
-**Date:** December 2025 (Updated December 7, 2025)
+**Date:** December 2025 (Updated December 15, 2025)
 **Supersedes:** v12
 
 **Key Changes from v12:**
@@ -11,6 +11,12 @@
 - **Agent Specification Matrix (3.6):** Per-agent tools, namespace permissions, external APIs
 - **Observability & Debugging (10):** Agent tracing, sync debugging, cost metering, GDPR data export
 - **Reflection Namespace (8.12):** Added `reflectionState` namespace for reflection trigger state
+
+**Updates (December 15, 2025):**
+
+- **"3W" Runtime Architecture (3.2.1, 5.1.1, 6.6):** Documented Web Worker implementation for agent execution
+- **Embedding Status (8.5.3):** Marked WASM embeddings as TODO (currently using MockEmbeddingService)
+- **Mozilla AI Reference:** Added 3W strategy reference from Mozilla AI blog
 
 **Key Changes from v11 (preserved from v12):**
 
@@ -618,6 +624,47 @@ interface TriggerEngine {
   intentRouter: CoordinatorAgent;
 }
 ```
+
+#### 3.2.1 Runtime Architecture: "3W" Strategy ✅ IMPLEMENTED
+
+> **Reference:** [Mozilla AI - 3W for In-Browser AI](https://blog.mozilla.ai/3w-for-in-browser-ai-webllm-wasm-webworkers/)
+
+The TriggerEngine runs in a **Web Worker** to isolate heavy AI orchestration from the UI thread:
+
+| Component | Location | Status |
+|-----------|----------|--------|
+| **TriggerEngine** | Web Worker (`agent.worker.ts`) | ✅ Implemented |
+| **6 Mission Agents** | Web Worker | ✅ Implemented |
+| **IndexedDB Store** | Web Worker | ✅ Implemented |
+| **LLM Client** | Web Worker | ✅ Implemented |
+| **WASM Embeddings** | Web Worker | 🔴 TODO (using MockEmbeddingService) |
+
+**Implementation Files:**
+- Worker: `apps/consumer/src/workers/agent.worker.ts`
+- Hook: `apps/consumer/src/hooks/useAgentWorker.ts`
+- Context: `apps/consumer/src/contexts/TriggerContext.tsx` (thin proxy)
+
+**Message Protocol:**
+```typescript
+// Main Thread → Worker
+type WorkerMessage =
+  | { type: 'INIT'; payload: { userId: string } }
+  | { type: 'START' }
+  | { type: 'STOP' }
+  | { type: 'HANDLE_REQUEST'; payload: { request: string; requestId: string } };
+
+// Worker → Main Thread
+type WorkerResponse =
+  | { type: 'INIT_COMPLETE' }
+  | { type: 'STARTED' }
+  | { type: 'STATS_UPDATE'; payload: TriggerStats }
+  | { type: 'REQUEST_COMPLETE'; payload: { requestId: string; result: TriggerResult } };
+```
+
+**Benefits:**
+- UI remains responsive (60fps) during heavy agent execution
+- IndexedDB shared between worker and main thread
+- Tauri mode uses native Rust HTTP for unlimited concurrency
 
 ### 3.3 Mission State Machine
 
@@ -1406,8 +1453,46 @@ Images are served from Figma's MCP asset URLs (7-day expiry). For production:
 
 **Platform-Specific Considerations:**
 
-- **Tauri:** Full OrbitDB/IPFS node runs in Rust sidecar process. Stable, performant, always-on sync.
+- **Tauri:** Full OrbitDB/IPFS node runs in Rust sidecar process. Stable, performant, always-on sync. Native `reqwest` HTTP client bypasses browser connection limits.
 - **PWA:** Service Worker execution is resource-constrained. Use on-demand sync to prevent battery drain and browser tab throttling. Aggressive IndexedDB caching required.
+
+#### 5.1.1 Agent Execution Runtime ✅ IMPLEMENTED
+
+Both platforms use the **"3W" architecture** (Web Workers, WASM, WebLLM) for agent execution:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      UI Thread (React)                           │
+│  • TriggerContext (thin proxy)                                  │
+│  • useAgentWorker() hook manages worker lifecycle               │
+│  • Reads from IndexedDB for display                             │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │ postMessage
+                                 ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Web Worker (agent.worker.ts)                  │
+│  • TriggerEngine (4-mode orchestrator)                          │
+│  • 6 Mission Agents (Shopping, Travel, Restaurant, etc.)        │
+│  • IndexedDB Store connection                                   │
+│  • LLM Client (routes to Tauri HTTP or browser fetch)           │
+│  • WASM Embeddings (TODO: replace MockEmbeddingService)         │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+              ┌──────────────────┴──────────────────┐
+              │                                     │
+              ▼                                     ▼
+┌─────────────────────────┐           ┌─────────────────────────┐
+│   Tauri (Desktop)       │           │   PWA (Browser)         │
+│  • Rust reqwest HTTP    │           │  • Browser fetch API    │
+│  • No connection limit  │           │  • 6-connection limit   │
+│  • Native OAuth         │           │  • Standard OAuth       │
+└─────────────────────────┘           └─────────────────────────┘
+```
+
+**Key Implementation Files:**
+- `apps/consumer/src/workers/agent.worker.ts` - Worker runtime
+- `apps/consumer/src/hooks/useAgentWorker.ts` - Hook for worker communication
+- `apps/consumer/src-tauri/src/lib.rs` - Rust HTTP proxy (Tauri)
 
 ### 5.2 Sync Layer: OrbitDB v3 + IPFS (Helia)
 
@@ -2471,10 +2556,19 @@ Ritual connects off-chain AI computations with on-chain smart contracts via Infe
 ### 6.6 Local/Browser-Based Inference Options
 
 > For maximum privacy, run models entirely on user devices.
+> **Reference:** [Mozilla AI - 3W for In-Browser AI](https://blog.mozilla.ai/3w-for-in-browser-ai-webllm-wasm-webworkers/)
+
+The **"3W" strategy** (Web Workers + WASM + WebLLM) enables server-grade AI performance in the browser:
+
+| Component | Purpose | OwnYou Status |
+|-----------|---------|---------------|
+| **Web Workers** | Isolate heavy compute from UI thread | ✅ Implemented (`agent.worker.ts`) |
+| **WASM** | Near-native performance for embeddings | 🔴 TODO (using mock) |
+| **WebLLM** | Browser-based LLM inference | 🟡 Planned (Phase 5) |
 
 #### 6.6.1 WebLLM (Browser)
 
-**Status:** Production-ready
+**Status:** Production-ready (not yet integrated in OwnYou)
 **Performance:** ~80% of native speed via WebGPU
 
 ```typescript
@@ -5017,11 +5111,21 @@ const computeLocalEmbedding = async (text: string): Promise<number[]> => {
 
 #### 8.5.3 Platform-Specific Embedding
 
-| Platform | Embedding Implementation | Performance |
-|----------|-------------------------|-------------|
-| **PWA** | `@xenova/transformers` (WebGPU/WASM) | ~50ms per embedding |
-| **Tauri** | `candle` or `ort` (native Rust) | ~10ms per embedding |
-| **Production** | Local service or pgvector built-in | ~5ms per embedding |
+| Platform | Embedding Implementation | Performance | Status |
+|----------|-------------------------|-------------|--------|
+| **PWA** | `onnxruntime-web` (WASM) | ~50ms per embedding | 🔴 TODO |
+| **Tauri** | `candle` or `ort` (native Rust) | ~10ms per embedding | 🔴 TODO |
+| **Production** | Local service or pgvector built-in | ~5ms per embedding | 🔴 Future |
+
+> **Current Status:** Using `MockEmbeddingService` (deterministic hash-based mock, not real embeddings)
+> **Interface Ready:** `packages/memory-store/src/search/embeddings.ts` defines pluggable `EmbeddingService`
+> **Next Step:** Implement `OnnxEmbeddingService` using `onnxruntime-web` with `all-MiniLM-L6-v2.onnx` model
+
+**Implementation Plan:**
+1. Add `onnxruntime-web` dependency to `packages/memory-store`
+2. Download model to `apps/consumer/public/models/all-MiniLM-L6-v2.onnx` (~23MB)
+3. Implement `OnnxEmbeddingService` class in worker context
+4. Wire up in `agent.worker.ts` to replace `MockEmbeddingService`
 
 **Privacy guarantee:** Embedding models run entirely on-device. Memory content never leaves the user's device for embedding computation.
 
