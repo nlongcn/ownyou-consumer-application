@@ -10,7 +10,26 @@ pub mod oauth;
 use oauth::{OAuthClient, OAuthProvider, TokenData, is_token_expired};
 use oauth2::PkceCodeVerifier;
 use std::sync::Mutex;
+use std::time::Duration;
 use tauri::{Manager, Emitter, State};
+use once_cell::sync::Lazy;
+
+/// Sprint 11b: Singleton HTTP client with connection pooling
+///
+/// Benefits:
+/// - Reuses TCP connections (avoids handshake overhead)
+/// - Connection pool maintains up to 10 idle connections per host
+/// - 90 second idle timeout matches typical LLM API response times
+///
+/// Reference: https://docs.rs/reqwest/latest/reqwest/struct.ClientBuilder.html
+static HTTP_CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
+    reqwest::Client::builder()
+        .pool_idle_timeout(Duration::from_secs(90))
+        .pool_max_idle_per_host(10)
+        .timeout(Duration::from_secs(60))
+        .build()
+        .expect("Failed to create HTTP client")
+});
 
 /// Application state for OAuth flow
 struct AppState {
@@ -162,6 +181,9 @@ fn check_token_expiration(token_data: TokenData) -> Result<bool, String> {
 use std::collections::HashMap;
 
 /// Proxy HTTP request via Rust backend to bypass browser limits
+///
+/// Sprint 11b: Now uses singleton HTTP_CLIENT with connection pooling
+/// for better performance on repeated requests (e.g., LLM API calls)
 #[tauri::command]
 async fn http_request(
     method: String,
@@ -169,8 +191,9 @@ async fn http_request(
     headers: Option<HashMap<String, String>>,
     body: Option<String>,
 ) -> Result<String, String> {
-    let client = reqwest::Client::new();
-    
+    // Use singleton client with connection pooling (Sprint 11b)
+    let client = &*HTTP_CLIENT;
+
     let method = match method.to_uppercase().as_str() {
         "GET" => reqwest::Method::GET,
         "POST" => reqwest::Method::POST,
