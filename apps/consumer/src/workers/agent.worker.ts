@@ -26,11 +26,17 @@ import { LLMClient, MockLLMProvider } from '@ownyou/llm-client';
 import { NAMESPACES, type AgentType } from '@ownyou/shared-types';
 import type { BaseAgent } from '@ownyou/agents-base';
 import { IndexedDBStore } from '@ownyou/store';
+import {
+  OnnxEmbeddingService,
+  MockEmbeddingService,
+  type EmbeddingService,
+} from '@ownyou/memory-store/search';
 
 // --- Worker State ---
 let engine: TriggerEngine | null = null;
 let store: IndexedDBStore | null = null;
 let llmClient: LLMClient | null = null;
+let embeddingService: EmbeddingService | null = null;
 let isRunning = false;
 let userId: string = 'anonymous';
 
@@ -56,15 +62,27 @@ async function initialize(uid: string) {
     // Checking IndexedDBStore implementation: usually needs connection.
     // For now, assuming it handles connection on first request or similar.
     
-    // 2. Initialize LLM Client
+    // 2. Initialize Embedding Service (Sprint 11b: WASM embeddings)
+    // Uses OnnxEmbeddingService with MockEmbeddingService fallback
+    // This enables real semantic search in memory retrieval
+    const mockFallback = new MockEmbeddingService(384);
+    embeddingService = new OnnxEmbeddingService({
+      modelId: 'Xenova/all-MiniLM-L6-v2',
+      dimensions: 384,
+      fallback: mockFallback,
+      logProgress: true, // Log model download progress
+    });
+    console.log('[AgentWorker] Embedding service initialized (ONNX with fallback)');
+
+    // 3. Initialize LLM Client
     // TODO: Configure real provider based on settings passed in INIT
     // For MVP Sprint 11a, we use MockLLMProvider but configured for "standard" tier
     llmClient = new LLMClient({
-      provider: new MockLLMProvider(), 
+      provider: new MockLLMProvider(),
       budgetConfig: { monthlyBudgetUsd: 10 },
     });
 
-    // 3. Initialize Trigger Engine
+    // 4. Initialize Trigger Engine
     engine = new TriggerEngine({
       store,
       llm: llmClient,

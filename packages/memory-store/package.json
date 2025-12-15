@@ -31,7 +31,8 @@
   },
   "dependencies": {
     "@ownyou/shared-types": "workspace:*",
-    "idb": "^8.0.0"
+    "idb": "^8.0.0",
+    "onnxruntime-web": "^1.17.0"
   },
   "devDependencies": {
     "fake-indexeddb": "^6.0.0",
