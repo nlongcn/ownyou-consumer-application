@@ -87,6 +87,13 @@ export const NAMESPACES = {
 
   // Sprint 8: Diagnostic Agent
   DIAGNOSTIC_REPORTS: 'ownyou.diagnostic_reports',
+
+  // Sprint 9: Observability & Debugging (v13 Section 10.7)
+  DEBUG_TRACES: 'ownyou.debug.traces',
+  DEBUG_SYNC: 'ownyou.debug.sync',
+  DEBUG_LLM: 'ownyou.debug.llm',
+  DEBUG_ERRORS: 'ownyou.debug.errors',
+  DEBUG_AUDIT: 'ownyou.debug.audit',
 } as const;
 
 /**
@@ -230,6 +237,27 @@ export const NS = {
   /** Diagnostic reports namespace: [namespace, userId] */
   diagnosticReports: (userId: string) =>
     [NAMESPACES.DIAGNOSTIC_REPORTS, userId] as const,
+
+  // Sprint 9: Observability & Debugging namespaces (v13 Section 10.7)
+  /** Debug traces namespace: [namespace, userId] */
+  debugTraces: (userId: string) =>
+    [NAMESPACES.DEBUG_TRACES, userId] as const,
+
+  /** Debug sync namespace: [namespace, deviceId] */
+  debugSync: (deviceId: string) =>
+    [NAMESPACES.DEBUG_SYNC, deviceId] as const,
+
+  /** Debug LLM metrics namespace: [namespace, userId] */
+  debugLlm: (userId: string) =>
+    [NAMESPACES.DEBUG_LLM, userId] as const,
+
+  /** Debug errors namespace: [namespace, userId] */
+  debugErrors: (userId: string) =>
+    [NAMESPACES.DEBUG_ERRORS, userId] as const,
+
+  /** Debug audit namespace: [namespace, userId] */
+  debugAudit: (userId: string) =>
+    [NAMESPACES.DEBUG_AUDIT, userId] as const,
 } as const;
 
 /**
@@ -289,6 +317,13 @@ export const NAMESPACE_PRIVACY: Record<Namespace, 'public' | 'sensitive' | 'priv
 
   // Sprint 8: Diagnostic Agent
   [NAMESPACES.DIAGNOSTIC_REPORTS]: 'private', // Diagnostic reports are private
+
+  // Sprint 9: Observability & Debugging (v13 Section 10.7)
+  [NAMESPACES.DEBUG_TRACES]: 'private', // Debug traces are private
+  [NAMESPACES.DEBUG_SYNC]: 'private', // Sync logs are private
+  [NAMESPACES.DEBUG_LLM]: 'private', // LLM metrics are private
+  [NAMESPACES.DEBUG_ERRORS]: 'private', // Error logs are private
+  [NAMESPACES.DEBUG_AUDIT]: 'private', // Audit logs are private
 };
 
 /**
@@ -351,4 +386,12 @@ export const NAMESPACE_SYNC_SCOPE: Record<Namespace, 'full' | 'selective' | 'non
 
   // Sprint 8: Diagnostic Agent
   [NAMESPACES.DIAGNOSTIC_REPORTS]: 'full', // Reports sync across devices
+
+  // Sprint 9: Observability & Debugging (v13 Section 10.7)
+  // All debug namespaces are device-local - never sync
+  [NAMESPACES.DEBUG_TRACES]: 'none', // Debug traces are device-local
+  [NAMESPACES.DEBUG_SYNC]: 'none', // Sync logs are device-local
+  [NAMESPACES.DEBUG_LLM]: 'none', // LLM metrics are device-local
+  [NAMESPACES.DEBUG_ERRORS]: 'none', // Error logs are device-local
+  [NAMESPACES.DEBUG_AUDIT]: 'none', // Audit logs are device-local
 };

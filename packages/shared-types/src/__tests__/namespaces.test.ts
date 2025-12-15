@@ -175,4 +175,53 @@ describe('Namespaces (v13 Section 8.12)', () => {
       expect(NAMESPACE_SYNC_SCOPE[NAMESPACES.EPISODIC_MEMORY]).toBe('selective');
     });
   });
+
+  // ========== Sprint 9: Observability & Debugging Namespaces (v13 Section 10.7) ==========
+
+  describe('DEBUG_* namespaces (v13 Section 10.7)', () => {
+    it('should define all DEBUG_* namespace strings', () => {
+      // Debug namespaces per v13 Section 10.7
+      expect(NAMESPACES.DEBUG_TRACES).toBe('ownyou.debug.traces');
+      expect(NAMESPACES.DEBUG_SYNC).toBe('ownyou.debug.sync');
+      expect(NAMESPACES.DEBUG_LLM).toBe('ownyou.debug.llm');
+      expect(NAMESPACES.DEBUG_ERRORS).toBe('ownyou.debug.errors');
+      expect(NAMESPACES.DEBUG_AUDIT).toBe('ownyou.debug.audit');
+    });
+
+    it('should have NS factory functions for debug namespaces', () => {
+      const userId = 'user_123';
+      const deviceId = 'device_456';
+
+      // Debug traces by user
+      expect(NS.debugTraces(userId)).toEqual(['ownyou.debug.traces', 'user_123']);
+
+      // Sync logs by device
+      expect(NS.debugSync(deviceId)).toEqual(['ownyou.debug.sync', 'device_456']);
+
+      // LLM metrics by user
+      expect(NS.debugLlm(userId)).toEqual(['ownyou.debug.llm', 'user_123']);
+
+      // Error logs by user
+      expect(NS.debugErrors(userId)).toEqual(['ownyou.debug.errors', 'user_123']);
+
+      // Audit log by user
+      expect(NS.debugAudit(userId)).toEqual(['ownyou.debug.audit', 'user_123']);
+    });
+
+    it('should mark all DEBUG_* namespaces as private', () => {
+      expect(NAMESPACE_PRIVACY[NAMESPACES.DEBUG_TRACES]).toBe('private');
+      expect(NAMESPACE_PRIVACY[NAMESPACES.DEBUG_SYNC]).toBe('private');
+      expect(NAMESPACE_PRIVACY[NAMESPACES.DEBUG_LLM]).toBe('private');
+      expect(NAMESPACE_PRIVACY[NAMESPACES.DEBUG_ERRORS]).toBe('private');
+      expect(NAMESPACE_PRIVACY[NAMESPACES.DEBUG_AUDIT]).toBe('private');
+    });
+
+    it('should mark all DEBUG_* namespaces as none sync (device-local)', () => {
+      expect(NAMESPACE_SYNC_SCOPE[NAMESPACES.DEBUG_TRACES]).toBe('none');
+      expect(NAMESPACE_SYNC_SCOPE[NAMESPACES.DEBUG_SYNC]).toBe('none');
+      expect(NAMESPACE_SYNC_SCOPE[NAMESPACES.DEBUG_LLM]).toBe('none');
+      expect(NAMESPACE_SYNC_SCOPE[NAMESPACES.DEBUG_ERRORS]).toBe('none');
+      expect(NAMESPACE_SYNC_SCOPE[NAMESPACES.DEBUG_AUDIT]).toBe('none');
+    });
+  });
 });

@@ -2,6 +2,35 @@
  * Agent Tracer - v13 Section 10.2
  *
  * Records and manages agent execution traces.
+ *
+ * ## Current Implementation (Sprint 9)
+ *
+ * This implementation uses in-memory storage for trace data. All traces are
+ * stored in a Map and will be lost on app restart.
+ *
+ * ## TODO: Sprint 10 - Store Integration
+ *
+ * Add LangGraph Store persistence to comply with v13 Section 10.1:
+ * "All observability data stays on-device" (implies persistence)
+ *
+ * Required changes:
+ * 1. Add Store dependency to constructor: `constructor(store: BaseStore)`
+ * 2. Persist traces using NS.debugTraces(userId) namespace
+ * 3. Load existing traces on initialization
+ * 4. Add integration tests for Store operations
+ *
+ * Example:
+ * ```typescript
+ * constructor(store: BaseStore) {
+ *   this.store = store;
+ * }
+ *
+ * async startTrace(options: TraceStartOptions): Promise<AgentTrace> {
+ *   const trace = { ... };
+ *   await this.store.put(NS.debugTraces(options.userId), trace.id, trace);
+ *   return trace;
+ * }
+ * ```
  */
 
 import type {
@@ -17,6 +46,9 @@ import type {
   MemoryOpRecord,
   TraceQueryOptions,
   CostSummary,
+  RecordStepOptions,
+  AgentStep,
+  TraceResourceSummary,
 } from './types';
 
 /**
@@ -49,6 +81,18 @@ export class AgentTracer {
       startTime: Date.now(),
       spans: [],
       events: [],
+      // Sprint 9: Enhanced step tracking (v13 Section 10.2)
+      steps: [],
+      resources: {
+        llmCalls: 0,
+        llmTokens: { input: 0, output: 0 },
+        llmCostUsd: 0,
+        toolCalls: 0,
+        memoryReads: 0,
+        memoryWrites: 0,
+        externalApiCalls: 0,
+      },
+      // Legacy cost tracking
       totalCostUsd: 0,
       llmCalls: 0,
       toolCalls: 0,
@@ -192,6 +236,73 @@ export class AgentTracer {
     if (!trace) return;
 
     trace.memoryOps[record.operation] += record.count;
+  }
+
+  // ========== Sprint 9: Enhanced Step Recording (v13 Section 10.2) ==========
+
+  /**
+   * Record an agent step with full detail
+   */
+  recordStep(traceId: string, options: RecordStepOptions): void {
+    const trace = this.traces.get(traceId);
+    if (!trace) return;
+
+    const step: AgentStep = {
+      stepIndex: trace.steps.length,
+      stepType: options.stepType,
+      timestamp: Date.now(),
+      durationMs: options.durationMs,
+      llm: options.llm,
+      tool: options.tool,
+      memory: options.memory,
+      externalApi: options.externalApi,
+      decision: options.decision,
+    };
+
+    trace.steps.push(step);
+
+    // Update resource summary based on step type
+    this.updateResourceSummary(trace, options);
+  }
+
+  /**
+   * Update trace resource summary based on step
+   */
+  private updateResourceSummary(trace: AgentTrace, step: RecordStepOptions): void {
+    switch (step.stepType) {
+      case 'llm_call':
+        if (step.llm) {
+          trace.resources.llmCalls++;
+          trace.resources.llmTokens.input += step.llm.tokens.input;
+          trace.resources.llmTokens.output += step.llm.tokens.output;
+          trace.resources.llmCostUsd += step.llm.costUsd;
+          // Also update legacy tracking
+          trace.totalCostUsd += step.llm.costUsd;
+          trace.llmCalls++;
+        }
+        break;
+
+      case 'tool_call':
+        trace.resources.toolCalls++;
+        trace.toolCalls++;
+        break;
+
+      case 'memory_read':
+        trace.resources.memoryReads++;
+        break;
+
+      case 'memory_write':
+        trace.resources.memoryWrites++;
+        break;
+
+      case 'external_api':
+        trace.resources.externalApiCalls++;
+        break;
+
+      case 'decision':
+        // Decisions don't have resource impact
+        break;
+    }
   }
 
   /**
