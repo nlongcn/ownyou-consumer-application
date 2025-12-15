@@ -3,8 +3,7 @@
  * v13 Section 4.4 - Profile Components
  */
 
-import React from 'react';
-import { cn } from '@ownyou/ui-design-system';
+import { cn, colors, ikigaiColors } from '@ownyou/ui-design-system';
 import type { IkigaiDimension } from '../types';
 
 export interface IkigaiWheelProps {
@@ -16,15 +15,17 @@ export interface IkigaiWheelProps {
   showLabels?: boolean;
   /** Show scores */
   showScores?: boolean;
+  /** Handler when a dimension is selected - Sprint 11b Bugfix 12 */
+  onDimensionSelect?: (dimensionName: string) => void;
   /** Additional CSS class names */
   className?: string;
 }
 
 const DEFAULT_DIMENSIONS: IkigaiDimension[] = [
-  { name: 'passion', label: 'Passion', score: 0, color: '#FF6B6B' },
-  { name: 'mission', label: 'Mission', score: 0, color: '#4ECDC4' },
-  { name: 'profession', label: 'Profession', score: 0, color: '#45B7D1' },
-  { name: 'vocation', label: 'Vocation', score: 0, color: '#96CEB4' },
+  { name: 'passion', label: 'Passion', score: 0, color: ikigaiColors.experiences },
+  { name: 'mission', label: 'Mission', score: 0, color: ikigaiColors.relationships },
+  { name: 'profession', label: 'Profession', score: 0, color: ikigaiColors.interests },
+  { name: 'vocation', label: 'Vocation', score: 0, color: ikigaiColors.giving },
 ];
 
 const SIZE_MAP = {
@@ -41,6 +42,7 @@ export function IkigaiWheel({
   size = 'medium',
   showLabels = true,
   showScores = true,
+  onDimensionSelect,
   className,
 }: IkigaiWheelProps) {
   const sizeConfig = SIZE_MAP[size];
@@ -114,16 +116,37 @@ export function IkigaiWheel({
         {/* Filled area */}
         <path
           d={pathPoints}
-          fill="rgba(135, 206, 235, 0.3)"
-          stroke="#87CEEB"
+          fill={`${colors.primary}4D`}
+          stroke={colors.primary}
           strokeWidth="2"
         />
 
-        {/* Data points */}
+        {/* Data points - Sprint 11b Bugfix 12: Added click handlers */}
         {dimensions.map((dimension, i) => {
           const point = getPoint(i, dimension.score);
+          const isClickable = !!onDimensionSelect;
           return (
-            <g key={dimension.name}>
+            <g
+              key={dimension.name}
+              onClick={() => onDimensionSelect?.(dimension.name)}
+              style={{ cursor: isClickable ? 'pointer' : 'default' }}
+              role={isClickable ? 'button' : undefined}
+              tabIndex={isClickable ? 0 : undefined}
+              onKeyDown={(e) => {
+                if (isClickable && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault();
+                  onDimensionSelect?.(dimension.name);
+                }
+              }}
+              aria-label={isClickable ? `View ${dimension.label} details` : undefined}
+            >
+              {/* Larger invisible hit area for easier clicking */}
+              <circle
+                cx={point.x}
+                cy={point.y}
+                r={16}
+                fill="transparent"
+              />
               <circle
                 cx={point.x}
                 cy={point.y}
@@ -131,6 +154,7 @@ export function IkigaiWheel({
                 fill={dimension.color}
                 stroke="white"
                 strokeWidth="2"
+                className={isClickable ? 'transition-transform hover:scale-125' : ''}
               />
               {showScores && (
                 <text
@@ -146,9 +170,10 @@ export function IkigaiWheel({
           );
         })}
 
-        {/* Labels */}
+        {/* Labels - Sprint 11b Bugfix 12: Made clickable */}
         {showLabels && dimensions.map((dimension, i) => {
           const pos = labelPositions[i];
+          const isClickable = !!onDimensionSelect;
           return (
             <text
               key={`label-${dimension.name}`}
@@ -156,7 +181,20 @@ export function IkigaiWheel({
               y={pos.y}
               textAnchor={pos.anchor as 'middle' | 'start' | 'end'}
               dominantBaseline={i === 0 ? 'auto' : i === 2 ? 'hanging' : 'middle'}
-              className={cn('font-display font-bold fill-gray-700', sizeConfig.label)}
+              className={cn(
+                'font-display font-bold fill-gray-700',
+                sizeConfig.label,
+                isClickable && 'cursor-pointer hover:fill-ownyou-primary transition-colors'
+              )}
+              onClick={() => onDimensionSelect?.(dimension.name)}
+              role={isClickable ? 'button' : undefined}
+              tabIndex={isClickable ? 0 : undefined}
+              onKeyDown={(e) => {
+                if (isClickable && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault();
+                  onDimensionSelect?.(dimension.name);
+                }
+              }}
             >
               {dimension.label}
             </text>

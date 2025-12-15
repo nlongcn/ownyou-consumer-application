@@ -123,8 +123,11 @@ function classifyEvidenceType(
   taxonomy_id: number
 ): EvidenceType {
   // Python lines 64-65: Normalize values
-  const existing_normalized = existing_value.trim().toLowerCase()
-  const new_normalized = new_value.trim().toLowerCase()
+  const safe_existing = existing_value || '';
+  const safe_new = new_value || '';
+  
+  const existing_normalized = safe_existing.trim().toLowerCase()
+  const new_normalized = safe_new.trim().toLowerCase()
 
   // Python lines 67-78: Compare
   if (existing_normalized === new_normalized) {

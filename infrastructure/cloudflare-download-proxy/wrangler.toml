@@ -1,0 +1,9 @@
+name = "ownyou-download-proxy"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Workers Free tier: 100,000 requests/day
+# More than enough for app downloads
+
+[vars]
+ENVIRONMENT = "production"

@@ -31,6 +31,26 @@ export const colors = {
   transparent: 'transparent',
   /** Current color */
   current: 'currentColor',
+  /** Microsoft brand color */
+  microsoft: '#2f2f2f',
+  /** Apple brand color (official Sign in with Apple black) */
+  apple: '#000000',
+  /** Google brand color (official Google blue) */
+  google: '#4285F4',
+} as const;
+
+/**
+ * Ikigai dimension colors - v13 Section 2.2
+ */
+export const ikigaiColors = {
+  /** Experiences dimension */
+  experiences: '#FF6B6B',
+  /** Relationships dimension */
+  relationships: '#4ECDC4',
+  /** Interests dimension */
+  interests: '#45B7D1',
+  /** Giving dimension */
+  giving: '#96CEB4',
 } as const;
 
 /**
@@ -66,7 +86,21 @@ export const tailwindColors = {
     'card-bg-alt': colors.cardBgAlt,
     placeholder: colors.placeholder,
   },
+  // Ikigai dimension colors
+  ikigai: {
+    experiences: ikigaiColors.experiences,
+    relationships: ikigaiColors.relationships,
+    interests: ikigaiColors.interests,
+    giving: ikigaiColors.giving,
+  },
+  // Brand colors
+  brand: {
+    microsoft: colors.microsoft,
+    apple: colors.apple,
+    google: colors.google,
+  },
 } as const;
 
 export type ColorToken = keyof typeof colors;
 export type ColorValue = (typeof colors)[ColorToken];
+export type IkigaiColorToken = keyof typeof ikigaiColors;

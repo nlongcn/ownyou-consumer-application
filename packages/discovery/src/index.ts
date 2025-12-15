@@ -23,7 +23,7 @@ export type {
 } from './types.js';
 
 // Default configuration
-export { DEFAULT_SIGNALING_CONFIG } from './types.js';
+export { DEFAULT_SIGNALING_CONFIG, createSignalingConfigWithWallet } from './types.js';
 
 // Device Manager
 export {
@@ -73,3 +73,11 @@ export {
   type PeerConnectionManager,
   type PeerConnectionEvent,
 } from './peer/peer-connection.js';
+
+// Wallet Providers (v13 Section 5.2.5 - ADR-001)
+export {
+  createPrivyWalletProvider,
+  createMockWalletProvider,
+  validateWalletProvider,
+  type PrivyWalletHooks,
+} from './wallet/index.js';

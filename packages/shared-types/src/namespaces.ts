@@ -97,6 +97,10 @@ export const NAMESPACES = {
   BACKUP_MANIFEST: 'ownyou.backup_manifest', // Backup metadata, checksums
   BACKUP_HISTORY: 'ownyou.backup_history', // Backup/restore history
   RECOVERY_KEY_HASH: 'ownyou.recovery_key_hash', // Hash of recovery key for verification
+
+  // Sprint 11: UI State (Consumer App)
+  UI_PREFERENCES: 'ownyou.ui.preferences', // Theme, display settings
+  UI_FILTER_STATE: 'ownyou.ui.filterState', // Current filter tab, view state
 } as const;
 
 /**
@@ -149,6 +153,10 @@ export const NS = {
   /** Mission cards namespace: [namespace, userId] */
   missionCards: (userId: string) =>
     [NAMESPACES.MISSION_CARDS, userId] as const,
+
+  /** Mission feedback namespace: [namespace, userId] */
+  missionFeedback: (userId: string) =>
+    [NAMESPACES.MISSION_FEEDBACK, userId] as const,
 
   /** Pseudonyms namespace: [namespace, userId] */
   pseudonyms: (userId: string) => [NAMESPACES.PSEUDONYMS, userId] as const,
@@ -264,6 +272,15 @@ export const NS = {
   /** Recovery key hash namespace: [namespace, userId] - for key verification */
   recoveryKeyHash: (userId: string) =>
     [NAMESPACES.RECOVERY_KEY_HASH, userId] as const,
+
+  // Sprint 11: UI State namespaces
+  /** UI preferences namespace: [namespace, userId] */
+  uiPreferences: (userId: string) =>
+    [NAMESPACES.UI_PREFERENCES, userId] as const,
+
+  /** UI filter state namespace: [namespace, userId] */
+  uiFilterState: (userId: string) =>
+    [NAMESPACES.UI_FILTER_STATE, userId] as const,
 } as const;
 
 /**
@@ -333,6 +350,10 @@ export const NAMESPACE_PRIVACY: Record<Namespace, 'public' | 'sensitive' | 'priv
   [NAMESPACES.BACKUP_MANIFEST]: 'private', // Backup metadata
   [NAMESPACES.BACKUP_HISTORY]: 'private', // Backup history
   [NAMESPACES.RECOVERY_KEY_HASH]: 'private', // Recovery key verification
+
+  // Sprint 11: UI State
+  [NAMESPACES.UI_PREFERENCES]: 'private', // User preferences are private
+  [NAMESPACES.UI_FILTER_STATE]: 'private', // Filter state is private
 };
 
 /**
@@ -405,4 +426,8 @@ export const NAMESPACE_SYNC_SCOPE: Record<Namespace, 'full' | 'selective' | 'non
   [NAMESPACES.BACKUP_MANIFEST]: 'full', // Manifest syncs so all devices know backup status
   [NAMESPACES.BACKUP_HISTORY]: 'full', // History syncs for audit
   [NAMESPACES.RECOVERY_KEY_HASH]: 'full', // Key hash syncs for verification
+
+  // Sprint 11: UI State
+  [NAMESPACES.UI_PREFERENCES]: 'full', // Theme preferences sync across devices
+  [NAMESPACES.UI_FILTER_STATE]: 'none', // Device-local filter state (doesn't sync)
 };

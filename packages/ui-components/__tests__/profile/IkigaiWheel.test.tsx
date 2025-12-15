@@ -88,8 +88,10 @@ describe('IkigaiWheel', () => {
   it('should render filled path', () => {
     render(<IkigaiWheel dimensions={mockDimensions} />);
     const wheel = screen.getByTestId('ikigai-wheel');
-    const path = wheel.querySelector('path[fill*="rgba"]');
+    // The path uses hex color with alpha (from design tokens)
+    const path = wheel.querySelector('path[d]');
     expect(path).toBeInTheDocument();
+    expect(path).toHaveAttribute('fill');
   });
 
   it('should apply custom className', () => {

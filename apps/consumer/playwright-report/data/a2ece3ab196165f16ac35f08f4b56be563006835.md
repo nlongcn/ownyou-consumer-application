@@ -1,0 +1,71 @@
+# Page snapshot
+
+```yaml
+- main [ref=e6]:
+  - generic [ref=e7]:
+    - complementary [ref=e8]:
+      - navigation "Main navigation" [ref=e9]:
+        - button "🏠 Home" [ref=e10] [cursor=pointer]:
+          - generic [ref=e11]: 🏠
+          - generic [ref=e12]: Home
+        - button "👤 Profile" [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]: 👤
+          - generic [ref=e15]: Profile
+        - button "💰 Wallet" [ref=e16] [cursor=pointer]:
+          - generic [ref=e17]: 💰
+          - generic [ref=e18]: Wallet
+        - button "📊 Data" [ref=e19] [cursor=pointer]:
+          - generic [ref=e20]: 📊
+          - generic [ref=e21]: Data
+        - button "⚙️ Settings" [ref=e22] [cursor=pointer]:
+          - generic [ref=e23]: ⚙️
+          - generic [ref=e24]: Settings
+    - main [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e28]:
+          - generic [ref=e30]: OwnYou
+          - generic [ref=e31]:
+            - generic [ref=e32]: 🪙
+            - generic [ref=e33]: "0"
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - generic [ref=e38]: ✨
+            - heading "Your AI is Ready" [level=1] [ref=e39]
+            - paragraph [ref=e40]: Connect your email and we'll find savings, insights, and opportunities personalized for you.
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - generic [ref=e43]: 💰
+              - paragraph [ref=e44]: Savings Missions
+              - paragraph [ref=e45]: Find deals you'll love
+            - generic [ref=e46]:
+              - generic [ref=e47]: 🎯
+              - paragraph [ref=e48]: Personal Insights
+              - paragraph [ref=e49]: Understand your patterns
+            - generic [ref=e50]:
+              - generic [ref=e51]: 🍽️
+              - paragraph [ref=e52]: Smart Suggestions
+              - paragraph [ref=e53]: Restaurants, travel & more
+            - generic [ref=e54]:
+              - generic [ref=e55]: 🔒
+              - paragraph [ref=e56]: 100% Private
+              - paragraph [ref=e57]: Data stays on your device
+          - button "📧 Connect Your Email Gmail or Outlook • Takes 30 seconds" [ref=e58] [cursor=pointer]:
+            - generic [ref=e60]: 📧
+            - generic [ref=e61]:
+              - paragraph [ref=e62]: Connect Your Email
+              - paragraph [ref=e63]: Gmail or Outlook • Takes 30 seconds
+            - img [ref=e64]
+          - generic [ref=e66]:
+            - button "📅 Calendar" [ref=e67] [cursor=pointer]:
+              - generic [ref=e68]: 📅
+              - text: Calendar
+            - generic [ref=e69]: •
+            - button "🧩 Extension" [ref=e70] [cursor=pointer]:
+              - generic [ref=e71]: 🧩
+              - text: Extension
+            - generic [ref=e72]: •
+            - button "💻 Desktop" [ref=e73] [cursor=pointer]:
+              - generic [ref=e74]: 💻
+              - text: Desktop
+          - paragraph [ref=e75]: Your data is analyzed locally and never leaves your device.
+```

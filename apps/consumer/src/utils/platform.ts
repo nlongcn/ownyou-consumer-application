@@ -8,16 +8,83 @@ export type Platform = 'pwa' | 'tauri';
 declare global {
   interface Window {
     __TAURI__?: unknown;
+    __TAURI_INTERNALS__?: unknown;
+    __TAURI_IPC__?: unknown;
   }
 }
 
 /**
  * Detect if running in Tauri or PWA
+ *
+ * Uses multiple detection methods for reliability:
+ * 1. Non-standard localhost ports (most reliable for release builds)
+ * 2. window.__TAURI__ (withGlobalTauri: true in tauri.conf.json)
+ * 3. window.__TAURI_INTERNALS__ or __TAURI_IPC__
+ * 4. User-Agent containing "Tauri"
+ * 5. tauri:// protocol
  */
 export function getPlatform(): Platform {
-  if (typeof window !== 'undefined' && '__TAURI__' in window) {
-    return 'tauri';
+  if (typeof window !== 'undefined') {
+    // DEBUG: Log all detection info
+    const port = window.location.port ? parseInt(window.location.port, 10) :
+                 (window.location.protocol === 'https:' ? 443 : 80);
+    const hostname = window.location.hostname;
+    const protocol = window.location.protocol;
+
+    console.log('[Platform] Detection starting:', {
+      hostname,
+      port,
+      protocol,
+      hasTauri: '__TAURI__' in window,
+      tauriValue: (window as any).__TAURI__,
+      hasInternals: '__TAURI_INTERNALS__' in window,
+      hasIPC: '__TAURI_IPC__' in window,
+      userAgent: navigator.userAgent,
+    });
+
+    // FIRST: Check for localhost with non-standard port (most reliable for Tauri release builds)
+    // Standard web ports: 80, 443, 3000, 3001, 5173, 5174, 8080, 8000
+    // Tauri uses random ports like 8765, 12345, etc.
+    const standardPorts = [80, 443, 3000, 3001, 5173, 5174, 8080, 8000];
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+
+    if (isLocalhost && !standardPorts.includes(port) && port > 1024) {
+      console.log(`[Platform] ✅ Detected TAURI via non-standard localhost port: ${port}`);
+      return 'tauri';
+    }
+
+    // Check for tauri:// protocol (Tauri 2.0 production builds)
+    if (protocol === 'tauri:') {
+      console.log('[Platform] ✅ Detected TAURI via tauri:// protocol');
+      return 'tauri';
+    }
+
+    // Tauri 2.0 with withGlobalTauri: true exposes window.__TAURI__
+    if ('__TAURI__' in window && window.__TAURI__) {
+      console.log('[Platform] ✅ Detected TAURI via __TAURI__');
+      return 'tauri';
+    }
+
+    // Tauri 2.0 internals (backup check)
+    if ('__TAURI_INTERNALS__' in window) {
+      console.log('[Platform] ✅ Detected TAURI via __TAURI_INTERNALS__');
+      return 'tauri';
+    }
+
+    // Tauri 2.0 IPC - most reliable check for Tauri environment
+    if ('__TAURI_IPC__' in window) {
+      console.log('[Platform] ✅ Detected TAURI via __TAURI_IPC__');
+      return 'tauri';
+    }
+
+    // Check user agent for Tauri webview
+    if (navigator.userAgent.includes('Tauri')) {
+      console.log('[Platform] ✅ Detected TAURI via User-Agent');
+      return 'tauri';
+    }
   }
+
+  console.log('[Platform] ❌ Detected PWA (no Tauri markers found)');
   return 'pwa';
 }
 

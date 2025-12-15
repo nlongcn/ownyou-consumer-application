@@ -1,9 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
+import crypto from 'crypto'
+import { cookies } from 'next/headers'
+
+/**
+ * Generate PKCE code verifier (43-128 chars)
+ */
+function generateCodeVerifier(): string {
+  return crypto.randomBytes(64).toString('base64url').substring(0, 128)
+}
+
+/**
+ * Generate PKCE code challenge from verifier using SHA256
+ */
+function generateCodeChallenge(verifier: string): string {
+  return crypto.createHash('sha256').update(verifier).digest('base64url')
+}
 
 /**
  * Outlook OAuth Authorization Endpoint
  *
- * Initiates OAuth 2.0 flow by redirecting user to Microsoft's consent screen
+ * Initiates OAuth 2.0 flow with PKCE by redirecting user to Microsoft's consent screen
  *
  * Scopes: Mail.Read (read emails), offline_access (refresh token)
  * Documentation: https://learn.microsoft.com/en-us/graph/auth-v2-user
@@ -29,13 +45,17 @@ export async function GET(request: NextRequest) {
       'offline_access',    // Get refresh token
     ]
 
+    // Generate PKCE code verifier and challenge
+    const codeVerifier = generateCodeVerifier()
+    const codeChallenge = generateCodeChallenge(codeVerifier)
+
     // Generate state parameter for CSRF protection
     const state = Buffer.from(JSON.stringify({
       timestamp: Date.now(),
       nonce: Math.random().toString(36).substring(7)
     })).toString('base64')
 
-    // Build Microsoft OAuth authorization URL
+    // Build Microsoft OAuth authorization URL with PKCE
     const authUrl = new URL('https://login.microsoftonline.com/common/oauth2/v2.0/authorize')
     authUrl.searchParams.append('client_id', clientId)
     authUrl.searchParams.append('response_type', 'code')
@@ -43,11 +63,24 @@ export async function GET(request: NextRequest) {
     authUrl.searchParams.append('response_mode', 'query')
     authUrl.searchParams.append('scope', scopes.join(' '))
     authUrl.searchParams.append('state', state)
+    authUrl.searchParams.append('code_challenge', codeChallenge)
+    authUrl.searchParams.append('code_challenge_method', 'S256')
     authUrl.searchParams.append('prompt', 'consent') // Force consent screen
 
     console.log('[Outlook OAuth] Redirecting to Microsoft consent screen')
     console.log('[Outlook OAuth] Redirect URI:', redirectUri)
     console.log('[Outlook OAuth] Scopes:', scopes.join(', '))
+    console.log('[Outlook OAuth] PKCE code_challenge:', codeChallenge.substring(0, 20) + '...')
+
+    // Store code verifier in cookie for callback to use
+    const cookieStore = await cookies()
+    cookieStore.set('outlook_pkce_verifier', codeVerifier, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 10, // 10 minutes
+      path: '/',
+    })
 
     // Redirect to Microsoft's OAuth consent screen
     return NextResponse.redirect(authUrl.toString())

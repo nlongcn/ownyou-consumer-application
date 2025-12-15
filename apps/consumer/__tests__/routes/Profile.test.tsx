@@ -29,28 +29,64 @@ vi.mock('../../src/hooks/useProfile', () => ({
     isLoading: false,
     error: null,
     refetch: vi.fn(),
+    disputeCategory: vi.fn(),
+  }),
+}));
+
+// Mock useIkigai - Profile.tsx uses this for dimension detail views
+vi.mock('../../src/contexts/IkigaiContext', () => ({
+  useIkigai: () => ({
+    profile: null, // No detailed profile for tests
+    isProfileLoading: false,
+    runInference: vi.fn(),
+    getContextForAgent: vi.fn(),
+    scoreMission: vi.fn(),
+    sortMissions: vi.fn(),
+    awardPoints: vi.fn(),
+    getPoints: vi.fn(),
+    getTier: vi.fn(),
+    isInferring: false,
+    inferenceError: null,
   }),
 }));
 
 // Mock ui-components
 vi.mock('@ownyou/ui-components', () => ({
   Header: ({ title }: { title: string }) => <header data-testid="header">{title}</header>,
-  IkigaiWheel: ({ passion, mission, vocation, profession }: { passion: number; mission: number; vocation: number; profession: number }) => (
+  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="card" className={className}>{children}</div>
+  ),
+  IkigaiWheel: ({ dimensions, onDimensionSelect }: { dimensions?: { name: string; label: string; score: number; color: string }[]; onDimensionSelect?: (name: string) => void }) => (
     <div data-testid="ikigai-wheel">
-      <span data-testid="passion">{passion}</span>
-      <span data-testid="mission">{mission}</span>
-      <span data-testid="vocation">{vocation}</span>
-      <span data-testid="profession">{profession}</span>
+      {dimensions?.map((d) => (
+        <span key={d.name} data-testid={d.name} onClick={() => onDimensionSelect?.(d.name)}>{d.score}</span>
+      ))}
     </div>
   ),
-  IABCategories: ({ categories }: { categories: { id: string; name: string }[] }) => (
+  IABCategories: ({ categories, onDispute }: { categories: { id: string; name: string }[]; onDispute?: (id: string) => void }) => (
     <div data-testid="iab-categories">
-      {categories.map(c => <div key={c.id}>{c.name}</div>)}
+      {categories.map(c => (
+        <div key={c.id}>
+          {c.name}
+          {onDispute && <button onClick={() => onDispute(c.id)}>Dispute</button>}
+        </div>
+      ))}
     </div>
   ),
   ConfidenceGauge: ({ confidence }: { confidence: number }) => (
     <div data-testid="confidence-gauge">{confidence}</div>
   ),
+}));
+
+// Mock design system
+vi.mock('@ownyou/ui-design-system', () => ({
+  radius: { card: '12px' },
+  ikigaiColors: {
+    experiences: '#FF6B6B',
+    relationships: '#4ECDC4',
+    interests: '#45B7D1',
+    giving: '#96CEB4',
+  },
 }));
 
 const queryClient = new QueryClient({

@@ -1,0 +1,50 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "OwnYou",
+  "version": "0.1.0",
+  "identifier": "ai.ownyou.consumer",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:3000",
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "OwnYou",
+        "width": 414,
+        "height": 896,
+        "minWidth": 320,
+        "minHeight": 568,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' https://login.microsoftonline.com https://graph.microsoft.com https://accounts.google.com https://www.googleapis.com https://oauth2.googleapis.com https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com ipc://localhost; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com;"
+    }
+  },
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": ["ownyou"]
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Utility",
+    "shortDescription": "Privacy-first personal AI",
+    "longDescription": "OwnYou is a privacy-first personal AI that puts you in control of your data."
+  }
+}

@@ -19,7 +19,7 @@ _**Agent (model default, mode Agent)**_
 
 <tool-use data-tool-type="generic" data-tool-name="list_dir">
 <details>
-            <summary>Tool use: **list_directory** • Listed directory undefined • **0** results</summary>
+            <summary>Tool use: **list_dir** • Listed directory, 0 results</summary>
         
 No results found
 </details>
@@ -54,55 +54,55 @@ Parameters:
 
 ```json
 {
-  &quot;pattern&quot;: &quot;browser implementation&quot;,
-  &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;,
-  &quot;outputMode&quot;: &quot;content&quot;,
-  &quot;caseInsensitive&quot;: false,
-  &quot;headLimit&quot;: 200
+  "pattern": "browser implementation",
+  "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application",
+  "outputMode": "content",
+  "caseInsensitive": false,
+  "headLimit": 200
 }
 ```
 Result:
 
 ```json
 {
-  &quot;success&quot;: {
-    &quot;pattern&quot;: &quot;browser implementation&quot;,
-    &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;,
-    &quot;outputMode&quot;: &quot;content&quot;,
-    &quot;workspaceResults&quot;: {
-      &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;: {
-        &quot;content&quot;: {
-          &quot;matches&quot;: [
+  "success": {
+    "pattern": "browser implementation",
+    "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application",
+    "outputMode": "content",
+    "workspaceResults": {
+      "/Volumes/T7_new/developer_old/ownyou_consumer_application": {
+        "content": {
+          "matches": [
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/README.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/README.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 16,
-                  &quot;content&quot;: &quot;The TypeScript browser implementation was missing ~400 lines of critical classification logic that:&quot;
+                  "lineNumber": 16,
+                  "content": "The TypeScript browser implementation was missing ~400 lines of critical classification logic that:"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/FINAL_SUMMARY.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/FINAL_SUMMARY.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 65,
-                  &quot;content&quot;: &quot;The TypeScript browser implementation was missing **~400 lines** of critical classification logic:&quot;
+                  "lineNumber": 65,
+                  "content": "The TypeScript browser implementation was missing **~400 lines** of critical classification logic:"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/migration2.0_requirements/archive_2025-01-12/TIER_SELECTION_IMPLEMENTATION_SPEC.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/migration2.0_requirements/archive_2025-01-12/TIER_SELECTION_IMPLEMENTATION_SPEC.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 12,
-                  &quot;content&quot;: &quot;This document specifies the implementation of the **Tiered Confidence Classification System** for the browser-based IAB classifier. This system is currently implemented in Python (&#96;src/email_parser/utils/classification_tier_selector.py&#96;) but **completely missing** from the TypeScript browser implementation.&quot;
+                  "lineNumber": 12,
+                  "content": "This document specifies the implementation of the **Tiered Confidence Classification System** for the browser-based IAB classifier. This system is currently implemented in Python (&#96;src/email_parser/utils/classification_tier_selector.py&#96;) but **completely missing** from the TypeScript browser implementation."
                 }
               ]
             }
           ],
-          &quot;totalLines&quot;: 3,
-          &quot;totalMatchedLines&quot;: 3
+          "totalLines": 3,
+          "totalMatchedLines": 3
         }
       }
     }
@@ -131,24 +131,24 @@ Parameters:
 
 ```json
 {
-  &quot;pattern&quot;: &quot;browser implementation of the classifier&quot;,
-  &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;,
-  &quot;outputMode&quot;: &quot;content&quot;,
-  &quot;caseInsensitive&quot;: false,
-  &quot;headLimit&quot;: 200
+  "pattern": "browser implementation of the classifier",
+  "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application",
+  "outputMode": "content",
+  "caseInsensitive": false,
+  "headLimit": 200
 }
 ```
 Result:
 
 ```json
 {
-  &quot;success&quot;: {
-    &quot;pattern&quot;: &quot;browser implementation of the classifier&quot;,
-    &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;,
-    &quot;outputMode&quot;: &quot;content&quot;,
-    &quot;workspaceResults&quot;: {
-      &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;: {
-        &quot;content&quot;: {}
+  "success": {
+    "pattern": "browser implementation of the classifier",
+    "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application",
+    "outputMode": "content",
+    "workspaceResults": {
+      "/Volumes/T7_new/developer_old/ownyou_consumer_application": {
+        "content": {}
       }
     }
   }
@@ -176,704 +176,704 @@ Parameters:
 
 ```json
 {
-  &quot;pattern&quot;: &quot;browser.*classifier&quot;,
-  &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;,
-  &quot;outputMode&quot;: &quot;content&quot;,
-  &quot;caseInsensitive&quot;: false,
-  &quot;headLimit&quot;: 200
+  "pattern": "browser.*classifier",
+  "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application",
+  "outputMode": "content",
+  "caseInsensitive": false,
+  "headLimit": 200
 }
 ```
 Result:
 
 ```json
 {
-  &quot;success&quot;: {
-    &quot;pattern&quot;: &quot;browser.*classifier&quot;,
-    &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;,
-    &quot;outputMode&quot;: &quot;content&quot;,
-    &quot;workspaceResults&quot;: {
-      &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;: {
-        &quot;content&quot;: {
-          &quot;matches&quot;: [
+  "success": {
+    "pattern": "browser.*classifier",
+    "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application",
+    "outputMode": "content",
+    "workspaceResults": {
+      "/Volumes/T7_new/developer_old/ownyou_consumer_application": {
+        "content": {
+          "matches": [
             {
-              &quot;file&quot;: &quot;./src/admin-dashboard/app/emails/page.tsx&quot;,
-              &quot;matches&quot;: [
+              "file": "./src/admin-dashboard/app/emails/page.tsx",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 10,
-                  &quot;content&quot;: &quot;import { buildWorkflowGraph } from &#39;@browser/agents/iab-classifier&#39;&quot;
+                  "lineNumber": 10,
+                  "content": "import { buildWorkflowGraph } from '@browser/agents/iab-classifier'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./tests/browser/agents/iab-classifier/comprehensive-tier-selection.test.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./tests/browser/agents/iab-classifier/comprehensive-tier-selection.test.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 16,
-                  &quot;content&quot;: &quot;import { createIABClassifier } from &#39;@browser/agents/iab-classifier&#39;&quot;
+                  "lineNumber": 16,
+                  "content": "import { createIABClassifier } from '@browser/agents/iab-classifier'"
                 },
                 {
-                  &quot;lineNumber&quot;: 18,
-                  &quot;content&quot;: &quot;import { applyTieredClassification } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 18,
+                  "content": "import { applyTieredClassification } from '@browser/agents/iab-classifier/tierSelector'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/FINAL_COMPLETE_TEST_RESULTS.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/FINAL_COMPLETE_TEST_RESULTS.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 25,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;&quot;
+                  "lineNumber": 25,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 29,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run&quot;
+                  "lineNumber": 29,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 34,
-                  &quot;content&quot;: &quot;✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms&quot;
+                  "lineNumber": 34,
+                  "content": "✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms"
                 },
                 {
-                  &quot;lineNumber&quot;: 67,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts&#96;&quot;
+                  "lineNumber": 67,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 71,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts --run&quot;
+                  "lineNumber": 71,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 76,
-                  &quot;content&quot;: &quot;✓ tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts  (5 tests) 702ms&quot;
+                  "lineNumber": 76,
+                  "content": "✓ tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts  (5 tests) 702ms"
                 },
                 {
-                  &quot;lineNumber&quot;: 104,
-                  &quot;content&quot;: &quot;npx tsc --noEmit src/browser/agents/iab-classifier/tierSelector.ts&quot;
+                  "lineNumber": 104,
+                  "content": "npx tsc --noEmit src/browser/agents/iab-classifier/tierSelector.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 147,
-                  &quot;content&quot;: &quot;**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;&quot;
+                  "lineNumber": 147,
+                  "content": "**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 213,
-                  &quot;content&quot;: &quot;**Location:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts:348-355&#96;&quot;
+                  "lineNumber": 213,
+                  "content": "**Location:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts:348-355&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 235,
-                  &quot;content&quot;: &quot;**Location:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts:587&#96;&quot;
+                  "lineNumber": 235,
+                  "content": "**Location:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts:587&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 315,
-                  &quot;content&quot;: &quot;- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 248-259)&quot;
+                  "lineNumber": 315,
+                  "content": "- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 248-259)"
                 },
                 {
-                  &quot;lineNumber&quot;: 316,
-                  &quot;content&quot;: &quot;- **Unit Tests:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96; (lines 815-985)&quot;
+                  "lineNumber": 316,
+                  "content": "- **Unit Tests:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96; (lines 815-985)"
                 },
                 {
-                  &quot;lineNumber&quot;: 317,
-                  &quot;content&quot;: &quot;- **50-Email Test:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts&#96;&quot;
+                  "lineNumber": 317,
+                  "content": "- **50-Email Test:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./tests/browser/agents/iab-classifier/unknown-filtering-50-emails.test.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./tests/browser/agents/iab-classifier/unknown-filtering-50-emails.test.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 16,
-                  &quot;content&quot;: &quot;import { createIABClassifier } from &#39;@browser/agents/iab-classifier&#39;&quot;
+                  "lineNumber": 16,
+                  "content": "import { createIABClassifier } from '@browser/agents/iab-classifier'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 14,
-                  &quot;content&quot;: &quot;import { createIABClassifier } from &#39;@browser/agents/iab-classifier&#39;&quot;
+                  "lineNumber": 14,
+                  "content": "import { createIABClassifier } from '@browser/agents/iab-classifier'"
                 },
                 {
-                  &quot;lineNumber&quot;: 21,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 21,
+                  "content": "} from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 114,
-                  &quot;content&quot;: &quot;vi.mock(&#39;@browser/agents/iab-classifier/analyzers/tools&#39;, () =&gt; {&quot;
+                  "lineNumber": 114,
+                  "content": "vi.mock('@browser/agents/iab-classifier/analyzers/tools', () =&gt; {"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/UNKNOWN_FILTERING_TEST_RESULTS_FINAL.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/UNKNOWN_FILTERING_TEST_RESULTS_FINAL.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 29,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run&quot;
+                  "lineNumber": 29,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 34,
-                  &quot;content&quot;: &quot;✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms&quot;
+                  "lineNumber": 34,
+                  "content": "✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms"
                 },
                 {
-                  &quot;lineNumber&quot;: 55,
-                  &quot;content&quot;: &quot;npx tsc --noEmit src/browser/agents/iab-classifier/tierSelector.ts&quot;
+                  "lineNumber": 55,
+                  "content": "npx tsc --noEmit src/browser/agents/iab-classifier/tierSelector.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 64,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts --run&quot;
+                  "lineNumber": 64,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 124,
-                  &quot;content&quot;: &quot;**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;&quot;
+                  "lineNumber": 124,
+                  "content": "**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 148,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;&quot;
+                  "lineNumber": 148,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 319,
-                  &quot;content&quot;: &quot;- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 248-259)&quot;
+                  "lineNumber": 319,
+                  "content": "- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 248-259)"
                 },
                 {
-                  &quot;lineNumber&quot;: 320,
-                  &quot;content&quot;: &quot;- **Unit Tests:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96; (lines 815-985)&quot;
+                  "lineNumber": 320,
+                  "content": "- **Unit Tests:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96; (lines 815-985)"
                 },
                 {
-                  &quot;lineNumber&quot;: 321,
-                  &quot;content&quot;: &quot;- **Integration Test (not executable):** &#96;tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&#96;&quot;
+                  "lineNumber": 321,
+                  "content": "- **Integration Test (not executable):** &#96;tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/UNKNOWN_CLASSIFICATION_FILTERING_IMPLEMENTATION_STATUS.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/UNKNOWN_CLASSIFICATION_FILTERING_IMPLEMENTATION_STATUS.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 67,
-                  &quot;content&quot;: &quot;**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;&quot;
+                  "lineNumber": 67,
+                  "content": "**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 93,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;&quot;
+                  "lineNumber": 93,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 111,
-                  &quot;content&quot;: &quot;✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms&quot;
+                  "lineNumber": 111,
+                  "content": "✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms"
                 },
                 {
-                  &quot;lineNumber&quot;: 123,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&#96;&quot;
+                  "lineNumber": 123,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 220,
-                  &quot;content&quot;: &quot;$ npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run&quot;
+                  "lineNumber": 220,
+                  "content": "$ npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 222,
-                  &quot;content&quot;: &quot;✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms&quot;
+                  "lineNumber": 222,
+                  "content": "✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms"
                 },
                 {
-                  &quot;lineNumber&quot;: 242,
-                  &quot;content&quot;: &quot;$ npx tsc --noEmit src/browser/agents/iab-classifier/tierSelector.ts&quot;
+                  "lineNumber": 242,
+                  "content": "$ npx tsc --noEmit src/browser/agents/iab-classifier/tierSelector.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 388,
-                  &quot;content&quot;: &quot;- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 248-259)&quot;
+                  "lineNumber": 388,
+                  "content": "- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 248-259)"
                 },
                 {
-                  &quot;lineNumber&quot;: 389,
-                  &quot;content&quot;: &quot;- **Unit Tests:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96; (lines 815-985)&quot;
+                  "lineNumber": 389,
+                  "content": "- **Unit Tests:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96; (lines 815-985)"
                 },
                 {
-                  &quot;lineNumber&quot;: 390,
-                  &quot;content&quot;: &quot;- **Integration Tests:** &#96;tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&#96;&quot;
+                  "lineNumber": 390,
+                  "content": "- **Integration Tests:** &#96;tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 15,
-                  &quot;content&quot;: &quot;import { runIABClassifier } from &#39;@browser/agents/iab-classifier&#39;&quot;
+                  "lineNumber": 15,
+                  "content": "import { runIABClassifier } from '@browser/agents/iab-classifier'"
                 },
                 {
-                  &quot;lineNumber&quot;: 18,
-                  &quot;content&quot;: &quot;import type { TaxonomySelection } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 18,
+                  "content": "import type { TaxonomySelection } from '@browser/agents/iab-classifier/tierSelector'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./tests/browser/agents/iab-classifier/tierSelector.test.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./tests/browser/agents/iab-classifier/tierSelector.test.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 22,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 22,
+                  "content": "} from '@browser/agents/iab-classifier/tierSelector'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/migration2.0_requirements/UNKNOWN_CLASSIFICATION_FILTERING_SPEC.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/migration2.0_requirements/UNKNOWN_CLASSIFICATION_FILTERING_SPEC.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 151,
-                  &quot;content&quot;: &quot;**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;&quot;
+                  "lineNumber": 151,
+                  "content": "**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 207,
-                  &quot;content&quot;: &quot;**File (TypeScript):** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;&quot;
+                  "lineNumber": 207,
+                  "content": "**File (TypeScript):** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 378,
-                  &quot;content&quot;: &quot;**File (TypeScript):** &#96;tests/browser/agents/iab-classifier/integration/tierSelectionWithUnknownFiltering.test.ts&#96;&quot;
+                  "lineNumber": 378,
+                  "content": "**File (TypeScript):** &#96;tests/browser/agents/iab-classifier/integration/tierSelectionWithUnknownFiltering.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 626,
-                  &quot;content&quot;: &quot;- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 115-221)&quot;
+                  "lineNumber": 626,
+                  "content": "- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 115-221)"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./src/admin-dashboard/app/analyze/page.tsx&quot;,
-              &quot;matches&quot;: [
+              "file": "./src/admin-dashboard/app/analyze/page.tsx",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 15,
-                  &quot;content&quot;: &quot;import { getBrowserClassifier, type ClassificationResult } from &#39;@/lib/browser-classifier&#39;&quot;
+                  "lineNumber": 15,
+                  "content": "import { getBrowserClassifier, type ClassificationResult } from '@/lib/browser-classifier'"
                 },
                 {
-                  &quot;lineNumber&quot;: 141,
-                  &quot;content&quot;: &quot;      // Classify emails using browser classifier&quot;
+                  "lineNumber": 141,
+                  "content": "      // Classify emails using browser classifier"
                 },
                 {
-                  &quot;lineNumber&quot;: 279,
-                  &quot;content&quot;: &quot;      // Use browser classifier with client-side config&quot;
+                  "lineNumber": 279,
+                  "content": "      // Use browser classifier with client-side config"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/README.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/README.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 12,
-                  &quot;content&quot;: &quot;This migration ports the **Tiered Confidence Classification System** from Python (&#96;src/email_parser/utils/&#96;) to TypeScript for the browser-based IAB classifier.&quot;
+                  "lineNumber": 12,
+                  "content": "This migration ports the **Tiered Confidence Classification System** from Python (&#96;src/email_parser/utils/&#96;) to TypeScript for the browser-based IAB classifier."
                 },
                 {
-                  &quot;lineNumber&quot;: 150,
-                  &quot;content&quot;: &quot;src/browser/agents/iab-classifier/&quot;
+                  "lineNumber": 150,
+                  "content": "src/browser/agents/iab-classifier/"
                 },
                 {
-                  &quot;lineNumber&quot;: 314,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/tierSelector.test.ts&quot;
+                  "lineNumber": 314,
+                  "content": "npm test tests/browser/agents/iab-classifier/tierSelector.test.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 315,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&quot;
+                  "lineNumber": 315,
+                  "content": "npm test tests/browser/agents/iab-classifier/profileTierFormatter.test.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 318,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/integration/&quot;
+                  "lineNumber": 318,
+                  "content": "npm test tests/browser/agents/iab-classifier/integration/"
                 },
                 {
-                  &quot;lineNumber&quot;: 321,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/e2e/&quot;
+                  "lineNumber": 321,
+                  "content": "npm test tests/browser/agents/iab-classifier/e2e/"
                 },
                 {
-                  &quot;lineNumber&quot;: 437,
-                  &quot;content&quot;: &quot;- **TypeScript Implementation**: &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;&quot;
+                  "lineNumber": 437,
+                  "content": "- **TypeScript Implementation**: &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 438,
-                  &quot;content&quot;: &quot;- **TypeScript Implementation**: &#96;src/browser/agents/iab-classifier/profileTierFormatter.ts&#96;&quot;
+                  "lineNumber": 438,
+                  "content": "- **TypeScript Implementation**: &#96;src/browser/agents/iab-classifier/profileTierFormatter.ts&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/FINAL_SUMMARY.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/FINAL_SUMMARY.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 12,
-                  &quot;content&quot;: &quot;The **Tiered Confidence Classification System** has been successfully migrated from Python to TypeScript for the browser-based IAB classifier. The migration is **production-ready** with:&quot;
+                  "lineNumber": 12,
+                  "content": "The **Tiered Confidence Classification System** has been successfully migrated from Python to TypeScript for the browser-based IAB classifier. The migration is **production-ready** with:"
                 },
                 {
-                  &quot;lineNumber&quot;: 99,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run&quot;
+                  "lineNumber": 99,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 334,
-                  &quot;content&quot;: &quot;src/browser/agents/iab-classifier/&quot;
+                  "lineNumber": 334,
+                  "content": "src/browser/agents/iab-classifier/"
                 },
                 {
-                  &quot;lineNumber&quot;: 348,
-                  &quot;content&quot;: &quot;tests/browser/agents/iab-classifier/&quot;
+                  "lineNumber": 348,
+                  "content": "tests/browser/agents/iab-classifier/"
                 },
                 {
-                  &quot;lineNumber&quot;: 376,
-                  &quot;content&quot;: &quot;- &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (503 lines)&quot;
+                  "lineNumber": 376,
+                  "content": "- &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (503 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 377,
-                  &quot;content&quot;: &quot;- &#96;src/browser/agents/iab-classifier/profileTierFormatter.ts&#96; (330 lines)&quot;
+                  "lineNumber": 377,
+                  "content": "- &#96;src/browser/agents/iab-classifier/profileTierFormatter.ts&#96; (330 lines)"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/archive_2025-01-12_test_docs/AUTOMATED_TESTING_STATUS.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/archive_2025-01-12_test_docs/AUTOMATED_TESTING_STATUS.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 27,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;&quot;
+                  "lineNumber": 27,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 73,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run&quot;
+                  "lineNumber": 73,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 78,
-                  &quot;content&quot;: &quot;✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (28 tests) 4ms&quot;
+                  "lineNumber": 78,
+                  "content": "✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (28 tests) 4ms"
                 },
                 {
-                  &quot;lineNumber&quot;: 92,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&#96;&quot;
+                  "lineNumber": 92,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 126,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tierSelection.integration.test.ts&#96;&quot;
+                  "lineNumber": 126,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tierSelection.integration.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 142,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tierSelection.e2e.test.ts&#96;&quot;
+                  "lineNumber": 142,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tierSelection.e2e.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 270,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run&quot;
+                  "lineNumber": 270,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 273,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/profileTierFormatter.test.ts --run&quot;
+                  "lineNumber": 273,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/profileTierFormatter.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 276,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelection.integration.test.ts --run&quot;
+                  "lineNumber": 276,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelection.integration.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 279,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelection.e2e.test.ts --run&quot;
+                  "lineNumber": 279,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelection.e2e.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 282,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tier --run&quot;
+                  "lineNumber": 282,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tier --run"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./tests/browser/agents/iab-classifier/tierSelection.e2e.test.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./tests/browser/agents/iab-classifier/tierSelection.e2e.test.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 17,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/profileTierFormatter&#39;&quot;
+                  "lineNumber": 17,
+                  "content": "} from '@browser/agents/iab-classifier/profileTierFormatter'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./tests/browser/agents/iab-classifier/tierSelection.integration.test.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./tests/browser/agents/iab-classifier/tierSelection.integration.test.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 15,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 15,
+                  "content": "} from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 19,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/profileTierFormatter&#39;&quot;
+                  "lineNumber": 19,
+                  "content": "} from '@browser/agents/iab-classifier/profileTierFormatter'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./tests/browser/agents/iab-classifier/profileTierFormatter.test.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 20,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/profileTierFormatter&#39;&quot;
+                  "lineNumber": 20,
+                  "content": "} from '@browser/agents/iab-classifier/profileTierFormatter'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/archive_2025-01-12_test_docs/TIER_SELECTION_TESTING_PLAN.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/archive_2025-01-12_test_docs/TIER_SELECTION_TESTING_PLAN.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 56,
-                  &quot;content&quot;: &quot;#### Test File: &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;&quot;
+                  "lineNumber": 56,
+                  "content": "#### Test File: &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 68,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 68,
+                  "content": "} from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 649,
-                  &quot;content&quot;: &quot;#### Test File: &#96;tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&#96;&quot;
+                  "lineNumber": 649,
+                  "content": "#### Test File: &#96;tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 660,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/profileTierFormatter&#39;&quot;
+                  "lineNumber": 660,
+                  "content": "} from '@browser/agents/iab-classifier/profileTierFormatter'"
                 },
                 {
-                  &quot;lineNumber&quot;: 910,
-                  &quot;content&quot;: &quot;**File**: &#96;tests/browser/agents/iab-classifier/integration/genderConflict.test.ts&#96;&quot;
+                  "lineNumber": 910,
+                  "content": "**File**: &#96;tests/browser/agents/iab-classifier/integration/genderConflict.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 914,
-                  &quot;content&quot;: &quot;import { selectPrimaryAndAlternatives } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 914,
+                  "content": "import { selectPrimaryAndAlternatives } from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1008,
-                  &quot;content&quot;: &quot;**File**: &#96;tests/browser/agents/iab-classifier/integration/granularityPrioritization.test.ts&#96;&quot;
+                  "lineNumber": 1008,
+                  "content": "**File**: &#96;tests/browser/agents/iab-classifier/integration/granularityPrioritization.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1012,
-                  &quot;content&quot;: &quot;import { selectPrimaryAndAlternatives } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 1012,
+                  "content": "import { selectPrimaryAndAlternatives } from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1100,
-                  &quot;content&quot;: &quot;**File**: &#96;tests/browser/agents/iab-classifier/integration/confidenceDelta.test.ts&#96;&quot;
+                  "lineNumber": 1100,
+                  "content": "**File**: &#96;tests/browser/agents/iab-classifier/integration/confidenceDelta.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1104,
-                  &quot;content&quot;: &quot;import { selectPrimaryAndAlternatives } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 1104,
+                  "content": "import { selectPrimaryAndAlternatives } from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1208,
-                  &quot;content&quot;: &quot;**File**: &#96;tests/browser/agents/iab-classifier/integration/nonExclusive.test.ts&#96;&quot;
+                  "lineNumber": 1208,
+                  "content": "**File**: &#96;tests/browser/agents/iab-classifier/integration/nonExclusive.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1212,
-                  &quot;content&quot;: &quot;import { applyTieredClassification } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 1212,
+                  "content": "import { applyTieredClassification } from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1318,
-                  &quot;content&quot;: &quot;**File**: &#96;tests/browser/agents/iab-classifier/e2e/fullProfile.test.ts&#96;&quot;
+                  "lineNumber": 1318,
+                  "content": "**File**: &#96;tests/browser/agents/iab-classifier/e2e/fullProfile.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1322,
-                  &quot;content&quot;: &quot;import { addTieredStructureToProfile } from &#39;@browser/agents/iab-classifier/profileTierFormatter&#39;&quot;
+                  "lineNumber": 1322,
+                  "content": "import { addTieredStructureToProfile } from '@browser/agents/iab-classifier/profileTierFormatter'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1512,
-                  &quot;content&quot;: &quot;Create: &#96;tests/browser/agents/iab-classifier/fixtures/mockClassifications.ts&#96;&quot;
+                  "lineNumber": 1512,
+                  "content": "Create: &#96;tests/browser/agents/iab-classifier/fixtures/mockClassifications.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1515,
-                  &quot;content&quot;: &quot;import type { TaxonomySelection } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 1515,
+                  "content": "import type { TaxonomySelection } from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1717,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/tierSelector.test.ts&quot;
+                  "lineNumber": 1717,
+                  "content": "npm test tests/browser/agents/iab-classifier/tierSelector.test.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 1718,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&quot;
+                  "lineNumber": 1718,
+                  "content": "npm test tests/browser/agents/iab-classifier/profileTierFormatter.test.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 1721,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/integration/&quot;
+                  "lineNumber": 1721,
+                  "content": "npm test tests/browser/agents/iab-classifier/integration/"
                 },
                 {
-                  &quot;lineNumber&quot;: 1724,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/e2e/&quot;
+                  "lineNumber": 1724,
+                  "content": "npm test tests/browser/agents/iab-classifier/e2e/"
                 },
                 {
-                  &quot;lineNumber&quot;: 1727,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/&quot;
+                  "lineNumber": 1727,
+                  "content": "npm test tests/browser/agents/iab-classifier/"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/migration2.0_requirements/archive_2025-01-12/TIER_SELECTION_IMPLEMENTATION_SPEC.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/migration2.0_requirements/archive_2025-01-12/TIER_SELECTION_IMPLEMENTATION_SPEC.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 12,
-                  &quot;content&quot;: &quot;This document specifies the implementation of the **Tiered Confidence Classification System** for the browser-based IAB classifier. This system is currently implemented in Python (&#96;src/email_parser/utils/classification_tier_selector.py&#96;) but **completely missing** from the TypeScript browser implementation.&quot;
+                  "lineNumber": 12,
+                  "content": "This document specifies the implementation of the **Tiered Confidence Classification System** for the browser-based IAB classifier. This system is currently implemented in Python (&#96;src/email_parser/utils/classification_tier_selector.py&#96;) but **completely missing** from the TypeScript browser implementation."
                 },
                 {
-                  &quot;lineNumber&quot;: 102,
-                  &quot;content&quot;: &quot;│ browser/agents/iab-classifier/index.ts (Workflow)          │&quot;
+                  "lineNumber": 102,
+                  "content": "│ browser/agents/iab-classifier/index.ts (Workflow)          │"
                 },
                 {
-                  &quot;lineNumber&quot;: 111,
-                  &quot;content&quot;: &quot;│ browser/agents/iab-classifier/tierSelector.ts (NEW)        │&quot;
+                  "lineNumber": 111,
+                  "content": "│ browser/agents/iab-classifier/tierSelector.ts (NEW)        │"
                 },
                 {
-                  &quot;lineNumber&quot;: 123,
-                  &quot;content&quot;: &quot;│ browser/agents/iab-classifier/profileTierFormatter.ts (NEW)│&quot;
+                  "lineNumber": 123,
+                  "content": "│ browser/agents/iab-classifier/profileTierFormatter.ts (NEW)│"
                 },
                 {
-                  &quot;lineNumber&quot;: 1038,
-                  &quot;content&quot;: &quot;import { applyTieredClassification } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 1038,
+                  "content": "import { applyTieredClassification } from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1044,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/profileTierFormatter&#39;&quot;
+                  "lineNumber": 1044,
+                  "content": "} from '@browser/agents/iab-classifier/profileTierFormatter'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1108,
-                  &quot;content&quot;: &quot;**File**: &#96;src/browser/agents/iab-classifier/nodes/reconcile.ts&#96;&quot;
+                  "lineNumber": 1108,
+                  "content": "**File**: &#96;src/browser/agents/iab-classifier/nodes/reconcile.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1190,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/profileTierFormatter&#39;&quot;
+                  "lineNumber": 1190,
+                  "content": "} from '@browser/agents/iab-classifier/profileTierFormatter'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1199,
-                  &quot;content&quot;: &quot;- [ ] Create file: &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;&quot;
+                  "lineNumber": 1199,
+                  "content": "- [ ] Create file: &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1226,
-                  &quot;content&quot;: &quot;- [ ] Create file: &#96;src/browser/agents/iab-classifier/profileTierFormatter.ts&#96;&quot;
+                  "lineNumber": 1226,
+                  "content": "- [ ] Create file: &#96;src/browser/agents/iab-classifier/profileTierFormatter.ts&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./src/admin-dashboard/app/api/profile/tiered/route.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./src/admin-dashboard/app/api/profile/tiered/route.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 21,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/profileTierFormatter&#39;&quot;
+                  "lineNumber": 21,
+                  "content": "} from '@browser/agents/iab-classifier/profileTierFormatter'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./verify_iab_classifier.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./verify_iab_classifier.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 2,
-                  &quot;content&quot;: &quot;import { buildWorkflowGraph } from &#39;./src/browser/agents/iab-classifier/index&#39;&quot;
+                  "lineNumber": 2,
+                  "content": "import { buildWorkflowGraph } from './src/browser/agents/iab-classifier/index'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./tests/browser/agents/iab-classifier/IABClassifier.test.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./tests/browser/agents/iab-classifier/IABClassifier.test.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 8,
-                  &quot;content&quot;: &quot;import { createIABClassifier } from &#39;@browser/agents/iab-classifier&#39;&quot;
+                  "lineNumber": 8,
+                  "content": "import { createIABClassifier } from '@browser/agents/iab-classifier'"
                 },
                 {
-                  &quot;lineNumber&quot;: 61,
-                  &quot;content&quot;: &quot;vi.mock(&#39;@browser/agents/iab-classifier/analyzers/tools&#39;, () =&gt; {&quot;
+                  "lineNumber": 61,
+                  "content": "vi.mock('@browser/agents/iab-classifier/analyzers/tools', () =&gt; {"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./src/browser/agents/iab-classifier/index.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./src/browser/agents/iab-classifier/index.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 17,
-                  &quot;content&quot;: &quot; * import { buildWorkflowGraph } from &#39;@browser/agents/iab-classifier&#39;&quot;
+                  "lineNumber": 17,
+                  "content": " * import { buildWorkflowGraph } from '@browser/agents/iab-classifier'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/IAB_MIGRATION_VERIFICATION_REPORT.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/IAB_MIGRATION_VERIFICATION_REPORT.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 15,
-                  &quot;content&quot;: &quot;| **Workflow Graph** | &#96;workflow/graph.py&#96; | &#96;src/browser/agents/iab-classifier/index.ts&#96; | ✅ Verified | Adapted to single-pass batch processing (removed &#96;advance_email&#96; node). |&quot;
+                  "lineNumber": 15,
+                  "content": "| **Workflow Graph** | &#96;workflow/graph.py&#96; | &#96;src/browser/agents/iab-classifier/index.ts&#96; | ✅ Verified | Adapted to single-pass batch processing (removed &#96;advance_email&#96; node). |"
                 },
                 {
-                  &quot;lineNumber&quot;: 16,
-                  &quot;content&quot;: &quot;| **State Schema** | &#96;workflow/state.py&#96; | &#96;src/browser/agents/iab-classifier/state.ts&#96; | ✅ Verified | &#96;WorkflowState&#96; schema matches, including all result fields. |&quot;
+                  "lineNumber": 16,
+                  "content": "| **State Schema** | &#96;workflow/state.py&#96; | &#96;src/browser/agents/iab-classifier/state.ts&#96; | ✅ Verified | &#96;WorkflowState&#96; schema matches, including all result fields. |"
                 },
                 {
-                  &quot;lineNumber&quot;: 17,
-                  &quot;content&quot;: &quot;| **Analyzer Nodes** | &#96;workflow/nodes/analyzers.py&#96; | &#96;src/browser/agents/iab-classifier/analyzers/index.ts&#96; | ✅ Verified | All 4 agents (Demographics, Household, Interests, Purchase) implemented. |&quot;
+                  "lineNumber": 17,
+                  "content": "| **Analyzer Nodes** | &#96;workflow/nodes/analyzers.py&#96; | &#96;src/browser/agents/iab-classifier/analyzers/index.ts&#96; | ✅ Verified | All 4 agents (Demographics, Household, Interests, Purchase) implemented. |"
                 },
                 {
-                  &quot;lineNumber&quot;: 18,
-                  &quot;content&quot;: &quot;| **Evidence Judge** | &#96;workflow/nodes/evidence_judge.py&#96; | &#96;src/browser/agents/iab-classifier/llm/evidenceJudge.ts&#96; | ✅ Verified | 1:1 port of quality scoring, hallucination detection, and confidence adjustment. |&quot;
+                  "lineNumber": 18,
+                  "content": "| **Evidence Judge** | &#96;workflow/nodes/evidence_judge.py&#96; | &#96;src/browser/agents/iab-classifier/llm/evidenceJudge.ts&#96; | ✅ Verified | 1:1 port of quality scoring, hallucination detection, and confidence adjustment. |"
                 },
                 {
-                  &quot;lineNumber&quot;: 20,
-                  &quot;content&quot;: &quot;| **Prompts** | &#96;workflow/prompts/__init__.py&#96; | &#96;src/browser/agents/iab-classifier/prompts.ts&#96; | ✅ Verified | Exact string copies of all system prompts and evidence guidelines. |&quot;
+                  "lineNumber": 20,
+                  "content": "| **Prompts** | &#96;workflow/prompts/__init__.py&#96; | &#96;src/browser/agents/iab-classifier/prompts.ts&#96; | ✅ Verified | Exact string copies of all system prompts and evidence guidelines. |"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./src/admin-dashboard/app/api/classify/route.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./src/admin-dashboard/app/api/classify/route.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 9,
-                  &quot;content&quot;: &quot;import { buildWorkflowGraph, WorkflowState } from &#39;@browser/agents/iab-classifier&#39;&quot;
+                  "lineNumber": 9,
+                  "content": "import { buildWorkflowGraph, WorkflowState } from '@browser/agents/iab-classifier'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/plans/2025-01-06-javascript-pwa-migration-strategy.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/plans/2025-01-06-javascript-pwa-migration-strategy.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 291,
-                  &quot;content&quot;: &quot;- &#96;/lib/browser-classifier.ts&#96; (updated with llm_config)&quot;
+                  "lineNumber": 291,
+                  "content": "- &#96;/lib/browser-classifier.ts&#96; (updated with llm_config)"
                 },
                 {
-                  &quot;lineNumber&quot;: 292,
-                  &quot;content&quot;: &quot;- &#96;/src/browser/agents/iab-classifier/state.ts&#96; (added llm_config field)&quot;
+                  "lineNumber": 292,
+                  "content": "- &#96;/src/browser/agents/iab-classifier/state.ts&#96; (added llm_config field)"
                 },
                 {
-                  &quot;lineNumber&quot;: 293,
-                  &quot;content&quot;: &quot;- &#96;/src/browser/agents/iab-classifier/analyzers/index.ts&#96; (all 4 analyzers updated)&quot;
+                  "lineNumber": 293,
+                  "content": "- &#96;/src/browser/agents/iab-classifier/analyzers/index.ts&#96; (all 4 analyzers updated)"
                 },
                 {
-                  &quot;lineNumber&quot;: 545,
-                  &quot;content&quot;: &quot;**I&#39;ve identified a critical functional divergence in the TypeScript analyzer nodes (**src/browser/agents/iab-classifier/analyzers/index.ts**) compared to the Python version**&quot;
+                  "lineNumber": 545,
+                  "content": "**I've identified a critical functional divergence in the TypeScript analyzer nodes (**src/browser/agents/iab-classifier/analyzers/index.ts**) compared to the Python version**"
                 },
                 {
-                  &quot;lineNumber&quot;: 553,
-                  &quot;content&quot;: &quot;**  **To troubleshoot, we need to **re-implementing the missing validation and logging logic** in all four TypeScript analyzer nodes within **src/browser/agents/iab-classifier/analyzers/index.ts**, mirroring the Python implementation. This is a critical flaw directly impacting IAB classification accuracy.&quot;
+                  "lineNumber": 553,
+                  "content": "**  **To troubleshoot, we need to **re-implementing the missing validation and logging logic** in all four TypeScript analyzer nodes within **src/browser/agents/iab-classifier/analyzers/index.ts**, mirroring the Python implementation. This is a critical flaw directly impacting IAB classification accuracy."
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./bugfix/2025-01-12-taxonomy-validation-formatting-bug.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./bugfix/2025-01-12-taxonomy-validation-formatting-bug.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 7,
-                  &quot;content&quot;: &quot;- TypeScript: &#96;/src/browser/agents/iab-classifier/analyzers/tools.ts&#96; (validateClassification function)&quot;
+                  "lineNumber": 7,
+                  "content": "- TypeScript: &#96;/src/browser/agents/iab-classifier/analyzers/tools.ts&#96; (validateClassification function)"
                 },
                 {
-                  &quot;lineNumber&quot;: 190,
-                  &quot;content&quot;: &quot;1. **&#96;/src/browser/agents/iab-classifier/analyzers/tools.ts&#96;**&quot;
+                  "lineNumber": 190,
+                  "content": "1. **&#96;/src/browser/agents/iab-classifier/analyzers/tools.ts&#96;**"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./bugfix/2025-01-12-batch-classification-email-provenance-bug.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./bugfix/2025-01-12-batch-classification-email-provenance-bug.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 8,
-                  &quot;content&quot;: &quot;- TypeScript: &#96;/src/browser/agents/iab-classifier/agents/*.ts&#96; (FIXED)&quot;
+                  "lineNumber": 8,
+                  "content": "- TypeScript: &#96;/src/browser/agents/iab-classifier/agents/*.ts&#96; (FIXED)"
                 },
                 {
-                  &quot;lineNumber&quot;: 26,
-                  &quot;content&quot;: &quot;   - Location: All 4 TypeScript agents in &#96;/src/browser/agents/iab-classifier/agents/*.ts&#96;&quot;
+                  "lineNumber": 26,
+                  "content": "   - Location: All 4 TypeScript agents in &#96;/src/browser/agents/iab-classifier/agents/*.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 83,
-                  &quot;content&quot;: &quot;1. **All 4 TypeScript agents** (&#96;/src/browser/agents/iab-classifier/agents/*.ts&#96;):&quot;
+                  "lineNumber": 83,
+                  "content": "1. **All 4 TypeScript agents** (&#96;/src/browser/agents/iab-classifier/agents/*.ts&#96;):"
                 },
                 {
-                  &quot;lineNumber&quot;: 226,
-                  &quot;content&quot;: &quot;- &#96;/src/browser/agents/iab-classifier/agents/demographics.ts&#96; (lines 244-260)&quot;
+                  "lineNumber": 226,
+                  "content": "- &#96;/src/browser/agents/iab-classifier/agents/demographics.ts&#96; (lines 244-260)"
                 },
                 {
-                  &quot;lineNumber&quot;: 227,
-                  &quot;content&quot;: &quot;- &#96;/src/browser/agents/iab-classifier/agents/household.ts&#96; (lines 243-259)&quot;
+                  "lineNumber": 227,
+                  "content": "- &#96;/src/browser/agents/iab-classifier/agents/household.ts&#96; (lines 243-259)"
                 },
                 {
-                  &quot;lineNumber&quot;: 228,
-                  &quot;content&quot;: &quot;- &#96;/src/browser/agents/iab-classifier/agents/interests.ts&#96; (lines 243-259)&quot;
+                  "lineNumber": 228,
+                  "content": "- &#96;/src/browser/agents/iab-classifier/agents/interests.ts&#96; (lines 243-259)"
                 },
                 {
-                  &quot;lineNumber&quot;: 229,
-                  &quot;content&quot;: &quot;- &#96;/src/browser/agents/iab-classifier/agents/purchase.ts&#96; (lines 248-264)&quot;
+                  "lineNumber": 229,
+                  "content": "- &#96;/src/browser/agents/iab-classifier/agents/purchase.ts&#96; (lines 248-264)"
                 }
               ]
             }
           ],
-          &quot;totalLines&quot;: 134,
-          &quot;totalMatchedLines&quot;: 134
+          "totalLines": 134,
+          "totalMatchedLines": 134
         }
       }
     }
@@ -931,41 +931,41 @@ Parameters:
 
 ```json
 {
-  &quot;pattern&quot;: &quot;browser classifier&quot;,
-  &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;,
-  &quot;outputMode&quot;: &quot;content&quot;,
-  &quot;caseInsensitive&quot;: false,
-  &quot;headLimit&quot;: 200
+  "pattern": "browser classifier",
+  "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application",
+  "outputMode": "content",
+  "caseInsensitive": false,
+  "headLimit": 200
 }
 ```
 Result:
 
 ```json
 {
-  &quot;success&quot;: {
-    &quot;pattern&quot;: &quot;browser classifier&quot;,
-    &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;,
-    &quot;outputMode&quot;: &quot;content&quot;,
-    &quot;workspaceResults&quot;: {
-      &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;: {
-        &quot;content&quot;: {
-          &quot;matches&quot;: [
+  "success": {
+    "pattern": "browser classifier",
+    "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application",
+    "outputMode": "content",
+    "workspaceResults": {
+      "/Volumes/T7_new/developer_old/ownyou_consumer_application": {
+        "content": {
+          "matches": [
             {
-              &quot;file&quot;: &quot;./src/admin-dashboard/app/analyze/page.tsx&quot;,
-              &quot;matches&quot;: [
+              "file": "./src/admin-dashboard/app/analyze/page.tsx",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 141,
-                  &quot;content&quot;: &quot;      // Classify emails using browser classifier&quot;
+                  "lineNumber": 141,
+                  "content": "      // Classify emails using browser classifier"
                 },
                 {
-                  &quot;lineNumber&quot;: 279,
-                  &quot;content&quot;: &quot;      // Use browser classifier with client-side config&quot;
+                  "lineNumber": 279,
+                  "content": "      // Use browser classifier with client-side config"
                 }
               ]
             }
           ],
-          &quot;totalLines&quot;: 2,
-          &quot;totalMatchedLines&quot;: 2
+          "totalLines": 2,
+          "totalMatchedLines": 2
         }
       }
     }
@@ -1033,722 +1033,722 @@ Parameters:
 
 ```json
 {
-  &quot;pattern&quot;: &quot;browser.*iab&quot;,
-  &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application/docs&quot;,
-  &quot;outputMode&quot;: &quot;content&quot;,
-  &quot;caseInsensitive&quot;: false,
-  &quot;headLimit&quot;: 200
+  "pattern": "browser.*iab",
+  "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application/docs",
+  "outputMode": "content",
+  "caseInsensitive": false,
+  "headLimit": 200
 }
 ```
 Result:
 
 ```json
 {
-  &quot;success&quot;: {
-    &quot;pattern&quot;: &quot;browser.*iab&quot;,
-    &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application/docs&quot;,
-    &quot;outputMode&quot;: &quot;content&quot;,
-    &quot;workspaceResults&quot;: {
-      &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;: {
-        &quot;content&quot;: {
-          &quot;matches&quot;: [
+  "success": {
+    "pattern": "browser.*iab",
+    "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application/docs",
+    "outputMode": "content",
+    "workspaceResults": {
+      "/Volumes/T7_new/developer_old/ownyou_consumer_application": {
+        "content": {
+          "matches": [
             {
-              &quot;file&quot;: &quot;docs/migration/migration2.0/FINAL_COMPLETE_TEST_RESULTS.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/migration2.0/FINAL_COMPLETE_TEST_RESULTS.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 25,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;&quot;
+                  "lineNumber": 25,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 29,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run&quot;
+                  "lineNumber": 29,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 34,
-                  &quot;content&quot;: &quot;✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms&quot;
+                  "lineNumber": 34,
+                  "content": "✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms"
                 },
                 {
-                  &quot;lineNumber&quot;: 67,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts&#96;&quot;
+                  "lineNumber": 67,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 71,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts --run&quot;
+                  "lineNumber": 71,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 76,
-                  &quot;content&quot;: &quot;✓ tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts  (5 tests) 702ms&quot;
+                  "lineNumber": 76,
+                  "content": "✓ tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts  (5 tests) 702ms"
                 },
                 {
-                  &quot;lineNumber&quot;: 104,
-                  &quot;content&quot;: &quot;npx tsc --noEmit src/browser/agents/iab-classifier/tierSelector.ts&quot;
+                  "lineNumber": 104,
+                  "content": "npx tsc --noEmit src/browser/agents/iab-classifier/tierSelector.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 147,
-                  &quot;content&quot;: &quot;**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;&quot;
+                  "lineNumber": 147,
+                  "content": "**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 213,
-                  &quot;content&quot;: &quot;**Location:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts:348-355&#96;&quot;
+                  "lineNumber": 213,
+                  "content": "**Location:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts:348-355&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 235,
-                  &quot;content&quot;: &quot;**Location:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts:587&#96;&quot;
+                  "lineNumber": 235,
+                  "content": "**Location:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts:587&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 315,
-                  &quot;content&quot;: &quot;- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 248-259)&quot;
+                  "lineNumber": 315,
+                  "content": "- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 248-259)"
                 },
                 {
-                  &quot;lineNumber&quot;: 316,
-                  &quot;content&quot;: &quot;- **Unit Tests:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96; (lines 815-985)&quot;
+                  "lineNumber": 316,
+                  "content": "- **Unit Tests:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96; (lines 815-985)"
                 },
                 {
-                  &quot;lineNumber&quot;: 317,
-                  &quot;content&quot;: &quot;- **50-Email Test:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts&#96;&quot;
+                  "lineNumber": 317,
+                  "content": "- **50-Email Test:** &#96;tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/migration2.0/UNKNOWN_FILTERING_TEST_RESULTS_FINAL.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/migration2.0/UNKNOWN_FILTERING_TEST_RESULTS_FINAL.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 29,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run&quot;
+                  "lineNumber": 29,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 34,
-                  &quot;content&quot;: &quot;✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms&quot;
+                  "lineNumber": 34,
+                  "content": "✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms"
                 },
                 {
-                  &quot;lineNumber&quot;: 55,
-                  &quot;content&quot;: &quot;npx tsc --noEmit src/browser/agents/iab-classifier/tierSelector.ts&quot;
+                  "lineNumber": 55,
+                  "content": "npx tsc --noEmit src/browser/agents/iab-classifier/tierSelector.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 64,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts --run&quot;
+                  "lineNumber": 64,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tier-selection-50-emails.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 124,
-                  &quot;content&quot;: &quot;**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;&quot;
+                  "lineNumber": 124,
+                  "content": "**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 148,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;&quot;
+                  "lineNumber": 148,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 319,
-                  &quot;content&quot;: &quot;- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 248-259)&quot;
+                  "lineNumber": 319,
+                  "content": "- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 248-259)"
                 },
                 {
-                  &quot;lineNumber&quot;: 320,
-                  &quot;content&quot;: &quot;- **Unit Tests:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96; (lines 815-985)&quot;
+                  "lineNumber": 320,
+                  "content": "- **Unit Tests:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96; (lines 815-985)"
                 },
                 {
-                  &quot;lineNumber&quot;: 321,
-                  &quot;content&quot;: &quot;- **Integration Test (not executable):** &#96;tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&#96;&quot;
+                  "lineNumber": 321,
+                  "content": "- **Integration Test (not executable):** &#96;tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/migration2.0/UNKNOWN_CLASSIFICATION_FILTERING_IMPLEMENTATION_STATUS.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/migration2.0/UNKNOWN_CLASSIFICATION_FILTERING_IMPLEMENTATION_STATUS.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 67,
-                  &quot;content&quot;: &quot;**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;&quot;
+                  "lineNumber": 67,
+                  "content": "**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 93,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;&quot;
+                  "lineNumber": 93,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 111,
-                  &quot;content&quot;: &quot;✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms&quot;
+                  "lineNumber": 111,
+                  "content": "✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms"
                 },
                 {
-                  &quot;lineNumber&quot;: 123,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&#96;&quot;
+                  "lineNumber": 123,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 220,
-                  &quot;content&quot;: &quot;$ npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run&quot;
+                  "lineNumber": 220,
+                  "content": "$ npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 222,
-                  &quot;content&quot;: &quot;✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms&quot;
+                  "lineNumber": 222,
+                  "content": "✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (38 tests) 5ms"
                 },
                 {
-                  &quot;lineNumber&quot;: 242,
-                  &quot;content&quot;: &quot;$ npx tsc --noEmit src/browser/agents/iab-classifier/tierSelector.ts&quot;
+                  "lineNumber": 242,
+                  "content": "$ npx tsc --noEmit src/browser/agents/iab-classifier/tierSelector.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 388,
-                  &quot;content&quot;: &quot;- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 248-259)&quot;
+                  "lineNumber": 388,
+                  "content": "- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 248-259)"
                 },
                 {
-                  &quot;lineNumber&quot;: 389,
-                  &quot;content&quot;: &quot;- **Unit Tests:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96; (lines 815-985)&quot;
+                  "lineNumber": 389,
+                  "content": "- **Unit Tests:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96; (lines 815-985)"
                 },
                 {
-                  &quot;lineNumber&quot;: 390,
-                  &quot;content&quot;: &quot;- **Integration Tests:** &#96;tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&#96;&quot;
+                  "lineNumber": 390,
+                  "content": "- **Integration Tests:** &#96;tests/browser/agents/iab-classifier/integration/unknownClassificationFiltering.test.ts&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/migration2.0/migration2.0_requirements/UNKNOWN_CLASSIFICATION_FILTERING_SPEC.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/migration2.0/migration2.0_requirements/UNKNOWN_CLASSIFICATION_FILTERING_SPEC.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 151,
-                  &quot;content&quot;: &quot;**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;&quot;
+                  "lineNumber": 151,
+                  "content": "**File:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 207,
-                  &quot;content&quot;: &quot;**File (TypeScript):** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;&quot;
+                  "lineNumber": 207,
+                  "content": "**File (TypeScript):** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 378,
-                  &quot;content&quot;: &quot;**File (TypeScript):** &#96;tests/browser/agents/iab-classifier/integration/tierSelectionWithUnknownFiltering.test.ts&#96;&quot;
+                  "lineNumber": 378,
+                  "content": "**File (TypeScript):** &#96;tests/browser/agents/iab-classifier/integration/tierSelectionWithUnknownFiltering.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 626,
-                  &quot;content&quot;: &quot;- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 115-221)&quot;
+                  "lineNumber": 626,
+                  "content": "- **TypeScript Source:** &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (lines 115-221)"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/migration2.0/README.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/migration2.0/README.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 150,
-                  &quot;content&quot;: &quot;src/browser/agents/iab-classifier/&quot;
+                  "lineNumber": 150,
+                  "content": "src/browser/agents/iab-classifier/"
                 },
                 {
-                  &quot;lineNumber&quot;: 314,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/tierSelector.test.ts&quot;
+                  "lineNumber": 314,
+                  "content": "npm test tests/browser/agents/iab-classifier/tierSelector.test.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 315,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&quot;
+                  "lineNumber": 315,
+                  "content": "npm test tests/browser/agents/iab-classifier/profileTierFormatter.test.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 318,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/integration/&quot;
+                  "lineNumber": 318,
+                  "content": "npm test tests/browser/agents/iab-classifier/integration/"
                 },
                 {
-                  &quot;lineNumber&quot;: 321,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/e2e/&quot;
+                  "lineNumber": 321,
+                  "content": "npm test tests/browser/agents/iab-classifier/e2e/"
                 },
                 {
-                  &quot;lineNumber&quot;: 437,
-                  &quot;content&quot;: &quot;- **TypeScript Implementation**: &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;&quot;
+                  "lineNumber": 437,
+                  "content": "- **TypeScript Implementation**: &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 438,
-                  &quot;content&quot;: &quot;- **TypeScript Implementation**: &#96;src/browser/agents/iab-classifier/profileTierFormatter.ts&#96;&quot;
+                  "lineNumber": 438,
+                  "content": "- **TypeScript Implementation**: &#96;src/browser/agents/iab-classifier/profileTierFormatter.ts&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/migration2.0/FINAL_SUMMARY.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/migration2.0/FINAL_SUMMARY.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 99,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run&quot;
+                  "lineNumber": 99,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 334,
-                  &quot;content&quot;: &quot;src/browser/agents/iab-classifier/&quot;
+                  "lineNumber": 334,
+                  "content": "src/browser/agents/iab-classifier/"
                 },
                 {
-                  &quot;lineNumber&quot;: 348,
-                  &quot;content&quot;: &quot;tests/browser/agents/iab-classifier/&quot;
+                  "lineNumber": 348,
+                  "content": "tests/browser/agents/iab-classifier/"
                 },
                 {
-                  &quot;lineNumber&quot;: 376,
-                  &quot;content&quot;: &quot;- &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (503 lines)&quot;
+                  "lineNumber": 376,
+                  "content": "- &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96; (503 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 377,
-                  &quot;content&quot;: &quot;- &#96;src/browser/agents/iab-classifier/profileTierFormatter.ts&#96; (330 lines)&quot;
+                  "lineNumber": 377,
+                  "content": "- &#96;src/browser/agents/iab-classifier/profileTierFormatter.ts&#96; (330 lines)"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/migration2.0/archive_2025-01-12_test_docs/AUTOMATED_TESTING_STATUS.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/migration2.0/archive_2025-01-12_test_docs/AUTOMATED_TESTING_STATUS.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 27,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;&quot;
+                  "lineNumber": 27,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 73,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run&quot;
+                  "lineNumber": 73,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 78,
-                  &quot;content&quot;: &quot;✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (28 tests) 4ms&quot;
+                  "lineNumber": 78,
+                  "content": "✓ tests/browser/agents/iab-classifier/tierSelector.test.ts  (28 tests) 4ms"
                 },
                 {
-                  &quot;lineNumber&quot;: 92,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&#96;&quot;
+                  "lineNumber": 92,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 126,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tierSelection.integration.test.ts&#96;&quot;
+                  "lineNumber": 126,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tierSelection.integration.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 142,
-                  &quot;content&quot;: &quot;**File:** &#96;tests/browser/agents/iab-classifier/tierSelection.e2e.test.ts&#96;&quot;
+                  "lineNumber": 142,
+                  "content": "**File:** &#96;tests/browser/agents/iab-classifier/tierSelection.e2e.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 270,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run&quot;
+                  "lineNumber": 270,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelector.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 273,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/profileTierFormatter.test.ts --run&quot;
+                  "lineNumber": 273,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/profileTierFormatter.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 276,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelection.integration.test.ts --run&quot;
+                  "lineNumber": 276,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelection.integration.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 279,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tierSelection.e2e.test.ts --run&quot;
+                  "lineNumber": 279,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tierSelection.e2e.test.ts --run"
                 },
                 {
-                  &quot;lineNumber&quot;: 282,
-                  &quot;content&quot;: &quot;npm test -- tests/browser/agents/iab-classifier/tier --run&quot;
+                  "lineNumber": 282,
+                  "content": "npm test -- tests/browser/agents/iab-classifier/tier --run"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/migration2.0/archive_2025-01-12_test_docs/TIER_SELECTION_TESTING_PLAN.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/migration2.0/archive_2025-01-12_test_docs/TIER_SELECTION_TESTING_PLAN.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 56,
-                  &quot;content&quot;: &quot;#### Test File: &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;&quot;
+                  "lineNumber": 56,
+                  "content": "#### Test File: &#96;tests/browser/agents/iab-classifier/tierSelector.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 68,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 68,
+                  "content": "} from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 649,
-                  &quot;content&quot;: &quot;#### Test File: &#96;tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&#96;&quot;
+                  "lineNumber": 649,
+                  "content": "#### Test File: &#96;tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 660,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/profileTierFormatter&#39;&quot;
+                  "lineNumber": 660,
+                  "content": "} from '@browser/agents/iab-classifier/profileTierFormatter'"
                 },
                 {
-                  &quot;lineNumber&quot;: 910,
-                  &quot;content&quot;: &quot;**File**: &#96;tests/browser/agents/iab-classifier/integration/genderConflict.test.ts&#96;&quot;
+                  "lineNumber": 910,
+                  "content": "**File**: &#96;tests/browser/agents/iab-classifier/integration/genderConflict.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 914,
-                  &quot;content&quot;: &quot;import { selectPrimaryAndAlternatives } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 914,
+                  "content": "import { selectPrimaryAndAlternatives } from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1008,
-                  &quot;content&quot;: &quot;**File**: &#96;tests/browser/agents/iab-classifier/integration/granularityPrioritization.test.ts&#96;&quot;
+                  "lineNumber": 1008,
+                  "content": "**File**: &#96;tests/browser/agents/iab-classifier/integration/granularityPrioritization.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1012,
-                  &quot;content&quot;: &quot;import { selectPrimaryAndAlternatives } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 1012,
+                  "content": "import { selectPrimaryAndAlternatives } from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1100,
-                  &quot;content&quot;: &quot;**File**: &#96;tests/browser/agents/iab-classifier/integration/confidenceDelta.test.ts&#96;&quot;
+                  "lineNumber": 1100,
+                  "content": "**File**: &#96;tests/browser/agents/iab-classifier/integration/confidenceDelta.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1104,
-                  &quot;content&quot;: &quot;import { selectPrimaryAndAlternatives } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 1104,
+                  "content": "import { selectPrimaryAndAlternatives } from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1208,
-                  &quot;content&quot;: &quot;**File**: &#96;tests/browser/agents/iab-classifier/integration/nonExclusive.test.ts&#96;&quot;
+                  "lineNumber": 1208,
+                  "content": "**File**: &#96;tests/browser/agents/iab-classifier/integration/nonExclusive.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1212,
-                  &quot;content&quot;: &quot;import { applyTieredClassification } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 1212,
+                  "content": "import { applyTieredClassification } from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1318,
-                  &quot;content&quot;: &quot;**File**: &#96;tests/browser/agents/iab-classifier/e2e/fullProfile.test.ts&#96;&quot;
+                  "lineNumber": 1318,
+                  "content": "**File**: &#96;tests/browser/agents/iab-classifier/e2e/fullProfile.test.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1322,
-                  &quot;content&quot;: &quot;import { addTieredStructureToProfile } from &#39;@browser/agents/iab-classifier/profileTierFormatter&#39;&quot;
+                  "lineNumber": 1322,
+                  "content": "import { addTieredStructureToProfile } from '@browser/agents/iab-classifier/profileTierFormatter'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1512,
-                  &quot;content&quot;: &quot;Create: &#96;tests/browser/agents/iab-classifier/fixtures/mockClassifications.ts&#96;&quot;
+                  "lineNumber": 1512,
+                  "content": "Create: &#96;tests/browser/agents/iab-classifier/fixtures/mockClassifications.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1515,
-                  &quot;content&quot;: &quot;import type { TaxonomySelection } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 1515,
+                  "content": "import type { TaxonomySelection } from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1717,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/tierSelector.test.ts&quot;
+                  "lineNumber": 1717,
+                  "content": "npm test tests/browser/agents/iab-classifier/tierSelector.test.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 1718,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/profileTierFormatter.test.ts&quot;
+                  "lineNumber": 1718,
+                  "content": "npm test tests/browser/agents/iab-classifier/profileTierFormatter.test.ts"
                 },
                 {
-                  &quot;lineNumber&quot;: 1721,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/integration/&quot;
+                  "lineNumber": 1721,
+                  "content": "npm test tests/browser/agents/iab-classifier/integration/"
                 },
                 {
-                  &quot;lineNumber&quot;: 1724,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/e2e/&quot;
+                  "lineNumber": 1724,
+                  "content": "npm test tests/browser/agents/iab-classifier/e2e/"
                 },
                 {
-                  &quot;lineNumber&quot;: 1727,
-                  &quot;content&quot;: &quot;npm test tests/browser/agents/iab-classifier/&quot;
+                  "lineNumber": 1727,
+                  "content": "npm test tests/browser/agents/iab-classifier/"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/migration2.0/migration2.0_requirements/archive_2025-01-12/TIER_SELECTION_IMPLEMENTATION_SPEC.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/migration2.0/migration2.0_requirements/archive_2025-01-12/TIER_SELECTION_IMPLEMENTATION_SPEC.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 102,
-                  &quot;content&quot;: &quot;│ browser/agents/iab-classifier/index.ts (Workflow)          │&quot;
+                  "lineNumber": 102,
+                  "content": "│ browser/agents/iab-classifier/index.ts (Workflow)          │"
                 },
                 {
-                  &quot;lineNumber&quot;: 111,
-                  &quot;content&quot;: &quot;│ browser/agents/iab-classifier/tierSelector.ts (NEW)        │&quot;
+                  "lineNumber": 111,
+                  "content": "│ browser/agents/iab-classifier/tierSelector.ts (NEW)        │"
                 },
                 {
-                  &quot;lineNumber&quot;: 123,
-                  &quot;content&quot;: &quot;│ browser/agents/iab-classifier/profileTierFormatter.ts (NEW)│&quot;
+                  "lineNumber": 123,
+                  "content": "│ browser/agents/iab-classifier/profileTierFormatter.ts (NEW)│"
                 },
                 {
-                  &quot;lineNumber&quot;: 1038,
-                  &quot;content&quot;: &quot;import { applyTieredClassification } from &#39;@browser/agents/iab-classifier/tierSelector&#39;&quot;
+                  "lineNumber": 1038,
+                  "content": "import { applyTieredClassification } from '@browser/agents/iab-classifier/tierSelector'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1044,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/profileTierFormatter&#39;&quot;
+                  "lineNumber": 1044,
+                  "content": "} from '@browser/agents/iab-classifier/profileTierFormatter'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1108,
-                  &quot;content&quot;: &quot;**File**: &#96;src/browser/agents/iab-classifier/nodes/reconcile.ts&#96;&quot;
+                  "lineNumber": 1108,
+                  "content": "**File**: &#96;src/browser/agents/iab-classifier/nodes/reconcile.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1190,
-                  &quot;content&quot;: &quot;} from &#39;@browser/agents/iab-classifier/profileTierFormatter&#39;&quot;
+                  "lineNumber": 1190,
+                  "content": "} from '@browser/agents/iab-classifier/profileTierFormatter'"
                 },
                 {
-                  &quot;lineNumber&quot;: 1199,
-                  &quot;content&quot;: &quot;- [ ] Create file: &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;&quot;
+                  "lineNumber": 1199,
+                  "content": "- [ ] Create file: &#96;src/browser/agents/iab-classifier/tierSelector.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1226,
-                  &quot;content&quot;: &quot;- [ ] Create file: &#96;src/browser/agents/iab-classifier/profileTierFormatter.ts&#96;&quot;
+                  "lineNumber": 1226,
+                  "content": "- [ ] Create file: &#96;src/browser/agents/iab-classifier/profileTierFormatter.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1332,
-                  &quot;content&quot;: &quot;- **IAB Taxonomy**: &#96;src/browser/taxonomy/iab_audience_taxonomy_v1.1.json&#96;&quot;
+                  "lineNumber": 1332,
+                  "content": "- **IAB Taxonomy**: &#96;src/browser/taxonomy/iab_audience_taxonomy_v1.1.json&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/IAB_MIGRATION_VERIFICATION_REPORT.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/IAB_MIGRATION_VERIFICATION_REPORT.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 15,
-                  &quot;content&quot;: &quot;| **Workflow Graph** | &#96;workflow/graph.py&#96; | &#96;src/browser/agents/iab-classifier/index.ts&#96; | ✅ Verified | Adapted to single-pass batch processing (removed &#96;advance_email&#96; node). |&quot;
+                  "lineNumber": 15,
+                  "content": "| **Workflow Graph** | &#96;workflow/graph.py&#96; | &#96;src/browser/agents/iab-classifier/index.ts&#96; | ✅ Verified | Adapted to single-pass batch processing (removed &#96;advance_email&#96; node). |"
                 },
                 {
-                  &quot;lineNumber&quot;: 16,
-                  &quot;content&quot;: &quot;| **State Schema** | &#96;workflow/state.py&#96; | &#96;src/browser/agents/iab-classifier/state.ts&#96; | ✅ Verified | &#96;WorkflowState&#96; schema matches, including all result fields. |&quot;
+                  "lineNumber": 16,
+                  "content": "| **State Schema** | &#96;workflow/state.py&#96; | &#96;src/browser/agents/iab-classifier/state.ts&#96; | ✅ Verified | &#96;WorkflowState&#96; schema matches, including all result fields. |"
                 },
                 {
-                  &quot;lineNumber&quot;: 17,
-                  &quot;content&quot;: &quot;| **Analyzer Nodes** | &#96;workflow/nodes/analyzers.py&#96; | &#96;src/browser/agents/iab-classifier/analyzers/index.ts&#96; | ✅ Verified | All 4 agents (Demographics, Household, Interests, Purchase) implemented. |&quot;
+                  "lineNumber": 17,
+                  "content": "| **Analyzer Nodes** | &#96;workflow/nodes/analyzers.py&#96; | &#96;src/browser/agents/iab-classifier/analyzers/index.ts&#96; | ✅ Verified | All 4 agents (Demographics, Household, Interests, Purchase) implemented. |"
                 },
                 {
-                  &quot;lineNumber&quot;: 18,
-                  &quot;content&quot;: &quot;| **Evidence Judge** | &#96;workflow/nodes/evidence_judge.py&#96; | &#96;src/browser/agents/iab-classifier/llm/evidenceJudge.ts&#96; | ✅ Verified | 1:1 port of quality scoring, hallucination detection, and confidence adjustment. |&quot;
+                  "lineNumber": 18,
+                  "content": "| **Evidence Judge** | &#96;workflow/nodes/evidence_judge.py&#96; | &#96;src/browser/agents/iab-classifier/llm/evidenceJudge.ts&#96; | ✅ Verified | 1:1 port of quality scoring, hallucination detection, and confidence adjustment. |"
                 },
                 {
-                  &quot;lineNumber&quot;: 20,
-                  &quot;content&quot;: &quot;| **Prompts** | &#96;workflow/prompts/__init__.py&#96; | &#96;src/browser/agents/iab-classifier/prompts.ts&#96; | ✅ Verified | Exact string copies of all system prompts and evidence guidelines. |&quot;
+                  "lineNumber": 20,
+                  "content": "| **Prompts** | &#96;workflow/prompts/__init__.py&#96; | &#96;src/browser/agents/iab-classifier/prompts.ts&#96; | ✅ Verified | Exact string copies of all system prompts and evidence guidelines. |"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/plans/2025-01-06-javascript-pwa-migration-strategy.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/plans/2025-01-06-javascript-pwa-migration-strategy.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 292,
-                  &quot;content&quot;: &quot;- &#96;/src/browser/agents/iab-classifier/state.ts&#96; (added llm_config field)&quot;
+                  "lineNumber": 292,
+                  "content": "- &#96;/src/browser/agents/iab-classifier/state.ts&#96; (added llm_config field)"
                 },
                 {
-                  &quot;lineNumber&quot;: 293,
-                  &quot;content&quot;: &quot;- &#96;/src/browser/agents/iab-classifier/analyzers/index.ts&#96; (all 4 analyzers updated)&quot;
+                  "lineNumber": 293,
+                  "content": "- &#96;/src/browser/agents/iab-classifier/analyzers/index.ts&#96; (all 4 analyzers updated)"
                 },
                 {
-                  &quot;lineNumber&quot;: 545,
-                  &quot;content&quot;: &quot;**I&#39;ve identified a critical functional divergence in the TypeScript analyzer nodes (**src/browser/agents/iab-classifier/analyzers/index.ts**) compared to the Python version**&quot;
+                  "lineNumber": 545,
+                  "content": "**I've identified a critical functional divergence in the TypeScript analyzer nodes (**src/browser/agents/iab-classifier/analyzers/index.ts**) compared to the Python version**"
                 },
                 {
-                  &quot;lineNumber&quot;: 553,
-                  &quot;content&quot;: &quot;**  **To troubleshoot, we need to **re-implementing the missing validation and logging logic** in all four TypeScript analyzer nodes within **src/browser/agents/iab-classifier/analyzers/index.ts**, mirroring the Python implementation. This is a critical flaw directly impacting IAB classification accuracy.&quot;
+                  "lineNumber": 553,
+                  "content": "**  **To troubleshoot, we need to **re-implementing the missing validation and logging logic** in all four TypeScript analyzer nodes within **src/browser/agents/iab-classifier/analyzers/index.ts**, mirroring the Python implementation. This is a critical flaw directly impacting IAB classification accuracy."
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/2025-11-12-gap-closure-research-FINAL.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/2025-11-12-gap-closure-research-FINAL.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 58,
-                  &quot;content&quot;: &quot;**Current Implementation** (&#96;src/browser/agents/iab-classifier/index.ts:104-132&#96;):&quot;
+                  "lineNumber": 58,
+                  "content": "**Current Implementation** (&#96;src/browser/agents/iab-classifier/index.ts:104-132&#96;):"
                 },
                 {
-                  &quot;lineNumber&quot;: 161,
-                  &quot;content&quot;: &quot;**TypeScript** (&#96;src/browser/agents/iab-classifier/confidence.ts:56-69&#96;):&quot;
+                  "lineNumber": 161,
+                  "content": "**TypeScript** (&#96;src/browser/agents/iab-classifier/confidence.ts:56-69&#96;):"
                 },
                 {
-                  &quot;lineNumber&quot;: 196,
-                  &quot;content&quot;: &quot;**Implementation**: &#96;src/browser/agents/iab-classifier/confidence.ts&#96; lines 56-178&quot;
+                  "lineNumber": 196,
+                  "content": "**Implementation**: &#96;src/browser/agents/iab-classifier/confidence.ts&#96; lines 56-178"
                 },
                 {
-                  &quot;lineNumber&quot;: 335,
-                  &quot;content&quot;: &quot;**Evidence** (&#96;src/browser/agents/iab-classifier/llm/client.ts:128-157&#96;):&quot;
+                  "lineNumber": 335,
+                  "content": "**Evidence** (&#96;src/browser/agents/iab-classifier/llm/client.ts:128-157&#96;):"
                 },
                 {
-                  &quot;lineNumber&quot;: 627,
-                  &quot;content&quot;: &quot;import { createClassificationGraph } from &#39;@/browser/agents/iab-classifier&#39;&quot;
+                  "lineNumber": 627,
+                  "content": "import { createClassificationGraph } from '@/browser/agents/iab-classifier'"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/reference/IAB_CLASSIFIER_TYPESCRIPT_SPEC.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/reference/IAB_CLASSIFIER_TYPESCRIPT_SPEC.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 116,
-                  &quot;content&quot;: &quot;**File**: &#96;/src/browser/agents/iab-classifier/state.ts&#96; (715 lines)&quot;
+                  "lineNumber": 116,
+                  "content": "**File**: &#96;/src/browser/agents/iab-classifier/state.ts&#96; (715 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 233,
-                  &quot;content&quot;: &quot;**File**: &#96;/src/browser/agents/iab-classifier/index.ts&#96; (329 lines)&quot;
+                  "lineNumber": 233,
+                  "content": "**File**: &#96;/src/browser/agents/iab-classifier/index.ts&#96; (329 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 336,
-                  &quot;content&quot;: &quot;**File**: &#96;/src/browser/agents/iab-classifier/batchOptimizer.ts&#96; (292 lines)&quot;
+                  "lineNumber": 336,
+                  "content": "**File**: &#96;/src/browser/agents/iab-classifier/batchOptimizer.ts&#96; (292 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 414,
-                  &quot;content&quot;: &quot;**File**: &#96;/src/browser/agents/iab-classifier/nodes/loadEmails.ts&#96; (line 87)&quot;
+                  "lineNumber": 414,
+                  "content": "**File**: &#96;/src/browser/agents/iab-classifier/nodes/loadEmails.ts&#96; (line 87)"
                 },
                 {
-                  &quot;lineNumber&quot;: 895,
-                  &quot;content&quot;: &quot;**File**: &#96;/src/browser/agents/iab-classifier/costTracker.ts&#96; (487 lines)&quot;
+                  "lineNumber": 895,
+                  "content": "**File**: &#96;/src/browser/agents/iab-classifier/costTracker.ts&#96; (487 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 984,
-                  &quot;content&quot;: &quot;**File Example**: &#96;/src/browser/agents/iab-classifier/agents/demographics.ts&#96; (279 lines)&quot;
+                  "lineNumber": 984,
+                  "content": "**File Example**: &#96;/src/browser/agents/iab-classifier/agents/demographics.ts&#96; (279 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 1147,
-                  &quot;content&quot;: &quot;| **Demographics** | &#96;/src/browser/agents/iab-classifier/agents/demographics.ts&#96; | 279 | Age (5), Gender (50), Education (70), Employment (80) |&quot;
+                  "lineNumber": 1147,
+                  "content": "| **Demographics** | &#96;/src/browser/agents/iab-classifier/agents/demographics.ts&#96; | 279 | Age (5), Gender (50), Education (70), Employment (80) |"
                 },
                 {
-                  &quot;lineNumber&quot;: 1148,
-                  &quot;content&quot;: &quot;| **Household** | &#96;/src/browser/agents/iab-classifier/agents/household.ts&#96; | 279 | Income (110), Marital Status (120), Children (130), Location (300) |&quot;
+                  "lineNumber": 1148,
+                  "content": "| **Household** | &#96;/src/browser/agents/iab-classifier/agents/household.ts&#96; | 279 | Income (110), Marital Status (120), Children (130), Location (300) |"
                 },
                 {
-                  &quot;lineNumber&quot;: 1149,
-                  &quot;content&quot;: &quot;| **Interests** | &#96;/src/browser/agents/iab-classifier/agents/interests.ts&#96; | 279 | Hobbies (342), Lifestyle (156), Brands (450) |&quot;
+                  "lineNumber": 1149,
+                  "content": "| **Interests** | &#96;/src/browser/agents/iab-classifier/agents/interests.ts&#96; | 279 | Hobbies (342), Lifestyle (156), Brands (450) |"
                 },
                 {
-                  &quot;lineNumber&quot;: 1150,
-                  &quot;content&quot;: &quot;| **Purchase Intent** | &#96;/src/browser/agents/iab-classifier/agents/purchase.ts&#96; | 279 | Shopping Behavior (520), Product Categories (530) |&quot;
+                  "lineNumber": 1150,
+                  "content": "| **Purchase Intent** | &#96;/src/browser/agents/iab-classifier/agents/purchase.ts&#96; | 279 | Shopping Behavior (520), Product Categories (530) |"
                 },
                 {
-                  &quot;lineNumber&quot;: 1156,
-                  &quot;content&quot;: &quot;**File**: &#96;/src/browser/agents/iab-classifier/nodes/analyzers.ts&#96; (1,003 lines)&quot;
+                  "lineNumber": 1156,
+                  "content": "**File**: &#96;/src/browser/agents/iab-classifier/nodes/analyzers.ts&#96; (1,003 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 1211,
-                  &quot;content&quot;: &quot;**File**: &#96;/src/browser/agents/iab-classifier/llm/evidenceJudge.ts&#96; (387 lines)&quot;
+                  "lineNumber": 1211,
+                  "content": "**File**: &#96;/src/browser/agents/iab-classifier/llm/evidenceJudge.ts&#96; (387 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 1459,
-                  &quot;content&quot;: &quot;**File**: &#96;/src/browser/agents/iab-classifier/taxonomy/taxonomyContext.ts&#96;&quot;
+                  "lineNumber": 1459,
+                  "content": "**File**: &#96;/src/browser/agents/iab-classifier/taxonomy/taxonomyContext.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1502,
-                  &quot;content&quot;: &quot;**File**: &#96;/src/browser/agents/iab-classifier/analyzers/tools.ts&#96;&quot;
+                  "lineNumber": 1502,
+                  "content": "**File**: &#96;/src/browser/agents/iab-classifier/analyzers/tools.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1634,
-                  &quot;content&quot;: &quot;**File**: &#96;/src/browser/agents/iab-classifier/nodes/reconcile.ts&#96;&quot;
+                  "lineNumber": 1634,
+                  "content": "**File**: &#96;/src/browser/agents/iab-classifier/nodes/reconcile.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 2231,
-                  &quot;content&quot;: &quot;| **State Schema** | &#96;/src/browser/agents/iab-classifier/state.ts&#96; | 715 |&quot;
+                  "lineNumber": 2231,
+                  "content": "| **State Schema** | &#96;/src/browser/agents/iab-classifier/state.ts&#96; | 715 |"
                 },
                 {
-                  &quot;lineNumber&quot;: 2232,
-                  &quot;content&quot;: &quot;| **Graph Builder** | &#96;/src/browser/agents/iab-classifier/index.ts&#96; | 329 |&quot;
+                  "lineNumber": 2232,
+                  "content": "| **Graph Builder** | &#96;/src/browser/agents/iab-classifier/index.ts&#96; | 329 |"
                 },
                 {
-                  &quot;lineNumber&quot;: 2233,
-                  &quot;content&quot;: &quot;| **Batch Optimizer** | &#96;/src/browser/agents/iab-classifier/batchOptimizer.ts&#96; | 292 |&quot;
+                  "lineNumber": 2233,
+                  "content": "| **Batch Optimizer** | &#96;/src/browser/agents/iab-classifier/batchOptimizer.ts&#96; | 292 |"
                 },
                 {
-                  &quot;lineNumber&quot;: 2238,
-                  &quot;content&quot;: &quot;| **Cost Tracker** | &#96;/src/browser/agents/iab-classifier/costTracker.ts&#96; | 487 |&quot;
+                  "lineNumber": 2238,
+                  "content": "| **Cost Tracker** | &#96;/src/browser/agents/iab-classifier/costTracker.ts&#96; | 487 |"
                 },
                 {
-                  &quot;lineNumber&quot;: 2239,
-                  &quot;content&quot;: &quot;| **Demographics Agent** | &#96;/src/browser/agents/iab-classifier/agents/demographics.ts&#96; | 279 |&quot;
+                  "lineNumber": 2239,
+                  "content": "| **Demographics Agent** | &#96;/src/browser/agents/iab-classifier/agents/demographics.ts&#96; | 279 |"
                 },
                 {
-                  &quot;lineNumber&quot;: 2240,
-                  &quot;content&quot;: &quot;| **Household Agent** | &#96;/src/browser/agents/iab-classifier/agents/household.ts&#96; | 279 |&quot;
+                  "lineNumber": 2240,
+                  "content": "| **Household Agent** | &#96;/src/browser/agents/iab-classifier/agents/household.ts&#96; | 279 |"
                 },
                 {
-                  &quot;lineNumber&quot;: 2241,
-                  &quot;content&quot;: &quot;| **Interests Agent** | &#96;/src/browser/agents/iab-classifier/agents/interests.ts&#96; | 279 |&quot;
+                  "lineNumber": 2241,
+                  "content": "| **Interests Agent** | &#96;/src/browser/agents/iab-classifier/agents/interests.ts&#96; | 279 |"
                 },
                 {
-                  &quot;lineNumber&quot;: 2242,
-                  &quot;content&quot;: &quot;| **Purchase Agent** | &#96;/src/browser/agents/iab-classifier/agents/purchase.ts&#96; | 279 |&quot;
+                  "lineNumber": 2242,
+                  "content": "| **Purchase Agent** | &#96;/src/browser/agents/iab-classifier/agents/purchase.ts&#96; | 279 |"
                 },
                 {
-                  &quot;lineNumber&quot;: 2243,
-                  &quot;content&quot;: &quot;| **Analyzer Node** | &#96;/src/browser/agents/iab-classifier/nodes/analyzers.ts&#96; | 1,003 |&quot;
+                  "lineNumber": 2243,
+                  "content": "| **Analyzer Node** | &#96;/src/browser/agents/iab-classifier/nodes/analyzers.ts&#96; | 1,003 |"
                 },
                 {
-                  &quot;lineNumber&quot;: 2244,
-                  &quot;content&quot;: &quot;| **Evidence Judge** | &#96;/src/browser/agents/iab-classifier/llm/evidenceJudge.ts&#96; | 387 |&quot;
+                  "lineNumber": 2244,
+                  "content": "| **Evidence Judge** | &#96;/src/browser/agents/iab-classifier/llm/evidenceJudge.ts&#96; | 387 |"
                 },
                 {
-                  &quot;lineNumber&quot;: 2245,
-                  &quot;content&quot;: &quot;| **Reconciliation** | &#96;/src/browser/agents/iab-classifier/nodes/reconcile.ts&#96; | TBD |&quot;
+                  "lineNumber": 2245,
+                  "content": "| **Reconciliation** | &#96;/src/browser/agents/iab-classifier/nodes/reconcile.ts&#96; | TBD |"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/learnings/ADMIN_DASHBOARD_TO_CONSUMER_UI.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/learnings/ADMIN_DASHBOARD_TO_CONSUMER_UI.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 522,
-                  &quot;content&quot;: &quot;- [x] **CODE:** &#96;/src/browser/agents/iab-classifier/state.ts:167-178, 700-703&#96;&quot;
+                  "lineNumber": 522,
+                  "content": "- [x] **CODE:** &#96;/src/browser/agents/iab-classifier/state.ts:167-178, 700-703&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 524,
-                  &quot;content&quot;: &quot;- [x] **CODE:** &#96;/src/browser/agents/iab-classifier/analyzers/index.ts&#96; (all 4 nodes updated)&quot;
+                  "lineNumber": 524,
+                  "content": "- [x] **CODE:** &#96;/src/browser/agents/iab-classifier/analyzers/index.ts&#96; (all 4 nodes updated)"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/2025-01-07-iab-classifier-review-findings.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/2025-01-07-iab-classifier-review-findings.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 12,
-                  &quot;content&quot;: &quot;**File**: &#96;src/browser/agents/iab-classifier/llm/evidenceJudge.ts&#96;&quot;
+                  "lineNumber": 12,
+                  "content": "**File**: &#96;src/browser/agents/iab-classifier/llm/evidenceJudge.ts&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 44,
-                  &quot;content&quot;: &quot;**File**: &#96;src/browser/agents/iab-classifier/agents/demographics.ts:194&#96;&quot;
+                  "lineNumber": 44,
+                  "content": "**File**: &#96;src/browser/agents/iab-classifier/agents/demographics.ts:194&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/2025-01-07-migration-summary.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/2025-01-07-migration-summary.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 15,
-                  &quot;content&quot;: &quot;**File**: &#96;src/browser/agents/iab-classifier/llm/evidenceJudge.ts:228&#96;&quot;
+                  "lineNumber": 15,
+                  "content": "**File**: &#96;src/browser/agents/iab-classifier/llm/evidenceJudge.ts:228&#96;"
                 },
                 {
-                  &quot;lineNumber&quot;: 41,
-                  &quot;content&quot;: &quot;**File**: &#96;src/browser/agents/iab-classifier/agents/demographics.ts:194&#96;&quot;
+                  "lineNumber": 41,
+                  "content": "**File**: &#96;src/browser/agents/iab-classifier/agents/demographics.ts:194&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/archive/2025-01-07-status-snapshots/SESSION_3_STATUS.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/archive/2025-01-07-status-snapshots/SESSION_3_STATUS.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 35,
-                  &quot;content&quot;: &quot;1. **&#96;src/browser/agents/iab-classifier/state.ts&#96;** (650 lines)&quot;
+                  "lineNumber": 35,
+                  "content": "1. **&#96;src/browser/agents/iab-classifier/state.ts&#96;** (650 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 40,
-                  &quot;content&quot;: &quot;2. **&#96;src/browser/agents/iab-classifier/index.ts&#96;** (360 lines)&quot;
+                  "lineNumber": 40,
+                  "content": "2. **&#96;src/browser/agents/iab-classifier/index.ts&#96;** (360 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 45,
-                  &quot;content&quot;: &quot;3. **&#96;src/browser/agents/iab-classifier/nodes/loadEmails.ts&#96;** (120 lines)&quot;
+                  "lineNumber": 45,
+                  "content": "3. **&#96;src/browser/agents/iab-classifier/nodes/loadEmails.ts&#96;** (120 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 49,
-                  &quot;content&quot;: &quot;4. **&#96;src/browser/agents/iab-classifier/nodes/retrieveProfile.ts&#96;** (126 lines)&quot;
+                  "lineNumber": 49,
+                  "content": "4. **&#96;src/browser/agents/iab-classifier/nodes/retrieveProfile.ts&#96;** (126 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 53,
-                  &quot;content&quot;: &quot;5. **&#96;src/browser/agents/iab-classifier/nodes/reconcile.ts&#96;** (466 lines)&quot;
+                  "lineNumber": 53,
+                  "content": "5. **&#96;src/browser/agents/iab-classifier/nodes/reconcile.ts&#96;** (466 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 57,
-                  &quot;content&quot;: &quot;6. **&#96;src/browser/agents/iab-classifier/nodes/updateMemory.ts&#96;** (217 lines)&quot;
+                  "lineNumber": 57,
+                  "content": "6. **&#96;src/browser/agents/iab-classifier/nodes/updateMemory.ts&#96;** (217 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 61,
-                  &quot;content&quot;: &quot;7. **&#96;src/browser/agents/iab-classifier/utils/confidence.ts&#96;** (215 lines)&quot;
+                  "lineNumber": 61,
+                  "content": "7. **&#96;src/browser/agents/iab-classifier/utils/confidence.ts&#96;** (215 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 65,
-                  &quot;content&quot;: &quot;8. **&#96;src/browser/agents/iab-classifier/analyzers/tools.ts&#96;** (713 lines)&quot;
+                  "lineNumber": 65,
+                  "content": "8. **&#96;src/browser/agents/iab-classifier/analyzers/tools.ts&#96;** (713 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 69,
-                  &quot;content&quot;: &quot;9. **&#96;src/browser/agents/iab-classifier/analyzers/index.ts&#96;** (360 lines)&quot;
+                  "lineNumber": 69,
+                  "content": "9. **&#96;src/browser/agents/iab-classifier/analyzers/index.ts&#96;** (360 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 266,
-                  &quot;content&quot;: &quot;- &#96;src/browser/agents/iab-classifier/state.ts&#96; - Added missing &#96;current_batch_start&#96; field to Annotation.Root&quot;
+                  "lineNumber": 266,
+                  "content": "- &#96;src/browser/agents/iab-classifier/state.ts&#96; - Added missing &#96;current_batch_start&#96; field to Annotation.Root"
                 },
                 {
-                  &quot;lineNumber&quot;: 269,
-                  &quot;content&quot;: &quot;- &#96;src/browser/agents/iab-classifier/analyzers/tools.ts&#96; (713 lines)&quot;
+                  "lineNumber": 269,
+                  "content": "- &#96;src/browser/agents/iab-classifier/analyzers/tools.ts&#96; (713 lines)"
                 },
                 {
-                  &quot;lineNumber&quot;: 270,
-                  &quot;content&quot;: &quot;- &#96;src/browser/agents/iab-classifier/analyzers/index.ts&#96; (360 lines - STUBS)&quot;
+                  "lineNumber": 270,
+                  "content": "- &#96;src/browser/agents/iab-classifier/analyzers/index.ts&#96; (360 lines - STUBS)"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;docs/migration/archive/2025-01-07-status-snapshots/SESSION_2_FINAL_STATUS.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/migration/archive/2025-01-07-status-snapshots/SESSION_2_FINAL_STATUS.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 21,
-                  &quot;content&quot;: &quot;**File:** &#96;src/browser/agents/iab-classifier/confidence.ts&#96; (now 220 lines, was 104)&quot;
+                  "lineNumber": 21,
+                  "content": "**File:** &#96;src/browser/agents/iab-classifier/confidence.ts&#96; (now 220 lines, was 104)"
                 },
                 {
-                  &quot;lineNumber&quot;: 48,
-                  &quot;content&quot;: &quot;**File:** &#96;src/browser/agents/iab-classifier/nodes/reconcile.ts&#96; (466 lines, was 61-line stub)&quot;
+                  "lineNumber": 48,
+                  "content": "**File:** &#96;src/browser/agents/iab-classifier/nodes/reconcile.ts&#96; (466 lines, was 61-line stub)"
                 },
                 {
-                  &quot;lineNumber&quot;: 108,
-                  &quot;content&quot;: &quot;**File:** &#96;src/browser/agents/iab-classifier/nodes/updateMemory.ts&#96; (217 lines, was 63-line stub)&quot;
+                  "lineNumber": 108,
+                  "content": "**File:** &#96;src/browser/agents/iab-classifier/nodes/updateMemory.ts&#96; (217 lines, was 63-line stub)"
                 }
               ]
             }
           ],
-          &quot;totalLines&quot;: 151,
-          &quot;totalMatchedLines&quot;: 151
+          "totalLines": 151,
+          "totalMatchedLines": 151
         }
       }
     }
@@ -1814,57 +1814,57 @@ Parameters:
 
 ```json
 {
-  &quot;pattern&quot;: &quot;Run&quot;,
-  &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application/docs/reference/IAB_CLASSIFIER_TYPESCRIPT_SPEC.md&quot;,
-  &quot;outputMode&quot;: &quot;content&quot;,
-  &quot;caseInsensitive&quot;: false,
-  &quot;headLimit&quot;: 200
+  "pattern": "Run",
+  "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application/docs/reference/IAB_CLASSIFIER_TYPESCRIPT_SPEC.md",
+  "outputMode": "content",
+  "caseInsensitive": false,
+  "headLimit": 200
 }
 ```
 Result:
 
 ```json
 {
-  &quot;success&quot;: {
-    &quot;pattern&quot;: &quot;Run&quot;,
-    &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application/docs/reference/IAB_CLASSIFIER_TYPESCRIPT_SPEC.md&quot;,
-    &quot;outputMode&quot;: &quot;content&quot;,
-    &quot;workspaceResults&quot;: {
-      &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;: {
-        &quot;content&quot;: {
-          &quot;matches&quot;: [
+  "success": {
+    "pattern": "Run",
+    "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application/docs/reference/IAB_CLASSIFIER_TYPESCRIPT_SPEC.md",
+    "outputMode": "content",
+    "workspaceResults": {
+      "/Volumes/T7_new/developer_old/ownyou_consumer_application": {
+        "content": {
+          "matches": [
             {
-              &quot;file&quot;: &quot;docs/reference/IAB_CLASSIFIER_TYPESCRIPT_SPEC.md&quot;,
-              &quot;matches&quot;: [
+              "file": "docs/reference/IAB_CLASSIFIER_TYPESCRIPT_SPEC.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 39,
-                  &quot;content&quot;: &quot;**Runtime Environment**:&quot;
+                  "lineNumber": 39,
+                  "content": "**Runtime Environment**:"
                 },
                 {
-                  &quot;lineNumber&quot;: 75,
-                  &quot;content&quot;: &quot;**Runtime Environment**:&quot;
+                  "lineNumber": 75,
+                  "content": "**Runtime Environment**:"
                 },
                 {
-                  &quot;lineNumber&quot;: 1154,
-                  &quot;content&quot;: &quot;### 5.3 Analyzer Node (Runs All 4 Sequentially)&quot;
+                  "lineNumber": 1154,
+                  "content": "### 5.3 Analyzer Node (Runs All 4 Sequentially)"
                 },
                 {
-                  &quot;lineNumber&quot;: 1160,
-                  &quot;content&quot;: &quot; * Run all 4 analyzers sequentially.&quot;
+                  "lineNumber": 1160,
+                  "content": " * Run all 4 analyzers sequentially."
                 },
                 {
-                  &quot;lineNumber&quot;: 1175,
-                  &quot;content&quot;: &quot;  // Run all 4 analyzers&quot;
+                  "lineNumber": 1175,
+                  "content": "  // Run all 4 analyzers"
                 },
                 {
-                  &quot;lineNumber&quot;: 1889,
-                  &quot;content&quot;: &quot;  // Run classification (batch processing)&quot;
+                  "lineNumber": 1889,
+                  "content": "  // Run classification (batch processing)"
                 }
               ]
             }
           ],
-          &quot;totalLines&quot;: 6,
-          &quot;totalMatchedLines&quot;: 6
+          "totalLines": 6,
+          "totalMatchedLines": 6
         }
       }
     }
@@ -1919,24 +1919,24 @@ Parameters:
 
 ```json
 {
-  &quot;pattern&quot;: &quot;verify_iab_classifier&quot;,
-  &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;,
-  &quot;outputMode&quot;: &quot;content&quot;,
-  &quot;caseInsensitive&quot;: false,
-  &quot;headLimit&quot;: 200
+  "pattern": "verify_iab_classifier",
+  "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application",
+  "outputMode": "content",
+  "caseInsensitive": false,
+  "headLimit": 200
 }
 ```
 Result:
 
 ```json
 {
-  &quot;success&quot;: {
-    &quot;pattern&quot;: &quot;verify_iab_classifier&quot;,
-    &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;,
-    &quot;outputMode&quot;: &quot;content&quot;,
-    &quot;workspaceResults&quot;: {
-      &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;: {
-        &quot;content&quot;: {}
+  "success": {
+    "pattern": "verify_iab_classifier",
+    "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application",
+    "outputMode": "content",
+    "workspaceResults": {
+      "/Volumes/T7_new/developer_old/ownyou_consumer_application": {
+        "content": {}
       }
     }
   }
@@ -1957,7 +1957,7 @@ Status: **completed**
 
 <tool-use data-tool-type="generic" data-tool-name="list_dir">
 <details>
-            <summary>Tool use: **list_directory** • Listed directory undefined • **0** results</summary>
+            <summary>Tool use: **list_dir** • Listed directory, 0 results</summary>
         
 No results found
 </details>
@@ -2005,24 +2005,24 @@ Parameters:
 
 ```json
 {
-  &quot;pattern&quot;: &quot;browser classifier&quot;,
-  &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application/docs&quot;,
-  &quot;outputMode&quot;: &quot;content&quot;,
-  &quot;caseInsensitive&quot;: false,
-  &quot;headLimit&quot;: 200
+  "pattern": "browser classifier",
+  "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application/docs",
+  "outputMode": "content",
+  "caseInsensitive": false,
+  "headLimit": 200
 }
 ```
 Result:
 
 ```json
 {
-  &quot;success&quot;: {
-    &quot;pattern&quot;: &quot;browser classifier&quot;,
-    &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application/docs&quot;,
-    &quot;outputMode&quot;: &quot;content&quot;,
-    &quot;workspaceResults&quot;: {
-      &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;: {
-        &quot;content&quot;: {}
+  "success": {
+    "pattern": "browser classifier",
+    "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application/docs",
+    "outputMode": "content",
+    "workspaceResults": {
+      "/Volumes/T7_new/developer_old/ownyou_consumer_application": {
+        "content": {}
       }
     }
   }
@@ -2066,357 +2066,357 @@ Parameters:
 
 ```json
 {
-  &quot;pattern&quot;: &quot;npm run dev&quot;,
-  &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;,
-  &quot;outputMode&quot;: &quot;content&quot;,
-  &quot;caseInsensitive&quot;: false,
-  &quot;headLimit&quot;: 200
+  "pattern": "npm run dev",
+  "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application",
+  "outputMode": "content",
+  "caseInsensitive": false,
+  "headLimit": 200
 }
 ```
 Result:
 
 ```json
 {
-  &quot;success&quot;: {
-    &quot;pattern&quot;: &quot;npm run dev&quot;,
-    &quot;path&quot;: &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;,
-    &quot;outputMode&quot;: &quot;content&quot;,
-    &quot;workspaceResults&quot;: {
-      &quot;/Volumes/T7_new/developer_old/ownyou_consumer_application&quot;: {
-        &quot;content&quot;: {
-          &quot;matches&quot;: [
+  "success": {
+    "pattern": "npm run dev",
+    "path": "/Volumes/T7_new/developer_old/ownyou_consumer_application",
+    "outputMode": "content",
+    "workspaceResults": {
+      "/Volumes/T7_new/developer_old/ownyou_consumer_application": {
+        "content": {
+          "matches": [
             {
-              &quot;file&quot;: &quot;./tests/browser/e2e/unknownClassificationFilteringPlaywright.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./tests/browser/e2e/unknownClassificationFilteringPlaywright.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 22,
-                  &quot;content&quot;: &quot;1. Dev server running: &#96;cd src/admin-dashboard &amp;&amp; npm run dev&#96;&quot;
+                  "lineNumber": 22,
+                  "content": "1. Dev server running: &#96;cd src/admin-dashboard &amp;&amp; npm run dev&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/README.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/README.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 299,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 299,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/migration2.0/archive_2025-01-12_test_docs/TIER_SELECTION_TESTING_PLAN.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/migration2.0/archive_2025-01-12_test_docs/TIER_SELECTION_TESTING_PLAN.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 1746,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 1746,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./src/admin-dashboard/PKCEImplementationSummary.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./src/admin-dashboard/PKCEImplementationSummary.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 165,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 165,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./src/admin-dashboard/OAUTH_SETUP.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./src/admin-dashboard/OAUTH_SETUP.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 114,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 114,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./src/admin-dashboard/COMPLETION_SUMMARY.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./src/admin-dashboard/COMPLETION_SUMMARY.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 240,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 240,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./src/admin-dashboard/README.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./src/admin-dashboard/README.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 32,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 32,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/migration/archive/2025-01-07-status-snapshots/MIGRATION_COMPLETION_CRITERIA.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/migration/archive/2025-01-07-status-snapshots/MIGRATION_COMPLETION_CRITERIA.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 121,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 121,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/reference/LEGACY_CODE_INTEGRATION.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/reference/LEGACY_CODE_INTEGRATION.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 574,
-                  &quot;content&quot;: &quot;cd dashboard &amp;&amp; npm run dev  # Verify manually&quot;
+                  "lineNumber": 574,
+                  "content": "cd dashboard &amp;&amp; npm run dev  # Verify manually"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/reference/CURRENT_SYSTEM.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/reference/CURRENT_SYSTEM.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 119,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 119,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 1281,
-                  &quot;content&quot;: &quot;cd dashboard/frontend &amp;&amp; npm run dev &amp;&quot;
+                  "lineNumber": 1281,
+                  "content": "cd dashboard/frontend &amp;&amp; npm run dev &amp;"
                 },
                 {
-                  &quot;lineNumber&quot;: 1334,
-                  &quot;content&quot;: &quot;   cd dashboard &amp;&amp; npm run dev&quot;
+                  "lineNumber": 1334,
+                  "content": "   cd dashboard &amp;&amp; npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/development/TESTING_PLAN.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/development/TESTING_PLAN.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 1289,
-                  &quot;content&quot;: &quot;cd dashboard/frontend &amp;&amp; npm run dev&quot;
+                  "lineNumber": 1289,
+                  "content": "cd dashboard/frontend &amp;&amp; npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/persistent_bugs/CORS_ISSUES.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/persistent_bugs/CORS_ISSUES.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 114,
-                  &quot;content&quot;: &quot;   npm run dev&quot;
+                  "lineNumber": 114,
+                  "content": "   npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/development/PLAYWRIGHT_MCP_SETUP.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/development/PLAYWRIGHT_MCP_SETUP.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 158,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 158,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./README.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./README.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 389,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 389,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 966,
-                  &quot;content&quot;: &quot;   npm run dev&quot;
+                  "lineNumber": 966,
+                  "content": "   npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./QUICKSTART.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./QUICKSTART.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 89,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 89,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 191,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 191,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./docs/reference/PROJECT_STRUCTURE.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./docs/reference/PROJECT_STRUCTURE.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 413,
-                  &quot;content&quot;: &quot;- Development: &#96;npm run dev&#96;&quot;
+                  "lineNumber": 413,
+                  "content": "- Development: &#96;npm run dev&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./dashboard/frontend/README.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./dashboard/frontend/README.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 12,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 12,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 45,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 45,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./dashboard/TROUBLESHOOTING.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./dashboard/TROUBLESHOOTING.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 35,
-                  &quot;content&quot;: &quot;1. **Stop the Next.js server** (Ctrl+C in the terminal running &#96;npm run dev&#96;)&quot;
+                  "lineNumber": 35,
+                  "content": "1. **Stop the Next.js server** (Ctrl+C in the terminal running &#96;npm run dev&#96;)"
                 },
                 {
-                  &quot;lineNumber&quot;: 43,
-                  &quot;content&quot;: &quot;   npm run dev&quot;
+                  "lineNumber": 43,
+                  "content": "   npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 114,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 114,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 142,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 142,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 181,
-                  &quot;content&quot;: &quot;- Check the terminal running &#96;npm run dev&#96;&quot;
+                  "lineNumber": 181,
+                  "content": "- Check the terminal running &#96;npm run dev&#96;"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./dashboard/STATUS.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./dashboard/STATUS.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 33,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 33,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 235,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 235,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./dashboard/QUICKSTART.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./dashboard/QUICKSTART.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 27,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 27,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 164,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 164,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./dashboard/IMPLEMENTATION_STATUS.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./dashboard/IMPLEMENTATION_STATUS.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 173,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 173,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 297,
-                  &quot;content&quot;: &quot;   cd dashboard/frontend &amp;&amp; npm run dev&quot;
+                  "lineNumber": 297,
+                  "content": "   cd dashboard/frontend &amp;&amp; npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./dashboard/DASHBOARD_QUICKSTART.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./dashboard/DASHBOARD_QUICKSTART.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 17,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 17,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./_archive/docs/archive/bugfixes_2025oct/STEP2_ISSUE_REPORT.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./_archive/docs/archive/bugfixes_2025oct/STEP2_ISSUE_REPORT.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 272,
-                  &quot;content&quot;: &quot;   npm run dev&quot;
+                  "lineNumber": 272,
+                  "content": "   npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./_archive/docs/archive/bugfixes_2025oct/FRONTEND_SESSION_FIX.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./_archive/docs/archive/bugfixes_2025oct/FRONTEND_SESSION_FIX.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 138,
-                  &quot;content&quot;: &quot;   npm run dev&quot;
+                  "lineNumber": 138,
+                  "content": "   npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./_archive/developer_docs/troubleshooting/step2-404-debugging.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./_archive/developer_docs/troubleshooting/step2-404-debugging.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 48,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 48,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 70,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 70,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 204,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 204,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 227,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 227,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 258,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 258,
+                  "content": "npm run dev"
                 },
                 {
-                  &quot;lineNumber&quot;: 293,
-                  &quot;content&quot;: &quot;npm run dev&quot;
+                  "lineNumber": 293,
+                  "content": "npm run dev"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./_archive/developer_docs/testing/tools/playwright.config.ts&quot;,
-              &quot;matches&quot;: [
+              "file": "./_archive/developer_docs/testing/tools/playwright.config.ts",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 16,
-                  &quot;content&quot;: &quot;        command: &#39;npm run dev&#39;,&quot;
+                  "lineNumber": 16,
+                  "content": "        command: 'npm run dev',"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./_archive/developer_docs/testing/tools/lighthouserc.json&quot;,
-              &quot;matches&quot;: [
+              "file": "./_archive/developer_docs/testing/tools/lighthouserc.json",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 4,
-                  &quot;content&quot;: &quot;      \&quot;startServerCommand\&quot;: \&quot;npm run dev\&quot;,&quot;
+                  "lineNumber": 4,
+                  "content": "      \"startServerCommand\": \"npm run dev\","
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./_archive/developer_docs/DEVELOPMENT_PLAN.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./_archive/developer_docs/DEVELOPMENT_PLAN.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 146,
-                  &quot;content&quot;: &quot;- &#96;npm run dev&#96; starts development server&quot;
+                  "lineNumber": 146,
+                  "content": "- &#96;npm run dev&#96; starts development server"
                 }
               ]
             },
             {
-              &quot;file&quot;: &quot;./_archive/developer_docs/DEVELOPER_GUIDELINES.md&quot;,
-              &quot;matches&quot;: [
+              "file": "./_archive/developer_docs/DEVELOPER_GUIDELINES.md",
+              "matches": [
                 {
-                  &quot;lineNumber&quot;: 111,
-                  &quot;content&quot;: &quot;- [ ] &#96;npm run dev&#96; starts development server&quot;
+                  "lineNumber": 111,
+                  "content": "- [ ] &#96;npm run dev&#96; starts development server"
                 }
               ]
             }
           ],
-          &quot;totalLines&quot;: 46,
-          &quot;totalMatchedLines&quot;: 46
+          "totalLines": 46,
+          "totalMatchedLines": 46
         }
       }
     }

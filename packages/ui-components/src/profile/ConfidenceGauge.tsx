@@ -3,8 +3,7 @@
  * v13 Section 4.4 - Profile Components
  */
 
-import React from 'react';
-import { cn } from '@ownyou/ui-design-system';
+import { cn, colors } from '@ownyou/ui-design-system';
 
 export interface ConfidenceGaugeProps {
   /** Confidence value (0-100) */
@@ -25,15 +24,24 @@ const SIZE_MAP = {
   large: { diameter: 120, stroke: 8, fontSize: 'text-xl' },
 };
 
+/** Confidence level colors - using design tokens where available */
+const confidenceLevelColors = {
+  high: colors.secondary,       // Green (secondary token)
+  good: colors.primary,         // Blue (primary token)
+  moderate: '#FBBF24',          // Yellow (standard warning)
+  low: '#FB923C',               // Orange (standard caution)
+  veryLow: '#EF4444',           // Red (standard danger)
+} as const;
+
 /**
  * Get color based on confidence level
  */
 function getConfidenceColor(value: number): string {
-  if (value >= 80) return '#70DF82'; // Green (secondary)
-  if (value >= 60) return '#87CEEB'; // Blue (primary)
-  if (value >= 40) return '#FBBF24'; // Yellow
-  if (value >= 20) return '#FB923C'; // Orange
-  return '#EF4444'; // Red
+  if (value >= 80) return confidenceLevelColors.high;
+  if (value >= 60) return confidenceLevelColors.good;
+  if (value >= 40) return confidenceLevelColors.moderate;
+  if (value >= 20) return confidenceLevelColors.low;
+  return confidenceLevelColors.veryLow;
 }
 
 /**
@@ -49,9 +57,11 @@ export function ConfidenceGauge({
   const config = SIZE_MAP[size];
   const radius = (config.diameter - config.stroke) / 2;
   const circumference = 2 * Math.PI * radius;
-  const progress = Math.min(100, Math.max(0, value));
+  // Guard against NaN/undefined values - Sprint 11b bugfix
+  const safeValue = Number.isFinite(value) ? value : 0;
+  const progress = Math.min(100, Math.max(0, safeValue));
   const offset = circumference - (progress / 100) * circumference;
-  const color = getConfidenceColor(value);
+  const color = getConfidenceColor(safeValue);
 
   return (
     <div
@@ -94,7 +104,7 @@ export function ConfidenceGauge({
         {showValue && (
           <div className="absolute inset-0 flex items-center justify-center">
             <span className={cn('font-price font-bold', config.fontSize)}>
-              {Math.round(value)}%
+              {Math.round(safeValue)}%
             </span>
           </div>
         )}

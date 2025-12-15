@@ -1,51 +1,19 @@
 /**
- * TriggerContext - Coordinates agent triggers and scheduling
+ * TriggerContext - Coordinates agent triggers and scheduling via Web Worker
  *
- * Sprint 11a: Wires @ownyou/triggers to consumer app
- * v13 Section 3 - Mission Agent System
- *
- * ACTUAL EXPORTS from @ownyou/triggers (verified from source):
- * - TriggerEngine (class) - constructor(config: TriggerEngineConfig)
- *   config = { store: AgentStore, llm?, userId, watchNamespaces: string[], schedules?, agentFactory }
- *   agentFactory = (type: AgentType) => BaseAgent | null (NOT async)
- * - TriggerEngineStats = { running, dataTriggersProcessed, scheduledTriggersProcessed, ... }
- * - TriggerResult = { trigger, agentType, mission?, skipped?, ... }
- * - handleUserRequest returns Promise<TriggerResult> (single result, not array)
+ * Sprint 11a Refactor: Moves execution to `agent.worker.ts`
  *
  * Responsibilities:
- * 1. Initialize TriggerEngine with store and agentFactory
- * 2. Watch IAB classifications and trigger agents
- * 3. Schedule daily/weekly agent runs
- * 4. Route user requests to appropriate agents
- * 5. Collect mission cards from agent runs
+ * 1. Initialize Agent Worker
+ * 2. Proxy user requests to worker
+ * 3. Expose worker stats and status
+ * 4. Maintain context interface for consumers
  */
 
-import { createContext, useContext, useEffect, useRef, useCallback, useState, type ReactNode } from 'react';
-import type { AgentType, MissionCard } from '@ownyou/shared-types';
-import {
-  TriggerEngine,
-  AgentRegistry,
-  DEFAULT_AGENT_REGISTRY,
-  type TriggerEngineConfig,
-  type TriggerEngineStats,
-  type TriggerResult,
-} from '@ownyou/triggers';
-import { NAMESPACES } from '@ownyou/shared-types';
-import { useStore } from './StoreContext';
-import { useAuth } from './AuthContext';
-
-// Import actual agents (only those that are built)
-import { ShoppingAgent } from '@ownyou/agents-shopping';
-import { RestaurantAgent } from '@ownyou/agents-restaurant';
-import { TravelAgent } from '@ownyou/agents-travel';
-// Note: @ownyou/agents-events and @ownyou/agents-diagnostic are not built yet
-// import { EventsAgent } from '@ownyou/agents-events';
-// import { DiagnosticAgent } from '@ownyou/agents-diagnostic';
-
-/**
- * Agent factory type - must be synchronous per TriggerEngine API
- */
-type AgentFactory = (type: AgentType) => unknown | null;
+import { createContext, useContext, type ReactNode } from 'react';
+import type { MissionCard } from '@ownyou/shared-types';
+import type { TriggerEngineStats, TriggerResult } from '@ownyou/triggers';
+import { useAgentWorker } from '../hooks/useAgentWorker';
 
 interface TriggerContextValue {
   /** Handle a user request (NL intent routing) */
@@ -77,167 +45,29 @@ interface TriggerProviderProps {
 }
 
 export function TriggerProvider({ children }: TriggerProviderProps) {
-  const { store, isReady } = useStore();
-  const { wallet, isAuthenticated } = useAuth();
-  const userId = wallet?.address ?? 'anonymous';
+  // Use the worker hook instead of local instantiation
+  const { 
+    isRunning, 
+    stats, 
+    handleUserRequest: workerHandleRequest, 
+    start, 
+    stop 
+  } = useAgentWorker();
 
-  const [isRunning, setIsRunning] = useState(false);
-  const [isExecuting, setIsExecuting] = useState(false);
-  const [recentMissions, setRecentMissions] = useState<MissionCard[]>([]);
+  // TODO: We need a way to get missions back from the worker
+  // For now, we rely on the UI reading from the Store directly (which the worker writes to)
+  const recentMissions: MissionCard[] = []; 
 
-  const engineRef = useRef<TriggerEngine | null>(null);
-
-  /**
-   * Synchronous agent factory as required by TriggerEngine API
-   * Actual API: (type: AgentType) => BaseAgent | null (NOT async)
-   *
-   * Creates agent instances from pre-imported agent classes.
-   * Uses AgentRegistry to check if agent type is enabled.
-   */
-  const agentRegistry = useRef(new AgentRegistry(DEFAULT_AGENT_REGISTRY));
-
-  const agentFactory = useCallback((): AgentFactory => {
-    return (agentType: AgentType): unknown | null => {
-      // Check if agent type is registered and enabled
-      const entry = agentRegistry.current.getAgent(agentType);
-      if (!entry?.enabled) {
-        console.log(`[TriggerContext] Agent ${agentType} not enabled or not registered`);
-        return null;
-      }
-
-      // Create agent instance based on type
-      // Only built agents are available
-      switch (agentType) {
-        case 'shopping':
-          return new ShoppingAgent();
-        case 'restaurant':
-          return new RestaurantAgent();
-        case 'travel':
-          return new TravelAgent();
-        // TODO: Add when packages are built
-        // case 'events':
-        //   return new EventsAgent();
-        // case 'diagnostic':
-        //   return new DiagnosticAgent();
-        default:
-          console.log(`[TriggerContext] Agent type '${agentType}' not available (package may not be built)`);
-          return null;
-      }
-    };
-  }, []);
-
-  /**
-   * Initialize TriggerEngine when store is ready
-   * Actual API: new TriggerEngine(config: TriggerEngineConfig)
-   * config = { store, llm?, userId, watchNamespaces: string[], schedules?, agentFactory }
-   *
-   * Note: watchNamespaces expects string[] - namespace base names, not tuples
-   */
-  useEffect(() => {
-    if (!isReady || !isAuthenticated || !store) {
-      return;
-    }
-
-    // Create engine config using actual TriggerEngineConfig type
-    // watchNamespaces expects string[] - just the namespace base names
-    const engineConfig = {
-      store: store,
-      userId,
-      // Watch IAB namespace for new classifications (string namespace names)
-      watchNamespaces: [
-        NAMESPACES.IAB_CLASSIFICATIONS,
-        NAMESPACES.MISSION_FEEDBACK,
-      ],
-      // Schedule daily digest and weekly reflection
-      schedules: {
-        daily_digest: '0 9 * * *',     // 9 AM daily
-        weekly_summary: '0 10 * * 0',  // 10 AM Sunday
-      },
-      // Synchronous agent factory (required by TriggerEngine API)
-      agentFactory: agentFactory(),
-    } as unknown as TriggerEngineConfig;
-
-    engineRef.current = new TriggerEngine(engineConfig);
-    console.log('[TriggerContext] TriggerEngine initialized');
-
-    // AUTO-START: Begin watching for IAB classifications immediately
-    // This ensures missions are generated as soon as data is classified
-    engineRef.current.start();
-    setIsRunning(true);
-    console.log('[TriggerContext] TriggerEngine auto-started - watching for new classifications');
-
-    return () => {
-      if (engineRef.current) {
-        engineRef.current.stop();
-        engineRef.current = null;
-        setIsRunning(false);
-      }
-    };
-  }, [isReady, isAuthenticated, store, userId, agentFactory]);
-
-  /**
-   * Handle user request via natural language intent routing
-   * Actual API: TriggerEngine.handleUserRequest(query: string) -> Promise<TriggerResult>
-   * TriggerResult = { trigger, agentType, mission?, skipped?, skipReason?, processingTimeMs? }
-   */
-  const handleUserRequest = useCallback(async (request: string): Promise<TriggerResult | null> => {
-    if (!engineRef.current) return null;
-
-    setIsExecuting(true);
+  const handleUserRequest = async (request: string): Promise<TriggerResult | null> => {
     try {
-      // Use TriggerEngine's handleUserRequest method
-      // Returns single TriggerResult, not array
-      const result = await engineRef.current.handleUserRequest(request);
-
-      // Store mission card in recent missions if present
-      if (result?.mission) {
-        setRecentMissions(prev => [result.mission!, ...prev.slice(0, 9)]);
-      }
-
-      return result;
+      return await workerHandleRequest(request);
     } catch (error) {
-      console.error('[TriggerContext] handleUserRequest failed:', error);
-      return null;
-    } finally {
-      setIsExecuting(false);
-    }
-  }, []);
-
-  /**
-   * Start the trigger engine
-   */
-  const start = useCallback(() => {
-    if (engineRef.current && !isRunning) {
-      engineRef.current.start();
-      setIsRunning(true);
-      console.log('[TriggerContext] Trigger engine started');
-    }
-  }, [isRunning]);
-
-  /**
-   * Stop the trigger engine
-   */
-  const stop = useCallback(() => {
-    if (engineRef.current && isRunning) {
-      engineRef.current.stop();
-      setIsRunning(false);
-      console.log('[TriggerContext] Trigger engine stopped');
-    }
-  }, [isRunning]);
-
-  /**
-   * Get stats about trigger activity
-   * Actual API: engine.getStats() -> TriggerEngineStats
-   * TriggerEngineStats = { running, dataTriggersProcessed, scheduledTriggersProcessed,
-   *                       eventTriggersProcessed, userTriggersProcessed, totalTriggersProcessed,
-   *                       lastTriggerAt?, failedTriggers }
-   */
-  const getStats = useCallback((): TriggerEngineStats | null => {
-    if (!engineRef.current) {
+      console.error('[TriggerContext] Request failed:', error);
       return null;
     }
-    return engineRef.current.getStats();
-  }, []);
+  };
+
+  const getStats = () => stats;
 
   const value: TriggerContextValue = {
     handleUserRequest,
@@ -246,7 +76,7 @@ export function TriggerProvider({ children }: TriggerProviderProps) {
     stop,
     getStats,
     recentMissions,
-    isExecuting,
+    isExecuting: false, // TODO: Add granular execution state to worker stats
   };
 
   return (

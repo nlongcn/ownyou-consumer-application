@@ -232,6 +232,63 @@ function _checkContinuationConditional(                                         
 export type IABClassifierWorkflow = ReturnType<typeof buildWorkflowGraph>
 
 /**
+ * LLM configuration for IAB classification.
+ * Contains API keys and provider settings.
+ */
+export interface LLMConfig {
+  api_key?: string
+  provider?: string
+  model?: string
+  base_url?: string // For Ollama
+}
+
+/**
+ * Get LLM configuration from Vite environment variables.
+ * Uses VITE_ prefix for browser-side environment variables.
+ */
+export function getLLMConfigFromEnv(): { provider: string; model: string; llm_config: LLMConfig } {
+  // In browser, use import.meta.env; in Node, use process.env
+  const env = typeof import.meta !== 'undefined' ? (import.meta as any).env || {} : (globalThis as any).process?.env || {}
+
+  const provider = env.VITE_LLM_PROVIDER || 'openai'
+  const model = env.VITE_LLM_MODEL || 'gpt-4o-mini'
+
+  // Get API key for the selected provider
+  let api_key = ''
+  switch (provider.toLowerCase()) {
+    case 'openai':
+      api_key = env.VITE_OPENAI_API_KEY || ''
+      break
+    case 'anthropic':
+    case 'claude':
+      api_key = env.VITE_ANTHROPIC_API_KEY || ''
+      break
+    case 'google':
+    case 'gemini':
+      api_key = env.VITE_GOOGLE_API_KEY || ''
+      break
+    case 'groq':
+      api_key = env.VITE_GROQ_API_KEY || ''
+      break
+    case 'deepinfra':
+      api_key = env.VITE_DEEPINFRA_API_KEY || ''
+      break
+    case 'mistral':
+      api_key = env.VITE_MISTRAL_API_KEY || ''
+      break
+    case 'ollama':
+      // Ollama doesn't need an API key
+      break
+  }
+
+  return {
+    provider,
+    model,
+    llm_config: { api_key, provider, model }
+  }
+}
+
+/**
  * Create IAB Classifier with full workflow execution.
  *
  * 1:1 port of Python run_workflow() from executor.py:31-204
@@ -245,9 +302,23 @@ export function createIABClassifier(options: {
   checkpointer?: any
   store: IndexedDBStore
   llm?: any
+  /** LLM provider name (openai, anthropic, etc.) */
+  llm_provider?: string
+  /** LLM model name */
+  llm_model?: string
+  /** LLM configuration with API keys */
+  llm_config?: LLMConfig
 }) {
-  const { checkpointer, store } = options
+  const { checkpointer, store, llm_provider, llm_model, llm_config } = options
   const graph = buildWorkflowGraph(store, checkpointer)
+
+  // Get config from env if not provided
+  const envConfig = getLLMConfigFromEnv()
+  const finalProvider = llm_provider || envConfig.provider
+  const finalModel = llm_model || envConfig.model
+  const finalLLMConfig = llm_config || envConfig.llm_config
+
+  console.log(`📊 IAB Classifier initialized: provider=${finalProvider}, model=${finalModel}, hasApiKey=${!!finalLLMConfig.api_key}`)
 
   return {
     invoke: async (input: any, config?: any) => {
@@ -266,8 +337,9 @@ export function createIABClassifier(options: {
           from: '',
           summary: input.text,
         }],
-        llm_provider: 'openai',
-        llm_model: 'gpt-4o',
+        llm_provider: finalProvider,
+        llm_model: finalModel,
+        llm_config: finalLLMConfig,
         llm_client: input.llm_client,
       }
 

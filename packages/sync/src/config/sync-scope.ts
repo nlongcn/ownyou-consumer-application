@@ -8,6 +8,7 @@
  */
 
 import type { SyncScopeConfig, SelectiveRule } from '../types.js';
+import { NAMESPACES } from '@ownyou/shared-types';
 
 /**
  * Episodic memory sync rules
@@ -30,53 +31,53 @@ export const EPISODIC_SYNC_RULES: SelectiveRule[] = [
  */
 export const SYNC_SCOPE_BY_NAMESPACE: Record<string, SyncScopeConfig> = {
   // ✅ Full sync - User data that must be consistent across devices
-  'ownyou.semantic': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.procedural': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.entities': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.relationships': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.summaries': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.iab': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.ikigai': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.ikigai_evidence': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.missions': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.mission_feedback': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.earnings': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.pseudonyms': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.disclosures': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.tracking_consents': { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.SEMANTIC_MEMORY]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.PROCEDURAL_MEMORY]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.ENTITIES]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.RELATIONSHIPS]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.COMMUNITY_SUMMARIES]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.IAB_CLASSIFICATIONS]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.IKIGAI_PROFILE]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.IKIGAI_EVIDENCE]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.MISSION_CARDS]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.MISSION_FEEDBACK]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.EARNINGS]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.PSEUDONYMS]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.DISCLOSURE_HISTORY]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.TRACKING_CONSENTS]: { shouldSync: true, syncStrategy: 'full' },
 
   // Sprint 7: Agent-specific namespaces - Full sync
-  'ownyou.dining_reservations': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.restaurant_favorites': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.event_tickets': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.event_favorites': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.travel_itineraries': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.travel_preferences': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.calendar': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.financial_profile': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.interests': { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.DINING_RESERVATIONS]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.RESTAURANT_FAVORITES]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.EVENT_TICKETS]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.EVENT_FAVORITES]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.TRAVEL_ITINERARIES]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.TRAVEL_PREFERENCES]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.CALENDAR]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.FINANCIAL_PROFILE]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.INTERESTS]: { shouldSync: true, syncStrategy: 'full' },
 
   // Sprint 8: Data source namespaces - Selective sync
-  'ownyou.financial_transactions': {
+  [NAMESPACES.FINANCIAL_TRANSACTIONS]: {
     shouldSync: true,
     syncStrategy: 'selective',
     selectiveRules: [{ condition: 'age_days_less_than', value: 90 }],
   },
-  'ownyou.calendar_events': {
+  [NAMESPACES.CALENDAR_EVENTS]: {
     shouldSync: true,
     syncStrategy: 'selective',
     selectiveRules: [{ condition: 'age_days_less_than', value: 90 }],
   },
-  'ownyou.calendar_profile': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.calendar_contacts': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.diagnostic_reports': { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.CALENDAR_PROFILE]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.CALENDAR_CONTACTS]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.DIAGNOSTIC_REPORTS]: { shouldSync: true, syncStrategy: 'full' },
 
   // Reflection state - Full sync for consistency
-  'ownyou.reflection': { shouldSync: true, syncStrategy: 'full' },
-  'ownyou.llm_budget': { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.REFLECTION_STATE]: { shouldSync: true, syncStrategy: 'full' },
+  [NAMESPACES.LLM_BUDGET]: { shouldSync: true, syncStrategy: 'full' },
 
   // ⚠️ Selective sync - Episodic memory
-  'ownyou.episodic': {
+  [NAMESPACES.EPISODIC_MEMORY]: {
     shouldSync: true,
     syncStrategy: 'selective',
     selectiveRules: EPISODIC_SYNC_RULES,
@@ -87,7 +88,7 @@ export const SYNC_SCOPE_BY_NAMESPACE: Record<string, SyncScopeConfig> = {
   'ownyou.sync.metadata': { shouldSync: false },
   'ownyou.sync.queue': { shouldSync: false },
   'ownyou.temp': { shouldSync: false },
-  'ownyou.llm_cache': { shouldSync: false },
+  [NAMESPACES.LLM_CACHE]: { shouldSync: false },
 
   // Sprint 9: Debug namespaces - Device-local only
   'ownyou.debug.traces': { shouldSync: false },
@@ -95,9 +96,9 @@ export const SYNC_SCOPE_BY_NAMESPACE: Record<string, SyncScopeConfig> = {
   'ownyou.debug.llm': { shouldSync: false },
   'ownyou.debug.errors': { shouldSync: false },
   'ownyou.debug.audit': { shouldSync: false },
-  'ownyou.traces': { shouldSync: false },
-  'ownyou.llm_usage': { shouldSync: false },
-  'ownyou.sync_logs': { shouldSync: false },
+  [NAMESPACES.AGENT_TRACES]: { shouldSync: false },
+  [NAMESPACES.LLM_USAGE]: { shouldSync: false },
+  [NAMESPACES.SYNC_LOGS]: { shouldSync: false },
 };
 
 /**

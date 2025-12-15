@@ -1,0 +1,142 @@
+[
+  {
+    "timestamp": 1519,
+    "type": "debug",
+    "text": "[vite] connecting..."
+  },
+  {
+    "timestamp": 1541,
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold"
+  },
+  {
+    "timestamp": 1589,
+    "type": "log",
+    "text": "[Platform] Detection starting: {hostname: localhost, port: 3002, protocol: http:, hasTauri: false, tauriValue: undefined}"
+  },
+  {
+    "timestamp": 1590,
+    "type": "log",
+    "text": "[Platform] ✅ Detected TAURI via non-standard localhost port: 3002"
+  },
+  {
+    "timestamp": 1590,
+    "type": "log",
+    "text": "[Platform] Detection starting: {hostname: localhost, port: 3002, protocol: http:, hasTauri: false, tauriValue: undefined}"
+  },
+  {
+    "timestamp": 1590,
+    "type": "log",
+    "text": "[Platform] ✅ Detected TAURI via non-standard localhost port: 3002"
+  },
+  {
+    "timestamp": 1590,
+    "type": "warning",
+    "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+  },
+  {
+    "timestamp": 1590,
+    "type": "warning",
+    "text": "⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath."
+  },
+  {
+    "timestamp": 1591,
+    "type": "log",
+    "text": "[Platform] Detection starting: {hostname: localhost, port: 3002, protocol: http:, hasTauri: false, tauriValue: undefined}"
+  },
+  {
+    "timestamp": 1591,
+    "type": "log",
+    "text": "[Platform] ✅ Detected TAURI via non-standard localhost port: 3002"
+  },
+  {
+    "timestamp": 1591,
+    "type": "log",
+    "text": "[Platform] Detection starting: {hostname: localhost, port: 3002, protocol: http:, hasTauri: false, tauriValue: undefined}"
+  },
+  {
+    "timestamp": 1591,
+    "type": "log",
+    "text": "[Platform] ✅ Detected TAURI via non-standard localhost port: 3002"
+  },
+  {
+    "timestamp": 1593,
+    "type": "debug",
+    "text": "[vite] connected."
+  },
+  {
+    "timestamp": 1596,
+    "type": "warning",
+    "text": "[App] Deep link setup failed (expected in PWA): TypeError: Cannot read properties of undefined (reading 'transformCallback')\n    at transformCallback (http://localhost:3002/node_modules/.vite/deps/chunk-2SKSMPEK.js?v=9f787081:22:37)\n    at listen (http://localhost:3002/node_modules/.vite/deps/chunk-NBDWZ4Q2.js?v=9f787081:37:14)\n    at onOpenUrl (http://localhost:3002/node_modules/.vite/deps/@tauri-apps_plugin-deep-link.js?v=9f787081:23:16)\n    at setupDeepLinkHandler (http://localhost:3002/src/App.tsx:94:40)"
+  },
+  {
+    "timestamp": 1596,
+    "type": "warning",
+    "text": "[App] Deep link setup failed (expected in PWA): TypeError: Cannot read properties of undefined (reading 'transformCallback')\n    at transformCallback (http://localhost:3002/node_modules/.vite/deps/chunk-2SKSMPEK.js?v=9f787081:22:37)\n    at listen (http://localhost:3002/node_modules/.vite/deps/chunk-NBDWZ4Q2.js?v=9f787081:37:14)\n    at onOpenUrl (http://localhost:3002/node_modules/.vite/deps/@tauri-apps_plugin-deep-link.js?v=9f787081:23:16)\n    at setupDeepLinkHandler (http://localhost:3002/src/App.tsx:94:40)"
+  },
+  {
+    "timestamp": 4472,
+    "type": "log",
+    "text": "[Platform] Detection starting: {hostname: localhost, port: 3002, protocol: http:, hasTauri: false, tauriValue: undefined}"
+  },
+  {
+    "timestamp": 4472,
+    "type": "log",
+    "text": "[Platform] ✅ Detected TAURI via non-standard localhost port: 3002"
+  },
+  {
+    "timestamp": 4474,
+    "type": "log",
+    "text": "[Platform] Detection starting: {hostname: localhost, port: 3002, protocol: http:, hasTauri: false, tauriValue: undefined}"
+  },
+  {
+    "timestamp": 4474,
+    "type": "log",
+    "text": "[Platform] ✅ Detected TAURI via non-standard localhost port: 3002"
+  },
+  {
+    "timestamp": 4499,
+    "type": "log",
+    "text": "Store initialized with IndexedDB: ownyou_0x735653"
+  },
+  {
+    "timestamp": 4500,
+    "type": "log",
+    "text": "[TriggerContext] TriggerEngine initialized"
+  },
+  {
+    "timestamp": 4501,
+    "type": "log",
+    "text": "[StoreWatcher] Started watching: [ownyou.iab, ownyou.mission_feedback]"
+  },
+  {
+    "timestamp": 4501,
+    "type": "log",
+    "text": "[CronScheduler] Started with 2 schedules"
+  },
+  {
+    "timestamp": 4501,
+    "type": "log",
+    "text": "[TriggerEngine] Started"
+  },
+  {
+    "timestamp": 4501,
+    "type": "log",
+    "text": "  - Watching namespaces: ownyou.iab, ownyou.mission_feedback"
+  },
+  {
+    "timestamp": 4501,
+    "type": "log",
+    "text": "  - Active schedules: 2"
+  },
+  {
+    "timestamp": 4501,
+    "type": "log",
+    "text": "[TriggerContext] TriggerEngine auto-started - watching for new classifications"
+  },
+  {
+    "timestamp": 4504,
+    "type": "log",
+    "text": "[MemoryContext] Reflection trigger manager initialized"
+  }
+]

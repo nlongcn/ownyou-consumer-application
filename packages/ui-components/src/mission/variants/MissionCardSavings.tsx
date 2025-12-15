@@ -3,8 +3,7 @@
  * v13 Section 4.5.1 - Savings card (284px height)
  */
 
-import React from 'react';
-import { cn, Card, CardContent } from '@ownyou/ui-design-system';
+import { cn, Card, CardContent, cardDimensions, cardHeights, radius } from '@ownyou/ui-design-system';
 import { FeedbackHeart } from '../FeedbackHeart';
 import type { Mission, HeartState } from '../../types';
 
@@ -34,17 +33,18 @@ export function MissionCardSavings({
     <Card
       className={cn(
         'relative overflow-hidden cursor-pointer',
-        'w-[180px] md:w-[220px] lg:w-[260px]',
         'transition-transform duration-200 hover:scale-[1.02]',
         'active:scale-[0.98]',
         'bg-ownyou-secondary/10', // Light mint tint for savings
         className,
       )}
-      style={{ height: '284px' }}
+      style={{ width: cardDimensions.width, height: cardHeights.savings }}
       onClick={onClick}
       role="article"
       aria-label={`Savings: ${mission.title}`}
       data-testid={`mission-card-savings-${mission.id}`}
+      data-mission-card
+      data-mission-id={mission.id}
     >
       {/* Image */}
       <div className="relative w-full h-[50%] overflow-hidden">
@@ -52,11 +52,15 @@ export function MissionCardSavings({
           <img
             src={mission.imageUrl}
             alt={mission.title}
-            className="w-full h-full object-cover rounded-t-[21px]"
+            className="w-full h-full object-cover"
+            style={{ borderTopLeftRadius: radius.imageLarge, borderTopRightRadius: radius.imageLarge }}
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-placeholder rounded-t-[21px]" />
+          <div
+            className="w-full h-full bg-placeholder"
+            style={{ borderTopLeftRadius: radius.imageLarge, borderTopRightRadius: radius.imageLarge }}
+          />
         )}
 
         {/* Brand Logo */}

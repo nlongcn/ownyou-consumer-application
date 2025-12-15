@@ -35,12 +35,31 @@ export const radius = {
 export const cardDimensions = {
   /** Standard mobile card width */
   width: '180px',
+  /** Tablet card width */
+  widthTablet: '220px',
   /** Desktop card width (responsive) */
   widthDesktop: '260px',
   /** Gap between cards in grid */
   gap: '13px',
   /** Feed side padding */
   feedPadding: '10px',
+  /** Negative overlap for masonry */
+  overlapMargin: '-13px',
+} as const;
+
+/**
+ * Card height values by type
+ */
+export const cardHeights = {
+  shopping: '290px',
+  savings: '284px',
+  consumables: '284px',
+  content: '284px',
+  travel: '208px',
+  entertainment: '207px',
+  food: '287px',
+  people: '210px',
+  health: '180px',
 } as const;
 
 /**

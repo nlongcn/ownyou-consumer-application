@@ -241,6 +241,33 @@ export async function importKey(
 }
 
 /**
+ * Derive an encryption password from a wallet signature
+ *
+ * This returns a deterministic password string suitable for
+ * OrbitDB's SimpleEncryption module.
+ *
+ * @param wallet - Wallet provider
+ * @param purpose - Key purpose ('sync' or 'backup')
+ * @returns Password string for encryption
+ */
+export async function deriveEncryptionPassword(
+  wallet: WalletProvider,
+  purpose: KeyPurpose
+): Promise<string> {
+  // Sign a deterministic message for password derivation
+  const message = `ownyou-${purpose}-password-v1`;
+  const signature = await wallet.signMessage(message);
+
+  // Hash signature to get deterministic password
+  const hash = sha256(new TextEncoder().encode(signature));
+
+  // Convert to hex string for use as password
+  return Array.from(hash)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+/**
  * Create a mock wallet provider for testing
  *
  * DO NOT USE IN PRODUCTION

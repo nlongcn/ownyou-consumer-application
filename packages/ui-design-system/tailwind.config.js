@@ -37,6 +37,19 @@ module.exports = {
           'card-bg-alt': '#F4F5F7',
           placeholder: '#D9D9D9',
         },
+        // Brand colors for OAuth providers
+        brand: {
+          microsoft: '#2f2f2f',
+          apple: '#000000',
+          google: '#4285F4',
+        },
+        // Ikigai dimension colors
+        ikigai: {
+          experiences: '#FF6B6B',
+          relationships: '#4ECDC4',
+          interests: '#45B7D1',
+          giving: '#96CEB4',
+        },
       },
 
       // Font Family - v13 Section 4.3.2

@@ -33,13 +33,15 @@
     "@ownyou/shared-types": "workspace:*"
   },
   "devDependencies": {
+    "@tauri-apps/plugin-http": "^2.0.0",
     "typescript": "^5.3.3",
     "vitest": "^1.6.0"
   },
   "peerDependencies": {
     "openai": "^4.0.0",
     "@anthropic-ai/sdk": "^0.32.0",
-    "@mlc-ai/web-llm": "^0.2.0"
+    "@mlc-ai/web-llm": "^0.2.0",
+    "@tauri-apps/plugin-http": "^2.0.0"
   },
   "peerDependenciesMeta": {
     "openai": {
@@ -49,6 +51,9 @@
       "optional": true
     },
     "@mlc-ai/web-llm": {
+      "optional": true
+    },
+    "@tauri-apps/plugin-http": {
       "optional": true
     }
   }

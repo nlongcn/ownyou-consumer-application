@@ -6,6 +6,8 @@
  * @see docs/architecture/OwnYou_architecture_v13.md Section 5.4
  */
 
+import { NAMESPACES } from '@ownyou/shared-types';
+
 /**
  * Cloud storage provider types
  */
@@ -94,9 +96,9 @@ export interface BackupPolicy {
  */
 export const DEFAULT_BACKUP_POLICY: BackupPolicy = {
   frequency: {
-    realtime: ['ownyou.earnings', 'ownyou.missions.completions'],
-    hourly: ['ownyou.iab', 'ownyou.ikigai'],
-    daily: ['ownyou.preferences', 'ownyou.semantic', 'ownyou.episodic'],
+    realtime: [NAMESPACES.EARNINGS, 'ownyou.missions.completions'],
+    hourly: [NAMESPACES.IAB_CLASSIFICATIONS, NAMESPACES.IKIGAI_PROFILE],
+    daily: ['ownyou.preferences', NAMESPACES.SEMANTIC_MEMORY, NAMESPACES.EPISODIC_MEMORY],
   },
   retention: {
     snapshots: 7,

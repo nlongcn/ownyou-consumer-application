@@ -23,10 +23,18 @@ import { DEFAULT_SYNC_CONFIG } from '../types.js';
 import * as OfflineQueue from './offline-queue.js';
 import type { OfflineQueueState } from './offline-queue.js';
 import * as VClock from './vector-clock.js';
-import { deriveEncryptionKey, encrypt, decrypt } from '../encryption/wallet-encryption.js';
+import { deriveEncryptionKey, deriveEncryptionPassword, encrypt, decrypt } from '../encryption/wallet-encryption.js';
 import { shouldSyncNamespace, getSyncScopeConfig, shouldSyncItem } from '../config/sync-scope.js';
 import { resolveConflict, createInitialState, serializeState, deserializeState } from '../crdt/conflict-resolver.js';
 import type { CRDTState } from '../crdt/conflict-resolver.js';
+import { createHeliaNode, type HeliaNode } from './helia-node.js';
+import {
+  createOrbitDBClient,
+  getOrbitDBNameForNamespace,
+  getOrbitDBTypeForNamespace,
+  type OrbitDBClient,
+  type OrbitDBDatabase,
+} from './orbitdb-client.js';
 
 /**
  * Store interface (abstracted to avoid circular dependency)
@@ -54,6 +62,14 @@ interface SyncLayerState {
   eventListeners: Set<(event: SyncEvent) => void>;
   syncIntervalId: ReturnType<typeof setInterval> | null;
   deviceId: string;
+  /** Helia IPFS node */
+  heliaNode: HeliaNode | null;
+  /** OrbitDB client */
+  orbitdbClient: OrbitDBClient | null;
+  /** Open OrbitDB databases by namespace */
+  orbitdbDatabases: Map<string, OrbitDBDatabase>;
+  /** Wallet address for identity */
+  walletAddress: string | null;
 }
 
 /**
@@ -89,6 +105,10 @@ export function createSyncLayer(config: SyncLayerConfig): SyncLayer {
     eventListeners: new Set(),
     syncIntervalId: null,
     deviceId,
+    heliaNode: null,
+    orbitdbClient: null,
+    orbitdbDatabases: new Map(),
+    walletAddress: null,
   };
 
   /**
@@ -121,6 +141,9 @@ export function createSyncLayer(config: SyncLayerConfig): SyncLayer {
 
     state.store = store;
 
+    // Get wallet address for identity
+    state.walletAddress = await config.walletProvider.getWalletAddress();
+
     // Derive encryption key from wallet
     const keyResult = await deriveEncryptionKey(config.walletProvider, 'sync');
     state.encryptionKey = keyResult.key;
@@ -136,6 +159,31 @@ export function createSyncLayer(config: SyncLayerConfig): SyncLayer {
       }
     } catch {
       // No persisted queue, use fresh one
+    }
+
+    // Derive encryption password for OrbitDB SimpleEncryption
+    const encryptionPassword = await deriveEncryptionPassword(config.walletProvider, 'sync');
+
+    // Initialize Helia and OrbitDB for peer-to-peer sync
+    try {
+      state.heliaNode = await createHeliaNode({
+        platform: config.platform,
+        enableRelay: true,
+      });
+
+      state.orbitdbClient = await createOrbitDBClient({
+        heliaNode: state.heliaNode,
+        walletAddress: state.walletAddress,
+        encryptionPassword, // Pass wallet-derived password for E2EE
+      });
+
+      emitEvent('sync_started', {
+        peerId: state.heliaNode.getPeerId(),
+        multiaddrs: state.heliaNode.getMultiaddrs(),
+      });
+    } catch (err) {
+      // OrbitDB/Helia not available - continue in offline-only mode
+      console.warn('OrbitDB/Helia initialization failed, running in offline mode:', err);
     }
 
     state.initialized = true;
@@ -194,6 +242,36 @@ export function createSyncLayer(config: SyncLayerConfig): SyncLayer {
       );
     }
 
+    // Close all OrbitDB databases
+    for (const db of state.orbitdbDatabases.values()) {
+      try {
+        await db.close();
+      } catch (err) {
+        console.warn('Failed to close database:', err);
+      }
+    }
+    state.orbitdbDatabases.clear();
+
+    // Stop OrbitDB client
+    if (state.orbitdbClient) {
+      try {
+        await state.orbitdbClient.stop();
+      } catch (err) {
+        console.warn('Failed to stop OrbitDB:', err);
+      }
+      state.orbitdbClient = null;
+    }
+
+    // Stop Helia node
+    if (state.heliaNode) {
+      try {
+        await state.heliaNode.stop();
+      } catch (err) {
+        console.warn('Failed to stop Helia:', err);
+      }
+      state.heliaNode = null;
+    }
+
     state.started = false;
     state.syncState = 'offline';
   }
@@ -233,6 +311,84 @@ export function createSyncLayer(config: SyncLayerConfig): SyncLayer {
   }
 
   /**
+   * Get or create an OrbitDB database for a namespace
+   */
+  async function getOrCreateDatabase(namespace: string): Promise<OrbitDBDatabase | null> {
+    if (!state.orbitdbClient || !state.walletAddress) {
+      return null;
+    }
+
+    // Check if already open
+    if (state.orbitdbDatabases.has(namespace)) {
+      return state.orbitdbDatabases.get(namespace)!;
+    }
+
+    // Create new database
+    const dbName = getOrbitDBNameForNamespace(namespace, state.walletAddress);
+    const dbType = getOrbitDBTypeForNamespace(namespace);
+
+    const db = await state.orbitdbClient.open(dbName, { type: dbType });
+    state.orbitdbDatabases.set(namespace, db);
+
+    // Subscribe to updates from other peers
+    db.onUpdate((entry) => {
+      handleRemoteUpdate(namespace, entry.key, entry.value);
+    });
+
+    return db;
+  }
+
+  /**
+   * Handle an update received from a remote peer via OrbitDB
+   */
+  async function handleRemoteUpdate(
+    namespace: string,
+    key: string,
+    encryptedValue: unknown
+  ): Promise<void> {
+    if (!state.encryptionKey || !state.store) {
+      return;
+    }
+
+    try {
+      // Decrypt the value
+      const encrypted = encryptedValue as Uint8Array;
+      const decrypted = await decrypt(encrypted, state.encryptionKey);
+      const json = new TextDecoder().decode(decrypted);
+      const remoteData = JSON.parse(json);
+
+      // Resolve conflicts using CRDT
+      const localData = await state.store.get([namespace, state.deviceId], key);
+
+      if (localData) {
+        // Both have data - resolve conflict
+        const localState = createInitialState(namespace, localData, state.deviceId);
+        const remoteState = createInitialState(namespace, remoteData.value, remoteData.deviceId);
+
+        const resolution = resolveConflict(namespace, localState, remoteState);
+
+        if (resolution.hadConflict) {
+          emitEvent('conflict_resolved', {
+            namespace,
+            key,
+            winningDeviceId: resolution.winningDeviceId,
+          });
+        }
+
+        // Store merged result
+        await state.store.put([namespace], key, resolution.mergedState);
+      } else {
+        // Only remote has data - just store it
+        await state.store.put([namespace], key, remoteData.value);
+      }
+
+      emitEvent('sync_completed', { namespace, key });
+    } catch (err) {
+      console.error('Failed to handle remote update:', err);
+    }
+  }
+
+  /**
    * Flush pending offline queue entries
    */
   async function flushOfflineQueue(): Promise<void> {
@@ -258,13 +414,24 @@ export function createSyncLayer(config: SyncLayerConfig): SyncLayer {
           operation: entry.operation,
           timestamp: entry.timestamp,
           vectorClock: entry.vectorClock,
+          deviceId: state.deviceId,
         };
 
         const plaintext = new TextEncoder().encode(JSON.stringify(payload));
         const encrypted = await encrypt(plaintext, state.encryptionKey);
 
-        // In a real implementation, this would send to OrbitDB/peers
-        // For now, we mark as synced locally
+        // Get or create OrbitDB database for this namespace
+        const db = await getOrCreateDatabase(entry.namespace);
+
+        if (db) {
+          // Send to OrbitDB - this will replicate to peers
+          if (entry.operation === 'put') {
+            await db.put(entry.key, encrypted);
+          } else if (entry.operation === 'delete') {
+            await db.del(entry.key);
+          }
+        }
+
         syncedIds.push(entry.id);
       } catch (err) {
         console.error('Failed to sync entry:', entry.id, err);
@@ -285,13 +452,77 @@ export function createSyncLayer(config: SyncLayerConfig): SyncLayer {
    * Fetch updates from connected peers
    */
   async function fetchPeerUpdates(): Promise<void> {
-    // In a real implementation, this would:
-    // 1. Connect to OrbitDB peers
-    // 2. Fetch their updates
-    // 3. Decrypt and merge using CRDTs
+    if (!state.orbitdbClient || !state.heliaNode) {
+      // No OrbitDB connection - nothing to fetch
+      return;
+    }
 
-    // Placeholder for peer fetching logic
-    // This would be implemented with actual OrbitDB integration
+    // OrbitDB automatically syncs when connected to peers
+    // Here we just ensure our databases are open for replication
+
+    // Get all syncable namespaces and ensure databases are open
+    const syncableNamespaces = await getSyncableNamespacesFromStore();
+
+    for (const namespace of syncableNamespaces) {
+      try {
+        await getOrCreateDatabase(namespace);
+      } catch (err) {
+        console.warn(`Failed to open database for ${namespace}:`, err);
+      }
+    }
+
+    // Update peer count from libp2p connections
+    const connections = (state.heliaNode.libp2p as { getConnections(): unknown[] }).getConnections();
+
+    // Update peers map
+    for (const conn of connections as Array<{ remotePeer: { toString(): string } }>) {
+      const peerId = conn.remotePeer.toString();
+      if (!state.peers.has(peerId)) {
+        state.peers.set(peerId, {
+          deviceId: peerId,
+          lastSeen: Date.now(),
+          connectionState: 'connected',
+        });
+        emitEvent('peer_connected', { peerId });
+      }
+    }
+  }
+
+  /**
+   * Get syncable namespaces from the store
+   */
+  async function getSyncableNamespacesFromStore(): Promise<string[]> {
+    if (!state.store) {
+      return [];
+    }
+
+    // Get namespaces that have data and should sync
+    const namespaces: string[] = [];
+
+    // Check known syncable namespaces
+    const knownNamespaces = [
+      'ownyou.semantic',
+      'ownyou.episodic',
+      'ownyou.entities',
+      'ownyou.iab',
+      'ownyou.missions',
+      'ownyou.earnings',
+    ];
+
+    for (const ns of knownNamespaces) {
+      if (shouldSyncNamespace(ns)) {
+        try {
+          const entries = await state.store.list([ns]);
+          if (entries.length > 0) {
+            namespaces.push(ns);
+          }
+        } catch {
+          // Namespace doesn't exist yet
+        }
+      }
+    }
+
+    return namespaces;
   }
 
   /**

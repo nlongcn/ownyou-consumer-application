@@ -3,8 +3,7 @@
  * v13 Section 4.5.1 - Travel card (208px height)
  */
 
-import React from 'react';
-import { cn, Card, CardContent } from '@ownyou/ui-design-system';
+import { cn, Card, CardContent, cardDimensions, cardHeights } from '@ownyou/ui-design-system';
 import { FeedbackHeart } from '../FeedbackHeart';
 import type { Mission, HeartState } from '../../types';
 
@@ -34,16 +33,20 @@ export function MissionCardTravel({
     <Card
       className={cn(
         'relative overflow-hidden cursor-pointer',
-        'w-[180px] md:w-[220px] lg:w-[260px]',
         'transition-transform duration-200 hover:scale-[1.02]',
         'active:scale-[0.98]',
         className,
       )}
-      style={{ height: '208px' }}
+      style={{
+        width: cardDimensions.width,
+        height: cardHeights.travel,
+      }}
       onClick={onClick}
       role="article"
       aria-label={`Travel: ${mission.title}`}
       data-testid={`mission-card-travel-${mission.id}`}
+      data-mission-card
+      data-mission-id={mission.id}
     >
       {/* Full-bleed Image */}
       <div className="absolute inset-0 overflow-hidden">

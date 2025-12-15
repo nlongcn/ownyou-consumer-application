@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   getPlatform,
   isMobile,
@@ -127,13 +127,34 @@ describe('isPWAInstalled', () => {
 });
 
 describe('isTouchDevice', () => {
+  const originalOntouchstart = (window as { ontouchstart?: unknown }).ontouchstart;
+  const originalMaxTouchPoints = navigator.maxTouchPoints;
+
+  afterEach(() => {
+    // Restore originals
+    if (originalOntouchstart !== undefined) {
+      (window as { ontouchstart?: unknown }).ontouchstart = originalOntouchstart;
+    } else {
+      delete (window as { ontouchstart?: unknown }).ontouchstart;
+    }
+    Object.defineProperty(navigator, 'maxTouchPoints', { value: originalMaxTouchPoints, writable: true, configurable: true });
+  });
+
   it('returns false when no touch support', () => {
-    Object.defineProperty(navigator, 'maxTouchPoints', { value: 0, writable: true });
+    // Remove ontouchstart from window
+    delete (window as { ontouchstart?: unknown }).ontouchstart;
+    Object.defineProperty(navigator, 'maxTouchPoints', { value: 0, writable: true, configurable: true });
     expect(isTouchDevice()).toBe(false);
   });
 
-  it('returns true when touch is supported', () => {
-    Object.defineProperty(navigator, 'maxTouchPoints', { value: 1, writable: true });
+  it('returns true when touch is supported via maxTouchPoints', () => {
+    delete (window as { ontouchstart?: unknown }).ontouchstart;
+    Object.defineProperty(navigator, 'maxTouchPoints', { value: 1, writable: true, configurable: true });
+    expect(isTouchDevice()).toBe(true);
+  });
+
+  it('returns true when ontouchstart is in window', () => {
+    (window as { ontouchstart?: unknown }).ontouchstart = undefined;
     expect(isTouchDevice()).toBe(true);
   });
 });

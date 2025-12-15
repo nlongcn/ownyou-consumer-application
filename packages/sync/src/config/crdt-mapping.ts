@@ -7,6 +7,7 @@
  */
 
 import type { CRDTType } from '../types.js';
+import { NAMESPACES } from '@ownyou/shared-types';
 
 /**
  * Namespace to CRDT type mapping
@@ -19,49 +20,49 @@ import type { CRDTType } from '../types.js';
  */
 export const CRDT_TYPE_BY_NAMESPACE: Record<string, CRDTType> = {
   // G-Counter: Values that only increment
-  'ownyou.earnings': 'g-counter',
+  [NAMESPACES.EARNINGS]: 'g-counter',
   'ownyou.ikigai.points': 'g-counter',
   'ownyou.missions.completionCount': 'g-counter',
-  'ownyou.llm_usage': 'g-counter',
+  [NAMESPACES.LLM_USAGE]: 'g-counter',
 
   // PN-Counter: Values that can increment/decrement
   'ownyou.token.balance': 'pn-counter',
 
   // OR-Set: Collections with add/remove
-  'ownyou.iab': 'or-set',
+  [NAMESPACES.IAB_CLASSIFICATIONS]: 'or-set',
   'ownyou.missions.tags': 'or-set',
   'ownyou.sync.trustedPeers': 'or-set',
   'ownyou.missions.dismissed': 'or-set',
-  'ownyou.entities': 'or-set',
-  'ownyou.relationships': 'or-set',
-  'ownyou.interests': 'or-set',
-  'ownyou.restaurant_favorites': 'or-set',
-  'ownyou.event_favorites': 'or-set',
+  [NAMESPACES.ENTITIES]: 'or-set',
+  [NAMESPACES.RELATIONSHIPS]: 'or-set',
+  [NAMESPACES.INTERESTS]: 'or-set',
+  [NAMESPACES.RESTAURANT_FAVORITES]: 'or-set',
+  [NAMESPACES.EVENT_FAVORITES]: 'or-set',
 
   // LWW-Register: Atomic fields where latest wins
-  'ownyou.semantic': 'lww-register',
+  [NAMESPACES.SEMANTIC_MEMORY]: 'lww-register',
   'ownyou.preferences': 'lww-register',
   'ownyou.user.name': 'lww-register',
   'ownyou.notifications.settings': 'lww-register',
   'ownyou.sync.lastTimestamp': 'lww-register',
-  'ownyou.ikigai': 'lww-register',
-  'ownyou.procedural': 'lww-register',
-  'ownyou.travel_preferences': 'lww-register',
-  'ownyou.calendar_profile': 'lww-register',
-  'ownyou.financial_profile': 'lww-register',
+  [NAMESPACES.IKIGAI_PROFILE]: 'lww-register',
+  [NAMESPACES.PROCEDURAL_MEMORY]: 'lww-register',
+  [NAMESPACES.TRAVEL_PREFERENCES]: 'lww-register',
+  [NAMESPACES.CALENDAR_PROFILE]: 'lww-register',
+  [NAMESPACES.FINANCIAL_PROFILE]: 'lww-register',
 
   // LWW-Map: Maps where each key is independent LWW
-  'ownyou.missions': 'lww-map',
-  'ownyou.mission_feedback': 'lww-map',
+  [NAMESPACES.MISSION_CARDS]: 'lww-map',
+  [NAMESPACES.MISSION_FEEDBACK]: 'lww-map',
   'ownyou.dataSources.configs': 'lww-map',
-  'ownyou.episodic': 'lww-map',
-  'ownyou.dining_reservations': 'lww-map',
-  'ownyou.event_tickets': 'lww-map',
-  'ownyou.travel_itineraries': 'lww-map',
-  'ownyou.calendar': 'lww-map',
-  'ownyou.calendar_events': 'lww-map',
-  'ownyou.financial_transactions': 'lww-map',
-  'ownyou.diagnostic_reports': 'lww-map',
+  [NAMESPACES.EPISODIC_MEMORY]: 'lww-map',
+  [NAMESPACES.DINING_RESERVATIONS]: 'lww-map',
+  [NAMESPACES.EVENT_TICKETS]: 'lww-map',
+  [NAMESPACES.TRAVEL_ITINERARIES]: 'lww-map',
+  [NAMESPACES.CALENDAR]: 'lww-map',
+  [NAMESPACES.CALENDAR_EVENTS]: 'lww-map',
+  [NAMESPACES.FINANCIAL_TRANSACTIONS]: 'lww-map',
+  [NAMESPACES.DIAGNOSTIC_REPORTS]: 'lww-map',
 };
 
 /**

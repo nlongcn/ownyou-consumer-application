@@ -1,9 +1,33 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Home } from '../../src/routes/Home';
+
+// Mock useAuth
+const mockUseAuth = vi.fn();
+vi.mock('../../src/contexts/AuthContext', () => ({
+  useAuth: () => mockUseAuth(),
+}));
+
+// Mock useDataSource - Home.tsx uses getConnectedSources
+vi.mock('../../src/contexts/DataSourceContext', () => ({
+  useDataSource: () => ({
+    dataSources: [],
+    getConnectedSources: () => [{ id: 'gmail', status: 'connected' }], // At least one connected for main view
+    connectSource: vi.fn(),
+    disconnectSource: vi.fn(),
+    syncSource: vi.fn(),
+    isSyncing: false,
+    isSourceConnected: () => true,
+  }),
+}));
+
+// Mock ChatInput component - it has internal dependencies
+vi.mock('../../src/components/ChatInput', () => ({
+  ChatInput: () => <div data-testid="chat-input">Chat Input</div>,
+}));
 
 // Mock the hooks
 vi.mock('../../src/hooks/useMissions', () => ({
@@ -31,6 +55,12 @@ vi.mock('../../src/hooks/useMissions', () => ({
     error: null,
     refetch: vi.fn(),
   })),
+  useUpdateMission: vi.fn(() => ({
+    snoozeMission: vi.fn(),
+    dismissMission: vi.fn(),
+    isSnoozing: false,
+    isDismissing: false,
+  })),
 }));
 
 vi.mock('../../src/hooks/useFeedback', () => ({
@@ -44,18 +74,19 @@ vi.mock('../../src/hooks/useFeedback', () => ({
 
 // Mock ui-components
 vi.mock('@ownyou/ui-components', () => ({
-  Header: () => <header data-testid="header">Header</header>,
-  FilterTabs: ({ activeTab, onTabChange }: { activeTab: string; onTabChange: (tab: string) => void }) => (
-    <div data-testid="filter-tabs">
-      <button onClick={() => onTabChange('all')} data-active={activeTab === 'all'}>All</button>
-      <button onClick={() => onTabChange('savings')} data-active={activeTab === 'savings'}>Savings</button>
-      <button onClick={() => onTabChange('ikigai')} data-active={activeTab === 'ikigai'}>Ikigai</button>
-      <button onClick={() => onTabChange('health')} data-active={activeTab === 'health'}>Health</button>
-    </div>
+  Header: ({ activeFilter, onFilterChange }: { activeFilter?: string; onFilterChange?: (tab: string) => void }) => (
+    <header data-testid="header">
+      <div data-testid="filter-tabs">
+        <button onClick={() => onFilterChange?.('all')} data-active={activeFilter === 'all'}>All</button>
+        <button onClick={() => onFilterChange?.('savings')} data-active={activeFilter === 'savings'}>Savings</button>
+        <button onClick={() => onFilterChange?.('ikigai')} data-active={activeFilter === 'ikigai'}>Ikigai</button>
+        <button onClick={() => onFilterChange?.('health')} data-active={activeFilter === 'health'}>Health</button>
+      </div>
+    </header>
   ),
-  MissionFeed: ({ missions, onMissionClick }: { missions: unknown[]; onMissionClick: (id: string) => void }) => (
+  MissionFeed: ({ missions, onMissionClick }: { missions: Array<{ id: string; title: string }>; onMissionClick: (id: string) => void }) => (
     <div data-testid="mission-feed">
-      {missions.map((m: { id: string; title: string }) => (
+      {missions.map((m) => (
         <div key={m.id} data-testid={`mission-${m.id}`} onClick={() => onMissionClick(m.id)}>
           {m.title}
         </div>
@@ -81,6 +112,13 @@ function renderWithProviders(ui: React.ReactElement) {
 describe('Home Route', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default to authenticated state for most tests
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      wallet: { address: '0x1234567890abcdef' },
+      connect: vi.fn(),
+      isLoading: false,
+    });
   });
 
   it('renders the home page with header', () => {
@@ -128,6 +166,15 @@ describe('Home Route', () => {
 });
 
 describe('Home Route Loading State', () => {
+  beforeEach(() => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      wallet: { address: '0x1234567890abcdef' },
+      connect: vi.fn(),
+      isLoading: false,
+    });
+  });
+
   it('shows loading skeleton when loading', () => {
     vi.doMock('../../src/hooks/useMissions', () => ({
       useMissions: () => ({
@@ -145,6 +192,15 @@ describe('Home Route Loading State', () => {
 });
 
 describe('Home Route Error State', () => {
+  beforeEach(() => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      wallet: { address: '0x1234567890abcdef' },
+      connect: vi.fn(),
+      isLoading: false,
+    });
+  });
+
   it('shows error message when error occurs', async () => {
     vi.doMock('../../src/hooks/useMissions', () => ({
       useMissions: () => ({

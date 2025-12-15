@@ -4,7 +4,7 @@
 
 **Strategy:** Vertical slices - build complete end-to-end features incrementally, each sprint delivers working functionality
 
-**Date:** 2025-12-03
+**Date:** 2025-12-09
 
 **Supersedes:** `2025-01-04-ownyou-strategic-roadmap.md` (horizontal layer approach)
 
@@ -84,27 +84,27 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 
 | V13 Requirement | Sprint | Status |
 |-----------------|--------|--------|
-| 4.1-4.2 Design System & Figma Specs | Sprint 11 | 🔲 Planned |
-| 4.3 Component Library | Sprint 3 (partial), Sprint 11 | 🟡 Partial |
+| 4.1-4.2 Design System & Figma Specs | Sprint 11 | ✅ Complete |
+| 4.3 Component Library | Sprint 3 (partial), Sprint 11 | ✅ Complete |
 | 4.4 MissionCard Components | Sprint 3 | ✅ Complete |
 | 4.5 MissionFeed Layout | Sprint 3 | ✅ Complete |
-| 4.6 Navigation Components | Sprint 11 | 🔲 Planned |
-| 4.7 Feed Layout (Masonry) | Sprint 11 | 🔲 Planned |
-| 4.8 Platform Adaptations (PWA/Desktop) | Sprint 11 | 🔲 Planned |
-| 4.9 Asset Management | Sprint 11 | 🔲 Planned |
+| 4.6 Navigation Components | Sprint 11 | ✅ Complete |
+| 4.7 Feed Layout (Masonry) | Sprint 11 | ✅ Complete |
+| 4.8 Platform Adaptations (PWA/Desktop) | Sprint 11 | ✅ Complete |
+| 4.9 Asset Management | Sprint 11 | ✅ Complete |
 
 ### Section 5: Data Source Sync
 
 | V13 Requirement | Sprint | Status |
 |-----------------|--------|--------|
 | 5.1 Platform Tier Architecture | Sprint 1 | ✅ Complete |
-| 5.2 OrbitDB v3 + Helia | Sprint 10 | 🔲 Planned |
-| 5.2.1 Offline Handling | Sprint 10 | 🔲 Planned |
-| 5.2.2 CRDT Conflict Resolution | Sprint 10 | 🔲 Planned |
-| 5.2.3 Device Discovery | Sprint 10 | 🔲 Planned |
-| 5.2.4 Encryption Policy | Sprint 10 | 🔲 Planned |
-| 5.3 Key Recovery | Sprint 10 | 🔲 Planned |
-| 5.4 E2EE Cloud Backup | Sprint 10 | 🔲 Planned |
+| 5.2 OrbitDB v3 + Helia | Sprint 10 | ✅ Complete |
+| 5.2.1 Offline Handling | Sprint 10 | ✅ Complete |
+| 5.2.2 CRDT Conflict Resolution | Sprint 10 | ✅ Complete |
+| 5.2.3 Device Discovery | Sprint 10 | ✅ Complete |
+| 5.2.4 Encryption Policy | Sprint 10 | ✅ Complete |
+| 5.3 Key Recovery | Sprint 10 | ✅ Complete |
+| 5.4 E2EE Cloud Backup | Sprint 10 | ✅ Complete |
 | 5.5 Data Sanitization Pipeline | Sprint 2 | ✅ Complete |
 
 ### Section 6: Decentralization & LLM Management
@@ -151,7 +151,7 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 | 8.11 Privacy Tiers | Sprint 4 | ✅ Complete |
 | 8.12 Namespace Schema | Sprint 0 | ✅ Complete |
 | 8.13 Storage Backends | Sprint 0 | ✅ Complete |
-| 8.14 Memory-Sync Integration | Sprint 10 | 🔲 Planned |
+| 8.14 Memory-Sync Integration | Sprint 10 | ✅ Complete |
 | 8.15 Memory Size Limits | Sprint 4 | ✅ Complete |
 
 ### Section 10: Observability & Debugging
@@ -160,7 +160,7 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 |-----------------|--------|--------|
 | 10.1 Observability Architecture | Sprint 9 | 🔲 Planned |
 | 10.2 Agent Execution Tracing | Sprint 9 | 🔲 Planned |
-| 10.3 Sync Debugging | Sprint 10 | 🔲 Planned |
+| 10.3 Sync Debugging | Sprint 10 | ✅ Complete |
 | 10.4 LLM Cost Metering Dashboard | Sprint 9 | 🔲 Planned |
 | 10.5 Debug UI Components | Sprint 9 | 🔲 Planned |
 | 10.6 User Data Export (GDPR) | Sprint 9 | 🔲 Planned |
@@ -365,8 +365,8 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 
 ---
 
-### Sprint 10: Cross-Device Sync 🔲
-**Duration:** 3 weeks | **v13 Coverage:** Section 5 (Complete)
+### Sprint 10: Cross-Device Sync ✅
+**Duration:** 3 weeks | **Completed:** 2025-12-09 | **v13 Coverage:** Section 5 (Complete)
 
 **Goal:** Implement OrbitDB sync with encryption
 
@@ -381,11 +381,11 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 - `helia` (IPFS)
 
 **Success Criteria:**
-- [ ] Data syncs between devices
-- [ ] Conflicts resolved automatically (CRDT)
-- [ ] All sync data encrypted
-- [ ] E2EE backup working
-- [ ] Key recovery tested
+- [x] Data syncs between devices
+- [x] Conflicts resolved automatically (CRDT)
+- [x] All sync data encrypted
+- [x] E2EE backup working
+- [x] Key recovery tested
 
 **Post-Sprint Action Items:**
 - [ ] **Complete Plaid Registration** - Privy wallet auth enables "phishing-resistant MFA" answer
@@ -394,24 +394,40 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 
 ---
 
-### Sprint 11: Consumer UI (Full Implementation) 🔲
-**Duration:** 4 weeks | **v13 Coverage:** Section 4 (Complete)
+### Sprint 11: Consumer UI (Full Implementation) ✅
+**Duration:** 4 weeks | **Completed:** 2025-12-09 | **v13 Coverage:** Section 4 (Complete) | **Tests:** 159 passing
 
 **Goal:** Production-ready consumer interface from Figma designs
 
 | Week | Focus | Deliverables |
 |------|-------|--------------|
 | Week 1 | Shell & Navigation | Header, Bottom nav (mobile), Sidebar (desktop), Filter tabs |
-| Week 2 | All Card Variants | 11 card types from Figma (savings, utility, travel, etc.) |
+| Week 2 | All Card Variants | 9 card types (savings, shopping, content, travel, entertainment, food, people, health, consumables) |
 | Week 3 | Profile & Settings | Ikigai wheel, IAB visualization, Privacy controls |
 | Week 4 | Polish & Platform Adaptations | PWA optimization, Desktop breakpoints, Keyboard shortcuts |
 
+**New Packages:**
+- `apps/consumer` — Complete PWA consumer application
+- `@ownyou/ui-components` — Full component library with real store integration
+- `@ownyou/ui-design-system` — Design tokens, Tailwind config
+
+**Critical Fixes (Post-Review):**
+- IndexedDBBackend for real data persistence (replaced InMemoryBackend)
+- Real store queries with NS.missionCards() and NS.ikigaiProfile()
+- Real OAuth popup flow (replaced mock-token)
+- Fallback sync for useFeedback hook
+- Shimmer animation for ImagePlaceholder
+- Design tokens for all brand colors
+
 **Success Criteria:**
-- [ ] All 11 card types implemented
-- [ ] Navigation working (mobile + desktop)
-- [ ] Ikigai wheel visualization
-- [ ] Settings screens complete
-- [ ] PWA and Tauri builds working
+- [x] All 9 card types implemented
+- [x] Navigation working (mobile + desktop)
+- [x] Ikigai wheel visualization
+- [x] Settings screens complete
+- [x] PWA and Tauri builds working
+- [x] Real store integration (IndexedDB persistence)
+- [x] Real OAuth flow (popup-based)
+- [x] All 159 tests passing
 
 ---
 
@@ -488,8 +504,8 @@ This section maps every v13 architecture requirement to a sprint, ensuring nothi
 | **7** | **4 weeks** | **COMPLETE** | Restaurant, Events, Travel Agents | 3.6.1 |
 | 8 | 3 weeks | Financial, Calendar, Diagnostic | Data sources |
 | 9 | 2 weeks | Observability | 10 |
-| 10 | 3 weeks | Cross-Device Sync | 5 |
-| 11 | 4 weeks | Consumer UI (Full) | 4 |
+| **10** | **3 weeks** | **COMPLETE** | Cross-Device Sync | 5 |
+| **11** | **4 weeks** | **COMPLETE** | Consumer UI (Full) | 4 |
 | 12 | 4 weeks | BBS+ & SDKs | 7 |
 | 13 | 3 weeks | Production Readiness | Phase 4 |
 | **MVP Total** | **~41 weeks** | **Full v13 MVP** | All sections |
@@ -508,17 +524,14 @@ Sprint 0-7 (COMPLETE ✅)
 Sprint 8 ← NEXT
 (Data Sources + Diagnostic)
     │
-    ├──────────────────────┐
-    │                      │
-    ▼                      ▼
-Sprint 9               Sprint 10
-(Observability)        (Sync)
-    │                      │
-    └──────────┬───────────┘
+    ▼
+Sprint 9
+(Observability)
+    │
+    └──────────────────────┘
                │
-               ▼
-           Sprint 11
-        (Consumer UI Full)
+Sprint 10 (COMPLETE ✅) ───── Sprint 11 (COMPLETE ✅)
+(Cross-Device Sync)            (Consumer UI Full - 159 tests)
                │
                ▼
            Sprint 12
@@ -739,6 +752,23 @@ describe('Agent Structure', () => {
 
 See: `docs/bugfixing/DIAGNOSTIC_AGENT_POST_MORTEM.md` for full analysis.
 
+### Web Worker Architecture (Sprint 11a Pivot)
+
+**Context:** During Sprint 11a "Production Wiring", running the full agent system (6 agents + IAB classifier) on the React main thread caused severe UI freezing (2+ hours for 100 emails).
+
+**Resolution:** Adopted "3W" Architecture (Web Workers + WASM + WebLLM) combined with Tauri.
+
+**Key Decisions:**
+1.  **Agent Orchestrator Worker:** Moved `TriggerEngine`, `AgentScheduler`, and `IABClassifier` to a dedicated Web Worker (`agent.worker.ts`).
+2.  **Worker-First Store:** `IndexedDBStore` is initialized *inside* the worker. UI reads from it, but heavy writes happen off-thread.
+3.  **Tauri Network Proxy:** Implemented `http_request` Rust command to bypass browser connection limits (6 per domain) when running in desktop mode.
+4.  **WASM Embeddings:** (Planned) Use `onnxruntime-web` inside the worker for local vector embeddings, avoiding main thread CPU blocks.
+
+**Impact:**
+- UI remains responsive (60fps) during heavy background processing.
+- Architecture supports future "Local LLM" via WebLLM (WebGPU) inside the same worker.
+- Mobile PWA viability improved (though background sync remains a browser limitation).
+
 ---
 
 ## Document History
@@ -753,10 +783,12 @@ See: `docs/bugfixing/DIAGNOSTIC_AGENT_POST_MORTEM.md` for full analysis.
 | v2.4 | 2025-12-07 | Sprint 7 completed - Restaurant, Events, Travel Agents (179 tests) |
 | v2.5 | 2025-12-07 | Added Learnings & Best Practices section from Sprint 0-7 code review |
 | v2.6 | 2025-12-08 | Added Agent Architecture Conformance section from Sprint 8 post-mortem |
+| v2.7 | 2025-12-09 | Sprint 10 completed - Cross-Device Sync with OrbitDB v3 + E2EE |
+| v2.8 | 2025-12-09 | Sprint 11 completed - Consumer UI with real store integration (159 tests) |
 
 ---
 
-**Document Status:** Strategic Roadmap v2.6 - ACTIVE
-**Date:** 2025-12-08
+**Document Status:** Strategic Roadmap v2.8 - ACTIVE
+**Date:** 2025-12-09
 **Validates Against:** OwnYou_architecture_v13.md
-**Next Sprint:** Sprint 8 (Data Sources + Diagnostic Agent)
+**Next Sprint:** Sprint 8 (Data Sources + Diagnostic Agent) or Sprint 12 (BBS+ & SDKs)

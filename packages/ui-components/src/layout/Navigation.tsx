@@ -3,7 +3,6 @@
  * v13 Section 4.6 - Navigation Components
  */
 
-import React from 'react';
 import { cn } from '@ownyou/ui-design-system';
 import type { NavItem } from '../types';
 
@@ -60,7 +59,7 @@ export function BottomNavigation({
             className={cn(
               'flex flex-col items-center gap-1',
               'px-3 py-1',
-              'rounded-[12.5px]',
+              'rounded-nav',
               'transition-colors duration-200',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-ownyou-primary',
               isActive
@@ -110,7 +109,7 @@ export function SidebarNavigation({
             className={cn(
               'flex items-center gap-3',
               'px-4 py-3',
-              'rounded-[12.5px]',
+              'rounded-nav',
               'transition-colors duration-200',
               'text-left w-full',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-ownyou-primary',
