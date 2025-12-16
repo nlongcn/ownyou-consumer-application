@@ -24,6 +24,24 @@ vi.mock('../../src/contexts/DataSourceContext', () => ({
   }),
 }));
 
+// Mock TriggerContext
+vi.mock('../../src/contexts/TriggerContext', () => ({
+  useTrigger: () => ({
+    isProcessing: false,
+    lastProcessed: null,
+    triggerCount: 0,
+  }),
+}));
+
+// Mock ToastContext
+vi.mock('../../src/contexts/ToastContext', () => ({
+  useToast: () => ({
+    showToast: vi.fn(),
+    hideToast: vi.fn(),
+    toasts: [],
+  }),
+}));
+
 // Mock ChatInput component - it has internal dependencies
 vi.mock('../../src/components/ChatInput', () => ({
   ChatInput: () => <div data-testid="chat-input">Chat Input</div>,
