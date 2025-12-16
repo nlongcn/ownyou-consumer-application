@@ -10,6 +10,13 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./tests/setup.ts'],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '.worktrees/**',
+      '**/*.spec.ts', // Playwright e2e tests
+      '**/*.spec.tsx', // Playwright e2e tests
+    ],
     env: {
       // Map environment variables to VITE_ prefixed versions for browser code
       VITE_OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',

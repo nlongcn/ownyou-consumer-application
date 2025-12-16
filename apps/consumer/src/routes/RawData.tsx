@@ -100,16 +100,28 @@ export function RawData() {
         const result = await store.list<RawDataItem>(namespace, { limit: 100, offset: 0 });
 
         // Transform items to RawDataItem format
-        const items: RawDataItem[] = result.items.map((item: unknown) => {
-          const i = item as Record<string, unknown>;
-          return {
-            id: String(i.id ?? i.key ?? Math.random()),
-            summary: String(i.summary ?? i.content ?? i.subject ?? i.description ?? 'No summary'),
-            sourceType: String(i.sourceType ?? validSourceType),
-            date: String(i.date ?? i.timestamp ?? i.createdAt ?? new Date().toISOString()),
-            metadata: i.metadata as Record<string, unknown> | undefined,
-          };
-        });
+        // Filter to only include email records (not classification records)
+        const items: RawDataItem[] = result.items
+          .filter((item: unknown) => {
+            const i = item as Record<string, unknown>;
+            // Only include items that have sourceType='email' or have email-like properties
+            // Exclude classification records which have 'category' field
+            return i.sourceType === 'email' || (i.summary && !i.category);
+          })
+          .map((item: unknown) => {
+            const i = item as Record<string, unknown>;
+            return {
+              id: String(i.id ?? i.key ?? Math.random()),
+              summary: String(i.summary ?? i.content ?? i.subject ?? i.description ?? 'No summary'),
+              sourceType: String(i.sourceType ?? validSourceType),
+              date: String(i.date ?? i.timestamp ?? i.createdAt ?? new Date().toISOString()),
+              metadata: {
+                ...(i.metadata as Record<string, unknown> | undefined),
+                from: i.from,
+                to: i.to,
+              },
+            };
+          });
 
         // Sort by date, newest first
         items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -139,7 +151,7 @@ export function RawData() {
   if (!isAuthenticated) {
     return (
       <div className="flex flex-col min-h-screen">
-        <Header showLogo={false} title="Your Data" onBack={handleBack} />
+        <Header showLogo={false} title="Your Data" onBack={handleBack} showFilters={false} />
         <div className="flex-1 flex items-center justify-center px-4">
           <Card className="p-8 text-center max-w-sm">
             <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
@@ -157,7 +169,7 @@ export function RawData() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header showLogo={false} title={`Your ${getSourceTitle(validSourceType)}`} onBack={handleBack} />
+      <Header showLogo={false} title={`Your ${getSourceTitle(validSourceType)}`} onBack={handleBack} showFilters={false} />
 
       <div className="flex-1 px-4 py-6 space-y-4">
         {/* Header with icon */}
@@ -266,6 +278,8 @@ export function RawData() {
 /** Individual data item card */
 function RawDataCard({ item }: { item: RawDataItem }) {
   const [expanded, setExpanded] = useState(false);
+  // Extract sender from metadata for type safety
+  const senderFrom = item.metadata?.from ? String(item.metadata.from) : null;
 
   return (
     <Card
@@ -276,9 +290,14 @@ function RawDataCard({ item }: { item: RawDataItem }) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <p className="font-medium text-sm line-clamp-2">{item.summary}</p>
+          {/* Show sender for emails */}
+          {senderFrom && (
+            <p className="text-xs text-gray-600 mt-0.5 truncate">
+              From: {senderFrom}
+            </p>
+          )}
           <p className="text-xs text-gray-500 mt-1">
             {formatDate(item.date)}
-            {item.sourceType && ` • ${item.sourceType}`}
           </p>
         </div>
         <button

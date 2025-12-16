@@ -42,6 +42,9 @@ export const NAMESPACES = {
   // Financial
   EARNINGS: 'ownyou.earnings',
 
+  // Data Source Configuration (v13 Section 5 - User-configurable sync settings)
+  DATA_SOURCE_CONFIGS: 'ownyou.data_source_configs',
+
   // Observability (Section 10)
   AGENT_TRACES: 'ownyou.traces',
   LLM_USAGE: 'ownyou.llm_usage',
@@ -163,6 +166,9 @@ export const NS = {
 
   /** Earnings namespace: [namespace, userId] */
   earnings: (userId: string) => [NAMESPACES.EARNINGS, userId] as const,
+
+  /** Data source configs namespace: [namespace, userId] - Sprint 11b Deviation 1 fix */
+  dataSourceConfigs: (userId: string) => [NAMESPACES.DATA_SOURCE_CONFIGS, userId] as const,
 
   /** Agent traces namespace: [namespace, userId] */
   agentTraces: (userId: string) => [NAMESPACES.AGENT_TRACES, userId] as const,
@@ -304,6 +310,7 @@ export const NAMESPACE_PRIVACY: Record<Namespace, 'public' | 'sensitive' | 'priv
   [NAMESPACES.DISCLOSURE_HISTORY]: 'private',
   [NAMESPACES.TRACKING_CONSENTS]: 'private',
   [NAMESPACES.EARNINGS]: 'sensitive',
+  [NAMESPACES.DATA_SOURCE_CONFIGS]: 'private', // User data source configs - device-local
   [NAMESPACES.AGENT_TRACES]: 'private',
   [NAMESPACES.LLM_USAGE]: 'private',
   [NAMESPACES.SYNC_LOGS]: 'private',
@@ -380,6 +387,7 @@ export const NAMESPACE_SYNC_SCOPE: Record<Namespace, 'full' | 'selective' | 'non
   [NAMESPACES.DISCLOSURE_HISTORY]: 'full',
   [NAMESPACES.TRACKING_CONSENTS]: 'full',
   [NAMESPACES.EARNINGS]: 'full',
+  [NAMESPACES.DATA_SOURCE_CONFIGS]: 'none', // Device-local data source configs
   [NAMESPACES.AGENT_TRACES]: 'none', // Device-local
   [NAMESPACES.LLM_USAGE]: 'none', // Device-local
   [NAMESPACES.SYNC_LOGS]: 'none', // Device-local

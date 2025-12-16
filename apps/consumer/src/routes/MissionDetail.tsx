@@ -60,7 +60,7 @@ export function MissionDetail() {
   if (error) {
     return (
       <div className="flex flex-col min-h-screen">
-        <Header showLogo={false} title="Mission" onBack={handleClose} />
+        <Header showLogo={false} title="Mission" onBack={handleClose} showFilters={false} />
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="text-center">
             <h2 className="text-xl font-bold mb-2">Mission not found</h2>
@@ -75,7 +75,7 @@ export function MissionDetail() {
   if (isLoading || !mission) {
     return (
       <div className="flex flex-col min-h-screen">
-        <Header showLogo={false} title="Mission" onBack={handleClose} />
+        <Header showLogo={false} title="Mission" onBack={handleClose} showFilters={false} />
         <div className="flex-1 p-4 animate-pulse">
           <div className="h-64 bg-placeholder mb-4" style={{ borderRadius: radius.card }} />
           <div className="h-8 bg-placeholder rounded w-3/4 mb-2" />
@@ -90,7 +90,7 @@ export function MissionDetail() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header showLogo={false} title="Mission" onBack={handleClose} />
+      <Header showLogo={false} title="Mission" onBack={handleClose} showFilters={false} />
 
       <div className="flex-1 p-4 space-y-4">
         {/* Hero Image */}

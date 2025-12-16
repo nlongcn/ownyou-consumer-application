@@ -8,7 +8,7 @@ import { BaseAgent, type AgentContext, type AgentResult } from '@ownyou/agents-b
 import type { MissionCard } from '@ownyou/shared-types';
 import { NAMESPACES, NS } from '@ownyou/shared-types';
 import { SHOPPING_PERMISSIONS, type ShoppingTriggerData, type DealResult } from './types';
-import { evaluateTrigger, evaluateTriggerHybrid, type TriggerResult } from './triggers';
+import { evaluateTriggerHybrid, type TriggerResult } from './triggers';
 import { createSearchDealsTool, createPriceCheckTool } from './tools';
 
 /**

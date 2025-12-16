@@ -52,12 +52,18 @@ async function exchangeCodeForToken(
   code: string,
   provider: string
 ): Promise<string> {
-  // Try localStorage first (for Tauri cross-context flow), then sessionStorage (for PWA)
+  // Get PKCE verifier - stored in localStorage because OAuth callback may happen
+  // in a popup window which has isolated sessionStorage from the main window.
+  // localStorage is shared across all same-origin windows.
   const codeVerifier = localStorage.getItem(`oauth_code_verifier_${provider}`)
     || sessionStorage.getItem(`oauth_code_verifier_${provider}`);
   if (!codeVerifier) {
     throw new Error('PKCE code verifier not found. Please try again.');
   }
+
+  // Clean up verifier immediately after retrieval (one-time use for security)
+  localStorage.removeItem(`oauth_code_verifier_${provider}`);
+  sessionStorage.removeItem(`oauth_code_verifier_${provider}`);
 
   // Use same redirect URI as the authorization request
   // Must match exactly - use the actual path we're currently on

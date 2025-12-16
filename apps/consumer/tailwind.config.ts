@@ -18,6 +18,11 @@ export default {
         'text-primary': '#000000',
         'text-secondary': '#FFFBFB',
         placeholder: '#D9D9D9',
+        // ownyou namespace for brand colors (used by 40+ components)
+        ownyou: {
+          primary: '#87CEEB',
+          secondary: '#70DF82',
+        },
       },
       fontFamily: {
         // v13 Section 4.3.2 Typography

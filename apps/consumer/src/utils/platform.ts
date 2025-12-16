@@ -13,6 +13,9 @@ declare global {
   }
 }
 
+// Cache for platform detection to avoid repeated logs
+let cachedPlatform: Platform | null = null;
+
 /**
  * Detect if running in Tauri or PWA
  *
@@ -24,13 +27,18 @@ declare global {
  * 5. tauri:// protocol
  */
 export function getPlatform(): Platform {
+  // Return cached result to avoid repeated detection logs
+  if (cachedPlatform !== null) {
+    return cachedPlatform;
+  }
+
   if (typeof window !== 'undefined') {
-    // DEBUG: Log all detection info
     const port = window.location.port ? parseInt(window.location.port, 10) :
                  (window.location.protocol === 'https:' ? 443 : 80);
     const hostname = window.location.hostname;
     const protocol = window.location.protocol;
 
+    // Log detection info once
     console.log('[Platform] Detection starting:', {
       hostname,
       port,
@@ -50,42 +58,49 @@ export function getPlatform(): Platform {
 
     if (isLocalhost && !standardPorts.includes(port) && port > 1024) {
       console.log(`[Platform] ✅ Detected TAURI via non-standard localhost port: ${port}`);
-      return 'tauri';
+      cachedPlatform = 'tauri';
+      return cachedPlatform;
     }
 
     // Check for tauri:// protocol (Tauri 2.0 production builds)
     if (protocol === 'tauri:') {
       console.log('[Platform] ✅ Detected TAURI via tauri:// protocol');
-      return 'tauri';
+      cachedPlatform = 'tauri';
+      return cachedPlatform;
     }
 
     // Tauri 2.0 with withGlobalTauri: true exposes window.__TAURI__
     if ('__TAURI__' in window && window.__TAURI__) {
       console.log('[Platform] ✅ Detected TAURI via __TAURI__');
-      return 'tauri';
+      cachedPlatform = 'tauri';
+      return cachedPlatform;
     }
 
     // Tauri 2.0 internals (backup check)
     if ('__TAURI_INTERNALS__' in window) {
       console.log('[Platform] ✅ Detected TAURI via __TAURI_INTERNALS__');
-      return 'tauri';
+      cachedPlatform = 'tauri';
+      return cachedPlatform;
     }
 
     // Tauri 2.0 IPC - most reliable check for Tauri environment
     if ('__TAURI_IPC__' in window) {
       console.log('[Platform] ✅ Detected TAURI via __TAURI_IPC__');
-      return 'tauri';
+      cachedPlatform = 'tauri';
+      return cachedPlatform;
     }
 
     // Check user agent for Tauri webview
     if (navigator.userAgent.includes('Tauri')) {
       console.log('[Platform] ✅ Detected TAURI via User-Agent');
-      return 'tauri';
+      cachedPlatform = 'tauri';
+      return cachedPlatform;
     }
   }
 
   console.log('[Platform] ❌ Detected PWA (no Tauri markers found)');
-  return 'pwa';
+  cachedPlatform = 'pwa';
+  return cachedPlatform;
 }
 
 /**

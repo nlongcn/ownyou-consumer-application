@@ -18,10 +18,11 @@
     "test:api": "node --env-file=.env -e \"fetch('https://api.openai.com/v1/models', {headers: {Authorization: 'Bearer ' + process.env.VITE_OPENAI_API_KEY}}).then(r => r.ok ? console.log('✅ OpenAI API key valid') : r.json().then(e => console.log('❌ API key error:', e.error?.message || r.status)))\"",
     "lint": "eslint src --ext ts,tsx",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build"
+    "tauri:build": "tauri build && rm -rf /Applications/OwnYou.app && cp -R src-tauri/target/release/bundle/macos/OwnYou.app /Applications/ && /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -f /Applications/OwnYou.app && echo '✅ Deployed to /Applications/OwnYou.app'"
   },
   "dependencies": {
     "@ownyou/agents-base": "workspace:*",
+    "@ownyou/agents-content": "workspace:*",
     "@ownyou/agents-diagnostic": "workspace:*",
     "@ownyou/agents-events": "workspace:*",
     "@ownyou/agents-restaurant": "workspace:*",

@@ -59,7 +59,7 @@ export function Wallet() {
   if (!isAuthenticated) {
     return (
       <div className="flex flex-col min-h-screen">
-        <Header showLogo={false} title="Wallet" />
+        <Header showLogo={false} title="Wallet" showFilters={false} />
         <div className="flex-1 flex items-center justify-center px-4">
           <Card className="p-8 text-center max-w-sm">
             <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
@@ -84,7 +84,7 @@ export function Wallet() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header showLogo={false} title="Wallet" />
+      <Header showLogo={false} title="Wallet" showFilters={false} />
 
       <div className="flex-1 px-4 py-6">
         <div className="max-w-3xl mx-auto space-y-6">

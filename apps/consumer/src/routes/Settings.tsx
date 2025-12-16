@@ -2,8 +2,10 @@ import { useState, useCallback, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Header } from '@ownyou/ui-components';
 import { Card } from '@ownyou/ui-design-system';
+import { NS } from '@ownyou/shared-types';
 import { useAuth } from '../contexts/AuthContext';
 import { useSync } from '../contexts/SyncContext';
+import { useStore } from '../contexts/StoreContext';
 import { useDataSource, type DataSourceId, type DataSource } from '../contexts/DataSourceContext';
 import { useGDPR } from '../hooks/useGDPR';
 import { SyncStatusDetails } from '../components/SyncStatusIndicator';
@@ -28,7 +30,7 @@ export function Settings() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header showLogo={false} title="Settings" />
+      <Header showLogo={false} title="Settings" showFilters={false} />
 
       <div className="flex-1 px-4 py-6">
         {/* Settings Navigation */}
@@ -107,6 +109,7 @@ function DataSettings() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [exportSuccess, setExportSuccess] = useState(false);
   const [showOutlookChoice, setShowOutlookChoice] = useState(false);
+  const [oauthSuccess, setOauthSuccess] = useState<string | null>(null); // Shows which source connected
   const navigate = useNavigate();
 
   /**
@@ -174,6 +177,10 @@ function DataSettings() {
             console.log(`[DataSettings] Tauri OAuth successful, connecting source...`);
             await connectSource(sourceId, accessToken);
             console.log(`[DataSettings] Connected ${sourceId} successfully`);
+            // Show success toast
+            const displayName = sourceId === 'outlook' ? 'Outlook' : sourceId === 'gmail' ? 'Gmail' : sourceId;
+            setOauthSuccess(displayName);
+            setTimeout(() => setOauthSuccess(null), 5000); // Auto-dismiss after 5 seconds
           } else {
             console.log(`[DataSettings] Tauri OAuth returned null (user cancelled or error)`);
           }
@@ -199,6 +206,10 @@ function DataSettings() {
           console.log(`[DataSettings] Calling connectSource for ${sourceId}...`);
           await connectSource(sourceId, accessToken);
           console.log(`[DataSettings] Connected ${sourceId} successfully`);
+          // Show success toast
+          const displayName = sourceId === 'outlook' ? 'Outlook' : sourceId === 'gmail' ? 'Gmail' : sourceId;
+          setOauthSuccess(displayName);
+          setTimeout(() => setOauthSuccess(null), 5000); // Auto-dismiss after 5 seconds
         } else {
           console.log(`[DataSettings] No access token received for ${sourceId}`);
         }
@@ -276,8 +287,32 @@ function DataSettings() {
   );
 
   return (
-    <Card className="p-6 space-y-4">
-      <h3 className="text-lg font-bold">Data Sources</h3>
+    <>
+      {/* Success Toast - Sprint 11b UX Enhancement */}
+      {oauthSuccess && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-fade-in-down">
+          <div className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <div>
+              <p className="font-semibold">{oauthSuccess} Connected!</p>
+              <p className="text-sm text-green-100">You can close the browser window</p>
+            </div>
+            <button
+              onClick={() => setOauthSuccess(null)}
+              className="ml-2 p-1 hover:bg-green-700 rounded"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      <Card className="p-6 space-y-4">
+        <h3 className="text-lg font-bold">Data Sources</h3>
 
       {visibleSources.map(source => {
         const displayInfo = getSourceDisplayInfo(source);
@@ -294,6 +329,7 @@ function DataSettings() {
             lastSync={source.lastSync ? formatRelativeTime(source.lastSync) : undefined}
             status={source.status}
             isLoading={isThisConnecting || isSyncingThis}
+            itemCount={source.itemCount}
             onConnect={() => handleConnect(source.id)}
             onDisconnect={() => handleDisconnect(source.id)}
             onSync={() => handleSync(source.id)}
@@ -406,6 +442,39 @@ function DataSettings() {
           </div>
         </div>
       )}
+
+      {/* Sync Summary - Shows total items and links to results */}
+      {(() => {
+        const totalItems = dataSources.reduce((sum, ds) => sum + (ds.itemCount || 0), 0);
+        const connectedCount = dataSources.filter(ds => ds.status === 'connected').length;
+        if (totalItems > 0 || connectedCount > 0) {
+          return (
+            <div className="pt-4 border-t">
+              <h4 className="font-bold mb-3">Sync Summary</h4>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="bg-blue-50 p-3 rounded-lg text-center">
+                  <p className="text-2xl font-bold text-blue-600">{totalItems}</p>
+                  <p className="text-xs text-gray-600">Items Synced</p>
+                </div>
+                <div className="bg-green-50 p-3 rounded-lg text-center">
+                  <p className="text-2xl font-bold text-green-600">{connectedCount}</p>
+                  <p className="text-xs text-gray-600">Sources Connected</p>
+                </div>
+              </div>
+              <button
+                onClick={() => navigate('/profile')}
+                className="w-full py-2 px-4 text-left bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors flex items-center justify-between"
+              >
+                <span className="flex items-center gap-2">
+                  <span>🎯</span> View Classification Results
+                </span>
+                <span className="text-purple-600">→</span>
+              </button>
+            </div>
+          );
+        }
+        return null;
+      })()}
 
       {/* View Data Section - Sprint 11b Bugfix 10 */}
       <div className="pt-4 border-t">
@@ -545,6 +614,7 @@ function DataSettings() {
         )}
       </div>
     </Card>
+    </>
   );
 }
 
@@ -681,8 +751,11 @@ function generatePKCE(): { codeVerifier: string; codeChallenge: string } {
  */
 function getOAuthUrl(sourceId: DataSourceId): string | null {
   // Generate and store PKCE verifier for token exchange
+  // IMPORTANT: Use localStorage (not sessionStorage) because OAuth callback may happen
+  // in a popup window which has isolated sessionStorage from the main window.
+  // localStorage is shared across all same-origin windows.
   const { codeVerifier, codeChallenge } = generatePKCE();
-  sessionStorage.setItem(`oauth_code_verifier_${sourceId}`, codeVerifier);
+  localStorage.setItem(`oauth_code_verifier_${sourceId}`, codeVerifier);
 
   // Use provider-specific redirect URIs (must match Azure/Google app registrations)
   const googleRedirectUri = encodeURIComponent(
@@ -809,7 +882,43 @@ interface WalletSettingsProps {
   isAuthenticated: boolean;
 }
 
+/**
+ * WalletSettings - Sprint 11b Bugfix 5: Wire wallet earnings from Store
+ * Fetches real earnings from NS.earnings namespace instead of hardcoded 0.00
+ */
 function WalletSettings({ wallet, isAuthenticated }: WalletSettingsProps) {
+  const { store, isReady } = useStore();
+  const [earnings, setEarnings] = useState<number>(0);
+  const [isLoadingEarnings, setIsLoadingEarnings] = useState(true);
+
+  // Fetch earnings from Store
+  useEffect(() => {
+    if (!store || !isReady || !wallet?.address) {
+      setIsLoadingEarnings(false);
+      return;
+    }
+
+    const fetchEarnings = async () => {
+      try {
+        const earningsData = await store.get<{ total: number; lastUpdated: string }>(
+          NS.earnings(wallet.address),
+          'lifetime'
+        );
+        setEarnings(earningsData?.total ?? 0);
+      } catch (error) {
+        console.error('[WalletSettings] Failed to fetch earnings:', error);
+        setEarnings(0);
+      } finally {
+        setIsLoadingEarnings(false);
+      }
+    };
+
+    fetchEarnings();
+  }, [store, isReady, wallet?.address]);
+
+  // Format earnings with 2 decimal places
+  const formattedEarnings = earnings.toFixed(2);
+
   return (
     <Card className="p-6 space-y-4">
       <h3 className="text-lg font-bold">Wallet</h3>
@@ -822,7 +931,9 @@ function WalletSettings({ wallet, isAuthenticated }: WalletSettingsProps) {
           </div>
 
           <div className="text-center py-4">
-            <p className="text-3xl font-bold">0.00 OWN</p>
+            <p className="text-3xl font-bold" data-testid="wallet-earnings">
+              {isLoadingEarnings ? '...' : formattedEarnings} OWN
+            </p>
             <p className="text-sm text-gray-600">Lifetime Earnings</p>
           </div>
         </>
@@ -930,6 +1041,7 @@ interface DataSourceCardProps {
   lastSync?: string;
   status?: string;
   isLoading?: boolean;
+  itemCount?: number;
   onConnect?: () => void;
   onDisconnect?: () => void;
   onSync?: () => void;
@@ -942,6 +1054,7 @@ function DataSourceCard({
   lastSync,
   status,
   isLoading,
+  itemCount,
   onConnect,
   onDisconnect,
   onSync,
@@ -974,6 +1087,9 @@ function DataSourceCard({
           )}
         </div>
         <p className="text-sm text-gray-600">{provider}</p>
+        {connected && itemCount !== undefined && itemCount > 0 && (
+          <p className="text-xs text-green-600 font-medium">{itemCount} items synced</p>
+        )}
         {connected && lastSync && (
           <p className="text-xs text-gray-400">Synced {lastSync}</p>
         )}
