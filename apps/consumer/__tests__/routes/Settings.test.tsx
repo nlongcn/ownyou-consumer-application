@@ -4,15 +4,10 @@ import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Settings } from '../../src/routes/Settings';
+import { AuthProvider } from '../../src/contexts/AuthContext';
+import { StoreProvider } from '../../src/contexts/StoreContext';
 
-// Mock contexts
-vi.mock('../../src/contexts/AuthContext', () => ({
-  useAuth: () => ({
-    isAuthenticated: true,
-    wallet: { address: '0x1234567890abcdef' },
-  }),
-}));
-
+// Mock SyncContext - external sync service dependency
 vi.mock('../../src/contexts/SyncContext', () => ({
   useSync: () => ({
     syncStatus: 'idle',
@@ -71,7 +66,11 @@ function renderWithProviders(ui: React.ReactElement) {
   return render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        {ui}
+        <AuthProvider>
+          <StoreProvider forceInMemory>
+            {ui}
+          </StoreProvider>
+        </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>
   );
@@ -80,6 +79,15 @@ function renderWithProviders(ui: React.ReactElement) {
 describe('Settings Route', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Set up authenticated wallet in localStorage
+    localStorage.setItem('ownyou_wallet', JSON.stringify({
+      address: '0x1234567890abcdef1234567890abcdef12345678',
+      publicKey: 'test-public-key',
+    }));
+  });
+
+  afterEach(() => {
+    localStorage.clear();
   });
 
   it('renders the settings page with header', () => {

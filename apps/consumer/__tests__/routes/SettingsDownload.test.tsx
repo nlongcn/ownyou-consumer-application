@@ -4,16 +4,11 @@ import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Settings } from '../../src/routes/Settings';
+import { AuthProvider } from '../../src/contexts/AuthContext';
+import { StoreProvider } from '../../src/contexts/StoreContext';
 import * as platformUtils from '../../src/utils/platform';
 
-// Mock contexts
-vi.mock('../../src/contexts/AuthContext', () => ({
-  useAuth: () => ({
-    isAuthenticated: true,
-    wallet: { address: '0x1234567890abcdef' },
-  }),
-}));
-
+// Mock SyncContext - external sync service dependency
 vi.mock('../../src/contexts/SyncContext', () => ({
   useSync: () => ({
     syncStatus: 'idle',
@@ -70,7 +65,11 @@ function renderWithProviders(ui: React.ReactElement) {
   return render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        {ui}
+        <AuthProvider>
+          <StoreProvider forceInMemory>
+            {ui}
+          </StoreProvider>
+        </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>
   );
@@ -79,12 +78,20 @@ function renderWithProviders(ui: React.ReactElement) {
 describe('Settings Download Dialog', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Set up authenticated wallet in localStorage
+    localStorage.setItem('ownyou_wallet', JSON.stringify({
+      address: '0x1234567890abcdef1234567890abcdef12345678',
+      publicKey: 'test-public-key',
+    }));
     // Mock getPlatform to return 'pwa'
     vi.spyOn(platformUtils, 'getPlatform').mockReturnValue('pwa');
-    
+
     // Mock window.open
     vi.spyOn(window, 'open').mockReturnValue({} as Window);
-    
+
+    // Mock window.confirm (jsdom doesn't implement it)
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+
     // Mock window.location.href setter (optional, but good to have if fallback is tested)
     Object.defineProperty(window, 'location', {
       value: { href: '' },
@@ -94,29 +101,29 @@ describe('Settings Download Dialog', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    localStorage.clear();
   });
 
-  it('opens download dialog and triggers download via trampoline', async () => {
+  it('opens download dialog and triggers download via proxy', async () => {
     const user = userEvent.setup();
-    
-    // Mock window.location.assign
-    const originalLocation = window.location;
-    const assignMock = vi.fn();
-    
+
+    // Track window.location.href changes
+    let capturedHref = '';
     Object.defineProperty(window, 'location', {
       value: {
-        ...originalLocation,
-        assign: assignMock,
-        href: originalLocation.href,
+        href: '',
+        get href() { return capturedHref; },
+        set href(value: string) { capturedHref = value; },
       },
       writable: true,
+      configurable: true,
     });
 
     renderWithProviders(<Settings />);
 
     // Navigate to Data tab
     await user.click(screen.getByText('Data'));
-    
+
     // Click Connect on Outlook
     const connectButtons = screen.getAllByText('Connect');
     await user.click(connectButtons[0]);
@@ -128,18 +135,8 @@ describe('Settings Download Dialog', () => {
     // Click Download Desktop App
     await user.click(screen.getByText('Download Desktop App'));
 
-    // Verify window.location.assign was called with the trampoline URL
-    expect(assignMock).toHaveBeenCalledWith(
-        expect.stringContaining('/download.html?url=')
-    );
-    expect(assignMock).toHaveBeenCalledWith(
-        expect.stringContaining(encodeURIComponent('https://github.com/nlongcn/ownyou-consumer-application/releases/download/'))
-    );
-    
-    // Restore window.location
-    Object.defineProperty(window, 'location', {
-        value: originalLocation,
-        writable: true,
-    });
+    // Verify window.location.href was set to the proxy URL
+    expect(capturedHref).toContain('ownyou-download-proxy');
+    expect(capturedHref).toContain(encodeURIComponent('https://github.com/nlongcn/ownyou-consumer-application/releases/download/'));
   });
 });
