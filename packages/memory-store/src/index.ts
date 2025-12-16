@@ -46,3 +46,8 @@ export { SemanticSearch, type SearchResult } from './search/semantic';
 export { BM25Search } from './search/bm25';
 export { RRFusion, type FusedResult } from './search/rrf';
 export { MockEmbeddingService, type EmbeddingService } from './search/embeddings';
+export {
+  OnnxEmbeddingService,
+  type OnnxEmbeddingConfig,
+  createEmbeddingServiceWithFallback,
+} from './search/onnx-embeddings';

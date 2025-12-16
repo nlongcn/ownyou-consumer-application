@@ -102,8 +102,19 @@ export function App() {
 
     const setupDeepLinkHandler = async () => {
       try {
-        // Listen for deep links via the deep-link plugin (direct app launch)
-        const { onOpenUrl } = await import('@tauri-apps/plugin-deep-link');
+        // Import deep-link plugin functions
+        const { onOpenUrl, getCurrent } = await import('@tauri-apps/plugin-deep-link');
+
+        // CRITICAL: Check for deep links that LAUNCHED the app (cold start)
+        // This handles the case where the app was started via ownyou:// URL
+        // and the URL needs to be processed before onOpenUrl listener is active
+        const initialUrls = await getCurrent();
+        if (initialUrls && initialUrls.length > 0) {
+          console.log('[App] Cold-start deep link detected:', initialUrls);
+          handleDeepLinkUrls(initialUrls);
+        }
+
+        // Listen for deep links received while app is running
         const unlistenDeepLink = await onOpenUrl((urls) => {
           console.log('[App] Deep link received (deep-link plugin):', urls);
           handleDeepLinkUrls(urls);

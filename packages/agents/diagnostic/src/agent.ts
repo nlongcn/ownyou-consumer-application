@@ -394,7 +394,7 @@ export class DiagnosticAgent extends BaseAgent {
    * Generate mission card from diagnostic report
    */
   private generateMissionCard(
-    userId: string,
+    _userId: string,
     report: DiagnosticReport,
     urgency: 'low' | 'medium' | 'high',
     evidenceRefs: string[]

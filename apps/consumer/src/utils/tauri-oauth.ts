@@ -1,20 +1,26 @@
 /**
- * Tauri OAuth Module - Uses Rust backend for token exchange to avoid CORS
+ * Tauri OAuth Module - Uses Cloudflare Worker for token exchange
  *
  * Flow:
- * 1. Call Rust `start_oauth` to generate auth URL (PKCE stored in Rust)
+ * 1. Build OAuth authorization URL with Cloudflare Worker as redirect_uri
  * 2. Open system browser with OAuth authorize URL
- * 3. System browser redirects to ownyou://oauth/callback?code=...
- * 4. OS opens Tauri app, triggering deep link handler
- * 5. Call Rust `complete_oauth` to exchange code for token (no CORS issues)
+ * 3. User authenticates with Microsoft/Google
+ * 4. OAuth provider redirects to Cloudflare Worker with authorization code
+ * 5. Cloudflare Worker exchanges code for tokens (has client_secret)
+ * 6. Worker shows success page and redirects to ownyou://oauth/callback?access_token=...
+ * 7. OS opens Tauri app, triggering deep link handler with tokens
  */
 
 import { getPlatform } from './platform';
-import { invoke } from '@tauri-apps/api/core';
 import { onOpenUrl } from '@tauri-apps/plugin-deep-link';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 
-// OAuth redirect URI - uses custom protocol scheme
-const REDIRECT_URI = 'ownyou://oauth/callback';
+// OAuth redirect URI - Cloudflare Worker handles token exchange with client_secret
+// The worker then redirects to the app with tokens via deep link
+const WEB_CALLBACK_URL = 'https://ownyou-oauth-callback.nlongcroft.workers.dev/callback';
+
+// Deep link URI - what the worker redirects to after token exchange
+const DEEP_LINK_URI = 'ownyou://oauth/callback';
 
 // Flag to indicate OAuth is in progress (prevents duplicate handling from App.tsx)
 let oauthInProgress = false;
@@ -45,28 +51,18 @@ const SOURCE_TO_SCOPES: Record<string, string[]> = {
 };
 
 /**
- * Token data returned from Rust backend
- */
-interface TokenData {
-  accessToken: string;
-  refreshToken: string | null;
-  expiresAt: number;
-  scope: string;
-  tokenType: string;
-}
-
-/**
  * Initialize OAuth listener (called on app start)
  */
 export async function initOAuthListener(): Promise<void> {
   if (getPlatform() === 'tauri') {
-    console.log('[TauriOAuth] Deep link system ready (Rust-based token exchange)');
+    console.log('[TauriOAuth] Deep link system ready (Cloudflare Worker token exchange)');
   }
 }
 
 /**
- * Start OAuth flow for a data source using Rust backend
- * Opens browser with OAuth URL and waits for deep link callback
+ * Start OAuth flow for a data source
+ * Token exchange happens in Cloudflare Worker (has client_secret)
+ * Worker redirects to app with access_token via deep link
  */
 export async function startTauriOAuth(sourceId: string): Promise<string | null> {
   if (getPlatform() !== 'tauri') {
@@ -96,16 +92,10 @@ export async function startTauriOAuth(sourceId: string): Promise<string | null> 
     throw new Error(`Client ID not configured for ${provider}`);
   }
 
-  // Call Rust backend to start OAuth (generates auth URL, stores PKCE verifier)
-  console.log('[TauriOAuth] Calling Rust start_oauth...');
-  const authUrl = await invoke<string>('start_oauth', {
-    provider,
-    clientId,
-    redirectUri: REDIRECT_URI,
-    scopes,
-  });
-
-  console.log('[TauriOAuth] Auth URL from Rust:', authUrl.substring(0, 100) + '...');
+  // Build OAuth authorization URL
+  // Microsoft redirects to Cloudflare Worker, which does token exchange and redirects to app
+  const authUrl = buildAuthUrl(provider, clientId, scopes, sourceId);
+  console.log('[TauriOAuth] Auth URL:', authUrl.substring(0, 100) + '...');
 
   return new Promise(async (resolve, reject) => {
     let unlisten: (() => void) | undefined;
@@ -114,7 +104,7 @@ export async function startTauriOAuth(sourceId: string): Promise<string | null> 
 
     const cleanup = () => {
       completed = true;
-      oauthInProgress = false; // Clear flag so App.tsx can handle future callbacks
+      oauthInProgress = false;
       if (unlisten) unlisten();
       if (timeoutId) clearTimeout(timeoutId);
     };
@@ -130,33 +120,32 @@ export async function startTauriOAuth(sourceId: string): Promise<string | null> 
         }
 
         for (const url of urls) {
-          if (url.startsWith('ownyou://oauth/callback')) {
+          if (url.startsWith(DEEP_LINK_URI)) {
             try {
               const urlObj = new URL(url);
               const params = urlObj.searchParams;
 
-              const code = params.get('code');
+              const accessToken = params.get('access_token');
               const error = params.get('error');
 
               if (error) {
                 throw new Error(params.get('error_description') || error);
               }
 
-              if (code) {
-                console.log('[TauriOAuth] Authorization code received, calling Rust complete_oauth...');
+              if (accessToken) {
+                console.log('[TauriOAuth] Access token received from Cloudflare Worker!');
 
-                // Call Rust backend to exchange code for token (no CORS issues!)
-                const tokenData = await invoke<TokenData>('complete_oauth', {
-                  provider,
-                  clientId,
-                  redirectUri: REDIRECT_URI,
-                  code,
-                  receivedState: null, // CSRF state is validated in Rust
-                });
+                // Bring app window to focus
+                try {
+                  const window = getCurrentWindow();
+                  await window.setFocus();
+                  console.log('[TauriOAuth] Window focused after OAuth success');
+                } catch (focusErr) {
+                  console.warn('[TauriOAuth] Could not focus window:', focusErr);
+                }
 
-                console.log('[TauriOAuth] Token exchange successful via Rust!');
                 cleanup();
-                resolve(tokenData.accessToken);
+                resolve(accessToken);
                 return;
               }
             } catch (err) {
@@ -171,7 +160,7 @@ export async function startTauriOAuth(sourceId: string): Promise<string | null> 
 
       // Open System Browser
       const { open } = await import('@tauri-apps/plugin-shell');
-      console.log('[TauriOAuth] Opening browser with URL:', authUrl.substring(0, 100) + '...');
+      console.log('[TauriOAuth] Opening browser...');
       await open(authUrl);
 
       // Set timeout (5 minutes)
@@ -192,15 +181,46 @@ export async function startTauriOAuth(sourceId: string): Promise<string | null> 
 }
 
 /**
+ * Build OAuth authorization URL
+ */
+function buildAuthUrl(provider: RustOAuthProvider, clientId: string, scopes: string[], state: string): string {
+  if (provider === 'microsoft') {
+    const params = new URLSearchParams({
+      client_id: clientId,
+      response_type: 'code',
+      redirect_uri: WEB_CALLBACK_URL,
+      scope: scopes.join(' '),
+      state: state,
+      response_mode: 'query',
+      prompt: 'consent',  // Force consent screen to show every time
+    });
+    return `https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?${params.toString()}`;
+  } else {
+    // Google
+    const params = new URLSearchParams({
+      client_id: clientId,
+      response_type: 'code',
+      redirect_uri: WEB_CALLBACK_URL,
+      scope: scopes.join(' '),
+      state: state,
+      access_type: 'offline',
+      prompt: 'consent',
+    });
+    return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+  }
+}
+
+/**
  * Get the OAuth redirect URI (for display/configuration purposes)
  */
 export function getOAuthRedirectUri(): string {
-  return REDIRECT_URI;
+  return WEB_CALLBACK_URL;
 }
 
 /**
  * Handle OAuth callback from App.tsx deep link handler (fallback)
- * Uses Rust backend for token exchange
+ * Cloudflare Worker has already exchanged the code for tokens
+ * Deep link contains access_token directly
  */
 export async function handleOAuthCallbackFromApp(callbackUrl: string): Promise<string | null> {
   console.log('[TauriOAuth] handleOAuthCallbackFromApp called with:', callbackUrl);
@@ -209,47 +229,21 @@ export async function handleOAuthCallbackFromApp(callbackUrl: string): Promise<s
     const urlObj = new URL(callbackUrl);
     const params = urlObj.searchParams;
 
-    const code = params.get('code');
+    const accessToken = params.get('access_token');
     const error = params.get('error');
-    const state = params.get('state'); // This is the provider (e.g., 'outlook', 'gmail')
 
     if (error) {
       console.error('[TauriOAuth] OAuth error:', error, params.get('error_description'));
       throw new Error(params.get('error_description') || error);
     }
 
-    if (!code) {
-      console.error('[TauriOAuth] No authorization code in callback URL');
-      return null;
+    if (accessToken) {
+      console.log('[TauriOAuth] Access token received from Cloudflare Worker (via fallback handler)');
+      return accessToken;
     }
 
-    // Determine provider from state or URL pattern
-    const provider = state && SOURCE_TO_PROVIDER[state]
-      ? SOURCE_TO_PROVIDER[state]
-      : 'microsoft'; // Default to Microsoft
-
-    const clientId = provider === 'microsoft'
-      ? import.meta.env.VITE_MICROSOFT_CLIENT_ID
-      : import.meta.env.VITE_GOOGLE_CLIENT_ID;
-
-    if (!clientId) {
-      console.error('[TauriOAuth] Client ID not configured');
-      return null;
-    }
-
-    console.log('[TauriOAuth] Calling Rust complete_oauth...');
-
-    // Call Rust backend to exchange code for token
-    const tokenData = await invoke<TokenData>('complete_oauth', {
-      provider,
-      clientId,
-      redirectUri: REDIRECT_URI,
-      code,
-      receivedState: null,
-    });
-
-    console.log('[TauriOAuth] Token exchange successful via Rust!');
-    return tokenData.accessToken;
+    console.error('[TauriOAuth] No access token in callback URL');
+    return null;
 
   } catch (err) {
     console.error('[TauriOAuth] handleOAuthCallbackFromApp error:', err);

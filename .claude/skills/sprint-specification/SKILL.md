@@ -136,6 +136,24 @@ export const DEFAULT_FEATURE_CONFIG: FeatureConfig = {
 ### I3: Integration Tests for Main Flow
 Every sprint MUST include integration tests that validate the complete flow from trigger to result.
 
+### C4: Tauri Build Discipline (OAuth/Deep Links)
+
+**CRITICAL:** For any sprint involving `apps/consumer/` changes:
+
+```bash
+cd apps/consumer
+pnpm tauri:build    # Builds + deploys to /Applications/OwnYou.app
+```
+
+**Why:** macOS routes `ownyou://` deep links to the INSTALLED app (`/Applications/OwnYou.app`), NOT the dev server. OAuth callbacks use deep links, so testing requires the rebuilt app.
+
+| Scenario | Command |
+|----------|---------|
+| OAuth/deep link testing | `pnpm tauri:build` (REQUIRED) |
+| General UI development | `pnpm tauri:dev` |
+
+Reference: `.claude/skills/tauri-build-discipline/SKILL.md`
+
 ## Agent Architecture Conformance
 
 When a sprint includes new agents, include this mandatory section:

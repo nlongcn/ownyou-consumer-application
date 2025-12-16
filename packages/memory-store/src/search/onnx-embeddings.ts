@@ -86,7 +86,6 @@ export class OnnxEmbeddingService implements EmbeddingService {
   private async _doInitialize(): Promise<void> {
     try {
       // Dynamic import to avoid bundling issues
-      // @ts-expect-error - transformers.js types may not be available
       const { pipeline, env } = await import('@xenova/transformers');
 
       // Configure for browser/worker environment

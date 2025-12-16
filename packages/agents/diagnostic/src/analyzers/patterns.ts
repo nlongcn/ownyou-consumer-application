@@ -7,7 +7,6 @@
 import type {
   DiscoveredPattern,
   PatternEvidence,
-  PatternType,
   AnalysisContext,
   AnalyzerResult,
 } from '../types.js';

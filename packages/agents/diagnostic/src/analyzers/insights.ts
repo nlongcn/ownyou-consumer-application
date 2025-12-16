@@ -168,11 +168,11 @@ export async function generateInsightsAsync(
 
       const response = await llmClient.complete(userId, {
         messages,
-        operation: 'diagnostic_insight',
+        operation: 'reflection_node', // Using reflection_node as closest operation type
         model: 'fast', // Use fast tier for cost efficiency
       });
 
-      if (response.success && response.content) {
+      if (!response.error && response.content) {
         const llmInsights = parseLLMInsights(response.content, patterns);
         if (llmInsights.length > 0) {
           return {
@@ -243,7 +243,7 @@ function generateFallbackInsights(
 export function generateInsights(
   patterns: DiscoveredPattern[],
   completeness: ProfileCompleteness,
-  context: AnalysisContext
+  _context: AnalysisContext
 ): AnalyzerResult<Insight[]> {
   // If LLM client is available, we should warn that async version should be used
   if (_llmClient) {

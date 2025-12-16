@@ -112,3 +112,19 @@ body {
 .masonry-grid-column > * {
   margin-bottom: var(--card-gap);
 }
+
+/* Toast notification animation */
+@keyframes fade-in-down {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fade-in-down 300ms ease-out forwards;
+}

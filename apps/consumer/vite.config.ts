@@ -88,8 +88,12 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
   },
+  worker: {
+    format: 'es', // Use ES modules for workers to support code-splitting
+  },
   server: {
     port: 3000,
+    strictPort: true, // CRITICAL: OAuth redirect URIs are registered to port 3000
     host: true,
   },
   test: {

@@ -219,7 +219,7 @@ export function Profile() {
   if (isLoading) {
     return (
       <div className="flex flex-col min-h-screen">
-        <Header showLogo={false} title="Profile" />
+        <Header showLogo={false} title="Profile" showFilters={false} />
         <div className="flex-1 flex items-center justify-center">
           <div className="animate-pulse text-center">
             <div className="w-48 h-48 rounded-full bg-placeholder mx-auto mb-4" />
@@ -232,7 +232,7 @@ export function Profile() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header showLogo={false} title="Profile" />
+      <Header showLogo={false} title="Profile" showFilters={false} />
 
       <div className="flex-1 px-4 py-6">
         <div className="max-w-3xl mx-auto space-y-8">

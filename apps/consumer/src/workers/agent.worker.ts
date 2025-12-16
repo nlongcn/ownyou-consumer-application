@@ -11,30 +11,30 @@
  * - Manages AgentScheduler
  * - Performs IAB Classification (batch processing)
  * - Executes all 6 Mission Agents
- * - Direct IndexedDB access (via @ownyou/store)
+ * - Direct IndexedDB access (via @ownyou/memory-store)
  * - Direct Network access (fetch) or Proxy to Main/Rust
  */
 
-import { TriggerEngine, type TriggerEngineStats } from '@ownyou/triggers';
+import { TriggerEngine } from '@ownyou/triggers';
 import { ShoppingAgent } from '@ownyou/agents-shopping';
 import { RestaurantAgent } from '@ownyou/agents-restaurant';
 import { TravelAgent } from '@ownyou/agents-travel';
 import { EventsAgent } from '@ownyou/agents-events';
 import { ContentAgent } from '@ownyou/agents-content';
 import { DiagnosticAgent } from '@ownyou/agents-diagnostic';
-import { LLMClient, MockLLMProvider } from '@ownyou/llm-client';
+import { LLMClient, WebLLMProvider } from '@ownyou/llm-client';
 import { NAMESPACES, type AgentType } from '@ownyou/shared-types';
 import type { BaseAgent } from '@ownyou/agents-base';
-import { IndexedDBStore } from '@ownyou/store';
 import {
+  MemoryStore,
+  IndexedDBBackend,
   OnnxEmbeddingService,
-  MockEmbeddingService,
   type EmbeddingService,
-} from '@ownyou/memory-store/search';
+} from '@ownyou/memory-store';
 
 // --- Worker State ---
 let engine: TriggerEngine | null = null;
-let store: IndexedDBStore | null = null;
+let store: MemoryStore | null = null;
 let llmClient: LLMClient | null = null;
 let embeddingService: EmbeddingService | null = null;
 let isRunning = false;
@@ -54,37 +54,43 @@ async function initialize(uid: string) {
   userId = uid;
   
   try {
-    // 1. Initialize Store (IndexedDB works in Workers)
-    store = new IndexedDBStore({
-      dbName: 'ownyou_store', // Must match main thread DB name
-    });
-    // We assume init() is async if it exists, or just instantiation is enough
-    // Checking IndexedDBStore implementation: usually needs connection.
-    // For now, assuming it handles connection on first request or similar.
-    
-    // 2. Initialize Embedding Service (Sprint 11b: WASM embeddings)
-    // Uses OnnxEmbeddingService with MockEmbeddingService fallback
-    // This enables real semantic search in memory retrieval
-    const mockFallback = new MockEmbeddingService(384);
+    // 1. Initialize Embedding Service FIRST (Sprint 11b: WASM embeddings)
+    // Real ONNX model - no mocks, no fallbacks
     embeddingService = new OnnxEmbeddingService({
       modelId: 'Xenova/all-MiniLM-L6-v2',
       dimensions: 384,
-      fallback: mockFallback,
-      logProgress: true, // Log model download progress
+      logProgress: true,
     });
-    console.log('[AgentWorker] Embedding service initialized (ONNX with fallback)');
+    console.log('[AgentWorker] Embedding service initializing (ONNX WASM)...');
 
-    // 3. Initialize LLM Client
-    // TODO: Configure real provider based on settings passed in INIT
-    // For MVP Sprint 11a, we use MockLLMProvider but configured for "standard" tier
-    llmClient = new LLMClient({
-      provider: new MockLLMProvider(),
-      budgetConfig: { monthlyBudgetUsd: 10 },
+    // 2. Initialize Store with real embedding service
+    const backend = new IndexedDBBackend({
+      dbName: `ownyou_${uid}`,
     });
+    store = new MemoryStore({
+      backend,
+      embeddingService,
+    });
+    console.log('[AgentWorker] Store initialized with IndexedDB + ONNX embeddings');
+
+    // 3. Initialize LLM Client with WebLLM (runs locally in browser)
+    // WebLLM uses WebGPU for fast local inference - no external API needed
+    const webllmProvider = new WebLLMProvider({
+      model: 'Llama-3.2-1B-Instruct-q4f16_1-MLC', // Small, fast model for local inference
+      onProgress: (progress, status) => console.log(`[WebLLM] ${status}: ${progress}%`),
+    });
+    llmClient = new LLMClient({
+      provider: webllmProvider,
+      budgetConfig: {
+        monthlyBudgetUsd: 10,
+        throttling: { warnAt: 0.8, downgradeAt: 0.9, deferAt: 0.95, blockAt: 1.0 },
+      },
+    });
+    console.log('[AgentWorker] LLM client initialized (WebLLM local inference)');
 
     // 4. Initialize Trigger Engine
     engine = new TriggerEngine({
-      store,
+      store: store as any, // Type cast - MemoryStore implements core AgentStore interface
       llm: llmClient,
       userId,
       watchNamespaces: [
@@ -167,7 +173,7 @@ function registerAgents(engine: TriggerEngine) {
 
   engine.registerAgent({
     type: 'diagnostic',
-    namespaces: ['*'],
+    namespaces: [NAMESPACES.IAB_CLASSIFICATIONS, NAMESPACES.IKIGAI_PROFILE] as any, // All namespaces for diagnostic
     intents: ['analyze', 'profile', 'insights', 'patterns'],
     description: 'Profile analysis and insights',
     enabled: true,

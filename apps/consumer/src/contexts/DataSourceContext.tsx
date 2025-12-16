@@ -135,47 +135,13 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
   };
 
   /**
-   * Connect a data source with OAuth token
-   */
-  const connectSource = useCallback(async (sourceId: DataSourceId, accessToken: string) => {
-    if (!store || !isReady) throw new Error('Store not ready');
-
-    // Update status to connecting
-    setDataSources(prev => prev.map(ds =>
-      ds.id === sourceId ? { ...ds, status: 'connecting' as DataSourceStatus } : ds
-    ));
-
-    try {
-      // Store the access token securely
-      await store.put(NS.uiPreferences(userId), `oauth_${sourceId}`, {
-        accessToken,
-        savedAt: Date.now(),
-      });
-
-      // Update to connected
-      setDataSources(prev => prev.map(ds =>
-        ds.id === sourceId ? { ...ds, status: 'connected' as DataSourceStatus } : ds
-      ));
-
-      // Immediately sync after connecting
-      await syncSource(sourceId);
-    } catch (error) {
-      setDataSources(prev => prev.map(ds =>
-        ds.id === sourceId ? {
-          ...ds,
-          status: 'error' as DataSourceStatus,
-          error: error instanceof Error ? error.message : 'Connection failed'
-        } : ds
-      ));
-      throw error;
-    }
-  }, [store, isReady, userId]);
-
-  /**
    * Sync a data source - fetch data, classify, and store
    *
    * Email sync uses @ownyou/email package
    * Calendar/Financial sync are placeholders until packages are built
+   *
+   * NOTE: This function is defined BEFORE connectSource because connectSource
+   * depends on it in its useCallback dependency array.
    */
   const syncSource = useCallback(async (sourceId: DataSourceId): Promise<SyncResult> => {
     console.log('[DataSourceContext] syncSource called for:', sourceId);
@@ -214,6 +180,7 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
       if (source.type === 'email') {
         // ========================================
         // EMAIL SYNC - Uses @ownyou/email package
+        // Sprint 11b Deviation 1 Fix: Read fetchOptions from Store
         // ========================================
         console.log('[DataSourceContext] Starting email sync for', sourceId);
         try {
@@ -226,6 +193,23 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
           // Create IAB classifier from iab-classifier package
           const iabClassifier = createIABClassifier({ store: store as unknown as Parameters<typeof createIABClassifier>[0]['store'] });
 
+          // Fetch user-configurable fetchOptions from Store (Sprint 11b Deviation 1 fix)
+          // Falls back to defaults if not configured
+          const DEFAULT_FETCH_OPTIONS = { maxResults: 100, daysBack: 30 };
+          let userFetchOptions = DEFAULT_FETCH_OPTIONS;
+          try {
+            const configData = await store.get<{ fetchOptions?: { maxResults?: number; daysBack?: number } }>(
+              NS.dataSourceConfigs(userId),
+              sourceId
+            );
+            if (configData?.fetchOptions) {
+              userFetchOptions = { ...DEFAULT_FETCH_OPTIONS, ...configData.fetchOptions };
+              console.log('[DataSourceContext] Using user-configured fetchOptions:', userFetchOptions);
+            }
+          } catch (configError) {
+            console.log('[DataSourceContext] No user fetchOptions config, using defaults');
+          }
+
           // Create email pipeline with PipelineConfig (userId is required)
           console.log('[DataSourceContext] Creating EmailPipeline for provider:', source.provider);
           const pipeline = new EmailPipeline({
@@ -233,7 +217,7 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
             provider: source.provider as 'google' | 'microsoft',
             runClassification: true,
             fetchOptions: {
-              maxResults: 100,
+              maxResults: userFetchOptions.maxResults,
             },
           });
 
@@ -253,6 +237,36 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
               classifiedAt: Date;
             }> = [];
 
+            // CRITICAL FIX: Store raw email data for RawData.tsx to display
+            // Store each email's summary to NS.iabClassifications namespace
+            console.log(`[DataSourceContext] Storing ${emails.length} emails to Store...`);
+            for (const email of emails) {
+              try {
+                // Store email summary for the RawData viewer
+                await store.put(
+                  NS.iabClassifications(userId),
+                  `email_${email.id}`,
+                  {
+                    id: email.id,
+                    summary: email.subject || 'No subject',
+                    content: email.body?.substring(0, 500) || '',
+                    sourceType: 'email',
+                    from: email.from,
+                    to: email.to,
+                    date: email.date instanceof Date ? email.date.toISOString() : email.date,
+                    timestamp: new Date().toISOString(),
+                    metadata: {
+                      provider: source.provider,
+                      hasAttachments: email.metadata?.hasAttachments || false,
+                    },
+                  }
+                );
+              } catch (storeErr) {
+                console.warn('[DataSourceContext] Failed to store email:', email.id, storeErr);
+              }
+            }
+            console.log('[DataSourceContext] Emails stored to namespace');
+
             // Helper to process a single email
             const processEmail = async (email: any) => {
               try {
@@ -266,6 +280,25 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
                   // Map @ownyou/iab-classifier output to @ownyou/email IABClassification format
                   // iab-classifier returns: { userId, source, sourceItemId, category (string), confidence (number), reasoning, textPreview, timestamp }
                   const c = classResult.classification;
+
+                  // CRITICAL FIX: Also store classification to the Store for Profile page
+                  try {
+                    await store.put(
+                      NS.iabClassifications(userId),
+                      `classification_${email.id}`,
+                      {
+                        emailId: email.id,
+                        category: c.category,
+                        confidence: c.confidence,
+                        reasoning: c.reasoning,
+                        textPreview: c.textPreview,
+                        classifiedAt: new Date().toISOString(),
+                      }
+                    );
+                  } catch (classStoreErr) {
+                    console.warn('[DataSourceContext] Failed to store classification:', email.id, classStoreErr);
+                  }
+
                   return {
                     emailId: email.id,
                     tier1Category: typeof c.category === 'string' ? c.category : 'Unknown',
@@ -288,9 +321,9 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
             for (let i = 0; i < emails.length; i += BATCH_SIZE) {
               const batch = emails.slice(i, i + BATCH_SIZE);
               console.log(`[DataSourceContext] Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(emails.length / BATCH_SIZE)} (${batch.length} emails)`);
-              
+
               const batchResults = await Promise.all(batch.map(processEmail));
-              
+
               // Filter out nulls (failed classifications) and add to results
               batchResults.forEach(res => {
                 if (res) results.push(res);
@@ -352,6 +385,43 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
       return { success: false, itemCount: 0, error: errorMessage };
     }
   }, [store, isReady, userId, dataSources]);
+
+  /**
+   * Connect a data source with OAuth token
+   */
+  const connectSource = useCallback(async (sourceId: DataSourceId, accessToken: string) => {
+    if (!store || !isReady) throw new Error('Store not ready');
+
+    // Update status to connecting
+    setDataSources(prev => prev.map(ds =>
+      ds.id === sourceId ? { ...ds, status: 'connecting' as DataSourceStatus } : ds
+    ));
+
+    try {
+      // Store the access token securely
+      await store.put(NS.uiPreferences(userId), `oauth_${sourceId}`, {
+        accessToken,
+        savedAt: Date.now(),
+      });
+
+      // Update to connected
+      setDataSources(prev => prev.map(ds =>
+        ds.id === sourceId ? { ...ds, status: 'connected' as DataSourceStatus } : ds
+      ));
+
+      // Immediately sync after connecting
+      await syncSource(sourceId);
+    } catch (error) {
+      setDataSources(prev => prev.map(ds =>
+        ds.id === sourceId ? {
+          ...ds,
+          status: 'error' as DataSourceStatus,
+          error: error instanceof Error ? error.message : 'Connection failed'
+        } : ds
+      ));
+      throw error;
+    }
+  }, [store, isReady, userId, syncSource]);
 
   /**
    * Disconnect a data source

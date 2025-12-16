@@ -68,6 +68,7 @@
 | `v13-compliance-check` | Before marking implementation complete |
 | `git-workflow-discipline` | ALL development (branch, test, commit, push) |
 | `testing-discipline` | ALL code (RED-GREEN-REFACTOR) |
+| `tauri-build-discipline` | Before testing OAuth/deep links in Tauri app |
 
 **Slash Commands:**
 - `/start-sprint` - Load sprint context and begin work
@@ -85,6 +86,27 @@ npm test                                  # Tests
 pytest tests/integration/                 # Integration tests
 langgraph dev                             # LangGraph Studio
 ```
+
+### Tauri Desktop App (apps/consumer/)
+
+**CRITICAL:** After making ANY code changes to `apps/consumer/`:
+
+```bash
+cd apps/consumer
+pnpm tauri:build    # Builds + deploys to /Applications/OwnYou.app
+```
+
+**Why this matters:**
+- macOS routes `ownyou://` deep links to the INSTALLED app (`/Applications/OwnYou.app`)
+- Deep links do NOT go to the dev server
+- OAuth callbacks use deep links → testing requires rebuilt app
+- `pnpm tauri:dev` does hot reload for UI but deep links still go to installed version
+
+| Scenario | Command | Notes |
+|----------|---------|-------|
+| OAuth/deep link testing | `pnpm tauri:build` | REQUIRED - rebuilds + deploys |
+| General UI development | `pnpm tauri:dev` | Hot reload, but deep links broken |
+| After ANY code changes | `pnpm tauri:build` | Before testing OAuth flow |
 
 ---
 

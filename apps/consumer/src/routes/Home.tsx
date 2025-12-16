@@ -291,7 +291,7 @@ export function Home() {
   // Show empty state with tip if data connected but no missions (processing complete)
   if (hasConnectedSources && !hasMissions && !isProcessing && !isLoading) {
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen pb-32"> {/* Add padding for ChatInput */}
         <Header showFilters={false} />
         <div className="flex-1 flex items-center justify-center px-4">
           <Card className="p-8 text-center max-w-md">
@@ -311,6 +311,7 @@ export function Home() {
             </button>
           </Card>
         </div>
+        <ChatInput />
       </div>
     );
   }

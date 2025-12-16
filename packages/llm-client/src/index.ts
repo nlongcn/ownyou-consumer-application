@@ -23,6 +23,8 @@
 export {
   LLMClient,
   MockLLMProvider,
+  WebLLMProvider,
+  type WebLLMProviderConfig,
   type LLMProvider,
   type LLMRequest,
   type LLMResponse,

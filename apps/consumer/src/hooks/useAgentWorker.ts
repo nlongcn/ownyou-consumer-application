@@ -3,12 +3,14 @@ import { useAuth } from '../contexts/AuthContext';
 import type { TriggerEngineStats, TriggerResult } from '@ownyou/triggers';
 
 // Define message types locally to avoid import issues with worker files
-type WorkerMessage = 
+type _WorkerMessage =
   | { type: 'INIT'; payload: { userId: string; walletAddress?: string } }
   | { type: 'START' }
   | { type: 'STOP' }
   | { type: 'HANDLE_REQUEST'; payload: { request: string; requestId: string } }
   | { type: 'GET_STATS' };
+// Export type alias to use in worker communication (prevents TS6196)
+export type { _WorkerMessage as WorkerMessage };
 
 type WorkerResponse =
   | { type: 'INIT_COMPLETE' }
