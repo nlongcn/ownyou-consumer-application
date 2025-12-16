@@ -73,8 +73,8 @@ vi.mock('@ownyou/ui-components', () => ({
       ))}
     </div>
   ),
-  ConfidenceGauge: ({ confidence }: { confidence: number }) => (
-    <div data-testid="confidence-gauge">{confidence}</div>
+  ConfidenceGauge: ({ value }: { value: number }) => (
+    <div data-testid="confidence-gauge">{value}</div>
   ),
 }));
 
@@ -133,7 +133,8 @@ describe('Profile Route', () => {
   it('renders confidence gauge', () => {
     renderWithProviders(<Profile />);
     expect(screen.getByTestId('confidence-gauge')).toBeInTheDocument();
-    expect(screen.getByTestId('confidence-gauge')).toHaveTextContent('0.78');
+    // Profile.tsx converts overallConfidence (0.78) to percentage: 0.78 * 100 = 78
+    expect(screen.getByTestId('confidence-gauge')).toHaveTextContent('78');
   });
 
   it('displays data summary stats', () => {

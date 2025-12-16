@@ -13,7 +13,11 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test-setup.ts'],
-    include: ['**/*.{test,spec}.{ts,tsx}'],
+    include: ['**/*.test.{ts,tsx}'],
+    exclude: [
+      '**/node_modules/**',
+      '**/e2e/**', // Playwright e2e tests run separately
+    ],
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: ['node_modules/', 'src/test-setup.ts'],

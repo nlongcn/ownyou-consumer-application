@@ -27,7 +27,7 @@ vi.mock('../../src/contexts/DataSourceContext', () => ({
 // Mock TriggerContext
 vi.mock('../../src/contexts/TriggerContext', () => ({
   useTrigger: () => ({
-    isProcessing: false,
+    isExecuting: false,
     lastProcessed: null,
     triggerCount: 0,
   }),
@@ -37,6 +37,7 @@ vi.mock('../../src/contexts/TriggerContext', () => ({
 vi.mock('../../src/contexts/ToastContext', () => ({
   useToast: () => ({
     showToast: vi.fn(),
+    showFeedbackToast: vi.fn(),
     hideToast: vi.fn(),
     toasts: [],
   }),
@@ -72,6 +73,7 @@ vi.mock('../../src/hooks/useMissions', () => ({
     isLoading: false,
     error: null,
     refetch: vi.fn(),
+    hasMissions: true, // Added: tells Home.tsx to render mission feed
   })),
   useUpdateMission: vi.fn(() => ({
     snoozeMission: vi.fn(),

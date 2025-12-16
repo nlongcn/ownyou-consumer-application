@@ -10,11 +10,18 @@ import {
   getFeatureAvailability,
   getColumns,
   getCardWidth,
+  _resetPlatformCache,
 } from '../../src/utils/platform';
 
 describe('getPlatform', () => {
   beforeEach(() => {
-    // Reset window.__TAURI__
+    // Reset platform cache and window.__TAURI__
+    _resetPlatformCache();
+    delete (window as { __TAURI__?: unknown }).__TAURI__;
+  });
+
+  afterEach(() => {
+    _resetPlatformCache();
     delete (window as { __TAURI__?: unknown }).__TAURI__;
   });
 
@@ -161,6 +168,12 @@ describe('isTouchDevice', () => {
 
 describe('getFeatureAvailability', () => {
   beforeEach(() => {
+    _resetPlatformCache();
+    delete (window as { __TAURI__?: unknown }).__TAURI__;
+  });
+
+  afterEach(() => {
+    _resetPlatformCache();
     delete (window as { __TAURI__?: unknown }).__TAURI__;
   });
 

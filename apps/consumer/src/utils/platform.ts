@@ -104,6 +104,13 @@ export function getPlatform(): Platform {
 }
 
 /**
+ * Reset platform cache (for testing only)
+ */
+export function _resetPlatformCache(): void {
+  cachedPlatform = null;
+}
+
+/**
  * Check if running on mobile viewport
  */
 export function isMobile(): boolean {
