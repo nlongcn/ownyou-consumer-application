@@ -4,6 +4,47 @@
 
 ---
 
+## ⛔ MANDATORY FIRST ACTION - READ THIS FIRST
+
+**Before responding to ANY user message, you MUST:**
+
+1. **List available skills** - Check `.claude/skills/` and plugin skills
+2. **Identify relevant skills** - Does this task match any skill description?
+3. **Use the Skill tool** - `Skill(skill-name)` BEFORE any other action
+4. **Announce usage** - "I'm using [skill] to [task]"
+5. **Follow the skill exactly** - Do not skip steps or rationalize shortcuts
+
+### If You Skip This Protocol:
+
+```
+❌ FAILURE: You responded without checking/using skills
+→ User will say: "You skipped skills. Start over."
+→ You must restart and follow the protocol
+```
+
+### Common Rationalizations That Mean You're Failing:
+
+- "This is just a simple question" → **WRONG.** Check for skills.
+- "Let me gather information first" → **WRONG.** Skills tell you HOW.
+- "The skill is overkill" → **WRONG.** Skills exist because simple becomes complex.
+- "I'll just do this one thing first" → **WRONG.** Skills BEFORE actions.
+
+### Required Skills by Task Type:
+
+| Task Type | Required Skill |
+|-----------|----------------|
+| Sprint work | `sprint-mode` |
+| Implementation | `implement-package` |
+| Testing | `testing-discipline` |
+| Debugging | `superpowers:systematic-debugging` |
+| Before completion | `v13-compliance-check` |
+| Git operations | `git-workflow-discipline` |
+| Design/planning | `superpowers:brainstorming` |
+
+**Hooks are active:** The system will BLOCK Edit/Write tools if skills weren't used.
+
+---
+
 ## 🎯 Quick Start
 
 **Dual-Purpose Architecture:**
@@ -137,5 +178,5 @@ For detailed workflows, migration protocols, and comprehensive instructions:
 
 ---
 
-**Last Updated:** 2025-12-01
-**Current Sprint:** Sprint 0 (Foundation)
+**Last Updated:** 2025-12-18
+**Current Sprint:** Sprint 11c (A/B Testing) - COMPLETE
