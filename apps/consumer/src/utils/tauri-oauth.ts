@@ -60,11 +60,21 @@ export async function initOAuthListener(): Promise<void> {
 }
 
 /**
+ * OAuth token data returned from the OAuth flow
+ */
+export interface OAuthTokenData {
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt?: number; // Unix timestamp when token expires
+  provider: 'google' | 'microsoft';
+}
+
+/**
  * Start OAuth flow for a data source
  * Token exchange happens in Cloudflare Worker (has client_secret)
- * Worker redirects to app with access_token via deep link
+ * Worker redirects to app with access_token + refresh_token via deep link
  */
-export async function startTauriOAuth(sourceId: string): Promise<string | null> {
+export async function startTauriOAuth(sourceId: string): Promise<OAuthTokenData | null> {
   if (getPlatform() !== 'tauri') {
     throw new Error('startTauriOAuth can only be used in Tauri');
   }
@@ -126,6 +136,9 @@ export async function startTauriOAuth(sourceId: string): Promise<string | null> 
               const params = urlObj.searchParams;
 
               const accessToken = params.get('access_token');
+              const refreshToken = params.get('refresh_token');
+              const expiresIn = params.get('expires_in');
+              const state = params.get('state');
               const error = params.get('error');
 
               if (error) {
@@ -134,6 +147,17 @@ export async function startTauriOAuth(sourceId: string): Promise<string | null> 
 
               if (accessToken) {
                 console.log('[TauriOAuth] Access token received from Cloudflare Worker!');
+                console.log('[TauriOAuth] Refresh token:', refreshToken ? 'present' : 'not present');
+                console.log('[TauriOAuth] Expires in:', expiresIn, 'seconds');
+
+                // Calculate expiration timestamp
+                const expiresAt = expiresIn
+                  ? Date.now() + (parseInt(expiresIn, 10) * 1000)
+                  : undefined;
+
+                // Determine provider from state
+                const isGoogle = state === 'gmail' || state === 'google-calendar';
+                const providerType: 'google' | 'microsoft' = isGoogle ? 'google' : 'microsoft';
 
                 // Bring app window to focus
                 try {
@@ -145,7 +169,12 @@ export async function startTauriOAuth(sourceId: string): Promise<string | null> 
                 }
 
                 cleanup();
-                resolve(accessToken);
+                resolve({
+                  accessToken,
+                  refreshToken: refreshToken || undefined,
+                  expiresAt,
+                  provider: providerType,
+                });
                 return;
               }
             } catch (err) {
@@ -220,9 +249,9 @@ export function getOAuthRedirectUri(): string {
 /**
  * Handle OAuth callback from App.tsx deep link handler (fallback)
  * Cloudflare Worker has already exchanged the code for tokens
- * Deep link contains access_token directly
+ * Deep link contains access_token + refresh_token directly
  */
-export async function handleOAuthCallbackFromApp(callbackUrl: string): Promise<string | null> {
+export async function handleOAuthCallbackFromApp(callbackUrl: string): Promise<OAuthTokenData | null> {
   console.log('[TauriOAuth] handleOAuthCallbackFromApp called with:', callbackUrl);
 
   try {
@@ -230,6 +259,9 @@ export async function handleOAuthCallbackFromApp(callbackUrl: string): Promise<s
     const params = urlObj.searchParams;
 
     const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
+    const expiresIn = params.get('expires_in');
+    const state = params.get('state');
     const error = params.get('error');
 
     if (error) {
@@ -239,7 +271,22 @@ export async function handleOAuthCallbackFromApp(callbackUrl: string): Promise<s
 
     if (accessToken) {
       console.log('[TauriOAuth] Access token received from Cloudflare Worker (via fallback handler)');
-      return accessToken;
+
+      // Calculate expiration timestamp
+      const expiresAt = expiresIn
+        ? Date.now() + (parseInt(expiresIn, 10) * 1000)
+        : undefined;
+
+      // Determine provider from state
+      const isGoogle = state === 'gmail' || state === 'google-calendar';
+      const providerType: 'google' | 'microsoft' = isGoogle ? 'google' : 'microsoft';
+
+      return {
+        accessToken,
+        refreshToken: refreshToken || undefined,
+        expiresAt,
+        provider: providerType,
+      };
     }
 
     console.error('[TauriOAuth] No access token in callback URL');
@@ -247,6 +294,52 @@ export async function handleOAuthCallbackFromApp(callbackUrl: string): Promise<s
 
   } catch (err) {
     console.error('[TauriOAuth] handleOAuthCallbackFromApp error:', err);
+    return null;
+  }
+}
+
+/**
+ * Refresh an OAuth token using the Cloudflare Worker
+ * @param refreshToken - The refresh token to use
+ * @param provider - 'google' or 'microsoft'
+ * @returns New token data or null if refresh fails
+ */
+export async function refreshOAuthToken(
+  refreshToken: string,
+  provider: 'google' | 'microsoft'
+): Promise<OAuthTokenData | null> {
+  const REFRESH_URL = 'https://ownyou-oauth-callback.nlongcroft.workers.dev/refresh';
+
+  try {
+    console.log(`[TauriOAuth] Refreshing ${provider} token...`);
+
+    const url = new URL(REFRESH_URL);
+    url.searchParams.set('refresh_token', refreshToken);
+    url.searchParams.set('provider', provider);
+
+    const response = await fetch(url.toString());
+    const data = await response.json();
+
+    if (data.error) {
+      console.error('[TauriOAuth] Token refresh failed:', data.error);
+      return null;
+    }
+
+    console.log('[TauriOAuth] Token refreshed successfully');
+
+    // Calculate expiration timestamp
+    const expiresAt = data.expiresIn
+      ? Date.now() + (data.expiresIn * 1000)
+      : undefined;
+
+    return {
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken || refreshToken, // Keep old if not returned
+      expiresAt,
+      provider,
+    };
+  } catch (err) {
+    console.error('[TauriOAuth] Token refresh error:', err);
     return null;
   }
 }

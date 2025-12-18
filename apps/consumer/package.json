@@ -1,13 +1,13 @@
 {
   "name": "@ownyou/consumer",
-  "version": "0.1.0",
+  "version": "0.1.15",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "build:pwa": "tsc && vite build",
-    "preview": "vite preview",
+    "version:bump": "node scripts/generate-build-info.js",
+    "build": "npm run version:bump && tsc && vite build",
+    "preview": "vite preview --open",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -18,9 +18,12 @@
     "test:api": "node --env-file=.env -e \"fetch('https://api.openai.com/v1/models', {headers: {Authorization: 'Bearer ' + process.env.VITE_OPENAI_API_KEY}}).then(r => r.ok ? console.log('✅ OpenAI API key valid') : r.json().then(e => console.log('❌ API key error:', e.error?.message || r.status)))\"",
     "lint": "eslint src --ext ts,tsx",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build && rm -rf /Applications/OwnYou.app && cp -R src-tauri/target/release/bundle/macos/OwnYou.app /Applications/ && /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -f /Applications/OwnYou.app && echo '✅ Deployed to /Applications/OwnYou.app'"
+    "tauri:build": "pkill -9 -x OwnYou 2>/dev/null; sleep 1; npm run version:bump && tauri build && rm -rf /Applications/OwnYou.app && cp -R src-tauri/target/release/bundle/macos/OwnYou.app /Applications/ && find /Applications/OwnYou.app -exec xattr -c {} \\; 2>/dev/null && codesign --force --deep --sign 'Apple Development: nlongcroft@gmail.com (ZQ4P8NAFLM)' /Applications/OwnYou.app && /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/Support/lsregister -f /Applications/OwnYou.app && echo '' && echo '═══════════════════════════════════════════' && cat src/build-info.ts | grep -E 'version|buildDate' && echo '═══════════════════════════════════════════' && open /Applications/OwnYou.app",
+    "pwa:build": "npm run version:bump && tsc && vite build && echo '' && echo '═══════════════════════════════════════════' && cat src/build-info.ts | grep -E 'version|buildDate' && echo '═══════════════════════════════════════════' && echo '✅ PWA built. Run: pnpm preview'",
+    "pwa:test": "npm run pwa:build && vite preview --open"
   },
   "dependencies": {
+    "@ownyou/ab-testing": "workspace:*",
     "@ownyou/agents-base": "workspace:*",
     "@ownyou/agents-content": "workspace:*",
     "@ownyou/agents-diagnostic": "workspace:*",

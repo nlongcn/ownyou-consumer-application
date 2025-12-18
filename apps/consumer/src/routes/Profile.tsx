@@ -1,8 +1,14 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Header, IkigaiWheel, IABCategories, ConfidenceGauge } from '@ownyou/ui-components';
 import { radius, ikigaiColors } from '@ownyou/ui-design-system';
+import { NS } from '@ownyou/shared-types';
+import type { Stage3Export, ModelConfig } from '@ownyou/ab-testing';
+import { getTopCategories } from '@ownyou/ab-testing';
 import { useProfile } from '../hooks/useProfile';
 import { useIkigai } from '../contexts/IkigaiContext';
+import { useStore } from '../contexts/StoreContext';
+import { useAuth } from '../contexts/AuthContext';
 import type { IkigaiScores } from '../hooks/useProfile';
 
 /** Ikigai dimension type for detail view */
@@ -151,10 +157,38 @@ function IkigaiDimensionDetail({
 }
 
 export function Profile() {
+  const navigate = useNavigate();
   const { profile, ikigaiScores, iabCategories, isLoading, error, disputeCategory } = useProfile();
   const { profile: ikigaiProfile } = useIkigai();
+  const { store, isReady } = useStore();
+  const { wallet } = useAuth();
   const [disputeMessage, setDisputeMessage] = useState<string | null>(null);
   const [selectedDimension, setSelectedDimension] = useState<DimensionName | null>(null);
+
+  // A/B Testing results state - Sprint 11c
+  const [abTestingResults, setAbTestingResults] = useState<Stage3Export | null>(null);
+  const userId = wallet?.address ?? 'anonymous';
+
+  // Load A/B testing results from store
+  useEffect(() => {
+    if (!store || !isReady) return;
+
+    const loadABTestingResults = async () => {
+      try {
+        const results = await store.get<Stage3Export>(
+          NS.abTestingResults(userId),
+          'latest'
+        );
+        if (results) {
+          setAbTestingResults(results);
+        }
+      } catch (err) {
+        console.error('[Profile] Failed to load A/B testing results:', err);
+      }
+    };
+
+    loadABTestingResults();
+  }, [store, isReady, userId]);
 
   /** Handle IAB category dispute - Sprint 11b Bugfix 9 */
   const handleDispute = useCallback(async (categoryId: string) => {
@@ -300,6 +334,90 @@ export function Profile() {
               <p className="text-sm text-gray-600">Data Sources</p>
             </div>
           </div>
+        </section>
+
+        {/* A/B Testing Results Section - Sprint 11c */}
+        <section className="bg-white p-6 shadow-sm" style={{ borderRadius: radius.card }}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold">Classification Analysis</h2>
+            {abTestingResults && (
+              <button
+                onClick={() => navigate('/results')}
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                View Details →
+              </button>
+            )}
+          </div>
+
+          {abTestingResults ? (
+            <div className="space-y-4">
+              {/* Agreement Summary */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-green-50 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-green-700">
+                    {Math.round(abTestingResults.comparisonMetrics.agreement.agreementRate * 100)}%
+                  </div>
+                  <div className="text-xs text-green-600">Model Agreement</div>
+                </div>
+                <div className="p-4 bg-blue-50 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-blue-700">
+                    {abTestingResults.models.length}
+                  </div>
+                  <div className="text-xs text-blue-600">Models Compared</div>
+                </div>
+              </div>
+
+              {/* Top Categories from A/B Testing */}
+              <div>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Top Categories (Multi-Model Consensus)
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {getTopCategories(abTestingResults.comparisonMetrics.coverage, 5).map(
+                    ({ category, frequency }: { category: string; frequency: number }) => (
+                      <span
+                        key={category}
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          frequency === abTestingResults.models.length
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {category}
+                        {frequency === abTestingResults.models.length && (
+                          <span className="ml-1">✓</span>
+                        )}
+                      </span>
+                    )
+                  )}
+                </div>
+              </div>
+
+              {/* Models Used */}
+              <div className="pt-3 border-t">
+                <p className="text-xs text-gray-500">
+                  Analyzed with:{' '}
+                  {abTestingResults.models.map((m: ModelConfig) => m.displayName).join(', ')}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-6">
+              <div className="w-12 h-12 bg-gray-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                <span className="text-xl">🔬</span>
+              </div>
+              <p className="text-gray-600 mb-3">
+                Run multi-model classification to compare how different AI models analyze your interests.
+              </p>
+              <button
+                onClick={() => navigate('/ab-testing')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+              >
+                Start A/B Testing
+              </button>
+            </div>
+          )}
         </section>
         </div>
       </div>

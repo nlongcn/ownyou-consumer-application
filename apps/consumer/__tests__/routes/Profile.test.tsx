@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Profile } from '../../src/routes/Profile';
+import { AuthProvider } from '../../src/contexts/AuthContext';
+import { StoreProvider } from '../../src/contexts/StoreContext';
 
 // Mock useProfile hook
 vi.mock('../../src/hooks/useProfile', () => ({
@@ -97,7 +99,11 @@ function renderWithProviders(ui: React.ReactElement) {
   return render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        {ui}
+        <AuthProvider>
+          <StoreProvider forceInMemory>
+            {ui}
+          </StoreProvider>
+        </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>
   );

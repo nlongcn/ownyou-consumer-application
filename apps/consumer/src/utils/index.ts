@@ -13,3 +13,10 @@ export {
 } from './platform';
 
 export type { Platform, Breakpoint } from './platform';
+
+export {
+  fetchAvailableModels,
+  clearModelsCache,
+  getConfiguredProviders,
+  groupModelsByProvider,
+} from './fetch-models';

@@ -11,6 +11,7 @@ import { useGDPR } from '../hooks/useGDPR';
 import { SyncStatusDetails } from '../components/SyncStatusIndicator';
 import { getPlatform } from '../utils/platform';
 import { startTauriOAuth, initOAuthListener } from '../utils/tauri-oauth';
+import { BUILD_INFO } from '../build-info';
 
 type SettingsSection = 'privacy' | 'data' | 'wallet' | 'sync' | 'about';
 
@@ -32,7 +33,7 @@ export function Settings() {
     <div className="flex flex-col min-h-screen">
       <Header showLogo={false} title="Settings" showFilters={false} />
 
-      <div className="flex-1 px-4 py-6">
+      <div className="flex-1 px-4 lg:px-8 xl:px-12 py-6 w-full max-w-6xl mx-auto">
         {/* Settings Navigation */}
         <nav className="flex overflow-x-auto gap-2 mb-6 hide-scrollbar">
           {(['privacy', 'data', 'wallet', 'sync', 'about'] as SettingsSection[]).map((section) => (
@@ -68,8 +69,8 @@ function PrivacySettings() {
   const [shareAnonymized, setShareAnonymized] = useState(false);
 
   return (
-    <Card className="p-6 space-y-4">
-      <h3 className="text-lg font-bold">Privacy Controls</h3>
+    <Card size="full" className="p-6 lg:p-8 space-y-6">
+      <h3 className="text-xl lg:text-2xl font-bold">Privacy Controls</h3>
 
       <SettingToggle
         label="Local Processing Only"
@@ -129,20 +130,50 @@ function DataSettings() {
    * This handles the case where OAuth redirects back (no popup) and stores token in sessionStorage
    */
   useEffect(() => {
+    // Check for new format (full token data)
+    const pendingTokenDataStr = sessionStorage.getItem('oauth_token_data');
+    // Also check legacy format (just access token)
     const pendingToken = sessionStorage.getItem('oauth_token');
     const pendingProvider = sessionStorage.getItem('oauth_provider') as DataSourceId | null;
 
-    if (pendingToken && pendingProvider) {
-      console.log('[DataSettings] Found pending OAuth token for:', pendingProvider);
+    if (pendingTokenDataStr && pendingProvider) {
+      console.log('[DataSettings] Found pending OAuth token data for:', pendingProvider);
       // Clear the stored values first to prevent loops
+      sessionStorage.removeItem('oauth_token_data');
+      sessionStorage.removeItem('oauth_provider');
+
+      try {
+        const tokenData = JSON.parse(pendingTokenDataStr);
+        setIsConnecting(pendingProvider);
+        connectSource(pendingProvider, tokenData)
+          .then(() => {
+            console.log('[DataSettings] Connected via redirect flow:', pendingProvider);
+          })
+          .catch((error) => {
+            console.error('[DataSettings] Failed to connect via redirect flow:', error);
+          })
+          .finally(() => {
+            setIsConnecting(null);
+          });
+      } catch (err) {
+        console.error('[DataSettings] Failed to parse token data:', err);
+      }
+    } else if (pendingToken && pendingProvider) {
+      // Legacy format - just access token
+      console.log('[DataSettings] Found pending OAuth token (legacy) for:', pendingProvider);
       sessionStorage.removeItem('oauth_token');
       sessionStorage.removeItem('oauth_provider');
 
-      // Connect with the stored token
+      const isGoogle = pendingProvider === 'gmail' || pendingProvider === 'google-calendar';
+      const tokenData = {
+        accessToken: pendingToken,
+        provider: (isGoogle ? 'google' : 'microsoft') as 'google' | 'microsoft',
+      };
+
       setIsConnecting(pendingProvider);
-      connectSource(pendingProvider, pendingToken)
+      connectSource(pendingProvider, tokenData)
         .then(() => {
-          console.log('[DataSettings] Connected via redirect flow:', pendingProvider);
+          console.log('[DataSettings] Connected via redirect flow (legacy):', pendingProvider);
         })
         .catch((error) => {
           console.error('[DataSettings] Failed to connect via redirect flow:', error);
@@ -171,11 +202,12 @@ function DataSettings() {
         try {
           // Use standalone Tauri OAuth flow with PKCE
           // This opens system browser, user authenticates, callback comes via deep link
-          const accessToken = await startTauriOAuth(sourceId);
+          const tokenData = await startTauriOAuth(sourceId);
 
-          if (accessToken) {
+          if (tokenData) {
             console.log(`[DataSettings] Tauri OAuth successful, connecting source...`);
-            await connectSource(sourceId, accessToken);
+            console.log(`[DataSettings] Token data: hasRefreshToken=${!!tokenData.refreshToken}, expiresAt=${tokenData.expiresAt ? new Date(tokenData.expiresAt).toISOString() : 'unknown'}`);
+            await connectSource(sourceId, tokenData);
             console.log(`[DataSettings] Connected ${sourceId} successfully`);
             // Show success toast
             const displayName = sourceId === 'outlook' ? 'Outlook' : sourceId === 'gmail' ? 'Gmail' : sourceId;
@@ -204,7 +236,14 @@ function DataSettings() {
 
         if (accessToken) {
           console.log(`[DataSettings] Calling connectSource for ${sourceId}...`);
-          await connectSource(sourceId, accessToken);
+          // PWA mode doesn't return refresh tokens (yet) - wrap in OAuthTokenData format
+          const isGoogle = sourceId === 'gmail' || sourceId === 'google-calendar';
+          const tokenData = {
+            accessToken,
+            provider: (isGoogle ? 'google' : 'microsoft') as 'google' | 'microsoft',
+            // Note: PWA mode doesn't have refresh tokens without server-side token exchange
+          };
+          await connectSource(sourceId, tokenData);
           console.log(`[DataSettings] Connected ${sourceId} successfully`);
           // Show success toast
           const displayName = sourceId === 'outlook' ? 'Outlook' : sourceId === 'gmail' ? 'Gmail' : sourceId;
@@ -311,9 +350,10 @@ function DataSettings() {
         </div>
       )}
 
-      <Card className="p-6 space-y-4">
-        <h3 className="text-lg font-bold">Data Sources</h3>
+      <Card size="full" className="p-6 lg:p-8 space-y-6">
+        <h3 className="text-xl lg:text-2xl font-bold">Data Sources</h3>
 
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       {visibleSources.map(source => {
         const displayInfo = getSourceDisplayInfo(source);
         const isConnected = source.status === 'connected';
@@ -336,6 +376,7 @@ function DataSettings() {
           />
         );
       })}
+        </div>
 
       {/* Outlook PWA limitation notice - only show in browser, not Tauri */}
       {getPlatform() === 'pwa' && dataSources.find(ds => ds.id === 'outlook')?.status === 'connected' && (
@@ -621,29 +662,37 @@ function DataSettings() {
 /**
  * Get desktop app download URL based on user's operating system
  * Auto-detects macOS vs Windows and returns appropriate installer URL
+ * Uses BUILD_INFO.version to always point to the matching release
  */
 function getDesktopDownloadUrl(): { url: string; platform: string; filename: string } {
-  const DOWNLOAD_URLS = {
-    mac_arm: {
-      url: 'https://github.com/nlongcn/ownyou-consumer-application/releases/download/v0.1.0/OwnYou_0.1.0_aarch64.dmg',
-      filename: 'OwnYou_0.1.0_aarch64.dmg',
-    },
-    windows: {
-      url: 'https://github.com/nlongcn/ownyou-consumer-application/releases/download/v0.1.0/OwnYou_0.1.0_x64-setup.exe',
-      filename: 'OwnYou_0.1.0_x64-setup.exe',
-    },
-  };
+  const version = BUILD_INFO.version;
+  const baseUrl = 'https://github.com/nlongcn/ownyou-consumer-application/releases/download';
 
   const ua = navigator.userAgent.toLowerCase();
 
   if (ua.includes('win')) {
-    return { url: DOWNLOAD_URLS.windows.url, platform: 'Windows', filename: DOWNLOAD_URLS.windows.filename };
+    const filename = `OwnYou_${version}_x64-setup.exe`;
+    return {
+      url: `${baseUrl}/v${version}/${filename}`,
+      platform: 'Windows',
+      filename
+    };
   }
   if (ua.includes('mac')) {
-    return { url: DOWNLOAD_URLS.mac_arm.url, platform: 'macOS', filename: DOWNLOAD_URLS.mac_arm.filename };
+    const filename = `OwnYou_${version}_aarch64.dmg`;
+    return {
+      url: `${baseUrl}/v${version}/${filename}`,
+      platform: 'macOS',
+      filename
+    };
   }
   // Default to Windows for unknown platforms
-  return { url: DOWNLOAD_URLS.windows.url, platform: 'Windows', filename: DOWNLOAD_URLS.windows.filename };
+  const filename = `OwnYou_${version}_x64-setup.exe`;
+  return {
+    url: `${baseUrl}/v${version}/${filename}`,
+    platform: 'Windows',
+    filename
+  };
 }
 
 /**
@@ -920,8 +969,8 @@ function WalletSettings({ wallet, isAuthenticated }: WalletSettingsProps) {
   const formattedEarnings = earnings.toFixed(2);
 
   return (
-    <Card className="p-6 space-y-4">
-      <h3 className="text-lg font-bold">Wallet</h3>
+    <Card size="full" className="p-6 lg:p-8 space-y-6">
+      <h3 className="text-xl lg:text-2xl font-bold">Wallet</h3>
 
       {isAuthenticated && wallet ? (
         <>
@@ -959,8 +1008,8 @@ interface SyncSettingsProps {
  */
 function SyncSettings(_props: SyncSettingsProps) {
   return (
-    <Card className="p-6 space-y-4">
-      <h3 className="text-lg font-bold">Cross-Device Sync</h3>
+    <Card size="full" className="p-6 lg:p-8 space-y-6">
+      <h3 className="text-xl lg:text-2xl font-bold">Cross-Device Sync</h3>
 
       <p className="text-sm text-gray-600">
         Your data is encrypted end-to-end and synced across your devices using OrbitDB.
@@ -980,12 +1029,35 @@ function SyncSettings(_props: SyncSettingsProps) {
 
 function AboutSettings() {
   return (
-    <Card className="p-6 space-y-4">
-      <h3 className="text-lg font-bold">About OwnYou</h3>
+    <Card size="full" className="p-6 lg:p-8 space-y-6">
+      <h3 className="text-xl lg:text-2xl font-bold">About OwnYou</h3>
 
       <div className="text-center py-4">
         <p className="text-2xl font-bold mb-1">OwnYou</p>
-        <p className="text-sm text-gray-600">Version 0.1.0</p>
+        <p className="text-sm text-gray-600">Version {BUILD_INFO.version}</p>
+      </div>
+
+      {/* Build Info Details */}
+      <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+        <h4 className="font-semibold text-sm text-gray-700">Build Information</h4>
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div>
+            <span className="text-gray-500">Version:</span>
+            <span className="ml-2 font-mono">{BUILD_INFO.version}</span>
+          </div>
+          <div>
+            <span className="text-gray-500">Built:</span>
+            <span className="ml-2">{BUILD_INFO.buildDate}</span>
+          </div>
+          <div>
+            <span className="text-gray-500">Branch:</span>
+            <span className="ml-2 font-mono">{BUILD_INFO.gitBranch}</span>
+          </div>
+          <div>
+            <span className="text-gray-500">Commit:</span>
+            <span className="ml-2 font-mono">{BUILD_INFO.gitCommit}</span>
+          </div>
+        </div>
       </div>
 
       <p className="text-sm text-gray-600">
@@ -1125,7 +1197,8 @@ function DataSourceCard({
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              {connected ? 'Disconnecting...' : 'Connecting...'}
+              {/* BUG 2 FIX: Show correct text based on status */}
+              {status === 'syncing' ? 'Syncing...' : (connected ? 'Disconnecting...' : 'Connecting...')}
             </span>
           ) : (
             connected ? 'Disconnect' : 'Connect'

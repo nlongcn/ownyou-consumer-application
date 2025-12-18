@@ -10,6 +10,7 @@ import { useDataSource } from '../contexts/DataSourceContext';
 import { useTrigger } from '../contexts/TriggerContext';
 import { useToast } from '../contexts/ToastContext';
 import { ChatInput } from '../components/ChatInput';
+import { VersionBadge } from '../components/VersionBadge';
 
 export function Home() {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
@@ -88,8 +89,8 @@ export function Home() {
     return (
       <div className="flex flex-col min-h-screen">
         <Header showFilters={false} />
-        <div className="flex-1 flex items-center justify-center px-4">
-          <Card className="p-8 text-center max-w-md">
+        <div className="flex-1 flex items-center justify-center px-4 lg:px-8">
+          <Card size="full" className="p-8 lg:p-10 text-center max-w-xl lg:max-w-3xl mx-auto">
             {/* OwnYou Logo */}
             <div className="mx-auto mb-6">
               <img
@@ -131,6 +132,7 @@ export function Home() {
             <p className="text-xs text-gray-500 mt-4">
               No account needed. Your wallet is created locally.
             </p>
+            <VersionBadge className="mt-4" />
           </Card>
         </div>
       </div>
@@ -142,8 +144,8 @@ export function Home() {
     return (
       <div className="flex flex-col min-h-screen">
         <Header showFilters={false} />
-        <div className="flex-1 flex items-center justify-center px-4 py-8">
-          <div className="w-full max-w-lg">
+        <div className="flex-1 flex items-center justify-center px-4 lg:px-8 py-8">
+          <div className="w-full max-w-xl lg:max-w-3xl">
             {/* Hero Section */}
             <div className="text-center mb-8">
               <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -224,6 +226,7 @@ export function Home() {
             <p className="text-center text-xs text-gray-400 mt-6">
               Your data is analyzed locally and never leaves your device.
             </p>
+            <VersionBadge className="mt-4 text-center" />
           </div>
         </div>
       </div>
@@ -239,8 +242,8 @@ export function Home() {
     return (
       <div className="flex flex-col min-h-screen">
         <Header showFilters={false} />
-        <div className="flex-1 flex items-center justify-center px-4">
-          <Card className="p-8 text-center max-w-md">
+        <div className="flex-1 flex items-center justify-center px-4 lg:px-8">
+          <Card size="full" className="p-8 lg:p-10 text-center max-w-xl lg:max-w-3xl mx-auto">
             {/* Animated processing icon */}
             <div className="w-20 h-20 mx-auto mb-6 relative">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full animate-pulse" />
@@ -293,8 +296,8 @@ export function Home() {
     return (
       <div className="flex flex-col min-h-screen pb-32"> {/* Add padding for ChatInput */}
         <Header showFilters={false} />
-        <div className="flex-1 flex items-center justify-center px-4">
-          <Card className="p-8 text-center max-w-md">
+        <div className="flex-1 flex items-center justify-center px-4 lg:px-8">
+          <Card size="full" className="p-8 lg:p-10 text-center max-w-xl lg:max-w-3xl mx-auto">
             <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
               <span className="text-3xl">🔍</span>
             </div>

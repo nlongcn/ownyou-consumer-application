@@ -104,6 +104,11 @@ export const NAMESPACES = {
   // Sprint 11: UI State (Consumer App)
   UI_PREFERENCES: 'ownyou.ui.preferences', // Theme, display settings
   UI_FILTER_STATE: 'ownyou.ui.filterState', // Current filter tab, view state
+
+  // Sprint 11c: A/B Testing (Consumer App)
+  AB_TESTING_RESULTS: 'ownyou.ab_testing.results', // A/B testing classification results
+  AB_TESTING_STAGE1: 'ownyou.ab_testing.stage1', // Downloaded emails
+  AB_TESTING_STAGE2: 'ownyou.ab_testing.stage2', // Preprocessed emails
 } as const;
 
 /**
@@ -287,6 +292,19 @@ export const NS = {
   /** UI filter state namespace: [namespace, userId] */
   uiFilterState: (userId: string) =>
     [NAMESPACES.UI_FILTER_STATE, userId] as const,
+
+  // Sprint 11c: A/B Testing namespaces
+  /** A/B testing results namespace: [namespace, userId] */
+  abTestingResults: (userId: string) =>
+    [NAMESPACES.AB_TESTING_RESULTS, userId] as const,
+
+  /** A/B testing stage 1 namespace: [namespace, userId] */
+  abTestingStage1: (userId: string) =>
+    [NAMESPACES.AB_TESTING_STAGE1, userId] as const,
+
+  /** A/B testing stage 2 namespace: [namespace, userId] */
+  abTestingStage2: (userId: string) =>
+    [NAMESPACES.AB_TESTING_STAGE2, userId] as const,
 } as const;
 
 /**
@@ -361,6 +379,11 @@ export const NAMESPACE_PRIVACY: Record<Namespace, 'public' | 'sensitive' | 'priv
   // Sprint 11: UI State
   [NAMESPACES.UI_PREFERENCES]: 'private', // User preferences are private
   [NAMESPACES.UI_FILTER_STATE]: 'private', // Filter state is private
+
+  // Sprint 11c: A/B Testing
+  [NAMESPACES.AB_TESTING_RESULTS]: 'private', // Classification results are private
+  [NAMESPACES.AB_TESTING_STAGE1]: 'private', // Downloaded emails are private
+  [NAMESPACES.AB_TESTING_STAGE2]: 'private', // Preprocessed emails are private
 };
 
 /**
@@ -438,4 +461,9 @@ export const NAMESPACE_SYNC_SCOPE: Record<Namespace, 'full' | 'selective' | 'non
   // Sprint 11: UI State
   [NAMESPACES.UI_PREFERENCES]: 'full', // Theme preferences sync across devices
   [NAMESPACES.UI_FILTER_STATE]: 'none', // Device-local filter state (doesn't sync)
+
+  // Sprint 11c: A/B Testing
+  [NAMESPACES.AB_TESTING_RESULTS]: 'none', // A/B test results are device-local
+  [NAMESPACES.AB_TESTING_STAGE1]: 'none', // Downloaded emails are device-local
+  [NAMESPACES.AB_TESTING_STAGE2]: 'none', // Preprocessed emails are device-local
 };

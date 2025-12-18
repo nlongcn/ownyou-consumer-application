@@ -11,8 +11,9 @@
  * the confidential token exchange server-side.
  */
 
-// Token endpoint
+// Token endpoints
 const MS_TOKEN_URL = 'https://login.microsoftonline.com/consumers/oauth2/v2.0/token';
+const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
 export default {
   async fetch(request, env) {
@@ -29,10 +30,24 @@ export default {
       });
     }
 
-    // Only handle /callback path
-    if (url.pathname !== '/callback') {
-      return new Response('Not Found', { status: 404 });
+    // Handle /callback path
+    if (url.pathname === '/callback') {
+      return handleCallback(url, env);
     }
+
+    // Handle /refresh path for token refresh
+    if (url.pathname === '/refresh') {
+      return handleRefresh(url, env);
+    }
+
+    return new Response('Not Found', { status: 404 });
+  },
+};
+
+/**
+ * Handle OAuth callback - exchange authorization code for tokens
+ */
+async function handleCallback(url, env) {
 
     // Get OAuth parameters
     const code = url.searchParams.get('code');
@@ -49,27 +64,121 @@ export default {
       return generateErrorPage('missing_code', 'No authorization code received', state);
     }
 
+    // Determine provider from state
+    const isGoogle = state === 'gmail' || state === 'google-calendar';
+
     // Exchange code for tokens
     try {
-      const tokens = await exchangeCodeForTokens(code, env);
+      const tokens = await exchangeCodeForTokens(code, env, isGoogle);
       return generateSuccessPage(tokens, state);
     } catch (err) {
       console.error('Token exchange failed:', err);
       return generateErrorPage('token_exchange_failed', err.message, state);
     }
-  },
-};
+}
+
+/**
+ * Handle token refresh - exchange refresh token for new access token
+ */
+async function handleRefresh(url, env) {
+  const refreshToken = url.searchParams.get('refresh_token');
+  const provider = url.searchParams.get('provider'); // 'google' or 'microsoft'
+
+  if (!refreshToken) {
+    return new Response(JSON.stringify({ error: 'missing_refresh_token' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    });
+  }
+
+  const isGoogle = provider === 'google';
+
+  try {
+    const tokens = await refreshAccessToken(refreshToken, env, isGoogle);
+    return new Response(JSON.stringify(tokens), {
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    });
+  } catch (err) {
+    console.error('Token refresh failed:', err);
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    });
+  }
+}
+
+/**
+ * Refresh an access token using a refresh token
+ */
+async function refreshAccessToken(refreshToken, env, isGoogle) {
+  let clientId, clientSecret, tokenUrl;
+
+  if (isGoogle) {
+    clientId = env.GOOGLE_CLIENT_ID;
+    clientSecret = env.GOOGLE_CLIENT_SECRET;
+    tokenUrl = GOOGLE_TOKEN_URL;
+  } else {
+    clientId = env.MICROSOFT_CLIENT_ID;
+    clientSecret = env.MICROSOFT_CLIENT_SECRET;
+    tokenUrl = MS_TOKEN_URL;
+  }
+
+  if (!clientId || !clientSecret) {
+    throw new Error(`OAuth credentials not configured for ${isGoogle ? 'Google' : 'Microsoft'}`);
+  }
+
+  const params = new URLSearchParams({
+    client_id: clientId,
+    client_secret: clientSecret,
+    refresh_token: refreshToken,
+    grant_type: 'refresh_token',
+  });
+
+  const response = await fetch(tokenUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: params.toString(),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error_description || data.error || 'Token refresh failed');
+  }
+
+  return {
+    accessToken: data.access_token,
+    refreshToken: data.refresh_token || refreshToken, // Google may not return new refresh_token
+    expiresIn: data.expires_in,
+    scope: data.scope,
+  };
+}
 
 /**
  * Exchange authorization code for tokens
+ * @param {string} code - Authorization code
+ * @param {Object} env - Environment variables
+ * @param {boolean} isGoogle - Whether this is a Google OAuth flow
  */
-async function exchangeCodeForTokens(code, env) {
-  const clientId = env.MICROSOFT_CLIENT_ID;
-  const clientSecret = env.MICROSOFT_CLIENT_SECRET;
+async function exchangeCodeForTokens(code, env, isGoogle) {
   const redirectUri = 'https://ownyou-oauth-callback.nlongcroft.workers.dev/callback';
 
+  let clientId, clientSecret, tokenUrl;
+
+  if (isGoogle) {
+    clientId = env.GOOGLE_CLIENT_ID;
+    clientSecret = env.GOOGLE_CLIENT_SECRET;
+    tokenUrl = GOOGLE_TOKEN_URL;
+  } else {
+    clientId = env.MICROSOFT_CLIENT_ID;
+    clientSecret = env.MICROSOFT_CLIENT_SECRET;
+    tokenUrl = MS_TOKEN_URL;
+  }
+
   if (!clientId || !clientSecret) {
-    throw new Error('OAuth credentials not configured');
+    throw new Error(`OAuth credentials not configured for ${isGoogle ? 'Google' : 'Microsoft'}`);
   }
 
   const params = new URLSearchParams({
@@ -80,7 +189,7 @@ async function exchangeCodeForTokens(code, env) {
     grant_type: 'authorization_code',
   });
 
-  const response = await fetch(MS_TOKEN_URL, {
+  const response = await fetch(tokenUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
