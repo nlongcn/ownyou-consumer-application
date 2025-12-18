@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
@@ -6,6 +6,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Settings } from '../../src/routes/Settings';
 import { AuthProvider } from '../../src/contexts/AuthContext';
 import { StoreProvider } from '../../src/contexts/StoreContext';
+
+// Track navigate calls for Bug 4 navigation tests
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 // Mock SyncContext - external sync service dependency
 vi.mock('../../src/contexts/SyncContext', () => ({
@@ -205,7 +215,8 @@ describe('Settings About Section', () => {
     const user = userEvent.setup();
     renderWithProviders(<Settings />);
     await user.click(screen.getByText('About'));
-    expect(screen.getByText('Version 0.1.0')).toBeInTheDocument();
+    // Version is dynamic from BUILD_INFO, just check the pattern exists
+    expect(screen.getByText(/Version \d+\.\d+\.\d+/)).toBeInTheDocument();
   });
 
   it('shows privacy policy link', async () => {
@@ -220,5 +231,71 @@ describe('Settings About Section', () => {
     renderWithProviders(<Settings />);
     await user.click(screen.getByText('About'));
     expect(screen.getByText('Terms of Service')).toBeInTheDocument();
+  });
+});
+
+/**
+ * Bug 4: Navigation Button Tests
+ *
+ * These tests verify that navigation buttons call navigate() correctly.
+ * Bug 4 was caused by state corruption (Bug 1) potentially interfering with navigation.
+ * With Bug 1 fixed, navigation should work correctly.
+ *
+ * Note: Only testing buttons that are always visible regardless of connection state.
+ * The "View Classification Results" button only shows when sources are connected.
+ */
+describe('Settings Navigation (Bug 4)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.setItem('ownyou_wallet', JSON.stringify({
+      address: '0x1234567890abcdef1234567890abcdef12345678',
+      publicKey: 'test-public-key',
+    }));
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  it('Emails button navigates to /data/emails', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Settings />);
+
+    // Go to Data section
+    await user.click(screen.getByText('Data'));
+
+    // Click Emails button
+    const button = screen.getByText('Emails');
+    await user.click(button);
+
+    expect(mockNavigate).toHaveBeenCalledWith('/data/emails');
+  });
+
+  it('Transactions button navigates to /data/transactions', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Settings />);
+
+    // Go to Data section
+    await user.click(screen.getByText('Data'));
+
+    // Click Transactions button
+    const button = screen.getByText('Transactions');
+    await user.click(button);
+
+    expect(mockNavigate).toHaveBeenCalledWith('/data/transactions');
+  });
+
+  it('Calendar Events button navigates to /data/calendar', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Settings />);
+
+    // Go to Data section
+    await user.click(screen.getByText('Data'));
+
+    // Click Calendar Events button
+    const button = screen.getByText('Calendar Events');
+    await user.click(button);
+
+    expect(mockNavigate).toHaveBeenCalledWith('/data/calendar');
   });
 });

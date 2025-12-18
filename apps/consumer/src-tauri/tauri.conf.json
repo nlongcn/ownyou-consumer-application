@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "OwnYou",
-  "version": "0.1.0",
+  "version": "0.1.15",
   "identifier": "ai.ownyou.consumer",
   "build": {
     "frontendDist": "../dist",
@@ -23,13 +23,15 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; connect-src 'self' https://login.microsoftonline.com https://graph.microsoft.com https://accounts.google.com https://www.googleapis.com https://oauth2.googleapis.com https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com ipc://localhost; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com;"
+      "csp": "default-src 'self'; connect-src 'self' https://login.microsoftonline.com https://graph.microsoft.com https://accounts.google.com https://www.googleapis.com https://gmail.googleapis.com https://oauth2.googleapis.com https://api.openai.com https://api.anthropic.com https://generativelanguage.googleapis.com https://api.groq.com https://api.deepinfra.com https://ownyou-oauth-callback.nlongcroft.workers.dev ipc://localhost; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com;"
     }
   },
   "plugins": {
     "deep-link": {
       "desktop": {
-        "schemes": ["ownyou"]
+        "schemes": [
+          "ownyou"
+        ]
       }
     }
   },

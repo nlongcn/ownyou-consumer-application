@@ -40,6 +40,19 @@ export {
   getModelPricing,
   getModelMetadata,
   getRecommendedModel,
+  // Additional provider exports for direct use (Sprint 11c)
+  OpenAIProvider,
+  type OpenAIProviderConfig,
+  AnthropicProvider,
+  type AnthropicProviderConfig,
+  GoogleProvider,
+  type GoogleProviderConfig,
+  GroqProvider,
+  type GroqProviderConfig,
+  DeepInfraProvider,
+  type DeepInfraProviderConfig,
+  OllamaProvider,
+  type OllamaProviderConfig,
 } from './providers';
 
 // Budget

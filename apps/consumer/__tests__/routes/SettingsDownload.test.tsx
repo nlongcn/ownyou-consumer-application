@@ -111,7 +111,6 @@ describe('Settings Download Dialog', () => {
     let capturedHref = '';
     Object.defineProperty(window, 'location', {
       value: {
-        href: '',
         get href() { return capturedHref; },
         set href(value: string) { capturedHref = value; },
       },

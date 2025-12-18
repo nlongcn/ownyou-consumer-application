@@ -24,6 +24,7 @@ import { createContext, useContext, useState, useCallback, useEffect, type React
 import { NS } from '@ownyou/shared-types';
 import { useStore } from './StoreContext';
 import { useAuth } from './AuthContext';
+import { refreshOAuthToken, type OAuthTokenData } from '../utils/tauri-oauth';
 
 // Types for data source management
 export type DataSourceId = 'gmail' | 'outlook' | 'google-calendar' | 'microsoft-calendar' | 'plaid';
@@ -47,12 +48,27 @@ export interface SyncResult {
   error?: string;
 }
 
+/** Token data stored in secure storage */
+interface StoredTokenData {
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt?: number; // Unix timestamp
+  provider: 'google' | 'microsoft';
+  savedAt: number;
+}
+
+/** Sync metadata stored separately from tokens (Bug 1 fix) */
+interface StoredSyncMetadata {
+  itemCount: number;
+  lastSync: string; // ISO date string
+}
+
 interface DataSourceContextValue {
   /** All available data sources with their connection status */
   dataSources: DataSource[];
 
-  /** Connect a data source with OAuth token */
-  connectSource: (sourceId: DataSourceId, accessToken: string) => Promise<void>;
+  /** Connect a data source with OAuth token data */
+  connectSource: (sourceId: DataSourceId, tokenData: OAuthTokenData) => Promise<void>;
 
   /** Disconnect a data source */
   disconnectSource: (sourceId: DataSourceId) => Promise<void>;
@@ -71,6 +87,9 @@ interface DataSourceContextValue {
 
   /** Check if a specific source is connected */
   isSourceConnected: (sourceId: DataSourceId) => boolean;
+
+  /** Get a valid access token for a source, refreshing if expired or forced */
+  getValidToken: (sourceId: DataSourceId, forceRefresh?: boolean) => Promise<string | null>;
 }
 
 const DataSourceContext = createContext<DataSourceContextValue | null>(null);
@@ -103,28 +122,63 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
 
   /**
    * Load OAuth tokens from secure storage and restore connection states
+   *
+   * BUG 1 FIX: Now also loads sync metadata (itemCount, lastSync) from Store
+   * and preserves existing state instead of mapping over INITIAL_DATA_SOURCES
    */
   const loadSavedTokens = async () => {
     if (!store) return;
 
     try {
       // Check for saved tokens for each source
+      // BUG 1 FIX: Use functional update to preserve existing state
       const updatedSources = await Promise.all(
-        INITIAL_DATA_SOURCES.map(async (source) => {
+        INITIAL_DATA_SOURCES.map(async (initialSource) => {
           try {
-            const tokenKey = `oauth_${source.id}`;
-            const tokenData = await store.get<{ accessToken: string; savedAt: number }>(
+            const tokenKey = `oauth_${initialSource.id}`;
+            const tokenData = await store.get<StoredTokenData>(
               NS.uiPreferences(userId),
               tokenKey
             );
 
             if (tokenData?.accessToken) {
-              return { ...source, status: 'connected' as DataSourceStatus };
+              console.log(`[DataSourceContext] Found saved token for ${initialSource.id}, expires:`,
+                tokenData.expiresAt ? new Date(tokenData.expiresAt).toISOString() : 'unknown');
+
+              // BUG 1 FIX: Also load sync metadata from Store
+              let itemCount: number | undefined;
+              let lastSync: Date | undefined;
+
+              try {
+                const syncKey = `sync_${initialSource.id}`;
+                const syncMeta = await store.get<StoredSyncMetadata>(
+                  NS.uiPreferences(userId),
+                  syncKey
+                );
+
+                if (syncMeta) {
+                  itemCount = syncMeta.itemCount;
+                  lastSync = syncMeta.lastSync ? new Date(syncMeta.lastSync) : undefined;
+                  console.log(`[DataSourceContext] Restored sync metadata for ${initialSource.id}:`, {
+                    itemCount,
+                    lastSync: lastSync?.toISOString(),
+                  });
+                }
+              } catch {
+                // Sync metadata not found, that's OK
+              }
+
+              return {
+                ...initialSource,
+                status: 'connected' as DataSourceStatus,
+                itemCount,
+                lastSync,
+              };
             }
           } catch {
             // Token not found or error, keep disconnected
           }
-          return source;
+          return initialSource;
         })
       );
 
@@ -133,6 +187,108 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
       console.error('[DataSourceContext] Failed to load saved tokens:', error);
     }
   };
+
+  /**
+   * Get a valid access token for a data source, refreshing if expired or forced
+   * @param sourceId - The data source ID
+   * @param forceRefresh - If true, refresh even if token appears valid (use after 401 errors)
+   */
+  const getValidToken = useCallback(async (sourceId: DataSourceId, forceRefresh = false): Promise<string | null> => {
+    if (!store) return null;
+
+    const tokenKey = `oauth_${sourceId}`;
+    const tokenData = await store.get<StoredTokenData>(
+      NS.uiPreferences(userId),
+      tokenKey
+    );
+
+    if (!tokenData?.accessToken) {
+      console.error('[DataSourceContext] No token found for', sourceId);
+      return null;
+    }
+
+    // Check if token is expired (with 5 minute buffer)
+    const now = Date.now();
+    const bufferMs = 5 * 60 * 1000; // 5 minutes
+
+    // Handle expiresAt as either number (Unix timestamp) or string (ISO date)
+    let expiresAtMs: number | undefined;
+    if (tokenData.expiresAt) {
+      if (typeof tokenData.expiresAt === 'string') {
+        expiresAtMs = new Date(tokenData.expiresAt).getTime();
+      } else {
+        expiresAtMs = tokenData.expiresAt;
+      }
+    }
+
+    const isExpired = expiresAtMs && (expiresAtMs - bufferMs) < now;
+    const shouldRefresh = forceRefresh || isExpired;
+
+    console.log('[DataSourceContext] Token check:', {
+      sourceId,
+      expiresAt: tokenData.expiresAt,
+      expiresAtMs,
+      now,
+      isExpired,
+      forceRefresh,
+      shouldRefresh,
+      hasRefreshToken: !!tokenData.refreshToken,
+    });
+
+    if (shouldRefresh && tokenData.refreshToken) {
+      console.log('[DataSourceContext] Refreshing token...', forceRefresh ? '(forced due to 401)' : '(expired)');
+
+      const newTokens = await refreshOAuthToken(tokenData.refreshToken, tokenData.provider);
+
+      if (newTokens) {
+        // Store the new tokens
+        const updatedTokenData: StoredTokenData = {
+          accessToken: newTokens.accessToken,
+          refreshToken: newTokens.refreshToken || tokenData.refreshToken,
+          expiresAt: newTokens.expiresAt,
+          provider: tokenData.provider,
+          savedAt: Date.now(),
+        };
+
+        await store.put(NS.uiPreferences(userId), tokenKey, updatedTokenData);
+        console.log('[DataSourceContext] Token refreshed and stored successfully');
+        return newTokens.accessToken;
+      } else {
+        console.error('[DataSourceContext] Token refresh failed - clearing invalid token');
+        // Clear the invalid token so user shows as disconnected
+        await store.delete(NS.uiPreferences(userId), tokenKey);
+        // Mark source as disconnected - user needs to reconnect
+        setDataSources(prev => prev.map(ds =>
+          ds.id === sourceId ? {
+            ...ds,
+            status: 'disconnected' as DataSourceStatus,
+            error: undefined,
+            lastSync: undefined,
+            itemCount: undefined,
+          } : ds
+        ));
+        return null;
+      }
+    }
+
+    if (isExpired && !tokenData.refreshToken) {
+      console.error('[DataSourceContext] Token expired and no refresh token - clearing invalid token');
+      // Clear the invalid token so user shows as disconnected
+      await store.delete(NS.uiPreferences(userId), tokenKey);
+      setDataSources(prev => prev.map(ds =>
+        ds.id === sourceId ? {
+          ...ds,
+          status: 'disconnected' as DataSourceStatus,
+          error: undefined,
+          lastSync: undefined,
+          itemCount: undefined,
+        } : ds
+      ));
+      return null;
+    }
+
+    return tokenData.accessToken;
+  }, [store, userId]);
 
   /**
    * Sync a data source - fetch data, classify, and store
@@ -163,17 +319,14 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
     ));
 
     try {
-      // Get the saved token
-      console.log('[DataSourceContext] Getting saved token for', sourceId);
-      const tokenData = await store.get<{ accessToken: string }>(
-        NS.uiPreferences(userId),
-        `oauth_${sourceId}`
-      );
-      console.log('[DataSourceContext] Token data:', tokenData ? 'found' : 'not found');
-      if (!tokenData?.accessToken) {
-        throw new Error('No access token found');
+      // Get a valid token (refreshing if needed)
+      console.log('[DataSourceContext] Getting valid token for', sourceId);
+      const accessToken = await getValidToken(sourceId);
+
+      if (!accessToken) {
+        throw new Error('No valid access token available. Please reconnect.');
       }
-      console.log('[DataSourceContext] Access token present, length:', tokenData.accessToken.length);
+      console.log('[DataSourceContext] Valid access token obtained, length:', accessToken.length);
 
       let itemCount = 0;
 
@@ -225,7 +378,7 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
           console.log('[DataSourceContext] Running email pipeline...');
           // The callback receives emails and must return IABClassification[] (@ownyou/email type)
           // We map from @ownyou/iab-classifier output to @ownyou/email IABClassification format
-          const result = await pipeline.run(tokenData.accessToken, async (emails) => {
+          const result = await pipeline.run(accessToken, async (emails) => {
             const results: Array<{
               emailId: string;
               tier1Category: string;
@@ -360,15 +513,28 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
       }
 
       // Update to connected with sync info
+      const syncTime = new Date();
       setDataSources(prev => prev.map(ds =>
         ds.id === sourceId ? {
           ...ds,
           status: 'connected' as DataSourceStatus,
-          lastSync: new Date(),
+          lastSync: syncTime,
           itemCount,
           error: undefined,
         } : ds
       ));
+
+      // BUG 1 FIX: Persist sync metadata to Store so it survives reloads
+      try {
+        const syncMeta: StoredSyncMetadata = {
+          itemCount,
+          lastSync: syncTime.toISOString(),
+        };
+        await store.put(NS.uiPreferences(userId), `sync_${sourceId}`, syncMeta);
+        console.log(`[DataSourceContext] Persisted sync metadata for ${sourceId}:`, syncMeta);
+      } catch (persistErr) {
+        console.warn('[DataSourceContext] Failed to persist sync metadata:', persistErr);
+      }
 
       return { success: true, itemCount };
     } catch (error) {
@@ -387,9 +553,9 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
   }, [store, isReady, userId, dataSources]);
 
   /**
-   * Connect a data source with OAuth token
+   * Connect a data source with OAuth token data (including refresh token)
    */
-  const connectSource = useCallback(async (sourceId: DataSourceId, accessToken: string) => {
+  const connectSource = useCallback(async (sourceId: DataSourceId, tokenData: OAuthTokenData) => {
     if (!store || !isReady) throw new Error('Store not ready');
 
     // Update status to connecting
@@ -398,10 +564,22 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
     ));
 
     try {
-      // Store the access token securely
-      await store.put(NS.uiPreferences(userId), `oauth_${sourceId}`, {
-        accessToken,
+      // Store the full token data securely (including refresh token)
+      const storedData: StoredTokenData = {
+        accessToken: tokenData.accessToken,
+        refreshToken: tokenData.refreshToken,
+        expiresAt: tokenData.expiresAt,
+        provider: tokenData.provider,
         savedAt: Date.now(),
+      };
+
+      await store.put(NS.uiPreferences(userId), `oauth_${sourceId}`, storedData);
+
+      console.log('[DataSourceContext] Token stored:', {
+        sourceId,
+        hasRefreshToken: !!tokenData.refreshToken,
+        expiresAt: tokenData.expiresAt ? new Date(tokenData.expiresAt).toISOString() : 'unknown',
+        provider: tokenData.provider,
       });
 
       // Update to connected
@@ -409,8 +587,10 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
         ds.id === sourceId ? { ...ds, status: 'connected' as DataSourceStatus } : ds
       ));
 
-      // Immediately sync after connecting
-      await syncSource(sourceId);
+      // BUG 3 FIX: Removed auto-sync after connecting
+      // User now has control over when to sync (can choose to sync all sources together)
+      // The full process flow improvement (user choice dialog, parallel download) is a future enhancement
+      console.log(`[DataSourceContext] ${sourceId} connected. User can manually sync when ready.`);
     } catch (error) {
       setDataSources(prev => prev.map(ds =>
         ds.id === sourceId ? {
@@ -421,7 +601,7 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
       ));
       throw error;
     }
-  }, [store, isReady, userId, syncSource]);
+  }, [store, isReady, userId]); // BUG 3 FIX: Removed syncSource from deps (no longer called)
 
   /**
    * Disconnect a data source
@@ -486,6 +666,7 @@ export function DataSourceProvider({ children }: DataSourceProviderProps) {
     isSyncing,
     getConnectedSources,
     isSourceConnected,
+    getValidToken,
   };
 
   return (
@@ -511,8 +692,8 @@ export function useDataSourceConnection(sourceId: DataSourceId) {
 
   const source = dataSources.find(ds => ds.id === sourceId);
 
-  const connect = useCallback(async (accessToken: string) => {
-    await connectSource(sourceId, accessToken);
+  const connect = useCallback(async (tokenData: OAuthTokenData) => {
+    await connectSource(sourceId, tokenData);
   }, [sourceId, connectSource]);
 
   const disconnect = useCallback(async () => {

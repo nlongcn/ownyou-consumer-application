@@ -9,9 +9,12 @@ import { Wallet } from './routes/Wallet';
 import { MissionDetail } from './routes/MissionDetail';
 import { OAuthCallback } from './routes/OAuthCallback';
 import { RawData } from './routes/RawData';
+import { ABTesting } from './routes/ABTesting';
+import { Results } from './routes/Results';
 import { useKeyboardNav } from './hooks/useKeyboardNav';
 import { isMobile, getPlatform } from './utils/platform';
 import { SyncStatusIndicator } from './components/SyncStatusIndicator';
+import { VersionBadge } from './components/VersionBadge';
 import { startTauriOAuth, handleOAuthCallbackFromApp, isOAuthInProgress } from './utils/tauri-oauth';
 
 // Map paths to nav item ids
@@ -21,6 +24,8 @@ const pathToId: Record<string, string> = {
   '/wallet': 'wallet',
   '/data': 'data',
   '/settings': 'settings',
+  '/ab-testing': 'settings', // A/B testing is accessed via settings
+  '/results': 'profile', // Results relate to profile data
 };
 
 export function App() {
@@ -46,15 +51,16 @@ export function App() {
         }
         console.log('[App] OAuth callback received (fallback), processing via handleOAuthCallbackFromApp');
         try {
-          const token = await handleOAuthCallbackFromApp(url);
-          if (token) {
-            // Parse the state to get the provider
+          const tokenData = await handleOAuthCallbackFromApp(url);
+          if (tokenData) {
+            // Parse the state to get the source ID
             const urlObj = new URL(url);
-            const provider = urlObj.searchParams.get('state') as 'outlook' | 'gmail' | null;
-            if (provider) {
-              console.log('[App] OAuth callback successful for:', provider);
-              sessionStorage.setItem('oauth_token', token);
-              sessionStorage.setItem('oauth_provider', provider);
+            const sourceId = urlObj.searchParams.get('state') as 'outlook' | 'gmail' | null;
+            if (sourceId) {
+              console.log('[App] OAuth callback successful for:', sourceId);
+              // Store serialized token data for Settings to pick up
+              sessionStorage.setItem('oauth_token_data', JSON.stringify(tokenData));
+              sessionStorage.setItem('oauth_provider', sourceId);
               // Navigate to settings to trigger token pickup
               navigate('/settings?tab=data');
             }
@@ -77,12 +83,12 @@ export function App() {
         setTimeout(async () => {
           if (provider === 'outlook' || provider === 'gmail') {
             try {
-              const token = await startTauriOAuth(provider);
-              if (token) {
+              const tokenData = await startTauriOAuth(provider);
+              if (tokenData) {
                 console.log('[App] OAuth successful for:', provider);
-                // Store token in sessionStorage for Settings to pick up
+                // Store serialized token data for Settings to pick up
                 // Settings.tsx has a useEffect that checks for these and calls connectSource()
-                sessionStorage.setItem('oauth_token', token);
+                sessionStorage.setItem('oauth_token_data', JSON.stringify(tokenData));
                 sessionStorage.setItem('oauth_provider', provider);
                 // Navigate to settings data tab to trigger token pickup and show confirmation
                 navigate('/settings?tab=data');
@@ -172,6 +178,8 @@ export function App() {
             <Route path="/auth/callback" element={<OAuthCallback />} />
             <Route path="/data/:sourceType" element={<RawData />} />
             <Route path="/data" element={<RawData />} />
+            <Route path="/ab-testing" element={<ABTesting />} />
+            <Route path="/results" element={<Results />} />
           </Routes>
         </main>
       </div>
@@ -188,6 +196,9 @@ export function App() {
 
       {/* Sync Status Indicator - Sprint 11b Bugfix 14 */}
       <SyncStatusIndicator />
+
+      {/* Global Version Badge - shows on ALL pages at top */}
+      <VersionBadge className="fixed top-1 right-2 z-50" />
     </Shell>
   );
 }
