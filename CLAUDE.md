@@ -31,15 +31,16 @@
 
 ### Required Skills by Task Type:
 
-| Task Type | Required Skill |
-|-----------|----------------|
-| Sprint work | `sprint-mode` |
-| Implementation | `implement-package` |
-| Testing | `testing-discipline` |
-| Debugging | `superpowers:systematic-debugging` |
-| Before completion | `v13-compliance-check` |
-| Git operations | `git-workflow-discipline` |
-| Design/planning | `superpowers:brainstorming` |
+| Task Type         | Required Skill                       |
+| ----------------- | ------------------------------------ |
+| Sprint work       | `sprint-mode`                      |
+| Implementation    | `implement-package`                |
+| Testing           | `testing-discipline`               |
+| Debugging         | `superpowers:systematic-debugging` |
+| Before completion | `v13-compliance-check`             |
+| Git operations    | `git-workflow-discipline`          |
+| Design/planning   | `superpowers:brainstorming`        |
+| Config/pricing    | `data-vs-code-separation`          |
 
 **Hooks are active:** The system will BLOCK Edit/Write tools if skills weren't used.
 
@@ -48,6 +49,7 @@
 ## 🎯 Quick Start
 
 **Dual-Purpose Architecture:**
+
 - **IAB Classification** → Advertising revenue via BBS+ pseudonyms
 - **Mission Agents** → User utility via personalized mission cards
 
@@ -61,14 +63,15 @@
 
 ## 📚 Essential Documentation
 
-| Priority | Document | Purpose |
-|----------|----------|---------|
-| **1** | `docs/sprints/ownyou-sprint0-spec.md` | Current sprint specification |
-| **2** | `docs/architecture/OwnYou_architecture_v13.md` | Full system architecture |
-| **3** | `docs/architecture/extracts/` | Focused architecture sections for context loading |
-| **4** | `docs/plans/2025-01-04-ownyou-strategic-roadmap.md` | 7-phase roadmap |
+| Priority    | Document                                              | Purpose                                           |
+| ----------- | ----------------------------------------------------- | ------------------------------------------------- |
+| **1** | `docs/sprints/`                                     | Location of the current sprint                    |
+| **2** | `docs/architecture/OwnYou_architecture_v13.md`      | Full system architecture                          |
+| **3** | `docs/architecture/extracts/`                       | Focused architecture sections for context loading |
+| **4** | `docs/plans/2025-01-04-ownyou-strategic-roadmap.md` | 7-phase roadmap                                   |
 
 ### Architecture Extracts (Load as needed)
+
 - `extracts/memory-types-8.4.md` - Memory/Episode/Entity types
 - `extracts/namespaces-8.12.md` - STORE_NAMESPACES constant
 - `extracts/storage-backends-8.13.md` - Platform backends
@@ -91,6 +94,7 @@
 ## ⚠️ Critical Constraints
 
 **Self-Sovereign Architecture:**
+
 - ✅ ALL personal data on user's device (IndexedDB or SQLite)
 - ✅ Wallet-derived encryption keys
 - ❌ NEVER centralized cloud backend for personal data
@@ -102,16 +106,18 @@
 
 **Use these skills (in `.claude/skills/`):**
 
-| Skill | Use When |
-|-------|----------|
-| `sprint-mode` | Starting ANY sprint task |
-| `implement-package` | Implementing a sprint package |
-| `v13-compliance-check` | Before marking implementation complete |
+| Skill                       | Use When                                     |
+| --------------------------- | -------------------------------------------- |
+| `sprint-mode`             | Starting ANY sprint task                     |
+| `implement-package`       | Implementing a sprint package                |
+| `v13-compliance-check`    | Before marking implementation complete       |
 | `git-workflow-discipline` | ALL development (branch, test, commit, push) |
-| `testing-discipline` | ALL code (RED-GREEN-REFACTOR) |
-| `tauri-build-discipline` | Before testing OAuth/deep links in Tauri app |
+| `testing-discipline`      | ALL code (RED-GREEN-REFACTOR)                |
+| `tauri-build-discipline`  | Before testing OAuth/deep links in Tauri app |
+| `data-vs-code-separation` | Config, pricing, model names (no hardcoding) |
 
 **Slash Commands:**
+
 - `/start-sprint` - Load sprint context and begin work
 
 ---
@@ -138,16 +144,17 @@ pnpm tauri:build    # Builds + deploys to /Applications/OwnYou.app
 ```
 
 **Why this matters:**
+
 - macOS routes `ownyou://` deep links to the INSTALLED app (`/Applications/OwnYou.app`)
 - Deep links do NOT go to the dev server
 - OAuth callbacks use deep links → testing requires rebuilt app
 - `pnpm tauri:dev` does hot reload for UI but deep links still go to installed version
 
-| Scenario | Command | Notes |
-|----------|---------|-------|
-| OAuth/deep link testing | `pnpm tauri:build` | REQUIRED - rebuilds + deploys |
-| General UI development | `pnpm tauri:dev` | Hot reload, but deep links broken |
-| After ANY code changes | `pnpm tauri:build` | Before testing OAuth flow |
+| Scenario                | Command              | Notes                             |
+| ----------------------- | -------------------- | --------------------------------- |
+| OAuth/deep link testing | `pnpm tauri:build` | REQUIRED - rebuilds + deploys     |
+| General UI development  | `pnpm tauri:dev`   | Hot reload, but deep links broken |
+| After ANY code changes  | `pnpm tauri:build` | Before testing OAuth flow         |
 
 ---
 
@@ -174,6 +181,7 @@ ownyou_consumer_application/
 ## 📖 Detailed Guidance
 
 For detailed workflows, migration protocols, and comprehensive instructions:
+
 - **See:** `docs/reference/AI_ASSISTANT_GUIDE.md`
 
 ---
