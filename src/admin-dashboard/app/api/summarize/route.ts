@@ -213,13 +213,20 @@ export async function POST(request: NextRequest) {
 
     console.log(`[Summarize API] Complete: ${summarizedEmails.length} emails in ${durationMs}ms`)
 
+    // Count LLM successes vs fallbacks by checking subject_reasoning
+    // Fallback case sets subject_reasoning = 'Fallback - summarization failed'
+    const llmSuccesses = summarizedEmails.filter(e =>
+      e.subject_reasoning && !e.subject_reasoning.includes('Fallback')
+    ).length
+    const fallbacks = summarizedEmails.length - llmSuccesses
+
     return NextResponse.json({
       success: true,
       emails: summarizedEmails,
       stats: {
         total: summarizedEmails.length,
-        llm_summaries: summarizedEmails.filter(e => e.summary && e.summary.length > 500).length,
-        fallback_summaries: summarizedEmails.filter(e => !e.summary || e.summary.length <= 500).length,
+        llm_summaries: llmSuccesses,
+        fallback_summaries: fallbacks,
         duration_ms: durationMs,
       },
     })

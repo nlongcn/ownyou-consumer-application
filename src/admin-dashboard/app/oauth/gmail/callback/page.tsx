@@ -19,7 +19,7 @@
 
 import { useEffect, useState, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { handleGoogleCallback } from '@/lib/oauth-integration'
+import { handleGoogleCallback, getOAuthReturnUrl } from '@/lib/oauth-integration'
 
 // Loading component for Suspense fallback
 function GmailCallbackLoading() {
@@ -91,10 +91,12 @@ function GmailCallbackPageContent() {
 
         setStatus('success')
 
-        // Redirect to emails page after short delay
+        // Redirect to the page user came from (stored before OAuth started)
+        const returnUrl = getOAuthReturnUrl()
+        console.log('[Gmail OAuth] Redirecting to:', returnUrl)
         setTimeout(() => {
-          router.push('/emails')
-        }, 2000)
+          router.push(returnUrl)
+        }, 1500)
       } catch (err) {
         console.error('[Gmail OAuth] Callback error:', err)
         setError(err instanceof Error ? err.message : String(err))
@@ -144,7 +146,7 @@ function GmailCallbackPageContent() {
               You can now download and classify your emails.
             </p>
             <p className="text-sm text-gray-500">
-              Redirecting to emails page...
+              Redirecting...
             </p>
           </div>
         )}

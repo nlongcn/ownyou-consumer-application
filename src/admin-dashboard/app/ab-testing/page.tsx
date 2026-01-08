@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import {
   Email,
   PreprocessedEmail,
@@ -35,6 +35,7 @@ import {
 import { getGmailOAuthClient } from '@/lib/gmail-oauth-client'
 import { getOutlookOAuthClient } from '@/lib/outlook-oauth-client'
 import { IndexedDBStore } from '@/lib/IndexedDBStore'
+import { getPendingOAuthAction, setPendingOAuthAction, clearPendingOAuthAction, hasPendingOAuthAction, type PendingOAuthAction } from '@/lib/oauth-integration'
 
 // Persistence namespace for A/B testing data
 const AB_TESTING_NAMESPACE = ['ab_testing', 'session']
@@ -113,11 +114,21 @@ export default function ABTestingPage() {
         console.log('[A/B Testing Persistence] Loading session from IndexedDB...')
 
         // Load stage 1 data (downloaded emails)
+        // IMPORTANT: Check for pending OAuth action BEFORE loading config
+        // If there's a pending action, the user set a specific config (e.g., maxEmails: 50)
+        // that should NOT be overwritten by stale IndexedDB data
+        const hasPending = hasPendingOAuthAction()
+        if (hasPending) {
+          console.log('[A/B Testing Persistence] Pending OAuth action detected, skipping config restoration to preserve user settings')
+        }
+
         const stage1Item = await store.get(AB_TESTING_NAMESPACE, 'stage1_emails')
         if (stage1Item?.value) {
           const data = stage1Item.value as { emails: Email[], config: any, stageStatus: StageStatus }
           setDownloadedEmails(data.emails || [])
-          if (data.config) {
+          // Only restore config if there's NO pending OAuth action
+          // Pending OAuth action has the user's most recent settings
+          if (data.config && !hasPending) {
             setDownloadConfig(data.config)
           }
           if (data.stageStatus === 'completed') {
@@ -140,16 +151,15 @@ export default function ABTestingPage() {
           console.log(`[A/B Testing Persistence] Loaded ${data.emails?.length || 0} preprocessed emails`)
         }
 
-        // Load stage 3 data (classification results)
+        // Load stage 3 data (classification results only - NOT model selections)
+        // Model selections are always loaded fresh from API to avoid stale/invalid models
         const stage3Item = await store.get(AB_TESTING_NAMESPACE, 'stage3_results')
         if (stage3Item?.value) {
           const data = stage3Item.value as {
-            selectedModels: ModelConfig[],
             results: Record<string, ModelResults>,
             metrics: ComparisonMetrics | null,
             stageStatus: StageStatus
           }
-          setSelectedModels(data.selectedModels || [FALLBACK_MODELS[0]])
           // Convert Record back to Map
           if (data.results) {
             const resultsMap = new Map<string, ModelResults>()
@@ -164,7 +174,7 @@ export default function ABTestingPage() {
           if (data.stageStatus === 'completed') {
             setStageStatus(s => ({ ...s, classify: 'completed' }))
           }
-          console.log(`[A/B Testing Persistence] Loaded classification results`)
+          console.log(`[A/B Testing Persistence] Loaded classification results (models loaded fresh from API)`)
         }
 
         console.log('[A/B Testing Persistence] Session loaded successfully')
@@ -176,14 +186,19 @@ export default function ABTestingPage() {
     loadPersistedData()
   }, [store, storeInitialized])
 
-  // Load models from API on mount
+  // Load models from API on mount - always fresh, never persisted
   useEffect(() => {
     const loadModels = async () => {
-      console.log('[A/B Testing] Loading models from API...')
+      console.log('[A/B Testing] Loading fresh models from API...')
       setModelsLoading(true)
       try {
         const models = await fetchAvailableModels(true) // Force refresh
         setAvailableModels(models)
+        // Set default selection to first model from fresh API response
+        if (models.length > 0) {
+          setSelectedModels([models[0]])
+          console.log(`[A/B Testing] Default model set to: ${models[0].provider}:${models[0].model}`)
+        }
         console.log(`[A/B Testing] Loaded ${models.length} models from API`)
       } catch (error) {
         console.error('[A/B Testing] Failed to load models:', error)
@@ -194,6 +209,42 @@ export default function ABTestingPage() {
     }
     loadModels()
   }, [])
+
+  // Track if we've already checked for pending OAuth actions
+  const pendingActionChecked = useRef(false)
+
+  // Check for pending OAuth action after page load (auto-continue OAuth flow)
+  useEffect(() => {
+    if (!hydrated || pendingActionChecked.current) return
+    pendingActionChecked.current = true
+
+    const checkPendingAction = async () => {
+      const pending = getPendingOAuthAction()
+      if (pending?.action === 'download_both') {
+        console.log('[A/B Testing] Found pending action: download_both, continuing OAuth flow...')
+
+        // Restore the download config from the pending action
+        if (pending.provider || pending.maxEmails) {
+          console.log(`[A/B Testing] Restoring config: provider=${pending.provider}, maxEmails=${pending.maxEmails}`)
+          setDownloadConfig(prev => ({
+            provider: (pending.provider as EmailProvider) || prev.provider,
+            maxEmails: pending.maxEmails || prev.maxEmails,
+          }))
+        }
+
+        // Small delay to ensure page is fully rendered and state is updated
+        setTimeout(() => {
+          // Trigger download which will check auth status and continue appropriately
+          const downloadBtn = document.querySelector('[data-action="download"]') as HTMLButtonElement
+          if (downloadBtn) {
+            downloadBtn.click()
+          }
+        }, 500)
+      }
+    }
+
+    checkPendingAction()
+  }, [hydrated])
 
   // Comparison metrics
   const [comparisonMetrics, setComparisonMetrics] = useState<ComparisonMetrics | null>(null)
@@ -229,13 +280,15 @@ export default function ABTestingPage() {
         // If neither is authorized, start with Gmail OAuth
         if (!gmailAuthorized && !outlookAuthorized) {
           console.log('[A/B Testing] Neither provider authorized, starting Gmail OAuth...')
+          setPendingOAuthAction('download_both', { provider, maxEmails }) // Auto-continue after OAuth
           await gmailOAuthClient.authorize()
-          return // Will redirect, then user needs to click again for Outlook
+          return // Will redirect, OAuth callback will return here and auto-continue
         }
 
         // If only Outlook not authorized, start Outlook OAuth
         if (gmailAuthorized && !outlookAuthorized) {
           console.log('[A/B Testing] Gmail authorized but Outlook not, starting Outlook OAuth...')
+          setPendingOAuthAction('download_both', { provider, maxEmails }) // Auto-continue after OAuth
           await outlookOAuthClient.authorize()
           return
         }
@@ -243,6 +296,7 @@ export default function ABTestingPage() {
         // If only Gmail not authorized, start Gmail OAuth
         if (!gmailAuthorized && outlookAuthorized) {
           console.log('[A/B Testing] Outlook authorized but Gmail not, starting Gmail OAuth...')
+          setPendingOAuthAction('download_both', { provider, maxEmails }) // Auto-continue after OAuth
           await gmailOAuthClient.authorize()
           return
         }
@@ -479,14 +533,14 @@ export default function ABTestingPage() {
         results.forEach((value, key) => {
           resultsRecord[key] = value
         })
+        // Note: selectedModels NOT persisted - always loaded fresh from API
         await store.put(AB_TESTING_NAMESPACE, 'stage3_results', {
-          selectedModels,
           results: resultsRecord,
           metrics,
           stageStatus: 'completed',
           savedAt: new Date().toISOString(),
         })
-        console.log('[A/B Testing Persistence] Stage 3 saved to IndexedDB')
+        console.log('[A/B Testing Persistence] Stage 3 saved to IndexedDB (models not persisted)')
       }
     } catch (error) {
       console.error('Classification error:', error)
@@ -519,7 +573,8 @@ export default function ABTestingPage() {
       preprocess: 'idle',
       classify: 'idle',
     })
-    setSelectedModels([FALLBACK_MODELS[0]])
+    // Use first model from fresh API list, fallback to FALLBACK_MODELS[0]
+    setSelectedModels([availableModels[0] || FALLBACK_MODELS[0]])
 
     // Clear IndexedDB
     if (store) {

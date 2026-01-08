@@ -428,7 +428,7 @@ function DetailsTab({
       agg.totalConfidence += c.confidence
       agg.minConfidence = Math.min(agg.minConfidence, c.confidence)
       agg.maxConfidence = Math.max(agg.maxConfidence, c.confidence)
-      if (c.emailId && c.emailId !== 'batch') {
+      if (c.emailId && c.emailId !== 'batch' && !agg.emailIds.includes(c.emailId)) {
         agg.emailIds.push(c.emailId)
       }
       if (c.reasoning && !agg.reasonings.includes(c.reasoning)) {
@@ -444,9 +444,9 @@ function DetailsTab({
     return Array.from(aggregateMap.values())
   }, [filteredClassifications])
 
-  // Sort by email count (most supported first), then by confidence
+  // Sort by unique email count (most supported first), then by confidence
   const sortedClassifications = [...aggregatedClassifications].sort((a, b) => {
-    if (b.emailCount !== a.emailCount) return b.emailCount - a.emailCount
+    if (b.emailIds.length !== a.emailIds.length) return b.emailIds.length - a.emailIds.length
     return b.avgConfidence - a.avgConfidence
   })
 
@@ -516,12 +516,12 @@ function DetailsTab({
                 <div className="flex items-center gap-4">
                   {/* Email count badge */}
                   <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
-                    {agg.emailCount} email{agg.emailCount !== 1 ? 's' : ''}
+                    {agg.emailIds.length} email{agg.emailIds.length !== 1 ? 's' : ''}
                   </span>
                   {/* Confidence range */}
                   <span className={`font-medium ${getConfidenceColor(agg.avgConfidence)}`}>
                     {(agg.avgConfidence * 100).toFixed(0)}%
-                    {agg.emailCount > 1 && agg.minConfidence !== agg.maxConfidence && (
+                    {agg.emailIds.length > 1 && agg.minConfidence !== agg.maxConfidence && (
                       <span className="text-xs text-gray-400 ml-1">
                         ({(agg.minConfidence * 100).toFixed(0)}-{(agg.maxConfidence * 100).toFixed(0)}%)
                       </span>
@@ -540,7 +540,7 @@ function DetailsTab({
               {isExpanded && (
                 <div className="border-t bg-gray-50 p-4 space-y-3">
                   {/* Confidence stats */}
-                  {agg.emailCount > 1 && (
+                  {agg.emailIds.length > 1 && (
                     <div>
                       <div className="text-xs font-medium text-gray-500 mb-1">CONFIDENCE STATISTICS</div>
                       <div className="grid grid-cols-3 gap-4 text-sm">

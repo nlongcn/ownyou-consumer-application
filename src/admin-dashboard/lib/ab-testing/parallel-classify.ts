@@ -19,7 +19,7 @@ import {
 import {
   applyTieredClassification,
   type TaxonomySelection,
-} from '@browser/agents/iab-classifier/tierSelector'
+} from '@ownyou/iab-classifier'
 
 // Progress callback type
 export type ProgressCallback = (modelKey: string, status: 'started' | 'completed' | 'error', message?: string) => void

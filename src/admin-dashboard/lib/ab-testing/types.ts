@@ -164,7 +164,17 @@ export interface ABTestingState {
   comparisonMetrics: ComparisonMetrics | null
 }
 
-// Fallback models for selection (used when API is not available)
+/**
+ * Fallback models for selection (used when API is not available)
+ *
+ * @deprecated Bundled fallback - for dynamic fallbacks use:
+ * ```typescript
+ * import { configService } from '@ownyou/llm-client';
+ * const fallbackModels = await configService.getFallbackModels();
+ * ```
+ *
+ * @see docs/architecture/extracts/llm-cost-6.10.md
+ */
 export const FALLBACK_MODELS: ModelConfig[] = [
   // OpenAI
   { provider: 'openai', model: 'gpt-4o-mini', displayName: 'GPT-4o-mini' },
@@ -181,7 +191,10 @@ export const FALLBACK_MODELS: ModelConfig[] = [
   { provider: 'deepinfra', model: 'meta-llama/Llama-3.3-70B-Instruct', displayName: 'Llama 3.3 70B (DeepInfra)' },
 ]
 
-// DEPRECATED: Use FALLBACK_MODELS instead. This alias exists for backwards compatibility.
+/**
+ * @deprecated Use configService.getFallbackModels() instead.
+ * This alias exists for backwards compatibility.
+ */
 export const AVAILABLE_MODELS = FALLBACK_MODELS
 
 // API response type for /api/analyze/models

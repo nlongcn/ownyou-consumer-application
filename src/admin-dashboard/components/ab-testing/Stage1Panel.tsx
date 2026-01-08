@@ -100,8 +100,27 @@ export function Stage1Panel({
           </label>
           <input
             type="number"
-            value={config.maxEmails}
-            onChange={(e) => onConfigChange({ ...config, maxEmails: parseInt(e.target.value) || 50 })}
+            value={config.maxEmails || ''}
+            onChange={(e) => {
+              const value = e.target.value
+              if (value === '') {
+                // Allow empty during editing
+                onConfigChange({ ...config, maxEmails: 0 })
+              } else {
+                const parsed = parseInt(value, 10)
+                if (!isNaN(parsed) && parsed >= 0) {
+                  // Clamp to max but allow typing any positive number
+                  const clamped = Math.min(500, parsed)
+                  onConfigChange({ ...config, maxEmails: clamped })
+                }
+              }
+            }}
+            onBlur={() => {
+              // Ensure valid value on blur (default to 50 if empty or invalid)
+              if (config.maxEmails < 1) {
+                onConfigChange({ ...config, maxEmails: 50 })
+              }
+            }}
             disabled={disabled || status === 'running'}
             min={1}
             max={500}
@@ -115,6 +134,7 @@ export function Stage1Panel({
         <button
           onClick={handleDownload}
           disabled={disabled || isDownloading}
+          data-action="download"
           className="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {isDownloading ? 'Downloading...' : 'Download Emails'}

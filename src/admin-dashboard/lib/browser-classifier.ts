@@ -19,7 +19,7 @@
 'use client'
 
 import { IndexedDBStore } from '@browser/store/IndexedDBStore'
-import { buildWorkflowGraph, WorkflowState } from '@browser/agents/iab-classifier'
+import { buildWorkflowGraph, WorkflowState } from '@ownyou/iab-classifier'
 
 export interface ClassificationInput {
   user_id: string
