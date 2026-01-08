@@ -55,15 +55,15 @@ export class DeepInfraProvider extends BaseLLMProvider {
     return LLMProviderType.DEEPINFRA;
   }
 
+  /**
+   * Get supported models (sync, uses bundled defaults)
+   * @deprecated For dynamic model list, use: configService.getModelsByProvider('deepinfra')
+   */
   getSupportedModels(): string[] {
+    // Bundled defaults - for current list use ConfigService
     return [
       'meta-llama/Llama-3.3-70B-Instruct',
-      'meta-llama/Llama-3.1-70B-Instruct',
-      'meta-llama/Llama-3.1-8B-Instruct',
       'Qwen/Qwen2.5-72B-Instruct',
-      'Qwen/Qwen2.5-7B-Instruct',
-      'mistralai/Mixtral-8x7B-Instruct-v0.1',
-      'google/gemma-2-9b-it',
     ];
   }
 

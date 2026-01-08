@@ -52,10 +52,14 @@ export class GoogleProvider extends BaseLLMProvider {
     return LLMProviderType.GOOGLE;
   }
 
+  /**
+   * Get supported models (sync, uses bundled defaults)
+   * @deprecated For dynamic model list, use: configService.getModelsByProvider('google')
+   */
   getSupportedModels(): string[] {
+    // Bundled defaults - for current list use ConfigService
     return [
       'gemini-2.0-flash',
-      'gemini-2.0-flash-exp',
       'gemini-1.5-pro',
       'gemini-1.5-flash',
     ];
@@ -64,7 +68,7 @@ export class GoogleProvider extends BaseLLMProvider {
   async isAvailable(): Promise<boolean> {
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1/models?key=${this.apiKey}`
+        `https://generativelanguage.googleapis.com/v1beta/models?key=${this.apiKey}`
       );
       return response.ok;
     } catch (error) {
@@ -107,7 +111,7 @@ export class GoogleProvider extends BaseLLMProvider {
       }
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${this.apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`,
         {
           method: 'POST',
           headers: {

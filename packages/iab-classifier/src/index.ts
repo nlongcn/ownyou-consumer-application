@@ -59,6 +59,12 @@ export {
   type TieredPurchaseIntent,
 } from './profileTierFormatter'
 
+// Re-export tier selection functions
+export {
+  applyTieredClassification,
+  calculateTierDepth,
+} from './tierSelector'
+
 /**
  * Build compiled StateGraph for IAB Taxonomy Profile workflow.
  *

@@ -11,7 +11,38 @@ import OpenAI from 'openai';
 import { BaseLLMProvider, LLMProviderType } from './base';
 import type { ProviderConfig } from './base';
 import type { LLMRequest, LLMResponse } from './types';
-import { getContextWindow, getMaxCompletionTokens, calculateCost } from './registry';
+import { getContextWindow, getMaxCompletionTokens, calculateCost, isReasoningModel as isRegistryReasoningModel } from './registry';
+
+/**
+ * Check if an OpenAI model is a reasoning model that requires special parameters.
+ * Reasoning models use max_completion_tokens instead of max_tokens and don't support temperature.
+ *
+ * Pattern-based detection for dynamic model lists (covers models not in registry):
+ * - o1-* models (o1, o1-mini, o1-preview, o1-pro, etc.)
+ * - o3-* models (o3, o3-mini, etc.)
+ * - gpt-5* models (gpt-5, gpt-5.1, gpt-5.2, gpt-5-pro, etc.) - all GPT-5 variants are reasoning models
+ */
+function isOpenAIReasoningModel(model: string): boolean {
+  // First check registry (for any custom overrides)
+  if (isRegistryReasoningModel(model)) {
+    return true;
+  }
+
+  // Pattern-based detection for OpenAI reasoning models
+  const lowerModel = model.toLowerCase();
+
+  // o1 and o3 series are reasoning models
+  if (lowerModel.startsWith('o1') || lowerModel.startsWith('o3')) {
+    return true;
+  }
+
+  // All GPT-5+ models are reasoning models
+  if (lowerModel.startsWith('gpt-5') || lowerModel.startsWith('gpt-6') || lowerModel.startsWith('gpt-7')) {
+    return true;
+  }
+
+  return false;
+}
 
 /**
  * Detect if running in Tauri environment
@@ -105,15 +136,19 @@ export class OpenAIProvider extends BaseLLMProvider {
     return LLMProviderType.OPENAI;
   }
 
+  /**
+   * Get supported models (sync, uses bundled defaults)
+   * @deprecated For dynamic model list, use: configService.getModelsByProvider('openai')
+   */
   getSupportedModels(): string[] {
+    // Bundled defaults - for current list use ConfigService
     return [
       'gpt-4o',
       'gpt-4o-mini',
       'gpt-4-turbo',
-      'gpt-4',
-      'gpt-3.5-turbo',
       'o1-preview',
       'o1-mini',
+      'o3-mini',
     ];
   }
 
@@ -160,9 +195,11 @@ export class OpenAIProvider extends BaseLLMProvider {
       };
 
       // Handle parameter differences between model versions
-      if (model.toLowerCase().includes('o1')) {
-        // o1 models use max_completion_tokens
+      // Reasoning models use max_completion_tokens and don't support temperature
+      const isReasoning = isOpenAIReasoningModel(model);
+      if (isReasoning) {
         params.max_completion_tokens = adjustedMaxTokens;
+        this.logger.debug(`Model ${model} detected as reasoning model - using max_completion_tokens, no temperature`);
       } else {
         params.max_tokens = adjustedMaxTokens;
         params.temperature = temperature;
@@ -172,6 +209,20 @@ export class OpenAIProvider extends BaseLLMProvider {
       const response = await client.chat.completions.create(params);
 
       const processingTime = (Date.now() - startTime) / 1000;
+
+      // Debug logging for reasoning models to understand response structure
+      const choice = response.choices[0];
+      if (isReasoning) {
+        this.logger.debug('Reasoning model response structure', {
+          model,
+          finish_reason: choice?.finish_reason,
+          has_content: !!choice?.message?.content,
+          content_preview: choice?.message?.content?.substring(0, 200),
+          refusal: (choice?.message as unknown as { refusal?: string })?.refusal,
+          message_keys: Object.keys(choice?.message || {}),
+        });
+      }
+
       const content = response.choices[0]?.message?.content ?? '';
 
       const inputTokens = response.usage?.prompt_tokens ?? 0;

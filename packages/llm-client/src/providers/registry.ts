@@ -1,26 +1,39 @@
 /**
  * Model Registry - v13 Section 6.10-6.11
  *
- * Comprehensive model metadata including:
- * - Context windows (input token limits)
- * - Max completion tokens (output limits)
- * - Pricing per 1K tokens
- * - Model tiers for budget management
+ * ⚠️ DEPRECATION NOTICE:
+ * This file contains BUNDLED DEFAULTS for backward compatibility.
+ * For dynamic, up-to-date pricing and model data, use ConfigService:
  *
- * Consolidated from @ownyou/iab-classifier modelRegistry.ts for Sprint 2.
+ * ```typescript
+ * import { configService } from '@ownyou/llm-client';
+ *
+ * // Dynamic pricing (recommended)
+ * const pricing = await configService.getPricing('gpt-4o-mini');
+ *
+ * // Dynamic model list
+ * const models = await configService.getModelsByProvider('openai');
+ * ```
+ *
+ * The sync functions in this file use bundled defaults and may have stale pricing.
+ * Use the async versions (suffixed with 'Async') for current data.
  *
  * @see docs/architecture/extracts/llm-cost-6.10.md
  */
 
 import type { Logger } from './base';
 import { LLMProviderType } from './base';
+import { configService } from '../config';
+import type { ModelMetadata as ConfigModelMetadata } from '../config';
+import { BUNDLED_DEFAULTS } from '../config/defaults';
 
 // ============================================================================
 // MODEL METADATA TYPES
 // ============================================================================
 
 /**
- * Complete model metadata
+ * Complete model metadata (legacy format)
+ * @deprecated Use ModelMetadata from '../config' for new code
  */
 export interface ModelMetadata {
   provider: LLMProviderType;
@@ -31,6 +44,7 @@ export interface ModelMetadata {
   tier: 'fast' | 'standard' | 'quality' | 'local';
   zeroDataRetention: boolean;
   description?: string;
+  isReasoningModel?: boolean;
 }
 
 /**
@@ -47,307 +61,76 @@ export interface ModelPricing {
 export type ModelTier = 'fast' | 'standard' | 'quality' | 'local';
 
 // ============================================================================
-// MODEL REGISTRY - Comprehensive model database
+// PROVIDER TYPE MAPPING
 // ============================================================================
 
-/**
- * MODEL_REGISTRY - Complete model metadata for all supported models
- *
- * Sources:
- * - OpenAI: https://platform.openai.com/docs/models
- * - Anthropic: https://docs.anthropic.com/en/docs/about-claude/models
- * - Google: https://ai.google.dev/gemini-api/docs/models
- * - Groq: https://console.groq.com/docs/models
- * - DeepInfra: https://deepinfra.com/models
- *
- * Last updated: 2025-01-09
- */
-export const MODEL_REGISTRY: Record<string, ModelMetadata> = {
-  // -------------------------------------------------------------------------
-  // OpenAI Models
-  // -------------------------------------------------------------------------
-  'gpt-4o': {
-    provider: LLMProviderType.OPENAI,
-    contextWindow: 128000,
-    maxCompletionTokens: 16384,
-    inputPricePer1k: 0.0025,
-    outputPricePer1k: 0.01,
-    tier: 'quality',
-    zeroDataRetention: false,
-    description: 'GPT-4o - Latest flagship model',
-  },
-  'gpt-4o-mini': {
-    provider: LLMProviderType.OPENAI,
-    contextWindow: 128000,
-    maxCompletionTokens: 16384,
-    inputPricePer1k: 0.00015,
-    outputPricePer1k: 0.0006,
-    tier: 'fast',
-    zeroDataRetention: false,
-    description: 'GPT-4o Mini - Cost-effective for most tasks',
-  },
-  'gpt-4-turbo': {
-    provider: LLMProviderType.OPENAI,
-    contextWindow: 128000,
-    maxCompletionTokens: 4096,
-    inputPricePer1k: 0.01,
-    outputPricePer1k: 0.03,
-    tier: 'quality',
-    zeroDataRetention: false,
-    description: 'GPT-4 Turbo - Previous generation flagship',
-  },
-  'o1-preview': {
-    provider: LLMProviderType.OPENAI,
-    contextWindow: 128000,
-    maxCompletionTokens: 32768,
-    inputPricePer1k: 0.015,
-    outputPricePer1k: 0.06,
-    tier: 'quality',
-    zeroDataRetention: false,
-    description: 'o1-preview - Advanced reasoning model',
-  },
-  'o1-mini': {
-    provider: LLMProviderType.OPENAI,
-    contextWindow: 128000,
-    maxCompletionTokens: 65536,
-    inputPricePer1k: 0.003,
-    outputPricePer1k: 0.012,
-    tier: 'standard',
-    zeroDataRetention: false,
-    description: 'o1-mini - Efficient reasoning model',
-  },
-
-  // -------------------------------------------------------------------------
-  // Anthropic Claude Models
-  // -------------------------------------------------------------------------
-  'claude-3-5-sonnet-20241022': {
-    provider: LLMProviderType.ANTHROPIC,
-    contextWindow: 200000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.003,
-    outputPricePer1k: 0.015,
-    tier: 'quality',
-    zeroDataRetention: false,
-    description: 'Claude 3.5 Sonnet - Best balance of capability and speed',
-  },
-  'claude-3-5-haiku-20241022': {
-    provider: LLMProviderType.ANTHROPIC,
-    contextWindow: 200000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.0008,
-    outputPricePer1k: 0.004,
-    tier: 'fast',
-    zeroDataRetention: false,
-    description: 'Claude 3.5 Haiku - Fastest Claude model',
-  },
-  'claude-3-haiku-20240307': {
-    provider: LLMProviderType.ANTHROPIC,
-    contextWindow: 200000,
-    maxCompletionTokens: 4096,
-    inputPricePer1k: 0.00025,
-    outputPricePer1k: 0.00125,
-    tier: 'fast',
-    zeroDataRetention: false,
-    description: 'Claude 3 Haiku - Budget option',
-  },
-  'claude-sonnet-4-20250514': {
-    provider: LLMProviderType.ANTHROPIC,
-    contextWindow: 200000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.003,
-    outputPricePer1k: 0.015,
-    tier: 'quality',
-    zeroDataRetention: false,
-    description: 'Claude Sonnet 4 - Latest Sonnet',
-  },
-
-  // -------------------------------------------------------------------------
-  // Google Gemini Models
-  // -------------------------------------------------------------------------
-  'gemini-2.0-flash': {
-    provider: LLMProviderType.GOOGLE,
-    contextWindow: 1000000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.00015,
-    outputPricePer1k: 0.0006,
-    tier: 'fast',
-    zeroDataRetention: false,
-    description: 'Gemini 2.0 Flash - Fast with 1M context',
-  },
-  'gemini-2.0-flash-exp': {
-    provider: LLMProviderType.GOOGLE,
-    contextWindow: 1000000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.00015,
-    outputPricePer1k: 0.0006,
-    tier: 'fast',
-    zeroDataRetention: false,
-    description: 'Gemini 2.0 Flash Experimental',
-  },
-  'gemini-1.5-pro': {
-    provider: LLMProviderType.GOOGLE,
-    contextWindow: 1000000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.00125,
-    outputPricePer1k: 0.005,
-    tier: 'quality',
-    zeroDataRetention: false,
-    description: 'Gemini 1.5 Pro - Previous generation flagship',
-  },
-  'gemini-1.5-flash': {
-    provider: LLMProviderType.GOOGLE,
-    contextWindow: 1000000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.000075,
-    outputPricePer1k: 0.0003,
-    tier: 'fast',
-    zeroDataRetention: false,
-    description: 'Gemini 1.5 Flash - Budget option with 1M context',
-  },
-
-  // -------------------------------------------------------------------------
-  // Groq Models (Zero Data Retention)
-  // -------------------------------------------------------------------------
-  'llama-3.3-70b-versatile': {
-    provider: LLMProviderType.GROQ,
-    contextWindow: 128000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.00059,
-    outputPricePer1k: 0.00079,
-    tier: 'standard',
-    zeroDataRetention: true,
-    description: 'Llama 3.3 70B on Groq - Fast inference with ZDR',
-  },
-  'llama-3.1-70b-versatile': {
-    provider: LLMProviderType.GROQ,
-    contextWindow: 128000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.00059,
-    outputPricePer1k: 0.00079,
-    tier: 'standard',
-    zeroDataRetention: true,
-    description: 'Llama 3.1 70B on Groq - Fast inference with ZDR',
-  },
-  'llama-3.1-8b-instant': {
-    provider: LLMProviderType.GROQ,
-    contextWindow: 128000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.00005,
-    outputPricePer1k: 0.00008,
-    tier: 'fast',
-    zeroDataRetention: true,
-    description: 'Llama 3.1 8B on Groq - Fastest option with ZDR',
-  },
-  'mixtral-8x7b-32768': {
-    provider: LLMProviderType.GROQ,
-    contextWindow: 32768,
-    maxCompletionTokens: 4096,
-    inputPricePer1k: 0.00024,
-    outputPricePer1k: 0.00024,
-    tier: 'fast',
-    zeroDataRetention: true,
-    description: 'Mixtral 8x7B on Groq - MoE model with ZDR',
-  },
-
-  // -------------------------------------------------------------------------
-  // DeepInfra Models (Zero Data Retention by default)
-  // -------------------------------------------------------------------------
-  'meta-llama/Llama-3.3-70B-Instruct': {
-    provider: LLMProviderType.DEEPINFRA,
-    contextWindow: 128000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.00035,
-    outputPricePer1k: 0.0004,
-    tier: 'standard',
-    zeroDataRetention: true,
-    description: 'Llama 3.3 70B on DeepInfra - Best price/performance with ZDR',
-  },
-  'meta-llama/Llama-3.1-8B-Instruct': {
-    provider: LLMProviderType.DEEPINFRA,
-    contextWindow: 128000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.00006,
-    outputPricePer1k: 0.00006,
-    tier: 'fast',
-    zeroDataRetention: true,
-    description: 'Llama 3.1 8B on DeepInfra - Ultra cheap with ZDR',
-  },
-  'Qwen/Qwen2.5-72B-Instruct': {
-    provider: LLMProviderType.DEEPINFRA,
-    contextWindow: 128000,
-    maxCompletionTokens: 8192,
-    inputPricePer1k: 0.00035,
-    outputPricePer1k: 0.0004,
-    tier: 'standard',
-    zeroDataRetention: true,
-    description: 'Qwen 2.5 72B on DeepInfra - Strong multilingual with ZDR',
-  },
-
-  // -------------------------------------------------------------------------
-  // Local Models (Ollama)
-  // -------------------------------------------------------------------------
-  'llama3.2': {
-    provider: LLMProviderType.OLLAMA,
-    contextWindow: 128000,
-    maxCompletionTokens: 4096,
-    inputPricePer1k: 0,
-    outputPricePer1k: 0,
-    tier: 'local',
-    zeroDataRetention: true,
-    description: 'Llama 3.2 via Ollama - Free local inference',
-  },
-  'mistral': {
-    provider: LLMProviderType.OLLAMA,
-    contextWindow: 32768,
-    maxCompletionTokens: 4096,
-    inputPricePer1k: 0,
-    outputPricePer1k: 0,
-    tier: 'local',
-    zeroDataRetention: true,
-    description: 'Mistral via Ollama - Free local inference',
-  },
-  'qwen2.5': {
-    provider: LLMProviderType.OLLAMA,
-    contextWindow: 32768,
-    maxCompletionTokens: 4096,
-    inputPricePer1k: 0,
-    outputPricePer1k: 0,
-    tier: 'local',
-    zeroDataRetention: true,
-    description: 'Qwen 2.5 via Ollama - Free local inference',
-  },
-
-  // -------------------------------------------------------------------------
-  // WebLLM Models (Browser-local)
-  // -------------------------------------------------------------------------
-  'Llama-3.2-3B-Instruct-q4f16_1-MLC': {
-    provider: LLMProviderType.WEBLLM,
-    contextWindow: 4096,
-    maxCompletionTokens: 2048,
-    inputPricePer1k: 0,
-    outputPricePer1k: 0,
-    tier: 'local',
-    zeroDataRetention: true,
-    description: 'Llama 3.2 3B via WebLLM - Browser-local inference',
-  },
-  'Phi-3.5-mini-instruct-q4f16_1-MLC': {
-    provider: LLMProviderType.WEBLLM,
-    contextWindow: 4096,
-    maxCompletionTokens: 2048,
-    inputPricePer1k: 0,
-    outputPricePer1k: 0,
-    tier: 'local',
-    zeroDataRetention: true,
-    description: 'Phi 3.5 Mini via WebLLM - Browser-local inference',
-  },
+const providerToLLMType: Record<string, LLMProviderType> = {
+  openai: LLMProviderType.OPENAI,
+  anthropic: LLMProviderType.ANTHROPIC,
+  google: LLMProviderType.GOOGLE,
+  groq: LLMProviderType.GROQ,
+  deepinfra: LLMProviderType.DEEPINFRA,
+  ollama: LLMProviderType.OLLAMA,
+  webllm: LLMProviderType.WEBLLM,
 };
 
+/**
+ * Convert ConfigService metadata to legacy format
+ */
+function tolegacyMetadata(metadata: ConfigModelMetadata): ModelMetadata {
+  return {
+    provider: providerToLLMType[metadata.provider] ?? LLMProviderType.OPENAI,
+    contextWindow: metadata.contextWindow,
+    maxCompletionTokens: metadata.maxCompletionTokens,
+    inputPricePer1k: metadata.pricing.inputPer1M / 1000,
+    outputPricePer1k: metadata.pricing.outputPer1M / 1000,
+    tier: determineTier(metadata),
+    zeroDataRetention: metadata.zeroDataRetention,
+    description: metadata.displayName,
+    isReasoningModel: metadata.isReasoningModel,
+  };
+}
+
+/**
+ * Determine tier from metadata
+ */
+function determineTier(metadata: ConfigModelMetadata): ModelTier {
+  const costPer1k = (metadata.pricing.inputPer1M + metadata.pricing.outputPer1M) / 2000;
+
+  if (metadata.provider === 'ollama' || metadata.provider === 'webllm') return 'local';
+  if (costPer1k < 0.0005) return 'fast';
+  if (costPer1k < 0.005) return 'standard';
+  return 'quality';
+}
+
 // ============================================================================
-// HELPER FUNCTIONS
+// MODEL REGISTRY - Bundled Defaults (Backward Compatibility)
 // ============================================================================
 
 /**
- * Get model metadata by name with fallback
+ * @deprecated Use ConfigService for dynamic pricing
+ *
+ * This is a bundled snapshot of model data for:
+ * - Backward compatibility with existing code
+ * - Offline operation
+ * - Synchronous access when async is not possible
+ *
+ * For current pricing, use: await configService.getPricing(modelId)
+ */
+export const MODEL_REGISTRY: Record<string, ModelMetadata> = Object.fromEntries(
+  Object.entries(BUNDLED_DEFAULTS.models).map(([id, metadata]) => [
+    id,
+    tolegacyMetadata(metadata),
+  ])
+);
+
+// ============================================================================
+// SYNC HELPER FUNCTIONS (Use Bundled Defaults)
+// ============================================================================
+
+/**
+ * Get model metadata by name (sync, uses bundled defaults)
+ * @deprecated Use configService.getModelMetadata() for dynamic data
  */
 export function getModelMetadata(modelName: string): ModelMetadata | null {
   // Exact match
@@ -366,7 +149,7 @@ export function getModelMetadata(modelName: string): ModelMetadata | null {
 }
 
 /**
- * Get context window for a model
+ * Get context window for a model (sync, uses bundled defaults)
  */
 export function getContextWindow(modelName: string, logger?: Logger): number {
   const metadata = getModelMetadata(modelName);
@@ -374,13 +157,12 @@ export function getContextWindow(modelName: string, logger?: Logger): number {
     return metadata.contextWindow;
   }
 
-  // Default fallback
   logger?.warn(`Unknown model '${modelName}' - using default 32K context window`);
   return 32768;
 }
 
 /**
- * Get max completion tokens for a model
+ * Get max completion tokens for a model (sync, uses bundled defaults)
  */
 export function getMaxCompletionTokens(modelName: string, logger?: Logger): number {
   const metadata = getModelMetadata(modelName);
@@ -388,13 +170,13 @@ export function getMaxCompletionTokens(modelName: string, logger?: Logger): numb
     return metadata.maxCompletionTokens;
   }
 
-  // Default fallback
   logger?.warn(`Unknown model '${modelName}' - using default 4K max completion`);
   return 4096;
 }
 
 /**
- * Calculate cost from token usage
+ * Calculate cost from token usage (sync, uses bundled defaults)
+ * @deprecated Use configService.getPricing() for current pricing
  */
 export function calculateCost(
   modelName: string,
@@ -413,7 +195,8 @@ export function calculateCost(
 }
 
 /**
- * Get model pricing
+ * Get model pricing (sync, uses bundled defaults)
+ * @deprecated Use configService.getPricing() for current pricing
  */
 export function getModelPricing(modelName: string): ModelPricing {
   const metadata = getModelMetadata(modelName);
@@ -424,12 +207,11 @@ export function getModelPricing(modelName: string): ModelPricing {
     };
   }
 
-  // Fallback to gpt-4o-mini pricing
   return { inputPer1k: 0.00015, outputPer1k: 0.0006 };
 }
 
 /**
- * Get all models for a provider
+ * Get all models for a provider (sync, uses bundled defaults)
  */
 export function getModelsForProvider(provider: LLMProviderType): string[] {
   return Object.entries(MODEL_REGISTRY)
@@ -438,7 +220,7 @@ export function getModelsForProvider(provider: LLMProviderType): string[] {
 }
 
 /**
- * Get all models for a tier
+ * Get all models for a tier (sync, uses bundled defaults)
  */
 export function getModelsForTier(tier: ModelTier): string[] {
   return Object.entries(MODEL_REGISTRY)
@@ -447,7 +229,7 @@ export function getModelsForTier(tier: ModelTier): string[] {
 }
 
 /**
- * Get all zero data retention models
+ * Get all zero data retention models (sync, uses bundled defaults)
  */
 export function getZDRModels(): string[] {
   return Object.entries(MODEL_REGISTRY)
@@ -464,7 +246,15 @@ export function isZDRModel(modelName: string): boolean {
 }
 
 /**
- * Get recommended model for a tier and provider preference
+ * Check if a model is a reasoning model
+ */
+export function isReasoningModel(modelName: string): boolean {
+  const metadata = getModelMetadata(modelName);
+  return metadata?.isReasoningModel ?? false;
+}
+
+/**
+ * Get recommended model for a tier (sync, uses bundled defaults)
  */
 export function getRecommendedModel(
   tier: ModelTier,
@@ -479,18 +269,15 @@ export function getRecommendedModel(
   });
 
   if (candidates.length === 0) {
-    // Fall back without ZDR requirement
     if (preferZDR) {
       return getRecommendedModel(tier, false, preferredProvider);
     }
-    // Fall back without provider preference
     if (preferredProvider) {
       return getRecommendedModel(tier, false);
     }
     return null;
   }
 
-  // Sort by cost (cheapest first)
   candidates.sort((a, b) => {
     const costA = a[1].inputPricePer1k + a[1].outputPricePer1k;
     const costB = b[1].inputPricePer1k + b[1].outputPricePer1k;
@@ -501,11 +288,55 @@ export function getRecommendedModel(
 }
 
 // ============================================================================
+// ASYNC HELPER FUNCTIONS (Use ConfigService - Recommended)
+// ============================================================================
+
+/**
+ * Get model metadata (async, uses ConfigService)
+ */
+export async function getModelMetadataAsync(modelName: string): Promise<ModelMetadata | null> {
+  const metadata = await configService.getModelMetadata(modelName);
+  if (!metadata) return null;
+  return tolegacyMetadata(metadata);
+}
+
+/**
+ * Calculate cost with current pricing (async, uses ConfigService)
+ */
+export async function calculateCostAsync(
+  modelName: string,
+  inputTokens: number,
+  outputTokens: number
+): Promise<number> {
+  const pricing = await configService.getPricing(modelName);
+  return (inputTokens * pricing.inputPer1M + outputTokens * pricing.outputPer1M) / 1_000_000;
+}
+
+/**
+ * Get model pricing (async, uses ConfigService)
+ */
+export async function getModelPricingAsync(modelName: string): Promise<ModelPricing> {
+  const pricing = await configService.getPricing(modelName);
+  return {
+    inputPer1k: pricing.inputPer1M / 1000,
+    outputPer1k: pricing.outputPer1M / 1000,
+  };
+}
+
+/**
+ * Get all models for a provider (async, uses ConfigService)
+ */
+export async function getModelsForProviderAsync(provider: string): Promise<string[]> {
+  return configService.getModelsByProvider(provider as any);
+}
+
+// ============================================================================
 // TIER CONFIGURATION (v13 Section 6.10)
 // ============================================================================
 
 /**
- * Model tier configuration with budget thresholds
+ * Model tier configuration (uses bundled defaults)
+ * @deprecated Use configService.getConfig().tiers for dynamic configuration
  */
 export const MODEL_TIERS: Record<ModelTier, {
   models: string[];

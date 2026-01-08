@@ -5,8 +5,19 @@
  *
  * Tracks token usage and calculates costs across different LLM providers.
  *
+ * ⚠️ DEPRECATION NOTICE (v13 Section 6.10):
+ * The static PRICING data below is BUNDLED DEFAULTS for backward compatibility.
+ * For current pricing, use ConfigService:
+ *
+ * ```typescript
+ * import { configService } from '@ownyou/llm-client';
+ * const pricing = await configService.getPricing('gpt-4o-mini');
+ * ```
+ *
  * MIGRATION NOTE: This is an EXACT 1:1 translation of the Python implementation.
  * Every type, method, and logic step has been verified against the Python source.
+ *
+ * @see docs/architecture/extracts/llm-cost-6.10.md
  */
 
 // ============================================================================
@@ -148,15 +159,18 @@ type PricingData = {
  *
  * Python source: cost_tracker.py:33-230 (class CostTracker)
  *
- * Pricing as of 2025-10-01 (per 1M tokens):
- * - OpenAI gpt-4o-mini: $0.15 input, $0.60 output
- * - OpenAI gpt-4o: $2.50 input, $10.00 output
- * - Claude Sonnet 4: $3.00 input, $15.00 output
- * - Claude Sonnet 3.5: $3.00 input, $15.00 output
- * - Ollama: Free (local)
+ * ⚠️ NOTE: For current pricing, use ConfigService from @ownyou/llm-client.
+ * The static PRICING below is bundled defaults for backward compatibility.
+ *
+ * @see docs/architecture/extracts/llm-cost-6.10.md
  */
 export class CostTracker {
-  // Python lines 45-80: PRICING = { ... }
+  /**
+   * @deprecated Use ConfigService for current pricing
+   *
+   * Bundled pricing defaults (per 1M tokens).
+   * For dynamic pricing: await configService.getPricing(modelId)
+   */
   static readonly PRICING: PricingData = {
     openai: {
       'gpt-4o-mini': {

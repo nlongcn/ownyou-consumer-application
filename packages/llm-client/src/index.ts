@@ -83,3 +83,22 @@ export {
   type CacheStats,
   type CacheStore,
 } from './cache';
+
+// Config (v13 Section 6.10 - Dynamic LLM Configuration)
+export {
+  configService,
+  ConfigServiceImpl,
+  fetchFromLLMPrices,
+  fetchFromOpenRouter,
+  DEFAULT_CACHE_TTL_MS,
+  LLM_PRICES_URL,
+  OPENROUTER_URL,
+  type Provider,
+  type Tier,
+  type ModelPricing,
+  type ModelMetadata,
+  type TierConfig,
+  type FallbackModel,
+  type LLMProviderConfig,
+  type CacheStatus,
+} from './config';
