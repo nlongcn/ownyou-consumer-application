@@ -59,7 +59,7 @@ def get_context_window_openai(client, model_name: str) -> Optional[int]:
         "gpt-3.5-turbo": 16385,
         "gpt-3.5-turbo-16k": 16385,
 
-        # GPT-5 family (experimental - update as released)
+        # GPT-5 family
         "gpt-5": 128000,
         "gpt-5-mini": 128000,
         "gpt-5-nano": 128000,

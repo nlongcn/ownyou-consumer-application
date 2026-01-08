@@ -7,35 +7,24 @@ Populates tracking tables (classification_history, analysis_runs, cost_tracking)
 """
 
 import logging
-import os
-import sys
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
 logger = logging.getLogger(__name__)
 
 
-def _get_dashboard_queries():
+def _get_tracking_queries():
     """
-    Dynamically import dashboard queries module.
+    Import local tracking queries module.
 
     Returns:
-        queries module or None if unavailable
+        tracking_queries module or None if unavailable
     """
     try:
-        # Add dashboard backend to path if needed
-        dashboard_backend_path = os.path.join(
-            os.path.dirname(__file__), '../../..', 'dashboard', 'backend'
-        )
-        dashboard_backend_path = os.path.abspath(dashboard_backend_path)
-
-        if dashboard_backend_path not in sys.path:
-            sys.path.insert(0, dashboard_backend_path)
-
-        from db import queries
-        return queries
+        from . import tracking_queries
+        return tracking_queries
     except Exception as e:
-        logger.warning(f"Dashboard tracking unavailable: {e}")
+        logger.warning(f"Tracking queries unavailable: {e}")
         return None
 
 
@@ -58,7 +47,7 @@ class WorkflowTracker:
         """
         self.user_id = user_id
         self.enabled = enabled
-        self.queries = _get_dashboard_queries() if enabled else None
+        self.queries = _get_tracking_queries() if enabled else None
 
         # Run metadata
         self.run_start_time = None
