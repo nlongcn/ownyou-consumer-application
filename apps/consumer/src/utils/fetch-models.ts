@@ -1,18 +1,26 @@
 /**
  * Dynamic Model Fetching for A/B Testing
  *
- * Fetches available models from LLM provider APIs.
- * - In Tauri mode: Direct API calls (no CORS restrictions)
- * - In PWA mode: Falls back to static list (CORS blocks provider APIs)
+ * Fetches available models DIRECTLY from LLM provider APIs.
+ * This ensures we always have correct, up-to-date model IDs that work with the APIs.
  *
- * Matches admin dashboard behavior from /api/analyze/models
+ * Provider API endpoints:
+ * - OpenAI: GET /v1/models
+ * - Anthropic: GET /v1/models (requires anthropic-dangerous-direct-browser-access header)
+ * - Google: GET /v1beta/models
+ * - Groq: GET /openai/v1/models
+ * - DeepSeek: GET /v1/models
+ *
+ * Pricing data comes separately from llm-prices.com via ConfigService.
+ * Model IDs from provider APIs are authoritative - no static lists maintained.
+ *
+ * @see docs/architecture/extracts/llm-cost-6.10.md
  */
 
 import type { ModelConfig, LLMProvider } from '@ownyou/ab-testing';
-import { FALLBACK_MODELS } from '@ownyou/ab-testing';
-import { getPlatform } from './platform';
+import { configService, type Provider } from '@ownyou/llm-client';
 
-// 5-minute cache (same as admin dashboard)
+// 5-minute cache for API-fetched models (ConfigService has its own 24h cache)
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 interface CachedModels {
@@ -23,17 +31,35 @@ interface CachedModels {
 let modelsCache: CachedModels | null = null;
 
 /**
- * Fallback model lists per provider (from admin dashboard)
- * Used when API fetch fails or in PWA mode
+ * Get fallback models from ConfigService
+ * Dynamic data from llm-prices.com/OpenRouter, with bundled defaults offline
  */
-const PROVIDER_FALLBACKS: Record<string, string[]> = {
-  openai: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo'],
-  anthropic: ['claude-sonnet-4-20250514', 'claude-3-7-sonnet-20250219', 'claude-3-5-haiku-20241022'],
-  google: ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash'],
-  groq: ['llama-3.3-70b-versatile', 'llama-3.1-70b-versatile', 'mixtral-8x7b-32768'],
-  deepinfra: ['meta-llama/Llama-3.3-70B-Instruct', 'meta-llama/Llama-3.1-70B-Instruct', 'Qwen/Qwen2.5-72B-Instruct'],
-  ollama: [], // Only populated if Ollama is running locally
-};
+async function getProviderFallbacks(provider: string): Promise<string[]> {
+  const configProvider = mapToConfigProvider(provider);
+  if (!configProvider) return [];
+
+  try {
+    return await configService.getModelsByProvider(configProvider);
+  } catch (error) {
+    console.warn(`[FetchModels] ConfigService fallback failed for ${provider}:`, error);
+    return [];
+  }
+}
+
+/**
+ * Map provider names to ConfigService Provider type
+ */
+function mapToConfigProvider(provider: string): Provider | null {
+  const mapping: Record<string, Provider> = {
+    openai: 'openai',
+    anthropic: 'anthropic',
+    google: 'google',
+    groq: 'groq',
+    deepinfra: 'deepinfra',
+    ollama: 'ollama',
+  };
+  return mapping[provider] ?? null;
+}
 
 /**
  * Get display name for a model
@@ -85,6 +111,7 @@ export function getConfiguredProviders(): Record<string, boolean> {
     anthropic: !!import.meta.env.VITE_ANTHROPIC_API_KEY,
     google: !!import.meta.env.VITE_GOOGLE_API_KEY,
     groq: !!import.meta.env.VITE_GROQ_API_KEY,
+    deepseek: !!import.meta.env.VITE_DEEPSEEK_API_KEY,
     deepinfra: !!import.meta.env.VITE_DEEPINFRA_API_KEY,
     ollama: !!import.meta.env.VITE_OLLAMA_BASE_URL,
   };
@@ -104,26 +131,63 @@ async function fetchOpenAIModels(): Promise<string[]> {
 
     if (!response.ok) {
       console.warn('[FetchModels] OpenAI API failed:', response.status);
-      return PROVIDER_FALLBACKS.openai;
+      return getProviderFallbacks('openai');
     }
 
     const data = await response.json();
+    // Use WHITELIST approach - only include CURRENT chat model patterns
+    // OpenAI has many model types (TTS, STT, image, embedding, etc.)
+    // We ONLY want current chat model families (no deprecated/legacy models):
+    const CHAT_MODEL_PATTERNS = [
+      'gpt-4o-mini',        // GPT-4o Mini (current)
+      'gpt-4o-2',           // GPT-4o dated versions (gpt-4o-2024-*, gpt-4o-2025-*)
+      'gpt-4o',             // GPT-4o base (current)
+      'chatgpt-4o',         // ChatGPT variant (current)
+      'o1-',                // O1 reasoning models (o1-preview, o1-mini)
+      'o3-',                // O3 reasoning models
+      'o4-',                // O4 reasoning models (future-proofing)
+    ];
+    // REMOVED (deprecated/legacy):
+    // - 'gpt-4-turbo'     - superseded by gpt-4o
+    // - 'gpt-4-0'         - old dated versions (gpt-4-0613, etc.)
+    // - 'gpt-4-1'         - old dated versions (gpt-4-1106-preview, etc.)
+    // - 'gpt-3.5-turbo'   - deprecated by OpenAI
+
+    // Non-chat model types to exclude (even if they match whitelist patterns)
+    const NON_CHAT_EXCLUSIONS = [
+      'tts',          // Text-to-speech (gpt-4o-mini-tts-*)
+      'transcribe',   // Speech-to-text (gpt-4o-mini-transcribe-*)
+      'realtime',     // Realtime API models
+      'audio',        // Audio models
+      'image',        // Image generation
+      'whisper',      // Speech recognition
+      'embedding',    // Embedding models
+      'search',       // Search preview models (gpt-4o-mini-search-preview-*)
+    ];
+
     const models = data.data
-      .filter((m: { id: string }) =>
-        m.id.includes('gpt') &&
-        !m.id.includes('instruct') &&
-        !m.id.includes('realtime') &&
-        !m.id.includes('audio')
-      )
+      .filter((m: { id: string }) => {
+        const id = m.id.toLowerCase();
+        // Must match one of our known chat model patterns
+        if (!CHAT_MODEL_PATTERNS.some(pattern => id.includes(pattern))) {
+          return false;
+        }
+        // Exclude non-chat model types even if they match patterns above
+        if (NON_CHAT_EXCLUSIONS.some(excl => id.includes(excl))) {
+          return false;
+        }
+        return true;
+      })
       .map((m: { id: string }) => m.id)
       .sort()
       .reverse(); // Newest first
 
     console.log('[FetchModels] OpenAI models loaded:', models.length);
-    return models.length > 0 ? models : PROVIDER_FALLBACKS.openai;
+    if (models.length > 0) return models;
+    return getProviderFallbacks('openai');
   } catch (error) {
     console.warn('[FetchModels] OpenAI fetch error:', error);
-    return PROVIDER_FALLBACKS.openai;
+    return getProviderFallbacks('openai');
   }
 }
 
@@ -131,11 +195,40 @@ async function fetchAnthropicModels(): Promise<string[]> {
   const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
   if (!apiKey) return [];
 
-  // Anthropic's API doesn't support CORS - browser requests are always blocked
-  // Even Tauri's webview triggers CORS preflight checks that Anthropic rejects
-  // So we always use the fallback list when API key is configured
-  console.log('[FetchModels] Anthropic: Using fallback (API does not support CORS)');
-  return PROVIDER_FALLBACKS.anthropic;
+  try {
+    // Anthropic supports CORS with the anthropic-dangerous-direct-browser-access header
+    // This is safe for OwnYou because users bring their own API keys (BYOKey pattern)
+    const response = await fetch('https://api.anthropic.com/v1/models', {
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      signal: AbortSignal.timeout(5000),
+    });
+
+    if (!response.ok) {
+      console.warn('[FetchModels] Anthropic API failed:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    // Filter to chat models only (exclude legacy completion models)
+    const models = data.data
+      .filter((m: { id: string; type?: string }) =>
+        m.id.includes('claude') &&
+        !m.id.includes('instant') // exclude legacy instant models
+      )
+      .map((m: { id: string }) => m.id)
+      .sort()
+      .reverse(); // Newest first
+
+    console.log('[FetchModels] Anthropic models loaded:', models.length, models);
+    return models;
+  } catch (error) {
+    console.warn('[FetchModels] Anthropic fetch error:', error);
+    return [];
+  }
 }
 
 async function fetchGroqModels(): Promise<string[]> {
@@ -150,7 +243,7 @@ async function fetchGroqModels(): Promise<string[]> {
 
     if (!response.ok) {
       console.warn('[FetchModels] Groq API failed:', response.status);
-      return PROVIDER_FALLBACKS.groq;
+      return getProviderFallbacks('groq');
     }
 
     const data = await response.json();
@@ -164,10 +257,11 @@ async function fetchGroqModels(): Promise<string[]> {
       .sort();
 
     console.log('[FetchModels] Groq models loaded:', models.length);
-    return models.length > 0 ? models : PROVIDER_FALLBACKS.groq;
+    if (models.length > 0) return models;
+    return getProviderFallbacks('groq');
   } catch (error) {
     console.warn('[FetchModels] Groq fetch error:', error);
-    return PROVIDER_FALLBACKS.groq;
+    return getProviderFallbacks('groq');
   }
 }
 
@@ -183,7 +277,7 @@ async function fetchDeepInfraModels(): Promise<string[]> {
 
     if (!response.ok) {
       console.warn('[FetchModels] DeepInfra API failed:', response.status);
-      return PROVIDER_FALLBACKS.deepinfra;
+      return getProviderFallbacks('deepinfra');
     }
 
     const data = await response.json();
@@ -198,10 +292,11 @@ async function fetchDeepInfraModels(): Promise<string[]> {
       .sort();
 
     console.log('[FetchModels] DeepInfra models loaded:', models.length);
-    return models.length > 0 ? models : PROVIDER_FALLBACKS.deepinfra;
+    if (models.length > 0) return models;
+    return getProviderFallbacks('deepinfra');
   } catch (error) {
     console.warn('[FetchModels] DeepInfra fetch error:', error);
-    return PROVIDER_FALLBACKS.deepinfra;
+    return getProviderFallbacks('deepinfra');
   }
 }
 
@@ -230,15 +325,78 @@ async function fetchOllamaModels(): Promise<string[]> {
   }
 }
 
-// Google doesn't have a public models API, so we use fallback
-function getGoogleModels(): string[] {
+async function fetchGoogleModels(): Promise<string[]> {
   const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
   if (!apiKey) return [];
-  return PROVIDER_FALLBACKS.google;
+
+  try {
+    // Google Generative AI models API
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
+      { signal: AbortSignal.timeout(5000) }
+    );
+
+    if (!response.ok) {
+      console.warn('[FetchModels] Google API failed:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    // Filter to generative models that support generateContent
+    const models = data.models
+      .filter((m: { name: string; supportedGenerationMethods?: string[] }) =>
+        m.name.includes('gemini') &&
+        m.supportedGenerationMethods?.includes('generateContent')
+      )
+      .map((m: { name: string }) => m.name.replace('models/', '')) // Remove 'models/' prefix
+      .sort()
+      .reverse();
+
+    console.log('[FetchModels] Google models loaded:', models.length, models);
+    return models;
+  } catch (error) {
+    console.warn('[FetchModels] Google fetch error:', error);
+    return [];
+  }
+}
+
+async function fetchDeepSeekModels(): Promise<string[]> {
+  const apiKey = import.meta.env.VITE_DEEPSEEK_API_KEY;
+  if (!apiKey) return [];
+
+  try {
+    // DeepSeek uses OpenAI-compatible API
+    const response = await fetch('https://api.deepseek.com/v1/models', {
+      headers: { 'Authorization': `Bearer ${apiKey}` },
+      signal: AbortSignal.timeout(5000),
+    });
+
+    if (!response.ok) {
+      console.warn('[FetchModels] DeepSeek API failed:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    const models = data.data
+      .filter((m: { id: string }) =>
+        m.id.includes('deepseek') &&
+        !m.id.includes('code') // Filter out code-specific models for chat
+      )
+      .map((m: { id: string }) => m.id)
+      .sort()
+      .reverse();
+
+    console.log('[FetchModels] DeepSeek models loaded:', models.length, models);
+    return models;
+  } catch (error) {
+    console.warn('[FetchModels] DeepSeek fetch error:', error);
+    return [];
+  }
 }
 
 /**
  * Fetch all available models from configured providers
+ * All providers support browser CORS - no need for Tauri/PWA distinction
  */
 async function fetchFromProviderAPIs(): Promise<ModelConfig[]> {
   const configured = getConfiguredProviders();
@@ -247,10 +405,13 @@ async function fetchFromProviderAPIs(): Promise<ModelConfig[]> {
   console.log('[FetchModels] Configured providers:', configured);
 
   // Fetch from all configured providers in parallel
+  // All providers support browser CORS (Anthropic requires special header, which we handle)
   const results = await Promise.allSettled([
     configured.openai ? fetchOpenAIModels() : Promise.resolve([]),
     configured.anthropic ? fetchAnthropicModels() : Promise.resolve([]),
+    configured.google ? fetchGoogleModels() : Promise.resolve([]),
     configured.groq ? fetchGroqModels() : Promise.resolve([]),
+    configured.deepseek ? fetchDeepSeekModels() : Promise.resolve([]),
     configured.deepinfra ? fetchDeepInfraModels() : Promise.resolve([]),
     configured.ollama ? fetchOllamaModels() : Promise.resolve([]),
   ]);
@@ -277,9 +438,9 @@ async function fetchFromProviderAPIs(): Promise<ModelConfig[]> {
     }
   }
 
-  // Google models (no API, use fallback if key exists)
-  if (configured.google) {
-    for (const model of getGoogleModels()) {
+  // Google models
+  if (results[2].status === 'fulfilled' && results[2].value.length > 0) {
+    for (const model of results[2].value) {
       models.push({
         provider: 'gemini' as LLMProvider,
         model,
@@ -289,8 +450,8 @@ async function fetchFromProviderAPIs(): Promise<ModelConfig[]> {
   }
 
   // Groq models
-  if (results[2].status === 'fulfilled' && results[2].value.length > 0) {
-    for (const model of results[2].value) {
+  if (results[3].status === 'fulfilled' && results[3].value.length > 0) {
+    for (const model of results[3].value) {
       models.push({
         provider: 'groq' as LLMProvider,
         model,
@@ -299,9 +460,20 @@ async function fetchFromProviderAPIs(): Promise<ModelConfig[]> {
     }
   }
 
+  // DeepSeek models
+  if (results[4].status === 'fulfilled' && results[4].value.length > 0) {
+    for (const model of results[4].value) {
+      models.push({
+        provider: 'deepseek' as LLMProvider,
+        model,
+        displayName: getDisplayName('deepseek', model),
+      });
+    }
+  }
+
   // DeepInfra models
-  if (results[3].status === 'fulfilled' && results[3].value.length > 0) {
-    for (const model of results[3].value) {
+  if (results[5].status === 'fulfilled' && results[5].value.length > 0) {
+    for (const model of results[5].value) {
       models.push({
         provider: 'deepinfra' as LLMProvider,
         model,
@@ -311,8 +483,8 @@ async function fetchFromProviderAPIs(): Promise<ModelConfig[]> {
   }
 
   // Ollama models
-  if (results[4].status === 'fulfilled' && results[4].value.length > 0) {
-    for (const model of results[4].value) {
+  if (results[6].status === 'fulfilled' && results[6].value.length > 0) {
+    for (const model of results[6].value) {
       models.push({
         provider: 'ollama' as LLMProvider,
         model,
@@ -325,10 +497,83 @@ async function fetchFromProviderAPIs(): Promise<ModelConfig[]> {
 }
 
 /**
- * Main function: Fetch available models with platform awareness
+ * Convert ConfigService fallback model to ModelConfig
+ */
+function toModelConfig(fallback: { provider: string; model: string; displayName: string }): ModelConfig {
+  // Map ConfigService provider names to LLMProvider
+  const providerMap: Record<string, LLMProvider> = {
+    openai: 'openai',
+    anthropic: 'claude',
+    google: 'gemini',
+    groq: 'groq',
+    deepinfra: 'deepinfra',
+    ollama: 'ollama',
+    webllm: 'webllm',
+  };
+
+  return {
+    provider: providerMap[fallback.provider] ?? (fallback.provider as LLMProvider),
+    model: fallback.model,
+    displayName: fallback.displayName,
+  };
+}
+
+/**
+ * Get ConfigService fallback models as ModelConfig[] (curated list of 8)
+ * Exported for potential future use in tests or other modules.
+ */
+export async function getConfigFallbackModels(): Promise<ModelConfig[]> {
+  try {
+    const fallbacks = await configService.getFallbackModels();
+    return fallbacks.map(toModelConfig);
+  } catch (error) {
+    console.error('[FetchModels] Failed to get ConfigService fallbacks:', error);
+    return [];
+  }
+}
+
+/**
+ * Get ALL models from ConfigService (100+ models from llm-prices.com or OpenRouter)
+ * This returns ALL models in config.models, not just the curated fallbackModels list.
+ */
+async function getAllConfigServiceModels(): Promise<ModelConfig[]> {
+  try {
+    const config = await configService.getConfig();
+    const models: ModelConfig[] = [];
+
+    // Map ConfigService provider names to LLMProvider
+    const providerMap: Record<string, LLMProvider> = {
+      openai: 'openai',
+      anthropic: 'claude',
+      google: 'gemini',
+      groq: 'groq',
+      deepinfra: 'deepinfra',
+      ollama: 'ollama',
+    };
+
+    for (const [modelId, metadata] of Object.entries(config.models)) {
+      const provider = providerMap[metadata.provider] ?? (metadata.provider as LLMProvider);
+      models.push({
+        provider,
+        model: modelId,
+        displayName: metadata.displayName || getDisplayName(metadata.provider, modelId),
+      });
+    }
+
+    console.log(`[FetchModels] ConfigService has ${models.length} models from ${config.source}`);
+    return models;
+  } catch (error) {
+    console.error('[FetchModels] Failed to get ConfigService models:', error);
+    return [];
+  }
+}
+
+/**
+ * Main function: Fetch available models from ConfigService (OpenRouter) + local providers
  *
- * - Tauri: Direct API calls to providers
- * - PWA: Returns fallback models (CORS blocks direct API calls)
+ * ConfigService fetches from OpenRouter which has 400+ models with real-time
+ * pricing data. We also fetch from Groq and Ollama directly since they're not
+ * in OpenRouter but user may have API keys/local instance.
  *
  * Results are cached for 5 minutes.
  */
@@ -342,39 +587,57 @@ export async function fetchAvailableModels(forceRefresh = false): Promise<ModelC
     }
   }
 
-  const platform = getPlatform();
-  console.log('[FetchModels] Fetching models for platform:', platform);
+  console.log('[FetchModels] Fetching models from ConfigService (OpenRouter) + Groq/Ollama');
 
-  let models: ModelConfig[];
+  let models: ModelConfig[] = [];
 
-  if (platform === 'tauri') {
-    // Tauri: Direct API calls work
+  try {
+    // PRIMARY: Use ConfigService which fetches from OpenRouter (dynamic, 400+ models)
+    const configModels = await getAllConfigServiceModels();
+    models.push(...configModels);
+  } catch (error) {
+    console.error('[FetchModels] ConfigService failed:', error);
+  }
+
+  // ALSO fetch from Groq and Ollama directly (not in OpenRouter)
+  const configured = getConfiguredProviders();
+
+  // Groq - separate API, not in OpenRouter
+  if (configured.groq) {
     try {
-      models = await fetchFromProviderAPIs();
-      if (models.length === 0) {
-        console.warn('[FetchModels] No models from APIs, using fallback');
-        models = FALLBACK_MODELS;
+      const groqModels = await fetchGroqModels();
+      for (const model of groqModels) {
+        models.push({
+          provider: 'groq' as LLMProvider,
+          model,
+          displayName: getDisplayName('groq', model),
+        });
       }
     } catch (error) {
-      console.error('[FetchModels] API fetch failed, using fallback:', error);
-      models = FALLBACK_MODELS;
+      console.warn('[FetchModels] Groq fetch failed:', error);
     }
-  } else {
-    // PWA: CORS blocks direct API calls
-    // Filter FALLBACK_MODELS to only include providers with API keys configured
-    const configured = getConfiguredProviders();
-    models = FALLBACK_MODELS.filter(m => {
-      const providerKey = m.provider === 'claude' ? 'anthropic' :
-                          m.provider === 'gemini' ? 'google' : m.provider;
-      return configured[providerKey];
-    });
+  }
 
-    if (models.length === 0) {
-      console.warn('[FetchModels] No providers configured, using full fallback');
-      models = FALLBACK_MODELS;
+  // Ollama - local instance, not in OpenRouter
+  if (configured.ollama) {
+    try {
+      const ollamaModels = await fetchOllamaModels();
+      for (const model of ollamaModels) {
+        models.push({
+          provider: 'ollama' as LLMProvider,
+          model,
+          displayName: getDisplayName('ollama', model),
+        });
+      }
+    } catch (error) {
+      console.warn('[FetchModels] Ollama fetch failed:', error);
     }
+  }
 
-    console.log('[FetchModels] PWA mode - using filtered fallback models:', models.length);
+  // Fallback to full provider API fetch if we got nothing
+  if (models.length === 0) {
+    console.warn('[FetchModels] No models from any source, falling back to provider APIs');
+    models = await fetchFromProviderAPIs();
   }
 
   // Update cache

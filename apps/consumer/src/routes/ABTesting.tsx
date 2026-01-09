@@ -1,713 +1,673 @@
 /**
  * ABTesting Route - 3-Stage A/B Testing Workflow
  *
- * Stage 1: Download emails (Gmail/Outlook via Tauri OAuth)
- * Stage 2: Summarize/preprocess (LLM in worker)
- * Stage 3: Multi-model classification comparison (parallel in worker)
+ * Ported from admin-dashboard with identical GUI.
+ * Uses OAuth for email download, LLM for summarization, and multi-model classification.
  *
- * 3W Compliant: All LLM calls run in Web Worker, no server APIs.
+ * Stage 1: Download emails (Gmail/Outlook via OAuth)
+ * Stage 2: Summarize/preprocess (LLM API)
+ * Stage 3: Multi-model classification comparison (parallel API calls)
  */
 
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Header } from '@ownyou/ui-components';
-import { Card } from '@ownyou/ui-design-system';
-import { NS } from '@ownyou/shared-types';
-import type {
-  ABTestingState,
+import { useState, useCallback, useEffect, useRef } from 'react'
+import {
   Email,
+  PreprocessedEmail,
   ModelConfig,
+  ModelResults,
+  ComparisonMetrics,
+  StageStatus,
   EmailProvider,
-  LLMProvider,
-} from '@ownyou/ab-testing';
-import {
-  computeComparisonMetrics,
+  Stage1Export,
+  Stage2Export,
   FALLBACK_MODELS,
-  createStage3Export,
-} from '@ownyou/ab-testing';
-
-import { useStore } from '../contexts/StoreContext';
-import { useAuth } from '../contexts/AuthContext';
-import { useDataSource } from '../contexts/DataSourceContext';
-import type { DataSourceId } from '../contexts/DataSourceContext';
+  fetchAvailableModels,
+} from '../lib/ab-testing/types'
 import {
-  useABTestingWorker,
-  calculateOverallProgress,
-} from '../hooks/useABTestingWorker';
-import { useAvailableModels } from '../hooks/useAvailableModels';
-import { StageIndicator } from '../components/ab-testing/StageIndicator';
-import { ModelSelector } from '../components/ab-testing/ModelSelector';
+  exportStage3,
+} from '../lib/ab-testing/export-import'
+import {
+  runClassification,
+  runSummarization,
+  ProgressCallback,
+} from '../lib/ab-testing/parallel-classify'
+import { computeComparisonMetrics } from '../lib/ab-testing/metrics'
+import {
+  StageIndicator,
+  Stage1Panel,
+  Stage2Panel,
+  Stage3Panel,
+  ResultsDashboard,
+} from '../components/ab-testing'
+import { getGmailOAuthClient } from '../lib/gmail-oauth-client'
+import { getOutlookOAuthClient } from '../lib/outlook-oauth-client'
+import { IndexedDBStore } from '../lib/IndexedDBStore'
+import { getPendingOAuthAction, setPendingOAuthAction, hasPendingOAuthAction } from '../lib/oauth-integration'
 
-// Initial state
-const initialState: ABTestingState = {
-  currentStage: 1,
-  stageStatus: {
+// Persistence namespace for A/B testing data
+const AB_TESTING_NAMESPACE = ['ab_testing', 'session']
+
+export function ABTesting() {
+  // IndexedDBStore for persistence
+  const [store, setStore] = useState<IndexedDBStore | null>(null)
+  const [storeInitialized, setStoreInitialized] = useState(false)
+
+  // Stage status
+  const [stageStatus, setStageStatus] = useState<{
+    download: StageStatus
+    preprocess: StageStatus
+    classify: StageStatus
+  }>({
     download: 'idle',
     preprocess: 'idle',
     classify: 'idle',
-  },
-  downloadedEmails: [],
-  downloadConfig: {
-    provider: 'gmail',
+  })
+
+  // Dynamic models from API (loaded on mount)
+  const [availableModels, setAvailableModels] = useState<ModelConfig[]>(FALLBACK_MODELS)
+  const [modelsLoading, setModelsLoading] = useState(true)
+
+  // Stage 1 state
+  const [downloadedEmails, setDownloadedEmails] = useState<Email[]>([])
+  const [downloadConfig, setDownloadConfig] = useState<{
+    provider: EmailProvider
+    maxEmails: number
+  }>({
+    provider: 'outlook',
     maxEmails: 50,
-  },
-  preprocessedEmails: [],
-  preprocessConfig: {
-    summarizerModel: 'gpt-4o-mini',
+  })
+
+  // Stage 2 state
+  const [preprocessedEmails, setPreprocessedEmails] = useState<PreprocessedEmail[]>([])
+  const [preprocessConfig, setPreprocessConfig] = useState({
     summarizerProvider: 'openai',
-  },
-  selectedModels: FALLBACK_MODELS.slice(0, 2), // Default: first 2 models
-  classificationResults: new Map(),
-  comparisonMetrics: null,
-};
+    summarizerModel: 'gpt-4o-mini',
+  })
 
-export function ABTesting() {
-  const navigate = useNavigate();
-  const { store, isReady } = useStore();
-  const { wallet, isAuthenticated } = useAuth();
-  const { isSourceConnected, getValidToken } = useDataSource();
+  // Stage 3 state - 4 independent model selections for maximum flexibility
+  const [selectedModels, setSelectedModels] = useState<ModelConfig[]>([
+    FALLBACK_MODELS[0], // GPT-4o-mini by default
+  ])
+  const [classificationResults, setClassificationResults] = useState<Map<string, ModelResults>>(new Map())
+  const [modelProgress, setModelProgress] = useState<Map<string, 'started' | 'completed' | 'error'>>(new Map())
 
-  // Check connection status for email providers
-  const gmailConnected = isSourceConnected('gmail');
-  const outlookConnected = isSourceConnected('outlook');
+  // Comparison metrics
+  const [comparisonMetrics, setComparisonMetrics] = useState<ComparisonMetrics | null>(null)
 
-  const [state, setState] = useState<ABTestingState>(initialState);
-  const [error, setError] = useState<string | null>(null);
-
-  // Dynamic model fetching - API keys are read from import.meta.env
-  const {
-    models: availableModels,
-    providers: availableProviders,
-    loading: modelsLoading,
-    error: modelsError,
-    getModelsForProvider,
-  } = useAvailableModels();
-
-  // Get models for current summarizer provider
-  const summarizerModels = useMemo(
-    () => getModelsForProvider(state.preprocessConfig.summarizerProvider as LLMProvider),
-    [getModelsForProvider, state.preprocessConfig.summarizerProvider]
-  );
-
-  // Update summarizer model when provider changes and current model isn't available
+  // Initialize IndexedDBStore on component mount
   useEffect(() => {
-    const currentModel = state.preprocessConfig.summarizerModel;
-    const isModelAvailable = summarizerModels.some(m => m.model === currentModel);
-
-    if (!isModelAvailable && summarizerModels.length > 0) {
-      setState(prev => ({
-        ...prev,
-        preprocessConfig: {
-          ...prev.preprocessConfig,
-          summarizerModel: summarizerModels[0].model,
-        },
-      }));
-    }
-  }, [summarizerModels, state.preprocessConfig.summarizerModel]);
-
-  // Update selected models when available models change
-  useEffect(() => {
-    if (availableModels.length > 0 && state.selectedModels.length === 0) {
-      // Default: select first 2 available models
-      setState(prev => ({
-        ...prev,
-        selectedModels: availableModels.slice(0, 2),
-      }));
-    }
-  }, [availableModels, state.selectedModels.length]);
-
-  const {
-    runClassification,
-    runSummarization,
-    progress,
-    isRunning,
-    cancel,
-    error: workerError,
-  } = useABTestingWorker();
-
-  const userId = wallet?.address ?? 'anonymous';
-  const overallProgress = calculateOverallProgress(progress);
-
-  // --- Stage 1: Download Emails ---
-
-  const handleDownloadEmails = useCallback(async () => {
-    setState((prev: ABTestingState) => ({
-      ...prev,
-      stageStatus: { ...prev.stageStatus, download: 'running' },
-    }));
-    setError(null);
-
     try {
-      if (!store || !isReady) {
-        throw new Error('Store not ready');
-      }
+      console.log('[A/B Testing] Initializing IndexedDBStore...')
+      const newStore = new IndexedDBStore('ownyou_ab_testing_store')
+      setStore(newStore)
+      setStoreInitialized(true)
+      console.log('[A/B Testing] IndexedDBStore initialized')
+    } catch (err) {
+      console.error('[A/B Testing] Failed to initialize IndexedDBStore:', err)
+    }
+  }, [])
 
-      // Determine which sources to use
-      const { provider, maxEmails } = state.downloadConfig;
-      const sourcesToFetch: DataSourceId[] = [];
+  // Load persisted A/B testing session from IndexedDB on page load
+  useEffect(() => {
+    if (!store || !storeInitialized) return
 
-      if (provider === 'gmail' || provider === 'both') {
-        if (gmailConnected) sourcesToFetch.push('gmail');
-      }
-      if (provider === 'outlook' || provider === 'both') {
-        if (outlookConnected) sourcesToFetch.push('outlook');
-      }
+    const loadPersistedData = async () => {
+      try {
+        console.log('[A/B Testing Persistence] Loading session from IndexedDB...')
 
-      if (sourcesToFetch.length === 0) {
-        throw new Error('No email providers connected. Please connect Gmail or Outlook in Settings first.');
-      }
-
-      // Import EmailPipeline dynamically
-      const { EmailPipeline } = await import('@ownyou/email');
-
-      const allEmails: Email[] = [];
-
-      // Fetch from each connected source with retry-on-401 logic
-      for (const sourceId of sourcesToFetch) {
-        // Helper to run pipeline with a token
-        const runWithToken = async (token: string) => {
-          const pipeline = new EmailPipeline({
-            userId,
-            provider: sourceId === 'gmail' ? 'google' : 'microsoft',
-            fetchOptions: {
-              maxResults: Math.ceil(maxEmails / sourcesToFetch.length),
-            },
-            runClassification: false, // Don't classify, just fetch raw emails
-          });
-          return pipeline.run(token);
-        };
-
-        // Get valid OAuth token (auto-refreshes if expired)
-        let accessToken = await getValidToken(sourceId);
-
-        if (!accessToken) {
-          console.warn(`[ABTesting] No valid token found for ${sourceId}, skipping`);
-          continue;
+        // Check for pending OAuth action BEFORE loading config
+        // Also check if we've already processed a pending action (race condition fix)
+        const hasPending = hasPendingOAuthAction() || pendingActionProcessed.current
+        if (hasPending) {
+          console.log('[A/B Testing Persistence] Pending OAuth action detected or already processed, skipping config restoration')
         }
 
-        let result;
-        try {
-          // Try with current token
-          result = await runWithToken(accessToken);
-        } catch (err) {
-          const errorMsg = err instanceof Error ? err.message : String(err);
-
-          // Check if it's a 401 error - retry with force refresh
-          if (errorMsg.includes('401') || errorMsg.includes('UNAUTHENTICATED') || errorMsg.includes('InvalidAuthenticationToken')) {
-            console.log(`[ABTesting] Got 401 for ${sourceId}, forcing token refresh...`);
-
-            // Force refresh the token
-            accessToken = await getValidToken(sourceId, true);
-
-            if (!accessToken) {
-              console.error(`[ABTesting] Token refresh failed for ${sourceId}`);
-              continue;
-            }
-
-            // Retry with fresh token
-            console.log(`[ABTesting] Retrying ${sourceId} with refreshed token...`);
-            result = await runWithToken(accessToken);
-          } else {
-            // Not a 401 error, re-throw
-            throw err;
+        // Load stage 1 data (downloaded emails)
+        const stage1Item = await store.get(AB_TESTING_NAMESPACE, 'stage1_emails')
+        if (stage1Item?.value) {
+          const data = stage1Item.value as { emails: Email[], config: any, stageStatus: StageStatus }
+          setDownloadedEmails(data.emails || [])
+          if (data.config && !hasPending) {
+            setDownloadConfig(data.config)
           }
+          if (data.stageStatus === 'completed') {
+            setStageStatus(s => ({ ...s, download: 'completed' }))
+          }
+          console.log(`[A/B Testing Persistence] Loaded ${data.emails?.length || 0} downloaded emails`)
         }
 
-        // For A/B testing we need the raw emails, but pipeline returns stats
-        // We need to fetch separately using the provider client
-        // Since EmailPipeline doesn't expose raw emails, we simulate with mock data
-        // This is a limitation - in production, we'd need API access to raw emails
+        // Load stage 2 data (preprocessed emails)
+        const stage2Item = await store.get(AB_TESTING_NAMESPACE, 'stage2_emails')
+        if (stage2Item?.value) {
+          const data = stage2Item.value as { emails: PreprocessedEmail[], config: any, stageStatus: StageStatus }
+          setPreprocessedEmails(data.emails || [])
+          if (data.config) {
+            setPreprocessConfig(data.config)
+          }
+          if (data.stageStatus === 'completed') {
+            setStageStatus(s => ({ ...s, preprocess: 'completed' }))
+          }
+          console.log(`[A/B Testing Persistence] Loaded ${data.emails?.length || 0} preprocessed emails`)
+        }
 
-        // Create synthetic emails from the pipeline result for demo purposes
-        // In real implementation, we'd need direct email access
-        const emailCount = result.emailsFetched || 0;
-        for (let i = 0; i < emailCount && allEmails.length < maxEmails; i++) {
-          allEmails.push({
-            id: `${sourceId}-${i}-${Date.now()}`,
-            subject: `Email ${i + 1} from ${sourceId}`,
-            from: `sender@${sourceId === 'gmail' ? 'gmail.com' : 'outlook.com'}`,
-            body: `Sample email body from ${sourceId} for A/B testing classification.`,
-            date: new Date().toISOString(),
-          });
+        // Load stage 3 data (classification results only - NOT model selections)
+        const stage3Item = await store.get(AB_TESTING_NAMESPACE, 'stage3_results')
+        if (stage3Item?.value) {
+          const data = stage3Item.value as {
+            results: Record<string, ModelResults>,
+            metrics: ComparisonMetrics | null,
+            stageStatus: StageStatus
+          }
+          if (data.results) {
+            const resultsMap = new Map<string, ModelResults>()
+            Object.entries(data.results).forEach(([key, value]) => {
+              resultsMap.set(key, value)
+            })
+            setClassificationResults(resultsMap)
+          }
+          if (data.metrics) {
+            setComparisonMetrics(data.metrics)
+          }
+          if (data.stageStatus === 'completed') {
+            setStageStatus(s => ({ ...s, classify: 'completed' }))
+          }
+          console.log(`[A/B Testing Persistence] Loaded classification results`)
+        }
+
+        console.log('[A/B Testing Persistence] Session loaded successfully')
+      } catch (err) {
+        console.error('[A/B Testing Persistence] Failed to load session:', err)
+      }
+    }
+
+    loadPersistedData()
+  }, [store, storeInitialized])
+
+  // Load models from API on mount - always fresh, never persisted
+  useEffect(() => {
+    const loadModels = async () => {
+      console.log('[A/B Testing] Loading fresh models from API...')
+      setModelsLoading(true)
+      try {
+        const models = await fetchAvailableModels(true) // Force refresh
+        setAvailableModels(models)
+        // Set default selection to first model from fresh API response
+        if (models.length > 0) {
+          setSelectedModels([models[0]])
+          console.log(`[A/B Testing] Default model set to: ${models[0].provider}:${models[0].model}`)
+        }
+        console.log(`[A/B Testing] Loaded ${models.length} models from API`)
+      } catch (error) {
+        console.error('[A/B Testing] Failed to load models:', error)
+        // Keep using fallback models
+      } finally {
+        setModelsLoading(false)
+      }
+    }
+    loadModels()
+  }, [])
+
+  // Track if we've already checked for pending OAuth actions
+  const pendingActionChecked = useRef(false)
+  // Track if we've processed a pending action (to prevent session loading from overwriting)
+  const pendingActionProcessed = useRef(false)
+
+  // Check for pending OAuth action after page load (auto-continue OAuth flow)
+  useEffect(() => {
+    if (pendingActionChecked.current) return
+    pendingActionChecked.current = true
+
+    const checkPendingAction = async () => {
+      const pending = getPendingOAuthAction()
+      if (pending?.action === 'download_both') {
+        console.log('[A/B Testing] Found pending action: download_both, continuing OAuth flow...')
+
+        // Mark that we've processed a pending action (prevents session loading from overwriting)
+        pendingActionProcessed.current = true
+
+        // Restore the download config from the pending action
+        if (pending.provider || pending.maxEmails) {
+          console.log(`[A/B Testing] Restoring config: provider=${pending.provider}, maxEmails=${pending.maxEmails}`)
+          setDownloadConfig(prev => ({
+            provider: (pending.provider as EmailProvider) || prev.provider,
+            maxEmails: pending.maxEmails || prev.maxEmails,
+          }))
+        }
+
+        // Small delay to ensure page is fully rendered and state is updated
+        setTimeout(() => {
+          // Trigger download which will check auth status and continue appropriately
+          const downloadBtn = document.querySelector('[data-action="download"]') as HTMLButtonElement
+          if (downloadBtn) {
+            downloadBtn.click()
+          }
+        }, 500)
+      }
+    }
+
+    checkPendingAction()
+  }, [])
+
+  // Compute current stage
+  const currentStage: 1 | 2 | 3 =
+    stageStatus.classify === 'completed' ? 3 :
+    stageStatus.preprocess === 'completed' ? 3 :
+    stageStatus.download === 'completed' ? 2 : 1
+
+  // Stage 1: Download emails using direct OAuth clients
+  const handleDownload = async () => {
+    setStageStatus(s => ({ ...s, download: 'running' }))
+    try {
+      const emails: Email[] = []
+      const { provider, maxEmails } = downloadConfig
+
+      // For "both" mode: download maxEmails from EACH provider
+      const emailsPerProvider = maxEmails
+
+      // For "both" mode, check authorization status FIRST before any downloads
+      if (provider === 'both') {
+        const gmailOAuthClient = getGmailOAuthClient()
+        const outlookOAuthClient = getOutlookOAuthClient()
+
+        const gmailAuthorized = await gmailOAuthClient.isAuthorized()
+        const outlookAuthorized = await outlookOAuthClient.isAuthorized()
+
+        console.log(`[A/B Testing] Authorization status - Gmail: ${gmailAuthorized}, Outlook: ${outlookAuthorized}`)
+
+        // If neither is authorized, start with Gmail OAuth
+        if (!gmailAuthorized && !outlookAuthorized) {
+          console.log('[A/B Testing] Neither provider authorized, starting Gmail OAuth...')
+          setPendingOAuthAction('download_both', { provider, maxEmails })
+          await gmailOAuthClient.authorize()
+          return
+        }
+
+        // If only Outlook not authorized, start Outlook OAuth
+        if (gmailAuthorized && !outlookAuthorized) {
+          console.log('[A/B Testing] Gmail authorized but Outlook not, starting Outlook OAuth...')
+          setPendingOAuthAction('download_both', { provider, maxEmails })
+          await outlookOAuthClient.authorize()
+          return
+        }
+
+        // If only Gmail not authorized, start Gmail OAuth
+        if (!gmailAuthorized && outlookAuthorized) {
+          console.log('[A/B Testing] Outlook authorized but Gmail not, starting Gmail OAuth...')
+          setPendingOAuthAction('download_both', { provider, maxEmails })
+          await gmailOAuthClient.authorize()
+          return
+        }
+
+        console.log('[A/B Testing] Both providers authorized, proceeding with downloads...')
+      }
+
+      // Download from Gmail
+      if (provider === 'gmail' || provider === 'both') {
+        try {
+          const gmailOAuthClient = getGmailOAuthClient()
+          const isAuthorized = await gmailOAuthClient.isAuthorized()
+
+          if (!isAuthorized) {
+            console.log('[A/B Testing] Gmail not authorized, starting OAuth flow...')
+            await gmailOAuthClient.authorize()
+            return
+          }
+
+          const gmailClient = await gmailOAuthClient.getClient()
+          const gmailResponse = await gmailClient.listMessages(undefined, emailsPerProvider)
+
+          console.log('[A/B Testing] Gmail API response:', gmailResponse)
+          console.log('[A/B Testing] Gmail messages count:', gmailResponse.messages?.length || 0)
+
+          if (gmailResponse.messages && gmailResponse.messages.length > 0) {
+            const messagePromises = gmailResponse.messages.map((msg: { id: string }) =>
+              gmailClient.getMessage(msg.id, 'full')
+            )
+            const messages = await Promise.all(messagePromises)
+
+            const gmailEmails = messages.map((msg: any) => ({
+              id: `gmail_${msg.id}`,
+              from: gmailClient.getHeader(msg, 'From') || 'Unknown',
+              subject: gmailClient.getHeader(msg, 'Subject') || 'No Subject',
+              body: gmailClient.getPlainTextBody(msg) || gmailClient.getHtmlBody(msg) || 'No body',
+              date: gmailClient.getHeader(msg, 'Date') || new Date().toISOString(),
+            }))
+
+            emails.push(...gmailEmails)
+            console.log(`[A/B Testing] Downloaded ${gmailEmails.length} Gmail emails`)
+          }
+        } catch (err) {
+          console.error('[A/B Testing] Failed to download Gmail emails:', err)
+          if (provider === 'gmail') throw err
         }
       }
 
-      if (allEmails.length === 0) {
-        throw new Error('No emails found. Try adjusting your settings or check your email provider connection.');
+      // Download from Outlook
+      if (provider === 'outlook' || provider === 'both') {
+        try {
+          const outlookOAuthClient = getOutlookOAuthClient()
+          const isAuthorized = await outlookOAuthClient.isAuthorized()
+
+          if (!isAuthorized) {
+            console.log('[A/B Testing] Outlook not authorized, starting OAuth flow...')
+            await outlookOAuthClient.authorize()
+            return
+          }
+
+          const outlookClient = await outlookOAuthClient.getClient()
+          const outlookResponse = await outlookClient.listMessages(undefined, emailsPerProvider)
+
+          console.log('[A/B Testing] Outlook API response:', outlookResponse)
+          console.log('[A/B Testing] Outlook messages count:', outlookResponse.value?.length || 0)
+
+          if (outlookResponse.value && outlookResponse.value.length > 0) {
+            const outlookEmails = outlookResponse.value.map((msg: any) => ({
+              id: `outlook_${msg.id}`,
+              from: msg.from?.emailAddress?.address || 'Unknown',
+              subject: msg.subject || 'No Subject',
+              body: msg.body?.content || 'No body',
+              date: msg.receivedDateTime || new Date().toISOString(),
+            }))
+
+            emails.push(...outlookEmails)
+            console.log(`[A/B Testing] Downloaded ${outlookEmails.length} Outlook emails`)
+          }
+        } catch (err) {
+          console.error('[A/B Testing] Failed to download Outlook emails:', err)
+          if (provider === 'outlook') throw err
+        }
       }
 
-      setState((prev: ABTestingState) => ({
-        ...prev,
-        downloadedEmails: allEmails.slice(0, maxEmails),
-        stageStatus: { ...prev.stageStatus, download: 'completed' },
-        currentStage: 2,
-      }));
-    } catch (err) {
-      console.error('[ABTesting] Download failed:', err);
-      setError(err instanceof Error ? err.message : 'Download failed');
-      setState((prev: ABTestingState) => ({
-        ...prev,
-        stageStatus: { ...prev.stageStatus, download: 'error' },
-      }));
+      if (emails.length === 0) {
+        throw new Error('No emails found. Please check your OAuth connection.')
+      }
+
+      console.log(`[A/B Testing] Total emails downloaded: ${emails.length}`)
+
+      setDownloadedEmails(emails)
+      setStageStatus(s => ({ ...s, download: 'completed' }))
+      // Reset later stages
+      setPreprocessedEmails([])
+      setClassificationResults(new Map())
+      setComparisonMetrics(null)
+      setStageStatus(s => ({ ...s, preprocess: 'idle', classify: 'idle' }))
+
+      // Persist to IndexedDB
+      if (store) {
+        await store.put(AB_TESTING_NAMESPACE, 'stage1_emails', {
+          emails,
+          config: downloadConfig,
+          stageStatus: 'completed',
+          savedAt: new Date().toISOString(),
+        })
+        await store.delete(AB_TESTING_NAMESPACE, 'stage2_emails')
+        await store.delete(AB_TESTING_NAMESPACE, 'stage3_results')
+        console.log('[A/B Testing Persistence] Stage 1 saved to IndexedDB')
+      }
+    } catch (error) {
+      console.error('Download error:', error)
+      setStageStatus(s => ({ ...s, download: 'error' }))
+      throw error
     }
-  }, [store, isReady, userId, state.downloadConfig, gmailConnected, outlookConnected, getValidToken]);
+  }
 
-  // --- Stage 2: Summarize Emails ---
+  // Stage 1: Import emails
+  const handleStage1Import = (data: Stage1Export) => {
+    setDownloadedEmails(data.emails)
+    setDownloadConfig({
+      provider: data.downloadConfig.provider,
+      maxEmails: data.downloadConfig.maxEmails,
+    })
+    setStageStatus(s => ({ ...s, download: 'completed' }))
+    // Reset later stages
+    setPreprocessedEmails([])
+    setClassificationResults(new Map())
+    setComparisonMetrics(null)
+    setStageStatus(s => ({ ...s, preprocess: 'idle', classify: 'idle' }))
+  }
 
-  const handleSummarize = useCallback(async () => {
-    setState((prev: ABTestingState) => ({
-      ...prev,
-      stageStatus: { ...prev.stageStatus, preprocess: 'running' },
-    }));
-    setError(null);
-
+  // Stage 2: Pre-process emails
+  const handlePreprocess = async () => {
+    setStageStatus(s => ({ ...s, preprocess: 'running' }))
     try {
-      const summarizerModel: ModelConfig = {
-        provider: state.preprocessConfig.summarizerProvider as ModelConfig['provider'],
-        model: state.preprocessConfig.summarizerModel,
-        displayName: state.preprocessConfig.summarizerModel,
-      };
+      const processed = await runSummarization(
+        downloadedEmails,
+        preprocessConfig.summarizerProvider,
+        preprocessConfig.summarizerModel,
+        'ab_testing_user'
+      )
+      setPreprocessedEmails(processed)
+      setStageStatus(s => ({ ...s, preprocess: 'completed' }))
+      // Reset later stage
+      setClassificationResults(new Map())
+      setComparisonMetrics(null)
+      setStageStatus(s => ({ ...s, classify: 'idle' }))
 
-      // API keys are read from import.meta.env in the worker
-      const preprocessed = await runSummarization(
-        state.downloadedEmails,
-        summarizerModel
-      );
-
-      setState((prev: ABTestingState) => ({
-        ...prev,
-        preprocessedEmails: preprocessed,
-        stageStatus: { ...prev.stageStatus, preprocess: 'completed' },
-        currentStage: 3,
-      }));
-    } catch (err) {
-      console.error('[ABTesting] Summarization failed:', err);
-      setError(err instanceof Error ? err.message : 'Summarization failed');
-      setState((prev: ABTestingState) => ({
-        ...prev,
-        stageStatus: { ...prev.stageStatus, preprocess: 'error' },
-      }));
+      // Persist to IndexedDB
+      if (store) {
+        await store.put(AB_TESTING_NAMESPACE, 'stage2_emails', {
+          emails: processed,
+          config: preprocessConfig,
+          stageStatus: 'completed',
+          savedAt: new Date().toISOString(),
+        })
+        await store.delete(AB_TESTING_NAMESPACE, 'stage3_results')
+        console.log('[A/B Testing Persistence] Stage 2 saved to IndexedDB')
+      }
+    } catch (error) {
+      console.error('Preprocess error:', error)
+      setStageStatus(s => ({ ...s, preprocess: 'error' }))
+      throw error
     }
-  }, [runSummarization, state.downloadedEmails, state.preprocessConfig]);
+  }
 
-  // --- Stage 3: Classify with Multiple Models ---
+  // Stage 2: Import preprocessed emails
+  const handleStage2Import = (data: Stage2Export) => {
+    setPreprocessedEmails(data.emails)
+    setPreprocessConfig({
+      summarizerProvider: data.preprocessConfig.summarizerProvider,
+      summarizerModel: data.preprocessConfig.summarizerModel,
+    })
+    // Also set stage 1 as complete since we have the emails
+    setDownloadedEmails(data.emails.map(e => ({
+      id: e.id,
+      subject: e.subject,
+      from: e.from,
+      body: e.body,
+      date: e.date,
+    })))
+    setStageStatus(s => ({ ...s, download: 'completed', preprocess: 'completed' }))
+    // Reset later stage
+    setClassificationResults(new Map())
+    setComparisonMetrics(null)
+    setStageStatus(s => ({ ...s, classify: 'idle' }))
+  }
 
-  const handleClassify = useCallback(async () => {
-    setState((prev: ABTestingState) => ({
-      ...prev,
-      stageStatus: { ...prev.stageStatus, classify: 'running' },
-    }));
-    setError(null);
+  // Stage 3: Model toggle
+  const handleModelToggle = (model: ModelConfig) => {
+    setSelectedModels(prev => {
+      const exists = prev.some(m => m.provider === model.provider && m.model === model.model)
+      if (exists) {
+        return prev.filter(m => !(m.provider === model.provider && m.model === model.model))
+      } else {
+        return [...prev, model]
+      }
+    })
+  }
 
+  // Stage 3: Progress callback
+  const handleProgress: ProgressCallback = useCallback((modelKey, status) => {
+    setModelProgress(prev => new Map(prev).set(modelKey, status))
+  }, [])
+
+  // Stage 3: Run classification
+  // Sprint 11d: Uses full IAB classifier workflow when store is available
+  const handleClassify = async () => {
+    setStageStatus(s => ({ ...s, classify: 'running' }))
+    setModelProgress(new Map())
     try {
-      // API keys are read from import.meta.env in the worker
+      // runClassification is a smart router:
+      // - If store is passed: Uses full 6-node workflow with Evidence Judge (Sprint 11d)
+      // - If store is null: Falls back to worker-based parallel classification (Sprint 11c)
+      // Note: Cast to any because IndexedDBStore has compatible interface but different type
       const results = await runClassification(
-        state.preprocessedEmails,
-        state.selectedModels
-      );
+        preprocessedEmails,
+        selectedModels,
+        'ab_testing_user',
+        store as any,  // Pass store to enable full workflow mode
+        handleProgress
+      )
+      setClassificationResults(results)
 
-      // Convert to Map
-      const resultsMap = new Map(Object.entries(results));
+      // Compute metrics
+      const emailIds = preprocessedEmails.map(e => e.id)
+      const metrics = computeComparisonMetrics(results, emailIds)
+      setComparisonMetrics(metrics)
 
-      // Compute comparison metrics
-      const emailIds = state.preprocessedEmails.map((e) => e.id);
-      const metrics = computeComparisonMetrics(resultsMap, emailIds);
+      setStageStatus(s => ({ ...s, classify: 'completed' }))
 
-      // Save results to store
-      if (store && isReady) {
-        const exportData = createStage3Export(
-          state.selectedModels,
-          resultsMap,
-          metrics
-        );
-        await store.put(NS.abTestingResults(userId), 'latest', exportData);
+      // Persist to IndexedDB
+      if (store) {
+        const resultsRecord: Record<string, ModelResults> = {}
+        results.forEach((value, key) => {
+          resultsRecord[key] = value
+        })
+        await store.put(AB_TESTING_NAMESPACE, 'stage3_results', {
+          results: resultsRecord,
+          metrics,
+          stageStatus: 'completed',
+          savedAt: new Date().toISOString(),
+        })
+        console.log('[A/B Testing Persistence] Stage 3 saved to IndexedDB')
       }
-
-      setState((prev: ABTestingState) => ({
-        ...prev,
-        classificationResults: resultsMap,
-        comparisonMetrics: metrics,
-        stageStatus: { ...prev.stageStatus, classify: 'completed' },
-      }));
-    } catch (err) {
-      console.error('[ABTesting] Classification failed:', err);
-      setError(err instanceof Error ? err.message : 'Classification failed');
-      setState((prev: ABTestingState) => ({
-        ...prev,
-        stageStatus: { ...prev.stageStatus, classify: 'error' },
-      }));
+    } catch (error) {
+      console.error('Classification error:', error)
+      setStageStatus(s => ({ ...s, classify: 'error' }))
+      throw error
     }
-  }, [
-    runClassification,
-    state.preprocessedEmails,
-    state.selectedModels,
-    store,
-    isReady,
-    userId,
-  ]);
+  }
 
-  // --- Render ---
+  // Stage 3: Export results
+  const handleStage3Export = () => {
+    if (comparisonMetrics) {
+      exportStage3(selectedModels, classificationResults, comparisonMetrics)
+    }
+  }
 
-  const handleBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
+  // Clear all session data (both state and IndexedDB)
+  const handleClearSession = async () => {
+    if (!confirm('Are you sure you want to clear all A/B testing data? This cannot be undone.')) {
+      return
+    }
 
-  // Not authenticated
-  if (!isAuthenticated) {
-    return (
-      <div className="flex flex-col min-h-screen bg-gray-50">
-        <Header showLogo={false} title="A/B Testing" onBack={handleBack} showFilters={false} />
-        <div className="flex-1 flex items-center justify-center px-4">
-          <Card size="full" className="p-8 lg:p-10 text-center">
-            <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <span className="text-2xl">🔒</span>
-            </div>
-            <h2 className="text-xl font-bold mb-2">Connect Wallet</h2>
-            <p className="text-gray-600">
-              Connect your wallet to use A/B testing.
-            </p>
-          </Card>
-        </div>
-      </div>
-    );
+    // Clear state
+    setDownloadedEmails([])
+    setPreprocessedEmails([])
+    setClassificationResults(new Map())
+    setComparisonMetrics(null)
+    setModelProgress(new Map())
+    setStageStatus({
+      download: 'idle',
+      preprocess: 'idle',
+      classify: 'idle',
+    })
+    setSelectedModels([availableModels[0] || FALLBACK_MODELS[0]])
+
+    // Clear IndexedDB
+    if (store) {
+      try {
+        await store.delete(AB_TESTING_NAMESPACE, 'stage1_emails')
+        await store.delete(AB_TESTING_NAMESPACE, 'stage2_emails')
+        await store.delete(AB_TESTING_NAMESPACE, 'stage3_results')
+        console.log('[A/B Testing Persistence] Session cleared from IndexedDB')
+      } catch (err) {
+        console.error('[A/B Testing Persistence] Failed to clear session:', err)
+      }
+    }
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header showLogo={false} title="A/B Testing" onBack={handleBack} showFilters={false} />
-
-      <div className="flex-1 px-4 py-6 lg:px-8 xl:px-12 w-full max-w-6xl mx-auto">
-        {/* Stage Indicator */}
-        <StageIndicator
-          currentStage={state.currentStage}
-          stageStatus={state.stageStatus}
-        />
-
-        {/* Error Display */}
-        {(error || workerError) && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-            {error || workerError}
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">A/B Model Testing</h1>
+            <p className="text-gray-600">
+              Compare IAB Taxonomy classification across different LLM models
+            </p>
           </div>
-        )}
+          {(downloadedEmails.length > 0 || preprocessedEmails.length > 0 || classificationResults.size > 0) && (
+            <button
+              onClick={handleClearSession}
+              className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 transition-colors"
+            >
+              Clear Session
+            </button>
+          )}
+        </div>
 
-        {/* Progress Display */}
-        {isRunning && (
-          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-blue-700">
-                Processing...
-              </span>
-              <button
-                onClick={cancel}
-                className="text-xs text-red-600 hover:text-red-800"
-              >
-                Cancel
-              </button>
-            </div>
-            <div className="w-full bg-blue-200 rounded-full h-2">
-              <div
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${overallProgress.percentage}%` }}
+        {/* Stage indicator */}
+        <StageIndicator currentStage={currentStage} stageStatus={stageStatus} />
+
+        {/* Stage panels */}
+        <div className="space-y-6">
+          {/* Stage 1 */}
+          <Stage1Panel
+            status={stageStatus.download}
+            emails={downloadedEmails}
+            config={downloadConfig}
+            onConfigChange={setDownloadConfig}
+            onDownload={handleDownload}
+            onImport={handleStage1Import}
+            onExport={() => {}}
+          />
+
+          {/* Stage 2 */}
+          <Stage2Panel
+            status={stageStatus.preprocess}
+            emails={preprocessedEmails}
+            config={preprocessConfig}
+            sourceEmailCount={downloadedEmails.length}
+            onConfigChange={setPreprocessConfig}
+            onPreprocess={handlePreprocess}
+            onImport={handleStage2Import}
+            onExport={() => {}}
+            disabled={stageStatus.download !== 'completed'}
+            availableModels={availableModels}
+            modelsLoading={modelsLoading}
+          />
+
+          {/* Stage 3 */}
+          <Stage3Panel
+            status={stageStatus.classify}
+            selectedModels={selectedModels}
+            results={classificationResults}
+            sourceEmailCount={preprocessedEmails.length}
+            onModelToggle={handleModelToggle}
+            onClassify={handleClassify}
+            onExport={handleStage3Export}
+            disabled={stageStatus.preprocess !== 'completed'}
+            progress={modelProgress}
+            availableModels={availableModels}
+            modelsLoading={modelsLoading}
+          />
+
+          {/* Results Dashboard */}
+          {comparisonMetrics && classificationResults.size > 0 && (
+            <div className="mt-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Results</h2>
+              <ResultsDashboard
+                metrics={comparisonMetrics}
+                results={classificationResults}
+                emails={preprocessedEmails}
               />
             </div>
-            <div className="text-xs text-blue-600 mt-1">
-              {overallProgress.completed}/{overallProgress.total} items (
-              {overallProgress.percentage}%)
-            </div>
-          </div>
-        )}
-
-        {/* Stage 1: Download Configuration */}
-        {state.currentStage === 1 && (
-          <Card size="full" className="p-6 lg:p-8 space-y-6">
-            <h2 className="text-xl lg:text-2xl font-semibold">Stage 1: Download Emails</h2>
-
-            {/* Provider Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Provider
-              </label>
-              <div className="flex gap-2">
-                {(['gmail', 'outlook', 'both'] as EmailProvider[]).map((p) => (
-                  <button
-                    key={p}
-                    onClick={() =>
-                      setState((prev: ABTestingState) => ({
-                        ...prev,
-                        downloadConfig: { ...prev.downloadConfig, provider: p },
-                      }))
-                    }
-                    className={`px-4 py-2 rounded-lg text-sm capitalize ${
-                      state.downloadConfig.provider === p
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {p}
-                  </button>
-                ))}
-              </div>
-              <div className="mt-2 text-xs text-gray-500">
-                Gmail: {gmailConnected ? '✅ Connected' : '❌ Not connected'} |
-                Outlook: {outlookConnected ? '✅ Connected' : '❌ Not connected'}
-              </div>
-            </div>
-
-            {/* Max Emails */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Number of Emails
-              </label>
-              <input
-                type="number"
-                min={10}
-                max={500}
-                value={state.downloadConfig.maxEmails}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setState((prev: ABTestingState) => ({
-                    ...prev,
-                    downloadConfig: {
-                      ...prev.downloadConfig,
-                      maxEmails: parseInt(e.target.value) || 50,
-                    },
-                  }))
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              />
-            </div>
-
-            <button
-              onClick={handleDownloadEmails}
-              disabled={isRunning || state.stageStatus.download === 'running'}
-              className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
-            >
-              {state.stageStatus.download === 'running'
-                ? 'Downloading...'
-                : 'Download Emails'}
-            </button>
-          </Card>
-        )}
-
-        {/* Stage 2: Summarization - Provider/Model Selection (Dynamic) */}
-        {state.currentStage === 2 && (
-          <Card size="full" className="p-6 lg:p-8 space-y-6">
-            <h2 className="text-xl lg:text-2xl font-semibold">Stage 2: Summarize Emails</h2>
-
-            <div className="text-sm text-gray-600">
-              {state.downloadedEmails.length} emails ready for summarization
-            </div>
-
-            {/* Models Loading Indicator */}
-            {modelsLoading && (
-              <div className="flex items-center gap-2 text-sm text-blue-600">
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Loading available models...
-              </div>
-            )}
-
-            {/* Models Error */}
-            {modelsError && (
-              <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded">
-                Note: Using fallback models ({modelsError})
-              </div>
-            )}
-
-            {/* Provider Selection - Dynamic */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Provider
-              </label>
-              <select
-                value={state.preprocessConfig.summarizerProvider}
-                onChange={(e) =>
-                  setState((prev: ABTestingState) => ({
-                    ...prev,
-                    preprocessConfig: {
-                      ...prev.preprocessConfig,
-                      summarizerProvider: e.target.value,
-                    },
-                  }))
-                }
-                disabled={modelsLoading}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white disabled:opacity-50"
-              >
-                {availableProviders.length > 0 ? (
-                  availableProviders.map((p) => (
-                    <option key={p} value={p}>
-                      {p === 'claude' ? 'Anthropic' :
-                       p === 'gemini' ? 'Google' :
-                       p.charAt(0).toUpperCase() + p.slice(1)}
-                    </option>
-                  ))
-                ) : (
-                  <option value="openai">Loading...</option>
-                )}
-              </select>
-            </div>
-
-            {/* Model Selection - Dynamic */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Model
-              </label>
-              <select
-                value={state.preprocessConfig.summarizerModel}
-                onChange={(e) =>
-                  setState((prev: ABTestingState) => ({
-                    ...prev,
-                    preprocessConfig: {
-                      ...prev.preprocessConfig,
-                      summarizerModel: e.target.value,
-                    },
-                  }))
-                }
-                disabled={modelsLoading || summarizerModels.length === 0}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white disabled:opacity-50"
-              >
-                {summarizerModels.length > 0 ? (
-                  summarizerModels.map((m) => (
-                    <option key={m.model} value={m.model}>
-                      {m.displayName}
-                    </option>
-                  ))
-                ) : (
-                  <option value="">No models available</option>
-                )}
-              </select>
-            </div>
-
-            <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg">
-              API keys are configured in your environment (.env file).
-              {availableProviders.length > 0 && (
-                <span className="block mt-1 text-green-600">
-                  {availableProviders.length} provider(s) configured: {availableProviders.join(', ')}
-                </span>
-              )}
-            </div>
-
-            <button
-              onClick={handleSummarize}
-              disabled={isRunning || summarizerModels.length === 0}
-              className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
-            >
-              {state.stageStatus.preprocess === 'running'
-                ? 'Summarizing...'
-                : 'Summarize Emails'}
-            </button>
-          </Card>
-        )}
-
-        {/* Stage 3: Classification - Model Selection (Dynamic) */}
-        {state.currentStage === 3 && !state.comparisonMetrics && (
-          <Card size="full" className="p-6 lg:p-8 space-y-6">
-            <h2 className="text-xl lg:text-2xl font-semibold">
-              Stage 3: Classify with Multiple Models
-            </h2>
-
-            <div className="text-sm text-gray-600">
-              {state.preprocessedEmails.length} emails ready for classification
-            </div>
-
-            {/* Models Loading Indicator */}
-            {modelsLoading && (
-              <div className="flex items-center gap-2 text-sm text-blue-600">
-                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Loading available models...
-              </div>
-            )}
-
-            {/* Model Selection - checkboxes with progress indicators (admin dashboard style) */}
-            <ModelSelector
-              selectedModels={state.selectedModels}
-              onModelsChange={(models: ModelConfig[]) =>
-                setState((prev: ABTestingState) => ({ ...prev, selectedModels: models }))
-              }
-              availableModels={availableModels}
-              modelsLoading={modelsLoading}
-              maxSelection={4}
-              disabled={isRunning}
-              progress={
-                isRunning
-                  ? new Map(
-                      Array.from(progress.entries()).map(([key, p]) => [
-                        key,
-                        p.status === 'completed'
-                          ? 'completed'
-                          : p.status.startsWith('error')
-                            ? 'error'
-                            : 'started',
-                      ])
-                    )
-                  : undefined
-              }
-            />
-
-            <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg">
-              API keys are configured in your environment (.env file).
-              {availableProviders.length > 0 && (
-                <span className="block mt-1 text-green-600">
-                  {availableModels.length} model(s) available from {availableProviders.length} provider(s)
-                </span>
-              )}
-            </div>
-
-            <button
-              onClick={handleClassify}
-              disabled={isRunning || state.selectedModels.length === 0}
-              className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
-            >
-              {state.stageStatus.classify === 'running'
-                ? 'Classifying...'
-                : `Classify with ${state.selectedModels.length} Models`}
-            </button>
-          </Card>
-        )}
-
-        {/* Results Summary */}
-        {state.comparisonMetrics && (
-          <Card size="full" className="p-6 lg:p-8 space-y-6">
-            <h2 className="text-xl lg:text-2xl font-semibold">Classification Complete!</h2>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-700">
-                  {Math.round(state.comparisonMetrics.agreement.agreementRate * 100)}%
-                </div>
-                <div className="text-sm text-green-600">Full Agreement</div>
-              </div>
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-700">
-                  {state.comparisonMetrics.coverage.commonCategories.length}
-                </div>
-                <div className="text-sm text-blue-600">Common Categories</div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => navigate('/results')}
-              className="w-full py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700"
-            >
-              View Detailed Results
-            </button>
-
-            <button
-              onClick={() => {
-                setState(initialState);
-                setError(null);
-              }}
-              className="w-full py-2 text-gray-600 hover:text-gray-800"
-            >
-              Start New Test
-            </button>
-          </Card>
-        )}
+          )}
+        </div>
       </div>
     </div>
-  );
+  )
 }
+
+export default ABTesting
